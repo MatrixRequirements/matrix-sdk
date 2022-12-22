@@ -1,0 +1,23 @@
+{
+  "name": "matrix-requirements-api",
+  "version": "1.0.0",
+  "description": "An API for manipulating MatrixRequirements projects",
+  "main": "index.js",
+  "types": "matrixApi.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatrixRequirements/matrix-api.git"
+  },
+  "author": "mike@matrixreq.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MatrixRequirements/matrix-api/issues"
+  },
+  "homepage": "https://github.com/MatrixRequirements/matrix-api#readme",
+  "devDependencies": {
+    "matrixrequirements-type-declarations": "^1.0.0"
+  }
+}
