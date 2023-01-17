@@ -10,8 +10,9 @@ by a Matrix instance at runtime.
 
 ## How to update (for Matrix Requirements developers)
 
-Copy the declaration file produced by the Clouds client build into this
-directory (`matrix-client-server/server/Clouds/client/build/js/matrixApi.d.ts`).
+Copy the declaration file produced by the Clouds client build from this
+location (`matrix-client-server/server/Clouds/client/build/js/types/matrixapi/index.d.ts`),
+and rename it to matrixApi.d.ts.
 
 If a new version is made, update the version number in the package.json file,
 and publish it with `npm publish`.

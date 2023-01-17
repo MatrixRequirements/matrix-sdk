@@ -1,1130 +1,5 @@
 declare module matrixApi
 {
-	/**
-	// debugging functionality for old browsers
-	(function () {
-	    var method:string;
-	    var noop = function () {
-	    };
-	    var methods:string[] = [
-	        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-	        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-	        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-	        'timeStamp', 'trace', 'warn'
-	    ];
-	    var length = methods.length;
-	    var console = (window.console = window.console || {});
-	    while (length--) {
-	        method = methods[length];
-	        // Only stub undefined methods.
-	        if (!console[method]) {
-	            console[method] = noop;
-	        }
-	    }
-	}());
-	*/ 
-	//# sourceMappingURL=init.d.ts.map
-
-	let ml: IMatrix;
-	//# sourceMappingURL=matrixlib.d.ts.map
-
-	class DeveloperTools implements IDeveloperTools {
-	    private static THE_SETTING;
-	    getStagingCode(): string;
-	    setStagingCode(newCode: string): void;
-	    runStagingCode(): void;
-	}
-	//# sourceMappingURL=DeveloperTools.d.ts.map
-
-	function InitializeBusinessLogic(): void;
-	//# sourceMappingURL=index.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IPlugin {
-	    initItem?: (item: IItem, jui: JQuery) => void;
-	    initServerSettings?: (serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings) => void;
-	    updateMenu?: (ul: JQuery, hook: number) => void;
-	    supportsControl?: (ctrl: string) => boolean;
-	    createControl?: (ctrlObj: JQuery, settings: IBaseControlOptions) => void;
-	    initProject?: (project: string) => void;
-	    isDefault?: boolean;
-	    filterProject?: (db: IDB[]) => void;
-	    updateSearchPanel?: () => void;
-	    updateItemPanel?: () => void;
-	    updateItem?: (item: IItem) => void;
-	    getProjectPages?: () => IProjectPageParam[];
-	    preSaveHook?: (isItem: boolean, type: string, controls: IControlDefinition[]) => JQueryDeferred<{}>;
-	    renderActionButtons?: (options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]) => boolean;
-	    updateTree?: () => void;
-	    getFieldConfigOptions?: () => IFieldDescription[];
-	    addFieldSettings?: (configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean) => void;
-	    getProjectSettingPages?: () => ISettingPage[];
-	    getCustomerSettingPages?: () => ISettingPage[];
-	    getPluginName?: () => string;
-	    getPluginVersion?: () => string;
-	    categorySetting?: (key: string) => string;
-	    editCategorySetting?: (key: string, category: string) => void;
-	    helpUrl?: string;
-	}
-	let pluginHooks: {
-	    shares: number;
-	};
-	interface ISettingPage {
-	    id: string;
-	    title: string;
-	    type?: string;
-	    help?: string;
-	    externalHelp?: string;
-	    render: (ui: JQuery) => void;
-	    advanced?: () => void;
-	    del?: () => void;
-	    saveAsync?: () => JQueryDeferred<unknown>;
-	    getNode?: () => IDB;
-	}
-	interface IProjectPageParam {
-	    id: string;
-	    title: string;
-	    render: any;
-	    destroy?: any;
-	    folder?: string;
-	    order: number;
-	    folderTitle?: string;
-	    icon?: string;
-	    usesFilters: boolean;
-	}
-	interface IPluginControl {
-	    [key: string]: Function;
-	}
-	interface IPluginPanelOptions {
-	    type: string;
-	    control: JQuery;
-	    controlState: number;
-	}
-	class PluginManager {
-	    private _jui;
-	    private _plugins;
-	    private controls;
-	    private destructors;
-	    private titles;
-	    private usesFilters;
-	    private activeControlPage;
-	    /** Called by the main UI handing over a div which can be used inside a plugin
-	     * to display modal popups
-	     *
-	     * @param {jquery object} jui a $("<div />") object
-	     * @returns {undefined}
-	     */
-	    setUI(jui: JQuery): void;
-	    /** function to register a plugin for a specific menu (specified by the hook)
-	     *
-	     * @param {instance of plugin} plugin
-	     * @returns {undefined}
-	     */
-	    register(plugin: IPlugin): void;
-	    /** this method is called from the main UI whenever an item is selected to be
-	     * displayed. The information is forwarded to all plugins
-	     *
-	     * @param {json object} item for example a requirement. see the json documention of item types
-	     * @returns {undefined}
-	     */
-	    init(item: IItem): void;
-	    /** this method is called after connecting to server using getServer ("")
-	     *
-	     * @param {json serverSettings} serverSettings or null after unsucessful login
-	     * @returns {undefined}
-	     */
-	    initServerSettings(serverSettings?: XRGetProject_StartupInfo_ListProjectAndSettings): void;
-	    /** this method is called when creating a menu which has a hook. it allows the plugins to add
-	     * li's to the ul supplied
-	     *
-	     * @param {number} hook identifies the menu
-	     * @param {jquery object} ul  a $("<ul />) object
-	     * @returns {undefined}
-	     */
-	    updateMenu(hook: number, ul: JQuery): void;
-	    getFieldConfigOptions(): IFieldDescription[];
-	    addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean): void;
-	    supportsControl(ctrl: string): boolean;
-	    createControl(ctrlObj: JQuery, settings: IBaseControlOptions): void;
-	    initProject(project: string): void;
-	    filterProject(db: IDB[]): void;
-	    updateSearchPanel(): void;
-	    updateItemPanel(): void;
-	    updateItem(updates: IItem): void;
-	    updateTree(): void;
-	    getProjectPages(): IProjectPageParam[];
-	    supportsControlPage(controlType: string): boolean;
-	    createControlPage(options: IPluginPanelOptions): void;
-	    destroyActiveControlPage(): void;
-	    callPreSaveHook(isItem: boolean, type: string, controls: IControlDefinition[]): JQueryDeferred<{}>;
-	    renderActionButtons(options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]): boolean;
-	    /******************** admin function  */
-	    getPlugins(): IPlugin[];
-	}
-	var plugins: PluginManager;
-	function InitializePluginManager(): void;
-	//# sourceMappingURL=PluginManager.d.ts.map
-
-	interface IDB {
-	    children?: IDB[];
-	    id?: string;
-	    title?: string;
-	    type?: string;
-	    isUnselected?: number;
-	    background?: string;
-	    border?: string;
-	    icon?: string;
-	    iconClass?: string;
-	    version?: string;
-	    extraStyle?: string;
-	    order?: number;
-	}
-	interface IDBParent {
-	    parent: string;
-	    position: number;
-	    item: IItem;
-	}
-	interface XRCategoryAndSettingListTypeExt {
-	    settingList: XRSettingType[];
-	    categoryId: number | string;
-	    categoryShort: string;
-	}
-	interface IDBCache {
-	    sortChildren(itemId: string): any;
-	    initMatrixTree(init: IDB[], includeActivity: boolean): any;
-	    initConfigTree(init: IDB[]): any;
-	    getTree(subtreeFilter: string[]): IDB[];
-	    getParentId(itemId: string): string;
-	    getCategoryBreadcrumbs(category: string): any;
-	    getBreadcrumbs(itemId: string): string[];
-	    getType(itemId: string): string;
-	    getIcon(itemId: string): string;
-	    setStyle(itemIds: string[], style: string, computeFolder: number): any;
-	    setStyleRec(folder: IDB[], itemIds: string[], style: string, computeFolder: number): boolean;
-	    isFolder(itemId: string): boolean;
-	    getItemTitle(itemId: string): string;
-	    getItemType(itemId: string): string;
-	    isHiddenLink(itemId: string): boolean;
-	    setHiddenLink(itemId: string, hidden: number): void;
-	    hasChildren(itemId: string): boolean;
-	    doesExist(itemId: string): boolean;
-	    insertItem(itemJson: IItem, parentId: string): IDBParent;
-	    copyFrom(target: string, source: IDB): boolean;
-	    getRootOfType(category: string): string;
-	    deleteItem(itemId: string): IDB;
-	    moveItem(itemId: string, newFolder: string, newPosition: number): any;
-	    updateItem(itemJson: IItem): void;
-	    getChildrenIds(parentId: string): string[];
-	    getItemFromCache(itemId: string): IDB;
-	}
-	class DBCache implements IDBCache {
-	    private db;
-	    private activities;
-	    private groupPos;
-	    private groupDefintion;
-	    private breadCrumbs;
-	    constructor();
-	    protected createVirtualFolder(id: string, title: string, icon?: string, color?: string): IDB;
-	    protected createVirtualItem(order: number, id: string, title: string, icon?: string): IDB;
-	    sortChildren(itemId: string): void;
-	    initMatrixTree(init: IDB[], includeActivity: boolean): void;
-	    initConfigTree(init: IDB[]): void;
-	    /** getTree returns a tree or a sub tree of the project.
-	     * this call is synchronous. The database tree is created once during the
-	     * initialization and filtered after as needed.
-	     *
-	     * @param {type} subtreeFilter
-	     * @returns tree object
-	     */
-	    getTree(subtreeFilter: string[]): IDB[];
-	    getParentId(itemId: string): string;
-	    getCategoryBreadcrumbs(category: string): string[];
-	    getBreadcrumbs(itemId: string): string[];
-	    getType(itemId: string): string;
-	    getIcon(itemId: string): string;
-	    setStyle(itemIds: string[], style: string, computeFolder: number): void;
-	    setStyleRec(folder: IDB[], itemIds: string[], style: string, computeFolder: number): boolean;
-	    isFolder(itemId: string): boolean;
-	    getItemTitle(itemId: string): string;
-	    getItemType(itemId: string): string;
-	    isHiddenLink(itemId: string): boolean;
-	    setHiddenLink(itemId: string, hidden: number): void;
-	    hasChildren(itemId: string): boolean;
-	    doesExist(itemId: string): boolean;
-	    insertItem(itemJson: IItem, parentId: string): IDBParent;
-	    copyFrom(target: string, source: IDB): boolean;
-	    getRootOfType(category: string): string;
-	    deleteItem(itemId: string): IDB;
-	    moveItem(itemId: string, newFolder: string, newPosition: number): void;
-	    updateItem(itemJson: IItem): void;
-	    getChildrenIds(parentId: string): string[];
-	    getItemFromCache(itemId: string): IDB;
-	    private internalReplace;
-	    private findInChildren;
-	    private findInDB;
-	    private findParentId;
-	    private deleteItemRec;
-	    private insertAtRec;
-	}
-	//# sourceMappingURL=DBCache.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IDeletedProjects {
-	    deleted: string[];
-	}
-	interface IWorkflowConfig {
-	    enabled?: boolean;
-	    defaultProjectId?: string;
-	    defaultTypeId?: string;
-	    projectsAndTypes?: IWorkflowConfigProjectsAndTypes[];
-	    one2one?: IWorkflowConfigOne2One;
-	    states?: IWorkflowConfigStates[];
-	    pluginId: number;
-	}
-	interface IWorkflowConfigOne2One {
-	    projectId: string;
-	    typeId: string;
-	}
-	interface IWorkflowConfigProjectsAndTypes {
-	    key: string;
-	    id: string;
-	    issueTypes: IWorkflowConfigIssueType[];
-	    name: string;
-	}
-	interface IWorkflowConfigIssueType {
-	    id: string;
-	    name: string;
-	    icon?: string;
-	    quickIssue?: boolean;
-	}
-	interface IWorkflowConfigStates {
-	    projectId: string;
-	    typeId: string;
-	    states: IWorkflowConfigStateDetails[];
-	}
-	interface IWorkflowConfigStateDetails {
-	    name: string;
-	    color: string;
-	    background: string;
-	    done: boolean | string;
-	}
-	interface IWorkflowConfigJira extends IWorkflowConfig {
-	    hideCreateJiraSimpleIssue?: boolean;
-	    hideCreateJiraNativeIssue?: boolean;
-	    requireCommitTicket?: boolean;
-	    addJIRAComment?: boolean;
-	}
-	interface IWorkflowConfigZoho extends IWorkflowConfig {
-	    zohoBaseUrl?: string;
-	}
-	interface IWorkflowConfigIssueTypesZoho extends IWorkflowConfigIssueType {
-	    prefix: string;
-	    details?: string;
-	}
-	interface ITraceConfig {
-	    rules: ITraceConfigDetails[];
-	}
-	interface ITraceConfigDetails {
-	    category: string;
-	    creates_end: string | boolean;
-	    end_point?: string;
-	    reporting: string[];
-	    up_rules: ITraceConfigRule[];
-	    down_rules: ITraceConfigRule[];
-	}
-	interface ITraceConfigRule {
-	    message: string;
-	    name: string;
-	    rule: TTraceRule;
-	    any_of: string[];
-	}
-	type TTraceRule = "can_have" | "must_have";
-	enum EnumItemPublish {
-	    IfNotInGroup = 0,
-	    Always = 1,
-	    Never = 2
-	}
-	interface IQMSConfig {
-	    /** there's only one publication in the array supported */
-	    publications: IPublication[];
-	    rolesTargetProjects?: string[];
-	    affectedByField?: string;
-	    responsibleForField?: string;
-	    training?: ITraining;
-	    /** Experimental: comma separated list of labels to show in published site -> if they are set */
-	    showLabels?: string;
-	    /** obsolete */
-	    legacyRoles: boolean;
-	}
-	interface ITraining {
-	    messages?: ITrainingMessages;
-	}
-	interface ITrainingMessages {
-	    trainingSub?: string;
-	    trainingText?: string;
-	    overdueSub?: string;
-	    overdueText?: string;
-	}
-	interface IPublication {
-	    /** information for each publishable category */
-	    rules: IPublicationCategory[];
-	    /** needs to be PUB right now */
-	    toCategory: string;
-	    /** needs to be pub right now */
-	    target: string;
-	    /** comma separated list of users who can publish */
-	    publisher: string;
-	    /** beta: userMode: default 0 - select the logged in user, 1 no user pre selected, 2: hide all other users , 3: hide all other users (Strict mode) */
-	    userMode?: number;
-	    /** obsolete */
-	    keepFlatList: boolean;
-	}
-	interface IPublicationCategory {
-	    /** the category for which the rule applies  */
-	    category: string;
-	    /** a list of labels which must be set to be able to publish (approved labels)*/
-	    readyLabels: string[];
-	    /** how individual items can be published:  0 - only if they are not in a group, 1 - independently of groups, 2 - only as part of a group*/
-	    itemRules: EnumItemPublish;
-	    /** name of the group, displayed in the UI as heading in the navigation of the live qms */
-	    groupName?: string;
-	    /** identification of labels which define the group (groupType setting in labels)  */
-	    groupLabelType?: string;
-	    /** if a PROC should only be published with its WI,s the group down would be WI*/
-	    groupDown?: string[];
-	}
-	interface IPublicationCategoryGroup {
-	    category: string;
-	    groupName: string;
-	    groupLabelType: string;
-	}
-	const qmsDefaultConfig: IQMSConfig;
-	interface IPublishLegacy {
-	    publisher: string;
-	}
-	interface ILabelsConfig {
-	    /** basic label definitions */
-	    labels: ILabel[];
-	    /** grouping of labels to or, xor or review groups */
-	    groups: ILabelGroup[];
-	    /** array of the design review labels */
-	    design_reviews?: IDesignReview[];
-	    /** allows to change the background color of the top bar if a filter is selected */
-	    filterBackgroundColor?: string;
-	    /** if set to true, the filters are shown in a drop down menu (each group needs to be added as well)*/
-	    useFilterMenu?: boolean;
-	    /** beta: when looking at an item, it shows the labels underneath the item if set to true - this allows for more items.. */
-	    useLabelBar?: boolean;
-	    /** invert groups in items (this will make groups show in the wrong order... as it was in 2.2 and before) */
-	    invertGroups?: boolean;
-	}
-	interface ILabelStyle {
-	    label: {
-	        on: {
-	            foreground: string;
-	            background: string;
-	            icon?: string;
-	            displayName: string;
-	            tooltip?: string;
-	        };
-	        off: {
-	            foreground: string;
-	            background: string;
-	            icon?: string;
-	            displayName: string;
-	            tooltip?: string;
-	        };
-	    };
-	    filter: {
-	        on: {
-	            foreground: string;
-	            background: string;
-	            icon?: string;
-	            displayName: string;
-	            tooltip?: string;
-	        };
-	        off: {
-	            foreground: string;
-	            background: string;
-	            icon?: string;
-	            displayName: string;
-	            tooltip?: string;
-	        };
-	    };
-	}
-	interface ILabel {
-	    label: string;
-	    categories: string[];
-	    editors?: string[];
-	    reportName: string;
-	    reportHide?: string;
-	    default?: boolean | string;
-	    defaultAsk?: boolean;
-	    style: ILabelStyle;
-	    isSelected?: boolean;
-	    isNegative?: boolean;
-	    askForComment?: boolean;
-	    displayName?: string;
-	    toolTipFilterOn?: string;
-	    color?: string;
-	    template?: ILabelTemplate;
-	    dontCopy?: boolean;
-	}
-	interface ILabelInstance extends ILabel {
-	    btn: JQuery;
-	}
-	interface ILabelTemplate {
-	    id: number;
-	    name: string;
-	    key: string;
-	}
-	interface ILabelGroup {
-	    selection: string;
-	    labels: string[];
-	    filterMenu?: IFilterMenu;
-	    default?: string;
-	    defaultAsk?: boolean;
-	    noColor?: string;
-	    noName?: string;
-	    noIcon?: string;
-	    reset?: boolean;
-	    foreground?: string;
-	    background?: string;
-	    askForComment?: boolean;
-	    showComments?: boolean;
-	    tooltip?: string;
-	    reviewers?: string[];
-	    groupType?: string;
-	    labelDef?: ILabel[];
-	    filterSelection?: string;
-	    virtualGroup?: boolean;
-	}
-	interface IFilterMenu {
-	    displayName: string;
-	    on?: {
-	        foreground: string;
-	        background: string;
-	        icon?: string;
-	        displayName: string;
-	        tooltip?: string;
-	    };
-	    off?: {
-	        foreground: string;
-	        background: string;
-	        icon?: string;
-	        displayName: string;
-	        tooltip?: string;
-	    };
-	}
-	interface IDesignReview {
-	    /** id of label (no spaces, special characters) */
-	    label: string;
-	    /** define who can approve the review. Empty array -> everybody.  */
-	    reviewers?: string[];
-	    /** beta: allow to specify the name of a field from which to take possible approvers. If set it has precedence over reviewers */
-	    reviewerField?: string;
-	    /** set to true if labels should be reset if item is changed */
-	    reset: boolean;
-	    /** title of review  */
-	    reviewName: string;
-	    /** sub title */
-	    reviewHelp: string;
-	    /** list of questions, checkboxes, or a signature box */
-	    reviewDetails: {
-	        name: string;
-	        help?: string;
-	        type?: string;
-	    }[];
-	    /**  can be set to rename comment field to something else than "Design Review Comment" */
-	    commentHeading?: string;
-	    /** can be used to set a group type (used internally e.g. to indicate a group is a design review for a Process) */
-	    groupType?: string;
-	    /** can be used to put the reviews' filter into the filter menu if enabled */
-	    filterMenu?: IFilterMenu;
-	    /** beta: allows to name a table field. If this exists, the revision need to increase when setting the label */
-	    revisionTableName?: string;
-	}
-	interface IMailConfig {
-	    canned?: IMailConfigCanned;
-	    defaultCC?: string[];
-	}
-	interface IMailConfigCanned {
-	    /**  replacement for please sign message (in SIGN page)*/
-	    please_sign?: string;
-	    /** replacement for look at item message (in tool menu)*/
-	    look_at?: string;
-	    /** replacement for training message (in SIGN page)*/
-	    training?: string;
-	    /** replacement for document released message (in SIGN page)*/
-	    release_note?: string;
-	    /** Generic replacement */
-	    [key: string]: string | undefined;
-	}
-	interface IMailConfigCustom {
-	    name: string;
-	    categories: string[];
-	    to: string[];
-	    subject: string;
-	    message: string;
-	}
-	interface ISearchConfig {
-	    searches: ISearchConfigSearch[];
-	    init?: IInitialSearches[];
-	}
-	interface ISearchConfigSearch {
-	    name: string;
-	    expr: string;
-	}
-	interface IInitialSearches {
-	    expr: string;
-	    style: string;
-	    computeFolder: number;
-	}
-	interface ILabelLockConfig {
-	    locks: ILabelLockConfigLocks[];
-	}
-	interface ILabelLockConfigLocks {
-	    label: string;
-	    lockKeeper: string[];
-	}
-	interface IRiskConfig {
-	    factors?: IRiskConfigFactor[];
-	    method?: IRiskConfigMethod;
-	    maxGreen?: number;
-	    maxYellow?: number;
-	    charts?: IRiskConfigZone[];
-	    rpns?: IRiskConfigRPN[];
-	    riskCategory?: string;
-	    riskCategories?: string[];
-	    mitigationTypes?: IRiskConfigMitgationType[];
-	    mitigationTable?: IRiskConfigMitgationTable;
-	    mitigationColDef?: IColDef;
-	    reductions?: IRiskConfigReduction[];
-	    postReduction?: IRiskPostReduction;
-	    rbm?: IRiskConfigRT;
-	    ram?: IRiskConfigRT;
-	    controls?: string;
-	    hazard_category?: string;
-	}
-	type IRiskConfigMethod = "+" | "*" | "lookup";
-	interface IRiskConfigRT {
-	    short: string;
-	    long: string;
-	    report: string;
-	    hidden?: boolean;
-	    colDef?: IColDef;
-	}
-	interface IRiskConfigMitgationType {
-	    type: string;
-	    name: string;
-	}
-	interface IRiskConfigFactor {
-	    type: string;
-	    label: string;
-	    weights: IRiskConfigFactorWeight[];
-	    hideTextInput?: boolean;
-	    readonly?: boolean;
-	    inputType?: IRiskConfigFactorInputType;
-	    options?: IRiskConfigFactorOption[];
-	    spancols?: boolean;
-	    colDef?: IColDef;
-	}
-	interface IColDef {
-	    width?: string;
-	    minWidth?: string;
-	    maxWidth?: string;
-	    rowSpan?: boolean;
-	}
-	interface IRiskConfigMitgationTable {
-	    columns: IRiskConfigTablesColumn[];
-	}
-	interface IRiskConfigTablesColumn {
-	    name: string;
-	    field: string;
-	    editor: RiskTableCellEditor;
-	    options?: any;
-	}
-	type RiskTableCellEditor = "control" | "reduction";
-	type IRiskConfigFactorInputType = "text" | "select" | "textarea" | "richtext";
-	interface IRiskConfigFactorOption {
-	    value: string;
-	    label: string;
-	    changes: IRiskConfigSelectChanges[];
-	}
-	interface IRiskConfigSelectChanges {
-	    changesFactor?: string;
-	    changesWeight?: string;
-	    value: number | string;
-	}
-	interface IRiskConfigFactorWeight {
-	    type: string;
-	    help: boolean;
-	    label: string;
-	    readonly?: boolean;
-	    hidden?: boolean;
-	    values: IRiskConfigFactorWeightValue[];
-	    colDef?: IColDef;
-	}
-	interface IRiskConfigFactorWeightValue {
-	    shortname: string;
-	    help: string;
-	    factor: number;
-	}
-	interface IRiskConfigReduction {
-	    name: string;
-	    options: IRiskConfigReductionOptions[];
-	}
-	interface IRiskConfigReductionOptions {
-	    shortname: string;
-	    by: number;
-	    changes: string;
-	}
-	interface IRiskConfigZone {
-	    zone?: string;
-	    foreground?: string;
-	    background?: string;
-	    textColor?: string;
-	    label?: string;
-	}
-	interface IRiskConfigRPN {
-	    zone: string;
-	    text: string;
-	    [key: string]: string | number;
-	}
-	interface IRiskPostReduction {
-	    weights: IRiskConfigFactorWeight[];
-	    help?: string;
-	}
-	interface ICascadingSelect {
-	    startGroupId: string;
-	    groups: ICascadingSelectGroup[];
-	}
-	interface ICascadingSelectGroup {
-	    groupId: string;
-	    type: "text" | "number" | "select";
-	    spec: ICascadingSelectText | ICascadingSelectNumber | ICascadingSelectSelect[];
-	}
-	interface ICascadingSelectNumber {
-	    counter: string;
-	    format: string;
-	    nextGroupId: string;
-	}
-	interface ICascadingSelectSelect {
-	    text: string;
-	    help?: string;
-	    nextGroupId: string;
-	}
-	interface ICascadingSelectText {
-	    text: string;
-	    nextGroupId: string;
-	}
-	interface IDHFConfig {
-	    /** if set to true the created PDFs won't be locked */
-	    doNotLockPDF?: boolean;
-	    /** default formats for different report types */
-	    defaultFormats?: IDHFConfigDefaultFormats;
-	    /** table configuration for audit trail table */
-	    audittrail?: IDHFConfigTable;
-	    /** table configuration for signature table*/
-	    signatures?: IDHFConfigTable;
-	    /** table configuration for responsibilities table */
-	    responsibilities?: IDHFConfigTable;
-	    /** list with predefined document sections when creating new DOC items */
-	    controlledDocs?: IDHFConfigStandardDocs;
-	    /** can be used to define custom table columns (e.g. dropdowns) */
-	    customColumns?: IDHFConfigCustomColumn[];
-	    /** allows to specify an alternative for "Ready to Sign / Release" button*/
-	    archiveButtonName?: string;
-	    /** if set to true a warning will be shown if there's a missing signature */
-	    warnMissingSign?: boolean;
-	    /** possibility to overwrite options in signature meaning column */
-	    signatureMeanings?: IStringMap;
-	    /**  beta: if true a user can reject instead of signing. the reject comment will be stored and showed, other cannot sign anymore */
-	    canReject?: boolean;
-	    /**  beta:  if canReject is true and this is true the user can reject without supplying a password */
-	    rejectWithoutPass?: boolean;
-	    /** beta: if canReject is true and this is true the user needs to supply special comment to reject */
-	    rejectNeedsComment?: boolean;
-	    /** beta: text shown in signature box if someone needs to sign something */
-	    signatureHint?: string;
-	    /** beta: list of users who can change name of person who needs to sign */
-	    proxyRights?: string[];
-	    /** beta: a list of options to what user is signing for ["i release", "i confirm correct","I don't know"], */
-	    signedMeaning?: string[];
-	    /** beta: removes not needed notifications and adds new ones when changing signatures proxies */
-	    fixNotifications?: boolean;
-	    /** beta: 0 leave original sign info. 1 replace name and title when changing signature proxies */
-	    proxySignTableUpdate?: number;
-	    /** beta: set to true show a column with sign meaning in SIGN */
-	    showOriginalSignMeaning?: boolean;
-	    /** obsolete */
-	    hideFileFormats?: IDHFConfigHideFormat[];
-	    /** obsolete */
-	    customTables?: IDHFConfigCustomTable[];
-	    /** obsolete  */
-	    customReports?: IDHFConfigCustomReports;
-	    /**  obsolete */
-	    categories?: IDHFCategories;
-	    /**  obsolete */
-	    captions?: ICaptions;
-	    /**  obsolete */
-	    renderInTree?: string[];
-	    /** obsolete */
-	    toolFolderName?: string;
-	    /** obsolete */
-	    functionDefaults?: IPrintFunctionParamsOverwrites;
-	}
-	interface ICaptions {
-	    figure?: ICaption;
-	    table?: ICaption;
-	}
-	interface ICaption {
-	    preNo: string;
-	    postNo: string;
-	}
-	interface IDHFCategories {
-	    documentTypes: string[];
-	    documentForms: string[];
-	    documentSigned: string[];
-	    documentTemplates: string[];
-	    signAs: string;
-	}
-	interface IDHFConfigCustomReports {
-	    group: string;
-	}
-	interface IDHFConfigDefaultFormats {
-	    DOC: IDHFConfigDefaultFormatsOption;
-	    SIGN: IDHFConfigDefaultFormatsOption;
-	    REPORT: IDHFConfigDefaultFormatsOption;
-	    [map: string]: IDHFConfigDefaultFormatsOption;
-	}
-	type IDHFConfigDefaultFormatsOption = "docx" | "pdf" | "html";
-	interface IDHFConfigHideFormat {
-	    category: string;
-	    format: IDHFConfigDefaultFormatsOption;
-	}
-	interface IDHFConfigCustomColumn {
-	    type: string;
-	    options: IDropdownOption[] | any;
-	    name: string;
-	    editor?: string;
-	}
-	interface IDHFConfigTable {
-	    columns: IDHFConfigTableColumn[];
-	}
-	interface IDHFConfigTableColumn {
-	    name: string;
-	    field: string;
-	    columnType: IDHFConfigTableColumnType;
-	    pos: number;
-	    editor?: TableCellEditor;
-	    options?: IDropdownOption[];
-	}
-	type IDHFConfigTableColumnType = "type0" | "type1" | "type2" | "type3" | "type4" | "type5" | "type6" | "type7" | "type8" | "type9" | "type10" | "type11" | "type12" | "type13" | "type14";
-	interface IDHFConfigCustomTable {
-	    name: string;
-	    id: string;
-	}
-	interface IDHFConfigStandardDocs {
-	    [key: string]: IDHFConfigStandardDocsDef;
-	}
-	interface IDHFConfigStandardDocsDef {
-	    fields: IDHFConfigStandardDocsSection[];
-	}
-	interface IDHFConfigStandardDocsSection {
-	    [key: string]: string;
-	}
-	interface IContextPageConfig {
-	    categoryHelp?: IContextPageConfigHelp;
-	    itemHelp?: IContextPageConfigHelp;
-	    tabs?: IContextPageConfigTab[];
-	}
-	interface IContextPageConfigHelp {
-	    [key: string]: string;
-	}
-	interface IContextPageConfigTab {
-	    title: string;
-	    type: ContextPageConfigTabOption;
-	    tabId?: string;
-	    hipchat?: boolean;
-	    baseURL?: string;
-	}
-	type ContextPageConfigTabOption = "help" | "support" | "faq" | "references" | "smartlinks" | "iframe" | "iframeget" | "upreferences" | "downreferences" | "foldercontent" | "trainings";
-	interface ITestConfig {
-	    xtcType: string;
-	    cloneSources: string[];
-	    presetFields: ITestConfigPresetField[];
-	    render: ITestConfigTables;
-	    defaultTestResultResult: string;
-	    automatic: ITestRuleAuto[];
-	    manual: ITestRuleManual[];
-	    perStep: ITestRuleStep[];
-	    reExecute?: string;
-	    autoFillTester?: string;
-	}
-	interface ITestConfigPresetField {
-	    field: string;
-	    value: string;
-	}
-	interface ITestConfigTables {
-	    [key: string]: ITestConfigTablesColumns;
-	}
-	interface ITestConfigTablesColumns {
-	    columns: ITestConfigTablesColumn[];
-	}
-	interface ITestConfigTablesColumn {
-	    name: string;
-	    field: string;
-	    editor: TableCellEditor;
-	    options?: IDropdownOption[] | any;
-	}
-	type TableCellEditor = "text" | "none" | "textline" | "design" | "uprules" | "downrules" | "rules" | "result" | "user" | "versionletter" | "date" | "select";
-	interface ITestRule {
-	    human: string;
-	    code: string;
-	    render: TestResultType;
-	}
-	interface ITestRuleAuto extends ITestRule {
-	    rule: TestResultRule;
-	    param: string;
-	}
-	interface ITestRuleManual extends ITestRule {
-	    command: string;
-	}
-	interface ITestRuleStep extends ITestRuleManual {
-	    key: string;
-	    image: string;
-	}
-	type TestResultType = "ok" | "error" | "warning";
-	type TestResultRule = "all" | "one" | "";
-	interface ICategorySetting {
-	}
-	interface ICategorySettingTitle extends ICategorySetting {
-	    create?: string;
-	    placeholder?: string;
-	}
-	interface ICategorySettingTextIcon extends ICategorySetting {
-	    color?: string;
-	    text?: string;
-	}
-	interface ICategorySettingTabs extends ICategorySetting {
-	    tabs: ICategorySettingTab[];
-	}
-	interface ICategorySettingTab {
-	    id?: string;
-	    name: string;
-	    fields: string[];
-	}
-	interface ICategoryGroups {
-	    groups: ICategoryGroup[];
-	}
-	interface ICategoryGroup {
-	    categories: string[];
-	    text: string;
-	    name: string;
-	    color: string;
-	    position?: number;
-	    helpPage?: string;
-	}
-	const ACL_SETTING: string;
-	interface IACL {
-	    rules: IACLRules[];
-	}
-	interface IACLRules {
-	    name: string;
-	    groups: string[];
-	    acl: IACLGroupsAcl[];
-	}
-	interface IACLGroupsAcl {
-	    category: string;
-	    fields?: string[];
-	    rights: string[];
-	}
-	interface IFieldParameter {
-	    [key: string]: any;
-	    /** if set to true, the control will not be editable by the user */
-	    readonly?: boolean;
-	    /** if set to true the field will not be shown in reports */
-	    hide_report?: boolean;
-	    /** if set to true the field will not be shown in documents */
-	    hide_document?: boolean;
-	    /** if set to true the field will not be shown in published (QMS) */
-	    hide_publication?: boolean;
-	    hide_UI?: boolean;
-	    /** set to 1 to not clean the field values */
-	    unsafeHtml?: number;
-	    /** this can be set to point to a an external website which is openend when user clicks on a link, e.g.
-	     * "externalHelp":"matrix.com". Note this must be a website which is accesible through https://url */
-	    externalHelp?: string;
-	    /** this can be set to show help as a tooltip, e.g. "popupHelp":"enter a short description" */
-	    popupHelp?: string;
-	    /** this can be set to render a help line underneath the "heading":"enter a long description" */
-	    inlineHelp?: string;
-	    /** for folder category */
-	    visibleOption?: string;
-	    /** for SIGN category
-	     * if set to true, the field is not visible (only makes sense with the above flag)
-	     */
-	    invisible?: boolean;
-	    /** this allows to copy fields from underlying DOC into the SIGN item.
-	     * Note: Fields are copied only if this is set to true and the labels (names) of the field is the same in the
-	     * DOC and the SIGN */
-	    copyfromdoc?: boolean;
-	    /** legacy options */
-	    adminVisibility?: boolean;
-	    /** legacy options */
-	    requiresContent?: boolean;
-	}
-	interface IDropDownConfig {
-	    fieldMeaning?: string;
-	    placeholder?: string;
-	    options: IDropdownOption[];
-	    groups?: IDropdownGroup[];
-	}
-	interface IDropdownGroup {
-	    value: string;
-	    label: string;
-	}
-	interface IDropdownOption {
-	    id: string;
-	    label: string;
-	    class?: string;
-	    disabled?: boolean;
-	    strikethrough?: boolean;
-	}
-	interface IAutoFillSetting {
-	    allowAutoFill: boolean;
-	    allowLoginAutoFill: boolean;
-	    allowDocSignAutoFill: boolean;
-	    allowLabelSignAutoFill: boolean;
-	    allowGateAutoFill: boolean;
-	    allowPublishAutoFill: boolean;
-	}
-	interface ISmartTextConfig {
-	    replacements?: ISmartTextConfigReplacement[];
-	}
-	interface ISmartTextConfigReplacement {
-	    /** id of the macro: needs to be simple combination of letters and digits */
-	    what: string;
-	    /** the text to display */
-	    with: string;
-	    /** value from 1 to 4: 1=plain text 2=rich text 3=term 4=abbreviation */
-	    tagType: number;
-	    /**  additional explanation for terms*/
-	    description?: string;
-	    /** set to true to ask user to review before creating document */
-	    warn: boolean;
-	    /** date/time of creation */
-	    when: string;
-	    /** internal: not to be used */
-	    projectSetting?: boolean;
-	    /** legacy: now handled by tagType */
-	    plain?: boolean;
-	    /**  Include this term/abv in the List of Terms and abbreviation doc section when not surrounded with _ */
-	    tableNoUnderscore?: boolean;
-	}
-	interface IProjectLogo {
-	    fileId: string;
-	}
-	interface IExtras {
-	    tableCanImport: boolean | string;
-	    copyPaste: boolean | string;
-	    moveIn: boolean | string;
-	    excelImport: boolean | string;
-	    deepTouch: boolean | string;
-	    noTouch: boolean | string;
-	    setLabel: boolean | string;
-	    compareX: boolean | string;
-	    compareInsideX: boolean | string;
-	    indexer: boolean;
-	    cleanup: boolean | string;
-	    defaultToNewEditor: boolean | string;
-	    enableLegacyReport?: "0" | "1" | "2";
-	}
-	interface IEmbeddedReport {
-	    reportId: string;
-	}
-	interface IProjectGroups {
-	    groups: IProjectGroup[];
-	}
-	interface IProjectGroup {
-	    name: string;
-	    projects: string[];
-	}
-	interface IFieldCapabilities {
-	    onlyOne?: boolean;
-	    canBePublished: boolean;
-	    canBeReadonly: boolean;
-	    canHideInDoc: boolean;
-	    canBeXtcPreset: boolean;
-	    canRequireContent?: boolean;
-	    canBeUsedInDocs?: boolean;
-	    validationFunction?: JsonEditorValidation;
-	    schema?: string;
-	    needsConfiguration?: boolean;
-	    canBeUnsafe?: boolean;
-	}
-	interface IFieldDescription {
-	    id: string;
-	    label: string;
-	    class: string;
-	    help: string;
-	    capabilities: IFieldCapabilities;
-	}
-	interface INotificationConfig {
-	    enabled: boolean;
-	    closeAuto: boolean;
-	    manualCreate: boolean;
-	    browserNotificationDisabled?: boolean;
-	    browserNotificationAutoCloseAfter?: number;
-	}
-	let notificationSetting: string;
-	let defaultNotificationConfig: INotificationConfig;
-	/** allow to set cell in table column if another dropdown cell in same row changes*/
-	interface IAutoColumn {
-	    /** a list of mappings (which cell is updated upon change of which cell) */
-	    maps: IAutoColumnMap[];
-	}
-	interface IAutoColumnMap {
-	    /** name of cell which triggers change */
-	    dropdownColumnName: string;
-	    /** name of cell which is updated  */
-	    textColumnName: string;
-	    /** mapping from selected to set value */
-	    mapping: IAutoColumnMapping[];
-	}
-	interface IAutoColumnMapping {
-	    /** selected value */
-	    dropdownValue: string;
-	    /** set value */
-	    textValue: string;
-	}
-	let autoColumnSetting: string;
-	let autoColumnDefault: IAutoColumn;
-	interface ICleanup {
-	    "cleanup": boolean;
-	    "tags": string[];
-	    "attributes": IStringStringArrayMap;
-	    "enforcedAttributes": IStringStringArrayMap;
-	    "protocolAttributes": ICleanupProtocol[];
-	}
-	interface ICleanupProtocol {
-	    "element": string;
-	    "attribute": string;
-	    "protocols": string[];
-	}
-	//# sourceMappingURL=ProjectSettings.d.ts.map
-
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
@@ -1187,7 +62,6 @@ declare module matrixApi
 	class GlobalMatrix {
 	    verbose: boolean;
 	    ItemConfig: ItemConfiguration;
-	    resetHighlightLinks: Function;
 	    PopulateProjects: Function;
 	    mobileApp: {
 	        Login: Function;
@@ -1197,8 +71,6 @@ declare module matrixApi
 	    jiraPlugin: any;
 	    Admin: any;
 	    doc: any;
-	    addHighlightLink: Function;
-	    addHighlightRegex: Function;
 	    ITEM_DOES_NOT_EXIST: string;
 	    matrixRestUrl: string;
 	    matrixBaseUrl: string;
@@ -1330,2012 +202,6 @@ declare module matrixApi
 	}
 	function InstallLegacyAdaptor(): void;
 	//# sourceMappingURL=globals.d.ts.map
-
-	/// <reference types="matrixrequirements-type-declarations" />
-	interface SchemaDef {
-	    module: string;
-	    type: string;
-	    serverUse: string;
-	    serverProp: string;
-	}
-	type JsonEditorValidation = (json: unknown) => Promise<string | null>;
-	/**
-	 * Globally available JSON Validator. It can validate against schemas stored in web/schemas/*.json
-	 * The schemas in this directory are generated by the `gulp schema` command and defined in schemagen/schemas.json
-	 * To add validation for a new type:
-	 * * Add to schemas.json
-	 * * Run gulp schema (or gulp build)
-	 * * Call jsonValidator.validateType( yourObject, "IYourInterface")
-	 *
-	 * There are some utility functions that can wrap a type in a validator closure or give you
-	 * access to the raw object.
-	 */
-	class JsonValidator {
-	    private schemas;
-	    private validators;
-	    private version;
-	    private ajv;
-	    /**
-	     * This is a global object, you should not have to create it. See `jsonValidator`
-	     */
-	    constructor(version: string);
-	    /**
-	     * Create a display string from an error list
-	     * @param errors
-	     */
-	    errorString(errors: Ajv.ErrorObject[]): string | null;
-	    /**
-	     * Create a validation function for the given type that is used in some of the Matrix editors
-	     * @param type
-	     */
-	    validationFunction(type: string): JsonEditorValidation;
-	    /**
-	     * Validate the given data against the given schema.
-	     * @param data
-	     * @param type
-	     * @return null if valid, or an array of errors if not
-	     */
-	    validateType(data: unknown, type: string): Promise<Ajv.ErrorObject[] | null>;
-	    /**
-	     * Get the validator function for the given type
-	     * @param type
-	     */
-	    validatorByType(type: string): Promise<Ajv.ValidateFunction | null>;
-	    urlRegex: RegExp;
-	    patchVersionIntoUrl(url: string): string;
-	    /**
-	     * Get the schema object for the given type
-	     * @param type
-	     * @throws Exception if the schema is not found
-	     */
-	    schemaByType(type: string): Promise<object | null>;
-	    /**
-	     * Get the schema UI element. This can be embedded in other DOM elements
-	     * @param type The name of the type - this should exist in the schemas dir
-	     * @throws Exception if the schema is not found
-	     */
-	    schemaView(type: string): Promise<MatrixSchemaView | null>;
-	}
-	interface ISchema extends ISchemaObject {
-	}
-	type ISchemaPropertyMap = {
-	    key: String;
-	    ISchemaProperty: any;
-	};
-	interface ISchemaItem {
-	    description?: string;
-	    type?: ESchemaType;
-	    anyOf?: ISchemaItem[];
-	}
-	interface ISchemaObject extends ISchemaItem {
-	    properties?: ISchemaPropertyMap;
-	    additionalProperties?: ISchemaItem;
-	    required?: string[];
-	}
-	interface ISchemaArray extends ISchemaItem {
-	    items?: ISchemaItem;
-	}
-	enum ESchemaType {
-	    string = "string",
-	    array = "array",
-	    object = "object",
-	    number = "number",
-	    boolean = "boolean"
-	}
-	interface ISchemaPrintTypeInfo {
-	    help?: string;
-	    type?: string;
-	    subItems?: string;
-	    subItemStart?: string;
-	    subItemEnd?: string;
-	}
-	class MatrixSchemaView {
-	    schema: ISchema;
-	    constructor(schema: ISchema);
-	    render(): HTMLDivElement;
-	    renderObject(object: ISchemaObject): string;
-	    renderArray(array: ISchemaArray): string;
-	    renderProperty(prop: ISchemaItem): ISchemaPrintTypeInfo;
-	}
-	//# sourceMappingURL=JsonValidator.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IPanel {
-	    destroy: Function;
-	    title: string;
-	    toggleZen?: Function;
-	}
-	interface IItemPanelOptions {
-	    control: JQuery;
-	    itemId: string;
-	    changed: Function;
-	    cachedItem: IItem;
-	}
-	class Application {
-	    lastMainItemForm: ItemControl;
-	    currentPanel: IPanel;
-	    protected currentPrintPanel: IPanel;
-	    protected saveEnabled: boolean;
-	    currentItem: IItem;
-	    protected currentItemForcedReadonly: boolean;
-	    protected isSaving: boolean;
-	    constructor();
-	    saveSave(): void;
-	    updateMainUI(disabled?: boolean): void;
-	    setSaveCancelState(enabled: boolean, quietCancel: boolean): void;
-	    editConfiguration(): void;
-	    destroyOldControls(): void;
-	    refreshLinks(): void;
-	    updateControl(watcherInfo: IItemWatched, itemChanged: (needsSave: boolean) => void): void;
-	    forceReadonly(itemId: string): void;
-	    highlightReferences(): void;
-	    createControl(folderType: string, itemId: string, itemChanged?: (needsSave: boolean) => void, cachedItem?: IItem): void;
-	    renderErrorControl(control: JQuery, header: string, text: string, contextFrame?: boolean): void;
-	    private createItemControlCached;
-	    private createItemControl;
-	}
-	//# sourceMappingURL=Application.d.ts.map
-
-	/**
-	 * This class maintains a list of searches to be executed in order to fill DOC sections.
-	 *
-	 * The searches are executed one after the other. This prevents the client from spamming
-	 * the server and allows the client to show progress.
-	 *
-	 */
-	export abstract class SelectSearchQueue {
-	    protected static verifySearchQueue: Function[];
-	    /** this function can be used if the user changes the selection in the tree to avoid unnecessary searches.
-	     *
-	     */
-	    static resetSearchQueue(): void;
-	    static launchTimer: number;
-	    /** adds a search to the queue.
-	     *
-	     * if there's no new search in the next 100ms, the searches are launched.
-	     * the idea is that the GUI is rendered completely before running the searches.
-	     * so that spinning wheels can indicate the needed action.
-	     */
-	    static addToSearchQueue(search: Function): void;
-	    static runSearches(): void;
-	}
-	//# sourceMappingURL=SelectSearchQueue.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IItemControlOptions extends IBaseControlOptions {
-	    id?: string;
-	    control?: JQuery;
-	    type?: string;
-	    item?: IItemGet;
-	    dummyData?: {};
-	    parent?: string;
-	    changed?: Function;
-	    isForm?: boolean;
-	    isItem?: boolean;
-	    isPrint?: boolean;
-	    isHistory?: number;
-	    isDialog?: boolean;
-	    canEdit?: boolean;
-	    canEditLabels?: boolean;
-	    canEditTitle?: boolean;
-	}
-	interface ILinkType {
-	    type: string;
-	    name?: string;
-	    buttonName?: string;
-	    folder?: boolean;
-	    import?: boolean;
-	    required?: boolean;
-	}
-	class ItemControl {
-	    private settings;
-	    private defaultOptions;
-	    private resizeItTimer;
-	    controls: IControlDefinition[];
-	    private _title;
-	    private _riders;
-	    private _outerbody;
-	    private _body;
-	    private config;
-	    private title;
-	    private links;
-	    private orginalControlState;
-	    private startEdit;
-	    private duringFill;
-	    private restrictUnlockTo;
-	    static lastTab: IStringNumberMap;
-	    constructor(options: IItemControlOptions);
-	    destroy(): void;
-	    getValues(update: IItemPut, latest?: IItemGet): IItemPut;
-	    saveAsync(category: string, auditAction: string, valueOverwrites?: IItemGet): JQueryDeferred<IDBParent | IItemGet>;
-	    addMove(itemId: string, newVersion: number): void;
-	    resizeItem(force?: boolean): void;
-	    refreshLinks(): void;
-	    fillControls(): void;
-	    needsSave(): boolean;
-	    hasTitle(): boolean;
-	    updateItem(newItem: IItem): void;
-	    setFieldValue(fieldId: number, newValue: string): void;
-	    getFieldValue(fieldId: number): any;
-	    getCurrentTitle(): any;
-	    setViewers(viewers: IItemWatched): void;
-	    getControls(fieldType?: string): JQuery[];
-	    /** returns (first) control with a given title */
-	    getControlByName(name: string): JQuery;
-	    /** returns control with a given id */
-	    getControlById(fieldId: number): JQuery;
-	    wasUpdated(itemId: string, historyLength: number): boolean;
-	    private addTabs;
-	    private showTab;
-	    private allowSectionClose;
-	    resizeIt(forceRedraw?: boolean): void;
-	    private needsSaveImpl;
-	    private getFieldType;
-	    private sendNeedsSave;
-	    private renderActionButtonsReport;
-	}
-	//# sourceMappingURL=ItemForm.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ITableParams {
-	    canBeModified?: boolean;
-	    create?: boolean;
-	    showLineNumbers?: boolean;
-	    maxRows?: number;
-	    fixRows?: number;
-	    readonly_allowfocus?: boolean;
-	    columns: any;
-	    onCellChanged?: Function;
-	}
-	interface IBaseControl {
-	    getValue: (latestItem?: IItemGet) => any;
-	    hasChanged: () => boolean;
-	    resizeItem: (width?: number, forceRedraw?: boolean) => void;
-	    destroy: () => void;
-	    highlightReferences?: () => void;
-	    getText?: Function;
-	    getValueRaw?: Function;
-	    setValue?: Function;
-	    updateItem?: Function;
-	    refreshLinks?: Function;
-	    linksToCreate?: Function;
-	    labelsToSet?: Function;
-	    redraw?: Function;
-	    refresh?: Function;
-	    needsLatest: boolean;
-	    requiresContent?: () => boolean;
-	    disableDelayedShow?: boolean;
-	}
-	interface IBaseControlOptions {
-	    [key: string]: any;
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldType?: string;
-	    fieldId?: number;
-	    valueChanged?: Function;
-	    parameter?: IFieldParameter;
-	    fieldValue?: any;
-	    fieldValueJSON?: {};
-	    isItem?: boolean;
-	    item?: IItem;
-	    isForm?: boolean;
-	    isPrint?: boolean;
-	    isTooltip?: boolean;
-	    id?: string;
-	    isHistory?: number;
-	    type?: string;
-	    isFolder?: boolean;
-	    requiresContent?: boolean;
-	}
-	abstract class BaseControl implements IBaseControl {
-	    protected _root: JQuery;
-	    disableDelayedShow: boolean;
-	    needsLatest: boolean;
-	    constructor(control: JQuery);
-	    protected createHelp(settings: IBaseControlOptions): JQuery;
-	    abstract getValue(): any;
-	    abstract hasChanged(): boolean;
-	    abstract resizeItem(newWidth?: number, force?: boolean): void;
-	    abstract destroy(): void;
-	}
-	//# sourceMappingURL=BaseControl.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IDropdownParams {
-	    readonly?: boolean;
-	    placeholder?: string;
-	    maxItems?: number;
-	    options?: IDropdownOption[];
-	    groups?: IDropdownGroup[];
-	    create?: boolean;
-	    sort?: boolean;
-	    optionSetting?: string;
-	    splitHuman?: boolean;
-	    inlineHelp?: string;
-	    requiresContent?: boolean;
-	    maxHeight?: string;
-	    printProcessor?: {
-	        dropdownOptions?: string;
-	        parameterField?: string;
-	    };
-	    width?: string;
-	    initialContent?: string;
-	}
-	interface IDropDownControlOptions extends IBaseControlOptions {
-	    controlState: any;
-	    parameter?: IDropdownParams;
-	    noMarkup?: boolean;
-	}
-	interface IUserSelect extends IDropDownControlOptions {
-	    parameter?: {
-	        readonly?: boolean;
-	        placeholder?: string;
-	        maxItems?: number;
-	        showGroups?: boolean;
-	        showUsers?: boolean;
-	    };
-	    options?: IDropdownOption[];
-	    create?: boolean;
-	}
-	class DropdownImpl extends BaseControl {
-	    private settings;
-	    private rawValue;
-	    private ctrl;
-	    private human;
-	    private duringInit;
-	    private beforeDisplay;
-	    private doesRequireContent;
-	    constructor(control: JQuery);
-	    init(options: IDropDownControlOptions): void;
-	    getValueRaw(): string;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    getText(): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	    requiresContent(): boolean;
-	    setValue(newValueDirty: string, force?: boolean): void;
-	    private valueChanged;
-	    private parseValue;
-	}
-	//# sourceMappingURL=dropdown.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	/************************************** Main section definition  ********************************************/
-	interface ICustomSection {
-	    description?: string;
-	    descriptionContent?: string;
-	    descriptionNoContent?: string;
-	    formatter: string;
-	    functionDefaults?: IPrintFunctionParamsOverwrites;
-	}
-	interface IPrintProcessorOptions {
-	    headers?: {
-	        maxDepth?: number;
-	        altBefore?: string;
-	        altAfter?: string;
-	    };
-	}
-	interface IProcessResult {
-	    /** generated html */
-	    html: string;
-	    /** primary list of items from selection + first level interators */
-	    redlining: string[];
-	}
-	interface IPrintProcessor {
-	    prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): any;
-	    processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): IProcessResult;
-	    getCustomStylesheet(): string;
-	    /**
-	     * This can be used by render functions to get a table and process its data,
-	     * for example for a row count
-	     * @param tableId The (sub)table to render
-	     * @param selection The selection to use as the root
-	     */
-	    getTableData(tableId: string, selection: string[]): string;
-	    globals: IPrintGlobals;
-	}
-	const PrintFindAllScriptsRegex: RegExp;
-	interface IPrintConfig {
-	    getPrintProcessor(): IPrintProcessor;
-	    getFieldAndLabelsIteratorsDropdown(): IDropdownOption[];
-	    getItemIteratorsDropdown(items: boolean, folders: boolean, allowNoIterator: boolean): any;
-	    getItemConditionDropdown(): any;
-	    showOptionsEditor(fctName: string, currentValue: string, onUpdate: (newValue: string) => void): any;
-	    editFunctionOptions(currentValue: string, onUpdate: (newOptions: string) => void): any;
-	    editStyle(wrap: JQuery): any;
-	    functionHasOptions(functionUid: string): any;
-	    getFunctions(group: string): any;
-	    getItemSorters(): IPrintSorterMap;
-	    getAllFunctions(): IPrintBaseFunctionMap;
-	    getAllIterators(): IPrintBaseFunctionMap;
-	}
-	var globalPrintConfig: IPrintConfig;
-	function setGlobalPrintConfig(config: IPrintConfig): void;
-	interface IStringRiskConfigMap {
-	    [key: string]: IRiskConfig;
-	}
-	interface IFieldCache {
-	    [key: string]: IPrintFieldInfo;
-	}
-	interface IPrintGlobals {
-	    itemMap: IStringJQueryMap;
-	    riskControlCategories: IStringStringArrayMap;
-	    categories: IStringJQueryMap;
-	    fieldsPerCategory: IStringJQueryMap;
-	    fieldIdByLabel: IStringMap;
-	    fieldDefById: IStringJQueryMap;
-	    riskConfigs: IStringRiskConfigMap;
-	    down: IStringStringArrayMap;
-	    up: IStringStringArrayMap;
-	    children: IStringStringArrayMap;
-	    count: number;
-	    lastItem: string;
-	    lastFields: IFieldCache;
-	}
-	//# sourceMappingURL=PrintProcessorInterfaces.d.ts.map
-
-	/************************************************************************
-	 
-	Formatter deal with an array or a single item/folder/label/field and convert that to an "html" string
-	 There are 5 main different types of formatters:
-	 * sequential: print folders/items in a list by mixing html with macros
-	 * tables: print folders arrays in a tabular form by mixing html with macros
-	 * blocks: print something about an item/folder/label/field by mixing html with macros
-	 * traces: know how to iterate over traces
-	 * fields / labels: know how to iterate over fields or labels
-	 
-	 These are implemented as JSON objects or javascript functions
-	************************************************************************/
-	interface IPrintFormatter {
-	    /**
-	     * a unique id required for user defined id's if the uid is not unique it will overwrite the defaults
-	     */
-	    uid: string;
-	    /**
-	     * to display to user
-	     */
-	    name: string;
-	    /**
-	     * explains what the entity  is for
-	     */
-	    help: string;
-	    /**
-	     * indicates if an item was deleted
-	     */
-	    deleted?: boolean;
-	    /**
-	     * last modification date of print item
-	    */
-	    modDate?: string;
-	}
-	/** a top level formatter - this can be selected by the user  */
-	interface IPrintFormatterTop extends IPrintFormatter {
-	    /**
-	     * Items with this flag will be displayed in the Layouter dialog as
-	     * a selection option. Right now only for LIST and TABLE
-	     */
-	    topLevelTemplate?: boolean;
-	    /**
-	     * breadcrumbs (parent folders and item itself in PRINT project)
-	     */
-	    path: string;
-	}
-	/** a hierarchical structure */
-	interface IPrintFormatterTree extends IPrintFormatter {
-	    /** what to render for items */
-	    item: string;
-	    /** before parents nodes (e.g. <ul>)*/
-	    before: string;
-	    /** after parents nodes (e.g </ul>)*/
-	    after: string;
-	}
-	/** prints a hierarchy of folders and items as sequential list / tree */
-	interface IPrintFormatterList extends IPrintFormatterTree, IPrintFormatterTop {
-	    folder: string;
-	    hideFolder?: boolean;
-	}
-	/** prints recursively traces */
-	interface IPrintFormatterTraces extends IPrintFormatterTree {
-	    iterator: string;
-	    params: IPrintItemIteratorParams;
-	}
-	/** a conditional object structure */
-	interface IPrintFormatterBlock extends IPrintFormatter {
-	    /** what to render for items */
-	    render: string;
-	    /** condition evaluation function */
-	    condition: string;
-	    /** condition params */
-	    params: IPrintConditionParams;
-	}
-	/** template for rendering fields and labels  */
-	interface IPrintFormatterFields extends IPrintFormatter {
-	    /** what to render for items */
-	    render: string;
-	    /** iterator function */
-	    iterator: string;
-	    /** iterator params */
-	    params: IPrintConditionParams;
-	    /** render before fields/labels */
-	    before: string;
-	    /** render after fields/labels */
-	    after: string;
-	}
-	/** takes an array of items and folders as input an renders them as table with possibly some sub tables (one after the other) */
-	interface IPrintFormatterTable extends IPrintFormatterTree {
-	    iterator: string;
-	    params: IPrintItemIteratorParams;
-	    subTable: string;
-	    subTableFolder: string;
-	    before: string;
-	    after: string;
-	    renderFolderRow: IPrintTableRow;
-	    renderItemRow: IPrintTableRow;
-	}
-	/**  defines a sub table: e.g. if the main table shows REQs the sub table can define how to show TCs for each REQ*/
-	interface IPrintFormatterSubTable extends IPrintFormatter {
-	    iterator: string;
-	    params: IPrintItemIteratorParams;
-	    subTable: string;
-	    cells: IPrintSubTableCell[];
-	    tableRow?: Number;
-	}
-	interface IPrintFunctionMacro {
-	    renderFunction: string;
-	}
-	interface IPrintItemMacro {
-	    renderItem: string;
-	}
-	interface IPrintTableRow {
-	    before: string;
-	    after: string;
-	    cells: ITableTableCell[];
-	}
-	interface ITableTableCell {
-	    before: string;
-	    after: string;
-	    render?: string;
-	    merge?: boolean;
-	    fetchColumn?: number;
-	    fetchColumnAlt?: string;
-	    sortFunction?: string;
-	    sortPriority?: number;
-	}
-	interface IPrintSubTableCell {
-	    render: string;
-	    fetchColumn?: number;
-	    fetchColumnAlt?: string;
-	}
-	interface IPrintCustomFormatter {
-	    /**
-	     * The project on this instance that is used as the source
-	     * for the definitions. By default this is PRINT
-	     */
-	    source?: string;
-	    /**
-	     * Definition of LIST iterators
-	     */
-	    items: {
-	        [key: string]: IPrintFormatter;
-	    };
-	    /**
-	     * Overwrites for default function parameters
-	     */
-	    functionDefaults: IPrintFunctionParamsOverwrites;
-	}
-	interface IPrintFormatterMap {
-	    [key: string]: IPrintFormatter;
-	}
-	interface IPrintConditionParams {
-	    negate?: boolean;
-	}
-	//# sourceMappingURL=PrintFormatter.d.ts.map
-
-	/************************************************************************
-	 
-	Print Functions item/folder/label/field and convert that to an "html" string or boolean
-	  
-	 These are implemented as javascript functions
-	************************************************************************/
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IPrintFunctionMap {
-	    [key: string]: IPrintFunction;
-	}
-	interface IConditionFunctionMap {
-	    [key: string]: IConditionFunction;
-	}
-	interface IPrintBaseFunction {
-	    getName: () => string;
-	    getHelp: (hideDetails?: boolean) => string;
-	    editParams?: (json: {}, onUpdate: (newParams: {}) => void) => JQuery;
-	}
-	interface IPrintBaseFunctionMap {
-	    [key: string]: IPrintBaseFunction;
-	}
-	interface IPrintFunction extends IPrintBaseFunction {
-	    getGroup: () => string;
-	    getSubGroup?: () => string;
-	    render: (overwrites: IGlobalPrintFunctionParams, params: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void, printProcessor?: IPrintProcessor) => string;
-	}
-	interface IPrintFunctionParams {
-	}
-	interface IPrintFunctionParamsOverwrites {
-	    debug: number;
-	    [key: string]: IPrintFunctionParams;
-	}
-	interface IPrePostProcessor {
-	    processor: string;
-	    [key: string]: any;
-	}
-	interface IGlobalPrintFunctionParams {
-	    outputFormat: string;
-	    customer: IPrintFunctionParamsOverwrites;
-	    project: IPrintFunctionParamsOverwrites;
-	    section: IPrintFunctionParamsOverwrites;
-	    tableRow?: number;
-	}
-	interface IConditionFunction extends IPrintBaseFunction {
-	    itemOrFolder: boolean;
-	    evaluate: (overwrites: IGlobalPrintFunctionParams, params: {}, itemOrFolderRef: any, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => boolean;
-	}
-	//# sourceMappingURL=PrintFunction.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	/************************************************************************
-	 
-	Iterators return children of an item, items or folders in a folder, or field / label objects
-	 There are 3 main different types of formatters:
-	 * Item operators return item ids based on an reference item or folder
-	 * Label iterators return label objects for an item
-	 * Field iterators return field objects for an item or folder
-	  
-	 These are implemented as javascript functions
-	 
-	************************************************************************/
-	interface IPrintIteratorMap {
-	    [key: string]: IPrintIterator;
-	}
-	interface IPrintItemIteratorParams {
-	    maxDepth?: number;
-	    sorting?: IPrintSortParams[];
-	}
-	interface IPrintIterator extends IPrintBaseFunction {
-	    worksOnItem: boolean;
-	    worksOnFolder: boolean;
-	}
-	interface IPrintItemIterator extends IPrintIterator {
-	    iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => string[];
-	    getValidation: () => JsonEditorValidation | null;
-	    folderIterator: boolean;
-	    traceIterator: boolean;
-	    tableRowIterator: boolean;
-	}
-	interface IPrintTracesIterator extends IPrintIterator {
-	    iterator: string;
-	    params: IPrintItemIteratorParams;
-	    iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => string[];
-	    getValidation: () => JsonEditorValidation | null;
-	}
-	interface IPrintFieldIteratorParams {
-	}
-	interface IPrintFieldInfo {
-	    fieldId: string;
-	    field: JQuery;
-	    name: string;
-	    type: string;
-	    config: JQuery;
-	    jsonConfig: any;
-	    jsonValue: any;
-	}
-	interface IPrintFieldIterator extends IPrintIterator {
-	    iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintFieldIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => IPrintFieldInfo[];
-	}
-	interface IPrintLabelIteratorParams {
-	}
-	interface IPrintLabelInfo {
-	    id: string;
-	    printName: string;
-	    icon: string;
-	    set: boolean;
-	    jsonConfig: {};
-	}
-	interface IPrintLabelIterator extends IPrintIterator {
-	    iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintLabelIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => IPrintLabelInfo[];
-	}
-	//# sourceMappingURL=PrintIterators.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	/************************************************************************
-	 
-	print sorter allow to sort items in tables
-	 
-	************************************************************************/
-	interface IPrintSorterMap {
-	    [key: string]: IPrintSorter;
-	}
-	interface IPrintSorterParams {
-	    reverse: boolean;
-	}
-	interface IPrintSorter {
-	    getName: () => string;
-	    getHelp: () => string;
-	    sort: (a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => number;
-	}
-	interface IPrintSortParams {
-	    sorter: string;
-	    descending: boolean;
-	    params?: any;
-	}
-	//# sourceMappingURL=PrintSorter.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IGateControlControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter: IGate;
-	}
-	/** define behavior of a gate */
-	interface IGate {
-	    /** define different reviews/approvals which need to be made for gate to pass */
-	    lines: IGateLine[];
-	    /** if set to true the user can add some comment when approving */
-	    hasComments: boolean;
-	    /** defines behavior when all reviews/approvals have passed */
-	    allPass: {
-	        /** locks the fields above the gate if all reviews/approvals have passed */
-	        lockAbove: boolean;
-	        /** enables the fields below the gate if all reviews/approvals have passed */
-	        enableBelow: boolean;
-	        /** sets the specified labels if all reviews/approvals have passed */
-	        setLabels?: string[];
-	        /** hides the tools menu if all reviews/approvals have passed */
-	        hideMenu?: boolean | string[];
-	        /** hides the reference view if all reviews/approvals have passed */
-	        hideReferences?: boolean;
-	        /** locks the title if all reviews/approvals have passed */
-	        lockTitle?: boolean;
-	        /** disables delete if all reviews/approvals have passed */
-	        lockDelete?: boolean;
-	        notifyEmailPassed?: string[];
-	        notifyPassed?: string[];
-	        notifyFirstReject?: string[];
-	    };
-	    notifyFirstReject?: string[];
-	    /** text to show in printed reports if all reviews/approvals have passed */
-	    printAllPassed: string;
-	    /** text to show in printed reports if reviews/approvals has been rejected */
-	    printNotPassed: string;
-	    /** text to show in printed reports if reviews/approvals still need to be finished */
-	    printTodo: string;
-	    /** button allowing to approve a gate, leave empty ("") to hide*/
-	    pass: string;
-	    /** button allowing to reject a gate, leave empty  ("") to hide*/
-	    fail: string;
-	    /** text to show instead of pass button if gate was approved, leave empty ("") to use same as pass, set to "hide" to hide the button in this state*/
-	    passPassed?: string;
-	    /** text to show instead of pass button if gate was rejected, leave empty ("") to use same as pass, set to "hide" to hide the button in this state */
-	    passFailed?: string;
-	    /** text to show instead of fail button if gate was approved, leave empty ("") to use same as fail, set to "hide" to hide the button in this state */
-	    failPassed?: string;
-	    /** text to show instead of fail button if gate was rejected, leave empty ("") to use same as fail, set to "hide" to hide the button in this state */
-	    failFailed?: string;
-	    /** ask for signature to approve a gate */
-	    requireSignature?: boolean;
-	    /** ask for signature to reject a gate */
-	    requireSignatureReject?: boolean;
-	    /**  reset gate if any of these fields change. enter field names or ids  */
-	    reset?: string[];
-	    readOnly?: boolean;
-	    /** legacy mode (don't show in UI and printed documents who approved/rejected a line) */
-	    hideApprovalInfo?: boolean;
-	    /** show a line per given signature when printing */
-	    printSignaturesApproved?: boolean;
-	    /** show a line per missing signature when printing */
-	    printSignaturesRequired?: boolean;
-	    /** show a line per rejected signature when printing */
-	    printSignaturesRejected: boolean;
-	    /**   if set to true only allow a user to sign only one line in a gate  */
-	    strictSign?: boolean;
-	}
-	interface IGateLine {
-	    /** a unique id for the line */
-	    id: string;
-	    /** define which users can approve */
-	    users: string[];
-	    /** info to show before user (e.g. to hint what the approval means) */
-	    hint?: string;
-	    /** info to show before user (... once approved) */
-	    hintDone?: string;
-	    /** info to show before user (... if rejected) */
-	    hintRejected?: string;
-	}
-	interface IGateStatus {
-	    passed: boolean;
-	    failed: boolean;
-	    lines: IGateStatusLine[];
-	    search: string;
-	}
-	interface IGateStatusLine {
-	    id: string;
-	    passed: boolean;
-	    failed: boolean;
-	    user: string;
-	    date: string;
-	    dateUser: string;
-	    comment: string;
-	}
-	class GateControlImpl extends BaseControl {
-	    private settings;
-	    constructor(control: JQuery);
-	    private currentValue;
-	    private uiCtrl;
-	    private triggerUpdate;
-	    private allPassed;
-	    init(options: IGateControlControlOptions): void;
-	    private postSave;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    setValue(): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    labelsToSet(): string[];
-	    changed(fieldId: number, fieldName: string): void;
-	    private formatUserLogin;
-	    private showControl;
-	    private askForSignature;
-	    private setStatus;
-	    private update;
-	    private setColor;
-	    private getLine;
-	    private parseFieldValue;
-	    private updateOverallStatus;
-	}
-	//# sourceMappingURL=gateControl.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface INotificationTableOptions {
-	    allowDelete: boolean;
-	    selectable: boolean;
-	    forColumn: boolean;
-	    itemColumn: boolean;
-	    doneColumn: boolean;
-	    canCloseMine: boolean;
-	    canCloseAll: boolean;
-	    showAddButton: boolean;
-	    none: string;
-	    tableClass?: string;
-	    moveDoneTo?: string;
-	}
-	class Notifications implements IPlugin {
-	    private notificationConfig;
-	    private lastCount;
-	    private newNotification;
-	    private _item;
-	    private lastMenu;
-	    private projectCount;
-	    isDefault: boolean;
-	    private notificationUpdateTimer;
-	    previousNotificationsIds: number[];
-	    constructor();
-	    onUpdate(ui: JQuery, config: IContextPageConfigTab, context: IContextInformation): void;
-	    init(): void;
-	    setPreviousNotificationsIds(notifIds: number[]): void;
-	    getPreviousNotificationsIds(): number[];
-	    initItem(item: IItem, jui: JQuery): void;
-	    initServerSettings(): void;
-	    initProject(): void;
-	    isEnabled(): boolean;
-	    getProjectPages(): IProjectPageParam[];
-	    updateMenu(ul: JQuery): void;
-	    private userCanAcknowledgeNotification;
-	    supportsControl(): boolean;
-	    updateNotifications(): void;
-	    private watchActivity;
-	    private updateActivity;
-	    private getNotificationChanges;
-	    protected getTotalNotificationsProject(project: string): XRTodoCount;
-	    protected getTotalNotifications(): number;
-	    protected getProjectNotifications(project: string, item: string): XRTodo[];
-	    private renderNotificationProjectPage;
-	    protected renderNotificationRow(tr: JQuery, notification: XRTodo, tableOptions: INotificationTableOptions): void;
-	    protected renderNotificationTable(container: JQuery, tableOptions: INotificationTableOptions, notifications: XRTodo[]): void;
-	    protected indicateNotificationChange(): void;
-	    protected closeNotifications(notifications: JQuery, deleteThem: boolean): void;
-	    protected updateProjectMenu(): void;
-	    static getMessage(todo: XRTodo): any;
-	    static getField(todo: XRTodo): any;
-	    static getReply(todo: XRTodo): any;
-	    protected showCreateNotificationDialog(): JQueryDeferred<unknown>;
-	    protected showAllNotificationsDialog(): void;
-	    private showNotifications;
-	    protected filterNotifications(ui: JQuery, cbs: any): void;
-	    deleteNotificationDlg(notification: XRTodo): JQueryDeferred<unknown>;
-	    deleteNotification(notification: XRTodo): JQueryDeferred<unknown>;
-	    protected deleteNotificationIdRec(project: string, notifications: JQuery, deleteThem: boolean, idx: number): JQueryDeferred<unknown>;
-	    protected deleteNotificationId(project: string, todoId: number, deleteThem: boolean): JQueryDeferred<unknown>;
-	    createNotification(users: string[], project: string, item: string, text: string, type: string, atDate: Date): JQueryDeferred<unknown>;
-	    private countRec;
-	    protected updateCounters(): void;
-	    protected getNotificationCount(itemId: string): number;
-	    private addFancyTreeNotificationCounterPlugin;
-	    static anchorTimer: any;
-	    static anchorNotifications(): void;
-	}
-	var NotificationList: Notifications;
-	function initialize(): void;
-	//# sourceMappingURL=Notifications.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IDateSelectParams {
-	    allowClear?: boolean;
-	    readonly?: boolean;
-	    vertical?: string;
-	    horizontal?: string;
-	    minDate?: Date;
-	    requiresContent?: boolean;
-	    initialContent?: boolean;
-	    inlineHelp?: string;
-	}
-	interface IDateSelectOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: IDateSelectParams;
-	}
-	class DateSelectImpl extends BaseControl {
-	    private settings;
-	    private data;
-	    private lastSelectedDate;
-	    private ctrl;
-	    private doesRequireContent;
-	    constructor(control: JQuery);
-	    init(options: IDateSelectOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    setValue(date: string): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    requiresContent(): boolean;
-	    private setDateFromString;
-	    static getDateFromString(dateStr: string): Date;
-	    private valueChanged;
-	    private renderHuman;
-	}
-	//# sourceMappingURL=dateselect.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface MatrixTreeOptions {
-	    noAnimation: boolean;
-	    highlight: boolean;
-	    canFilter: boolean;
-	    serverSearch: boolean;
-	    expand: number;
-	    canSelectItems: boolean;
-	    canFilterExclusiv: boolean;
-	    selectedItems: IReference[];
-	    isConfigSearch?: boolean;
-	    tree?: IDB[];
-	    controlState: ControlState;
-	    dropCallback: (moveDetails: ITreeDropInfo) => boolean;
-	    selectionChanged: (id: string) => void;
-	    onExpand?: (id: string) => void;
-	    isMainTree?: boolean;
-	}
-	interface ITreeDropInfo {
-	    parentId: string;
-	    itemId: string;
-	    index: number;
-	    updateUI?: () => void;
-	}
-	class MainTreeImpl {
-	    private settings;
-	    private _jui;
-	    private triggerSelectionChange;
-	    constructor();
-	    init(control: JQuery): void;
-	    render(treeSettings?: MatrixTreeOptions): void;
-	    update(item: IItem): void;
-	    remove(itemId: string): void;
-	    openFolder(itemId: string, expandToRoot?: boolean): void;
-	    closeFolder(itemId: string): void;
-	    select(itemId: string): void;
-	    isSelected(itemId: string): boolean;
-	    insertInTree(newItem: IDBParent, noEscape?: boolean): void;
-	    moveInTree(itemId: string, newParentId: string, newPosition: number): void;
-	    insertUpdateTreeRec(target: string, source: IDB): void;
-	    destroy(): void;
-	    clearFilter(): void;
-	    updateItemIsUnselected(itemId: string, isUnselected: boolean): void;
-	    updateNotificationCounters(): void;
-	}
-	var NavigationPanel: MainTreeImpl;
-	//# sourceMappingURL=MainTree.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class ProjectView implements IBaseControl {
-	    settings: IProjectPanelControlOptions;
-	    viewModeSelector: ViewModeSelector;
-	    searchBox: SearchBox;
-	    projectTree: ProjectTree;
-	    listView: ListView;
-	    prefixCategory: string;
-	    tree: JQuery;
-	    private _root;
-	    needsLatest: boolean;
-	    constructor(control: JQuery);
-	    init(options: IBaseControlOptions): void;
-	    private forceSelectChildren;
-	    hasChanged(): boolean;
-	    getValue(): IReference[];
-	    setValue(selectedItems: string[]): void;
-	    toggleSelection(selected: boolean): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    clearFilter(): void;
-	    filterStatusChanged(itemId: string): void;
-	    insertNode(parentKey: string, item: IDB, position: {
-	        at: number;
-	    }): void;
-	    moveNode(parentId: string, itemId: string, position: number): void;
-	    refresh(): void;
-	    updateRec(item: IDB): void;
-	    insertRec(parentKey: string, item: IDB): void;
-	    updateTopPosition(top: number): void;
-	    appendController(controller: JQuery): void;
-	    render(subtree?: number, itemId?: string, item?: IDB): void;
-	    openTree(key: string): void;
-	    closeTree(key: string): void;
-	    setTitle(key: string, title: string): void;
-	    removeNode(key: string): void;
-	    select(key: string): void;
-	    isSelected(key: string): boolean;
-	    updateItemIsUnselected(itemId: string, isUnselected: boolean): void;
-	    updateNotificationCounters(): void;
-	    private saveSelection;
-	    private calculateDropTarget;
-	}
-	//# sourceMappingURL=ProjectView.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IUIMap {
-	    [key: string]: JQuery;
-	}
-	interface IKeyTitle {
-	    key: string;
-	    title: string;
-	}
-	class ListView {
-	    private control;
-	    private hits;
-	    private selected;
-	    private projectWarn;
-	    private panel;
-	    private sRoot;
-	    private uRoot;
-	    private nodes;
-	    private noSelected;
-	    constructor(panel: ProjectView);
-	    show(): void;
-	    hide(): void;
-	    setSelectedItems(selectedItems: string[]): void;
-	    redrawItem(itemId: string): void;
-	    filterList(match: string): ISearchCounts;
-	    showSearchResults(serverSearchResults: string[]): ISearchCounts;
-	    selectAll(setSelected: boolean): void;
-	    private getTitleFromTree;
-	    private showNodes;
-	    private createNode;
-	    getFancyRootNode(): Fancytree.FancytreeNode;
-	    getFancyTree(): Fancytree.Fancytree;
-	}
-	//# sourceMappingURL=ProjectList.d.ts.map
-
-	/// <reference types="matrixrequirements-type-declarations" />
-	interface ISearchCounts {
-	    current: number;
-	    total: number;
-	    perTab: ISearchCountsTab[];
-	}
-	interface ISearchCountsTab {
-	    tabName: string;
-	    count: number;
-	}
-	class ProjectTree {
-	    private hits;
-	    private allHits;
-	    private lastFilterFct;
-	    private panel;
-	    private canBeFiltered;
-	    private delayedFilter;
-	    private lt;
-	    private lit;
-	    private legacyColors;
-	    constructor(panel: ProjectView, canBeFiltered: boolean);
-	    show(): void;
-	    hide(): void;
-	    setSelectedItems(selectedItems: string[]): void;
-	    applyFilter(): void;
-	    redrawItem(itemId: string): void;
-	    openTree(key: string): void;
-	    closeTree(key: string): void;
-	    selectAll(isSelected: boolean): void;
-	    selectChildren(node: Fancytree.FancytreeNode): void;
-	    unSelectChildren(node: Fancytree.FancytreeNode): void;
-	    unselectParents(node: Fancytree.FancytreeNode): void;
-	    setHideMismatches(hideMismatches: boolean): void;
-	    forcePartial(): void;
-	    filterTree(match?: string): ISearchCounts;
-	    removeFilter(): number;
-	    showSearchResults(serverSearchResults: string[]): ISearchCounts;
-	    getFancyRootNode(): Fancytree.FancytreeNode;
-	    getFancyTree(): Fancytree.Fancytree;
-	    getNode(key: string): Fancytree.FancytreeNode;
-	    removeNode(key: string): void;
-	    setTitle(key: string, title: string): boolean;
-	    select(key: string): void;
-	    isSelected(key: string): boolean;
-	    updateRec(item: IDB): void;
-	    insertRec(parentKey: string, item: IDB): void;
-	    moveNode(parentId: string, itemId: string, position: number): void;
-	    addNode(treeNode: Fancytree.FancytreeNode, item: IDB, position?: {
-	        at: number;
-	    }): Fancytree.FancytreeNode;
-	    treeFromDb(dbTree: IDB[]): void;
-	    updateItemIsUnselected(itemId: string, isUnselected: boolean): boolean;
-	    updateNotificationCounters(): void;
-	    private addNodes;
-	}
-	//# sourceMappingURL=ProjectTree.d.ts.map
-
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IProjectPanelControlOptions extends IBaseControlOptions {
-	    parameter?: {
-	        readonly?: boolean;
-	        placeholder?: string;
-	        maxItems?: number;
-	        options?: any;
-	    };
-	    noAnimation?: boolean;
-	    dragAndDrop?: boolean;
-	    controlState?: ControlState;
-	    highlight?: boolean;
-	    canFilter?: boolean;
-	    isConfigSearch?: boolean;
-	    serverSearch?: boolean;
-	    expand?: number;
-	    tree?: IDB[];
-	    tooltips?: boolean;
-	    collectionChanged?: (count: number) => void;
-	    selectionChanged?: (id: string) => void;
-	    onExpand?: (id: string) => void;
-	    dropCallback?: Function;
-	    crossProject?: string;
-	    selectedItems?: IReference[];
-	    selectMode?: SelectMode;
-	    glueToBottom?: boolean;
-	    isMainTree?: boolean;
-	    autoScroll?: boolean;
-	}
-	enum SelectMode {
-	    /*** DO NOT CHANGED numbers use from baseControl */
-	    none = 0,
-	    items = 1,
-	    folders = 2,
-	    singleItem = 3,
-	    singleFolder = 4,
-	    independent = 5,
-	    auto = 6,
-	    independentAuto = 7,
-	    autoPrecise = 8
-	}
-	interface MyNodeData extends Fancytree.FancytreeNode {
-	    cstrender?: boolean;
-	    background?: string;
-	    shortTitle?: string;
-	    border?: string;
-	    type?: string;
-	    icon?: string;
-	    hideCheckbox?: boolean;
-	    isUnselected?: boolean;
-	    extraStyle?: string;
-	    classes?: string[];
-	}
-	interface MyNode extends Fancytree.FancytreeNode {
-	    selected?: boolean;
-	    unselectable?: boolean;
-	    ul?: JQuery;
-	    span?: JQuery;
-	    type?: string;
-	    subMatch?: boolean;
-	    shortTitle?: string;
-	}
-	interface MyDDData {
-	    otherNode?: MyNode;
-	    hitMode?: string;
-	}
-	interface MyFancytree extends Fancytree.Fancytree {
-	    options?: Fancytree.FancytreeOptions;
-	}
-	interface MyFancytreeOption extends Fancytree.FancytreeOptions {
-	    filter?: {
-	        mode?: string;
-	    };
-	}
-	enum SearchState {
-	    NoSearch = 0,
-	    FilterDone = 1,
-	    ServerRunning = 2,
-	    ServerDone = 3
-	}
-	enum SearchUpdate {
-	    inserted_node = 1,
-	    updated_rec = 2,
-	    filter_status_changed = 3,
-	    title_changed = 4,
-	    item_dropped = 5
-	}
-	interface IVizMode {
-	    uid: string;
-	    icon: string;
-	    text: string;
-	    mainTree: boolean;
-	    asList: boolean;
-	    hide: boolean;
-	    check: boolean;
-	    expand: boolean;
-	}
-	interface IDelayedAction {
-	    type: string;
-	    expression: string;
-	}
-	//# sourceMappingURL=ProjectViewDefines.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface INavigationBar {
-	    disableTabs: boolean;
-	    tabs: INavigationBarTab[];
-	}
-	interface INavigationBarRuntime extends INavigationBar {
-	    tabs: INavigationBarTabRuntime[];
-	}
-	interface INavigationBarTab {
-	    name: string;
-	    icon: string;
-	    mode: TabMode;
-	    other: string[];
-	}
-	interface INavigationBarTabRuntime extends INavigationBarTab {
-	    node?: JQuery;
-	    trees?: JQuery[];
-	    isActive?: boolean;
-	}
-	interface IStringTabMap {
-	    [key: string]: INavigationBarTab;
-	}
-	enum TabMode {
-	    ShowAsDefault = 1,
-	    HideAsDefault = 2
-	}
-	class NavigationBar {
-	    static navbarWidth: number;
-	    protected rootTabMap: IStringTabMap;
-	    protected workFolders: string[];
-	    protected enabled: boolean;
-	    protected bar: INavigationBarRuntime;
-	    protected helpButton: JQuery;
-	    static getDefaultBar(project: string): INavigationBar;
-	    constructor();
-	    init(): void;
-	    isEnabled(): boolean;
-	    isInCurrentTab(itemId: string): boolean;
-	    getCurrentTab(): string;
-	    countPerTab(itemIds: string[]): ISearchCountsTab[];
-	    activateItemsTab(itemId: string): void;
-	    updateNotificationCounters(): void;
-	    protected drawNavigationBar(): void;
-	    setWorkFolders(folders: string[]): void;
-	    protected resizeBarItems(): void;
-	    protected createTabs(): void;
-	    switchTab(tabName: string): boolean;
-	    protected activateTab(tab: INavigationBarTabRuntime): void;
-	    private getTab;
-	}
-	var NavBar: NavigationBar;
-	function initialize(): void;
-	//# sourceMappingURL=NavigationBar.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IContextInformation {
-	    project: string;
-	    user: string;
-	    server: string;
-	    version: string;
-	    product: string;
-	    itemId: string;
-	    item: string;
-	    fieldList: string;
-	}
-	interface IContextFramesTools {
-	    showContextFrame(tabType: string, makeVisible: boolean): any;
-	    getExpender(): any;
-	    visibility(enabled: boolean): any;
-	    hideContextFrames(): any;
-	    showContextFrames(): any;
-	    renderContextFrames(): any;
-	    fillContextFrame(_data: IItem, itemId: string): any;
-	    init(): any;
-	}
-	interface IUploadedFileInfo {
-	    fileName: string;
-	    fileId?: string;
-	    uploaded?: boolean;
-	    fileObj?: any;
-	}
-	interface IFileDefinition {
-	    name: string;
-	}
-	interface IFileTools {
-	    UploadFilesAsync(files: FileList | File[]): JQueryDeferred<IUploadedFileInfo[]>;
-	    UploadFileAsync(file: File): JQueryDeferred<IUploadedFileInfo[]>;
-	    convertXLSXAsync(file: IFileParam): JQueryDeferred<string>;
-	}
-	interface IDeveloperTools {
-	    getStagingCode(): string;
-	    setStagingCode(newCode: string): any;
-	    runStagingCode(): any;
-	}
-	interface IItemTools {
-	    parseRef(itemRef: string): IItemIdParts;
-	    getCreator(item: IItem): string;
-	    getLastEditor(item: IItem): string;
-	    refListToDisplayString(inputItems: IReference[] | null, prefix: string, shorten?: number): string;
-	    renderLink(itemId: string, itemTitle?: string, newWindow?: boolean): any;
-	    updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
-	    clone(item: IItemGet, copyLabels: boolean): IItemPut;
-	    sort(a: string, b: string): any;
-	}
-	interface IJSONTools {
-	    mergeOptions(defaultOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
-	    setOptions(newOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
-	    isTrue(obj: undefined | null | boolean | string | number): boolean;
-	    isFalse(obj: undefined | null | boolean | string | number): boolean;
-	    fromString(str: null | string): {
-	        status: string;
-	        value: {};
-	    };
-	    clone(src: any): any;
-	}
-	interface IReportTask {
-	    reportId: string;
-	    jobId: number;
-	    progress: number;
-	    postCreateCallback: Function;
-	    postFailCallback?: Function;
-	    postProgressCallback?: Function;
-	    reportOptions?: IReportOptions;
-	}
-	interface IJobList {
-	    allGood: boolean;
-	    tasks: IReportTask[];
-	    doneBatch: number;
-	}
-	interface IReportOptions extends IRestParam {
-	    format?: string;
-	    inline?: boolean;
-	    reason?: string;
-	    filter?: string;
-	    isSignedReport?: boolean;
-	    includeSignatures?: string;
-	    newTitle?: string;
-	    copyFields?: string;
-	    itemList?: string;
-	    url?: string;
-	    resturl?: string;
-	}
-	interface IReportTransferField {
-	    fromId: string;
-	    toId: string;
-	}
-	interface IReportSetField {
-	    toId: string;
-	    value: string;
-	}
-	interface IGetReportProgressResult {
-	    status: string;
-	    progress: number;
-	    jobFile: IGetReportProgressJobFileResult[];
-	    visibleName: string;
-	}
-	interface IGetReportProgressJobFileResult {
-	    internalPath: string;
-	    jobFileId: number;
-	    mimeType: string;
-	    restUrl: string;
-	    visibleName: string;
-	}
-	interface IPostCreateSignOrDocResult {
-	    jobId: number;
-	}
-	interface IReportInput {
-	    to: string;
-	}
-	interface IReportGeneratorTools {
-	    SaveAndCreate(itemId: string, reportOptions: IReportOptions, progressInfo: string, postCreateCallback: Function, postFailCallback?: Function, postProgressCallback?: Function): void;
-	    CreateSignedDoc(docId: string, signatures: string[], signedDocumentsControl: JQuery, labelFilter: string, signName: string, transferFields: IReportTransferField[], defaultLabels: string[], docUpdateCb: (createdDocumentId: string) => void): void;
-	    createSIGN(target: string, comment: string, docId: string, signatures: string[], signedDocumentsControl: JQuery, labelFilter: string, signName: string, transferFields: IReportTransferField[], defaultLabels: string[], docUpdateCb: (createdDocumentId: string) => void): void;
-	    CreateDoc(docId: string, format: IReportOptions, labelFilter: string): void;
-	    CreateReport(reportId: string, format: IReportOptions, inputItems?: IReportInput[], requiredItems?: IReportInput[]): void;
-	    DownloadSignedDoc(signedId: string, format: IReportOptions): any;
-	}
-	interface IChangedLabels {
-	    changed: boolean;
-	    added: string[];
-	    removed: string[];
-	    delta: string;
-	}
-	const DOCUMENT_STATUS_LABEL_GROUP_TYPE = "_DOCUMENT_STATUS_";
-	interface ILabelTools {
-	    ignoreProjectFilter: boolean;
-	    getFilterColor(): string;
-	    getFilter(): string;
-	    getDisplayName(labelId: string): any;
-	    getFilterName(labelId: string): any;
-	    getLabelDefinitions(categories: string[]): ILabel[];
-	    setFilter(filter: string[]): any;
-	    resetReviewLabels(labelIds: string[], category: string, addXor?: boolean): string[];
-	    getDefaultLabels(category: string): string[];
-	    hasLabels(): any;
-	    setLabels(oldLabelIds: string, labels: string[]): string;
-	    setLabel(oldLabelIds: string[], label: string): string[];
-	    unsetLabel(oldLabelIds: string[], label: string): string[];
-	    compareLabels(before: string[], after: string[]): IChangedLabels;
-	    getLabelNames(): string[];
-	    getDesignReview(labelId: string): IDesignReview | null;
-	    isFiltered(category: string, labels: string): boolean;
-	    getLabelsOfLabelGroupsType(labelGroupType: string): string[];
-	    getLabelGroups(category?: string): ILabelGroup[];
-	    getLastTimeLabelWasSet(itemId: string, label: string, beforeRevision: number): any;
-	}
-	interface ILabelSwitches extends ILabelTools {
-	    labelsExist(): boolean;
-	}
-	interface ILoggerTools {
-	    log(id: string, msg: string): any;
-	    debug(message: string): void;
-	    info(message: string): void;
-	    warning(message: string): void;
-	    error(message: string): void;
-	    weirdState(message: string): void;
-	    brokenState(message: string): void;
-	    getLog(): string;
-	}
-	interface IUserDropDown {
-	    id: string;
-	    label: string;
-	}
-	interface ITestCanned extends IMailConfigCanned {
-	    [key: string]: string | undefined;
-	}
-	interface IUserLookup extends XRUserPermissionType {
-	    [key: string]: string | number;
-	}
-	interface IMailTools {
-	    /** send mail
-	    * @param {type} to comma separated list of user ids
-	    * @param {type} cc comma separated  list of user ids
-	    * @param {type} bcc comma separated  list of user ids
-	    * @param {type} subject default subject
-	    * @param {type} body default body
-	    * @param {type} systemMail set to 1 to send mail in name of system rather than user
-	    *
-	    * @returns {undefined} nothing
-	    */
-	    sendMail(to: string, cc: string, bcc: string, subject: string, body: string, systemMail?: number, noSuccess?: boolean, noReply?: number): JQueryDeferred<{}>;
-	    /** show send mail dialog and send mail
-	    * @param {type} sendTo comma separated list of user ids
-	    * @param {type} preSelectedUsers available users or null if to use all project users
-	    * @param {type} subject default subject
-	    * @param {type} body default body
-	    * @param {type} includeSupport whether to send it to matrix support
-	    * @param {type} sendCc
-	    
-	    * @returns {undefined} nothing
-	    */
-	    sendMailDlg(sendTo: string, preSelectedUsers: XRUserPermissionType[], subject: string, body: string, sendCc: string): void;
-	    replacePlaceholders(template: string, itemId: string, rejectComment: string, reviewers: string[], readers: string[], trainers: string[], trainees: string[]): string;
-	    /** get default messages, replace a few strings
-	     *
-	     * @param {type} messageId
-	     * @param {type} itemId
-	     * @returns {undefined}
-	     */
-	    getCannedMessage(messageId: string, to: string, itemId: string, custom?: string, body?: string): string;
-	    sendMails(sendTos: string[], subject: string, messages: string[]): any;
-	}
-	interface ICancelSearchEvent {
-	}
-	interface ISearchTools {
-	    OnCancelSearch: IEvent<ICancelSearchEvent, void>;
-	    getFilter(): any;
-	    cancelSearch(): any;
-	    searchInDialog(): any;
-	    endSearchInDialog(): any;
-	    highlight(term: string): any;
-	    hideHighlight(): any;
-	    renderHighlight(): any;
-	}
-	interface ICaptionFormat extends ICaption {
-	    captionDetails: string;
-	    captionClass: string;
-	    referenceClassNo: string;
-	}
-	interface ISmartTextTools {
-	    createMenu(docMode: boolean, tableMode: boolean): void;
-	    deleteTag(what: string): void;
-	    insertFigReference(reference: string, editor: any, editable: any): any;
-	    insertTabReference(reference: string, editor: any, editable: any): any;
-	    pasteBuffer(editor: any, editable: any): any;
-	    createCaption(isTable: boolean, editor: Summernote.editor, editable: any): any;
-	    updateCaptionsAndReferences(): any;
-	    createEditTag(tagType: number, what: string, data?: ISmartTextConfigReplacement, saveFct?: Function, forceTiny?: boolean): void;
-	    selectEditCreateTag(mode: number, tagType: number, tagSelected: Function): void;
-	    removeOuterParagraph(edit: string): any;
-	    replaceTextFragments(text: string, showTooltips?: boolean, encoded?: boolean): string;
-	    showTooltips(node: JQuery, noContainer?: boolean): any;
-	    prepareForReadReadRender(itemDetails: JQuery): any;
-	}
-	interface IToolTipCache {
-	    date: Date;
-	    item: IItem;
-	}
-	interface IDropDownButtonOption {
-	    name: string;
-	    class?: string;
-	    click: Function;
-	}
-	interface IDialogOptions {
-	    container: JQuery;
-	    title: string;
-	    buttons: any[];
-	    content?: JQuery;
-	    minMaxWidth?: number;
-	    minMaxHeight?: number;
-	    scrolling?: UIToolsConstants.Scroll;
-	    autoResize?: boolean;
-	    maximizeButton?: boolean;
-	    noXButton?: boolean;
-	    onClose?: Function;
-	    onOpen?: Function;
-	    onResize?: Function;
-	    noCloseOnEscape?: boolean;
-	}
-	interface ICIColor {
-	    color: string;
-	    alternateColor: string;
-	}
-	interface ICIColorList {
-	    [key: string]: ICIColor;
-	}
-	interface IUIToolsEnum {
-	    widgetPluginsContainer: IWidgetPluginsContainer;
-	    DateTime: IDateTimeUI;
-	    BlockingProgress: IBlockingProgressUI;
-	    SelectUserOrGroup: ISelectUserOrGroupUI;
-	    lt: ILT;
-	    Progress: IProgressUI;
-	    ThemeSelector: IThemeSelector;
-	    fixC3ForCopy(copied: JQuery): any;
-	    createDropDownButton(defaultText: string, options: IDropDownButtonOption[], isUp: boolean, isJui: boolean, buttonId?: string, disableDefaultButtonClick?: boolean): JQuery;
-	    getNiceDialogSize(minWidth: number, minHeight: number): {
-	        width: number;
-	        height: number;
-	    };
-	    showSuccess(messageTitle: string, hideAfter?: number): void;
-	    hideSuccess(): void;
-	    hideError(): void;
-	    showError(messageTitle: string, messageBody: string, showForMS?: number): void;
-	    showAck(ackId: number, messageTitle: string, dlgTitle?: string): void;
-	    showConfirm(confId: number, messageInfo: {
-	        title: string;
-	        ok: string;
-	        nok?: string;
-	        third?: string;
-	    }, confFunction: Function, noConfFunction: Function, thirdFunction?: Function): void;
-	    confirmSpinningWait(message: string): any;
-	    closeConfirmSpinningWait(): any;
-	    showTooltip(itemId: string, target: JQuery, event: Event, crossProject?: string): void;
-	    showTaskAsTooltip(id: string, title: string, url: string, htmlContent: string, target: JQuery): void;
-	    hideTooltip(now?: boolean): void;
-	    updateTooltip(): void;
-	    spaceMessage(userHasSpaces: boolean, passwordHasSpaces: boolean): string;
-	    getSpinningWait(message?: string): JQuery;
-	    setEnabled(button: JQuery, enabled: boolean): any;
-	    getDisplayError(jqxhr: IJcxhr, textStatus: string, error: string): any;
-	    showDialog(dlg: JQuery, title: string, content: JQuery, minMaxWidth: number, minMaxHeight: number, buttons: any[], // DialogButtonOptions 
-	    scrolling: UIToolsConstants.Scroll, autoResize?: boolean, maximizeButton?: boolean, close?: Function, open?: Function, resize?: Function, noCloseOnEscape?: boolean): any;
-	    showDialogDes({ maximizeButton, // = false
-	    noXButton, // = false
-	    autoResize, // = false
-	    onClose, // = null
-	    onOpen, // = null
-	    onResize, // = null
-	    noCloseOnEscape, // = false
-	    minMaxWidth, // = $(document).width() * 0.9
-	    minMaxHeight, // = app.itemForm.height() * 0.9
-	    scrolling, // = UIToolsConstants.Scroll.None
-	    content, // = null
-	    container, title, buttons }: IDialogOptions): any;
-	    pushDialog(thisDialog: JQuery): any;
-	    popDialog(thisDialog: JQuery): any;
-	    serverHtmlCleanupBlob(content: JQuery): JQueryDeferred<string>;
-	    copyBuffer(anchor: JQuery, tooltip: string, content: JQuery, catchKey?: JQuery, onProcessCopy?: Function, btnText?: string, beforeCopy?: Function, afterCopy?: Function): any;
-	    getIconOptions(): any;
-	    calculateColorFrom(input: string): ICIColor;
-	    getAvatar(info: string, size: number): JQuery;
-	    doCopy(content: JQuery, onProcessCopy: Function): any;
-	    addChevronSection(container: JQuery, text: string, help: string, open?: boolean): any;
-	    enableIf(cb: JQuery, state: boolean, ctrls: JQuery[]): any;
-	    addCheckboxD(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, defaultValue: string): any;
-	    addCheckbox(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
-	    addCheckboxIsTrue(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
-	    addCheckboxIsFalse(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
-	    addPassInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onUnFocus?: Function): any;
-	    addTextInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function, isPass?: boolean, help?: string, readonly?: boolean, rows?: number, allowResize?: boolean): any;
-	    addRichTextInput(ui: JQuery, params: IRichTextParams, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function): any;
-	    addDateSelect(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, help?: string, readonly?: boolean): any;
-	    addIconInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function, isPass?: boolean): any;
-	    addDropdownToArray(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, options: IDropdownOption[], grouping: IDropdownGroup[], maxItems: number, create: boolean, sort: boolean, onChange: Function, placeholder?: string): any;
-	    addDropdownNumber(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, first: number, last: number, onChange: Function, placeholder?: string, paramsBase?: IDropdownParams): any;
-	    addDropdownToValue(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, options: IDropdownOption[], create: boolean, sort: boolean, onChange: Function, placeholder?: string, paramsBase?: IDropdownParams): any;
-	    getPageTitle(title: string, getPanel?: () => JQuery, resize?: () => void): JQuery;
-	    createConfigLine(lineId: string, linePrefix: string, lineName: string, lineArray: any[], idProp: string, onChangedOrder: () => void, onEdit: (lineId: string) => void, needsEdit: boolean, onDelete: (lineId: string) => void): any;
-	    fixArrows(ul: JQuery): any;
-	    createConfigAddLine(action: string, onAdd: () => void): any;
-	}
-	class UIToolsConstants {
-	    static CIColors: ICIColorList;
-	    static CIColorsGrey: ICIColorList;
-	    static allGrey: string[];
-	    static CIColorsPrimary: ICIColorList;
-	}
-	module UIToolsConstants {
-	    enum Scroll {
-	        Auto = 0,
-	        Vertical = 1,
-	        None = 2
-	    }
-	}
-	interface ITimeZoneOption {
-	    val: string;
-	    text: string;
-	    timeformat?: string;
-	    dateformat?: string;
-	}
-	interface ITimeZoneSetting {
-	    [key: string]: string | ITimeZoneOption[] | undefined;
-	    timeZoneOptions: ITimeZoneOption[];
-	    settingsSource: string;
-	    timeformat?: string;
-	    dateformat?: string;
-	    timezone?: string;
-	}
-	interface IDateTimeUI {
-	    initDateTimeSettings(update?: boolean): JQueryDeferred<{}>;
-	    renderHumanDate(date: Date, dateOnly?: boolean): string;
-	    renderCustomerHumanDate(date: Date, dateOnly?: boolean): string;
-	    renderHumanMonth(dateObj: Date): string;
-	    renderDashFormat(dateObj: Date): string;
-	    renderSettingControls(options: {
-	        table: JQuery;
-	        user: string;
-	        help: string;
-	    }): void;
-	    renderSettingDialog(user: string): void;
-	    requiresTimeZoneWarning(): boolean;
-	    getTimeZoneCTA(): JQuery;
-	    getSimpleDateFormat(): string;
-	    getSimpleDateFormatMoment(): any;
-	    getSimpleDateTimeFormatMoment(): any;
-	}
-	interface IBlockingProgressUITask {
-	    name: string;
-	    progress?: number;
-	}
-	interface IBlockingProgressUI {
-	    Init(tasks: IBlockingProgressUITask[], animate?: boolean): void;
-	    SetProgress(taskIdx: number, percent: number, newText?: string): void;
-	    SetProgressError(taskIdx: number, problem: string): void;
-	}
-	interface IProgressUI {
-	    Init(message: string, warning?: boolean): void;
-	    Update(progress: number): void;
-	    SuccessHide(message: string, ms: number): void;
-	    ErrorHide(message: string, ms: number): void;
-	}
-	interface ISelectUserOrGroupUI {
-	    showMultiUserSelect(container: JQuery, help: string, selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): any;
-	    getUsersInSelection(selection: string[]): any;
-	    getGroupId(group: XRGroupPermissionType | XRGroupType): any;
-	    getGroupDisplayNameFromId(groupOrUserId: string): any;
-	    isGroup(groupOrUserId: string): any;
-	    exists(groupOrUserId: string): any;
-	    showSelectDialog(selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): any;
-	    getUserDropDownOptions(showUsers: boolean, showGroups: boolean, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUsername?: string): IDropdownOption[];
-	    showSingleSelect(control: JQuery, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUsername?: string): any;
-	    getAllUsersAndGroups(): JQueryDeferred<IDropdownOption[]>;
-	    combinedName(user: XRUserPermissionType): any;
-	    showSingleSelectDialog(selected: string, title: string, help: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[]): any;
-	}
-	interface ILT {
-	    forDB(code: string, fieldId: number): any;
-	    forUI(code: string, fieldId: number): any;
-	}
-	interface IMatrixUrlParts {
-	    project: string;
-	    item: string;
-	    params: IStringMap;
-	}
-	interface IURLTools {
-	    getParameterByName(url: string, name: string): string | null;
-	    parseUrl(url: String): IMatrixUrlParts;
-	}
-	interface IXPathToolsComp {
-	    name?: string;
-	    position: number;
-	}
-	interface IXPathTools {
-	    get(node: JQuery): any;
-	    hardCopy(element: JQuery): any;
-	}
-	interface IMatrix {
-	    Search: ISearchTools;
-	    Item: IItemTools;
-	    ContextFrames: IContextFramesTools;
-	    JSON: IJSONTools;
-	    XPath: IXPathTools;
-	    URL: IURLTools;
-	    Mail: IMailTools;
-	    Logger: ILoggerTools;
-	    LabelTools: ILabelTools;
-	    UI: IUIToolsEnum;
-	    File: IFileTools;
-	    DeveloperTools: IDeveloperTools;
-	    ReportGenerator: IReportGeneratorTools;
-	    SmartText: ISmartTextTools;
-	}
-	export interface IApp extends IBaseApp {
-	    mainApp: boolean;
-	    mainTreeLoaded: boolean;
-	    setCache(externalCache: DBCache): void;
-	    loadProject(project: string, item: string): void;
-	    loadTree(project: string): JQueryDeferred<{}>;
-	    loadTreeAndItem(project: string, item: string): JQueryDeferred<IItem>;
-	    updateFavicon(project: string, notification: boolean): void;
-	    waitForMainTree(callback: () => void): void;
-	    getTree(subtreeFilter?: string[]): IDB[];
-	    getSubTree(itemId: string): ISimpleTree;
-	    getAuditDetailsAsync(auditId?: number, ignoreErrors?: boolean): JQueryDeferred<XRTrimAudit>;
-	    getItemAsync(itemId: string, version?: number, ignoreErrors?: boolean, noHistory?: boolean): JQueryDeferred<IItem>;
-	    getNeedlesAsync(searchExpr: string, up: boolean, down: boolean, fields: string, labels: boolean, ignoreFilters?: boolean): JQueryDeferred<IItem[]>;
-	    getItemProjectAsync(project: string, itemId: string, ignoreErrors?: boolean): JQueryDeferred<IItem>;
-	    getProjectItemAsync(project: string, itemId: string, version?: number, includeHistory?: boolean): JQueryDeferred<IItem>;
-	    getProjectCatFields(project: string): JQueryDeferred<XRCategoryExtendedType[]>;
-	    getItemFromTree(itemId: string): IDB;
-	    getChildrenIds(parentId: string): string[];
-	    getChildrenIdsRec(itemId: string): string[];
-	    getParentId(itemId: string): string;
-	    getCategoryBreadcrumbs(category: string): string[];
-	    getBreadcrumbs(itemId: string): string[];
-	    setStyle(itemIds: string[], style: string, computeFolder: number): void;
-	    getRootOfType(category: string): string;
-	    startReportAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<{}>;
-	    canLaunchReport(): JQueryDeferred<boolean>;
-	    startCreateDocumentAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<XRPostProject_LaunchReport_CreateReportJobAck>;
-	    getReportDetails(jobId: number): JQueryDeferred<XRGetProject_JobStatus_JobsStatusWithUrl>;
-	    compareHTML(compareParams: XCPostCompareHtml): JQueryDeferred<XRPostProject_CompareHtml_HtmlCompareResult>;
-	    isFolder(itemId: string): boolean;
-	    getItemTitle(itemId: string, display?: boolean): string;
-	    download(jobId: number, file: number, param?: string[]): void;
-	    downloadFromUrl(url: string, param?: IStringMap): void;
-	    downloadInMemory(jobId: number, file: string, dataType?: string): JQueryDeferred<string>;
-	    downloadInMemoryFromUrl(url: string): JQueryDeferred<string>;
-	    searchAsync(term: string, filter?: string, ignoreFilters?: boolean, fieldList?: string, crossProject?: string, labels?: boolean, down?: boolean, up?: boolean, treeOrder?: boolean): JQueryDeferred<ISearchResult[]>;
-	    searchAsyncMinimalOutput(term: string, filter?: string, ignoreFilters?: boolean, crossProject?: string): JQueryDeferred<string[]>;
-	    updateItemInDBAsync(itemJson: IItemPut, auditAction: string, requireVersion?: number): JQueryDeferred<IItemGet>;
-	    getItemFromDBAsync(itemId: string): Promise<IItem>;
-	    getFieldFromDBAsync(itemId: string, fieldName: string): Promise<any>;
-	    setFieldInDBAsync(itemId: string, fieldName: string, value: string): Promise<any>;
-	    setFieldsInDBAsync(itemId: string, data: ISetField[]): Promise<any>;
-	    createItemOfTypeAsync(category: string, itemJson: IItemPut, actions: string, parentId: string, dontFailOnCleanup?: boolean): JQueryDeferred<IDBParent>;
-	    restoreItemAsync(itemId: string, title: string, version: number): JQueryDeferred<IRestoreItemResult>;
-	    deleteItem(itemId: string): JQueryDeferred<{}>;
-	    uploadFileProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<{}>;
-	    fetchFileAsync(url: string, progress: (p: IFileUploadProgress) => void): JQueryDeferred<XRPostProject_AddFile_AddFileAck>;
-	    resizeItem(force?: boolean): void;
-	    itemChanged(needsSave: boolean): void;
-	    updateItem(newItem: IItem): void;
-	    setFieldValue(fieldId: number, newValue: string): void;
-	    getFieldValue(fieldId: number): any;
-	    getCurrentTitle(): string;
-	    addDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
-	    removeDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
-	    setSettingJSON(key: string, valueJSON: {}): JQueryDeferred<{}>;
-	    readSettingJSONAsync(key: string, otherProject?: string, noRetry?: boolean): JQueryDeferred<{}>;
-	    setSettingCustomerJSON(key: string, valueJSON: {}): JQueryDeferred<unknown>;
-	    readSettingCustomerJSONAsync(key: string): JQueryDeferred<{}>;
-	    getMissingUpLinks(item: IItem): string[];
-	    isUpLinkMissing(item: IItem): boolean;
-	    getMissingDownLinks(item: IItem): string[];
-	    getLinkCategories(item: IItem, ctrlParameter: ILinkCollectionOptions): ILinkCategories[];
-	    isDownLinkMissing(item: IItem): boolean;
-	    isAnyLinkOutdated(item: IItem): boolean;
-	    hasLinks(item: IItem): boolean;
-	    isHiddenLink(itemId: string): {};
-	    setHiddenLink(itemId: string, hidden: number): void;
-	    saveAsync(sendUnEdit: boolean): JQueryDeferred<{}>;
-	    forceReadonly(itemId: string): void;
-	    cancel(): void;
-	    someOneElseChanged(): void;
-	    someOneIsChangingTheItem(): void;
-	    waitForEditRights(): void;
-	    someOneElseIsChanging(watcherInfo: IItemWatched): void;
-	    someOneElseWasChanging(watcherInfo: IItemWatched): void;
-	    someOneElseStoppedEditing(watcherInfo: IItemWatched, previousWatcherInfo: IItemWatched): void;
-	    updateItemViewers(watcherInfo: IItemWatched): void;
-	    getVersion(): string;
-	    getVersionQualifier(): string;
-	    getNeedsSave(): boolean;
-	    getType(itemId: string): string;
-	    getAvailableReportsAsync(): JQueryDeferred<XRGetProject_Reports_GetReportsAck>;
-	    getDeletedItemsAsync(insertInList: (item: IVersionDetails) => void, progress: (p: number) => void, deleteLog?: IVersionDetails[], startAt?: number): JQueryDeferred<{}>;
-	    getActivityAsync(insertInList: (item: IVersionDetails, first?: number, last?: number, referenceChange?: IReferenceUpdate) => void, startAt?: number, count?: number, auditIdMin?: number, auditIdMax?: number): JQueryDeferred<number>;
-	    canNavigateAwayAsync(): JQueryDeferred<{}>;
-	    treeSelectionChangeAsync(newItemId: string): JQueryDeferred<{}>;
-	    moveItemsAsync(itemIds: string, newFolder: string, newPosition?: number, useComment?: string): JQueryDeferred<{}>;
-	    updateMaxVersion(itemId: string): JQueryDeferred<{}>;
-	    removedFromTree(itemId: string, parentId: string): void;
-	    insertInTree(newItem: IDBParent): void;
-	    copyFrom(target: string, source: IDB): void;
-	    updateCache(newItem: IUpdateCache): void;
-	    createItemUrl(itemId?: string, crossProject?: string): string;
-	    renderItem(cachedItem?: IItem): void;
-	    print(): void;
-	    touchAsync(itemOrFolderId: string, depth: number): JQueryDeferred<string>;
-	    setLabels(newLabels: IItemGet): JQueryDeferred<{}>;
-	    needsSave(): boolean;
-	    signItemAsync(itemId: string, password: string, meaning?: string): JQueryDeferred<XRPostProject_SignItem_SignItemAck>;
-	    checkPassword(password: string): JQueryDeferred<IRestResult>;
-	    convertDocAsync(fileNo: number, targetDocumentFolder?: string, useOriginal?: boolean): JQueryDeferred<string>;
-	    pingCurrentItem(): void;
-	    getCurrentItemId(): string;
-	    commitChangeListAsync(changeList: IReferenceChange[]): JQueryDeferred<{}>;
-	    isMedical(strict?: boolean): boolean;
-	    commentRequired(): boolean;
-	    touchToolAvailable(item: IItem): boolean;
-	    auditTrailAvailable(): boolean;
-	    mailToolAvailable(): boolean;
-	    postLogin(user: string): void;
-	    canDeleteItem(item: IItem): boolean;
-	    canViewItem(item: IItem): boolean;
-	    canEditItem(item: IItem): boolean;
-	    canCreateItemType(category: string, folder?: boolean): boolean;
-	    canDragDrop(category: string, id: string): boolean;
-	    canSeeField(category: string, field: number): boolean;
-	    canEditField(category: string, field: number): boolean;
-	    evaluateTraceRule(item: IItem, checkDownRule: boolean): ITraceRules;
-	    dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
-	}
-	export interface IBaseApp {
-	    getParentId(itemId: string): string;
-	    itemChanged(needsSave: boolean): void;
-	    getVersion(): string;
-	    getVersionQualifier(): string;
-	    getNeedsSave(): boolean;
-	    getCurrentItemId(): string;
-	    pingCurrentItem(): void;
-	    canDragDrop(nodeType: string, pageId: string): boolean;
-	    dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
-	    getTree(subtreeFilter?: string[]): IDB[];
-	    pingCurrentItem(): void;
-	    itemForm: JQuery;
-	    printForm: JQuery;
-	    dlgForm: JQuery;
-	    postLogin(user: string): void;
-	    isConfigApp(): boolean;
-	}
-	//# sourceMappingURL=MatrixLibInterfaces.d.ts.map
 
 	export interface XCGetAllUsers extends IRestParam {
 	    details: any;
@@ -4753,152 +1619,1146 @@ declare module matrixApi
 	export type XRDeleteGroup_deleteUserFromGroup = string;
 	//# sourceMappingURL=RestResult.d.ts.map
 
-	interface IDashboard {
-	    displayString: string;
-	    icon?: string;
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDeletedProjects {
+	    deleted: string[];
 	}
-	interface IDashboardConfig {
-	    dashboards: {
-	        [key: string]: IDashboard;
+	interface IWorkflowConfig {
+	    enabled?: boolean;
+	    defaultProjectId?: string;
+	    defaultTypeId?: string;
+	    projectsAndTypes?: IWorkflowConfigProjectsAndTypes[];
+	    one2one?: IWorkflowConfigOne2One;
+	    states?: IWorkflowConfigStates[];
+	    pluginId: number;
+	}
+	interface IWorkflowConfigOne2One {
+	    projectId: string;
+	    typeId: string;
+	}
+	interface IWorkflowConfigProjectsAndTypes {
+	    key: string;
+	    id: string;
+	    issueTypes: IWorkflowConfigIssueType[];
+	    name: string;
+	}
+	interface IWorkflowConfigIssueType {
+	    id: string;
+	    name: string;
+	    icon?: string;
+	    quickIssue?: boolean;
+	}
+	interface IWorkflowConfigStates {
+	    projectId: string;
+	    typeId: string;
+	    states: IWorkflowConfigStateDetails[];
+	}
+	interface IWorkflowConfigStateDetails {
+	    name: string;
+	    color: string;
+	    background: string;
+	    done: boolean | string;
+	}
+	interface IWorkflowConfigJira extends IWorkflowConfig {
+	    hideCreateJiraSimpleIssue?: boolean;
+	    hideCreateJiraNativeIssue?: boolean;
+	    requireCommitTicket?: boolean;
+	    addJIRAComment?: boolean;
+	}
+	interface IWorkflowConfigZoho extends IWorkflowConfig {
+	    zohoBaseUrl?: string;
+	}
+	interface IWorkflowConfigIssueTypesZoho extends IWorkflowConfigIssueType {
+	    prefix: string;
+	    details?: string;
+	}
+	interface ITraceConfig {
+	    rules: ITraceConfigDetails[];
+	}
+	interface ITraceConfigDetails {
+	    category: string;
+	    creates_end: string | boolean;
+	    end_point?: string;
+	    reporting: string[];
+	    up_rules: ITraceConfigRule[];
+	    down_rules: ITraceConfigRule[];
+	}
+	interface ITraceConfigRule {
+	    message: string;
+	    name: string;
+	    rule: TTraceRule;
+	    any_of: string[];
+	}
+	type TTraceRule = "can_have" | "must_have";
+	enum EnumItemPublish {
+	    IfNotInGroup = 0,
+	    Always = 1,
+	    Never = 2
+	}
+	interface IQMSConfig {
+	    /** there's only one publication in the array supported */
+	    publications: IPublication[];
+	    rolesTargetProjects?: string[];
+	    affectedByField?: string;
+	    responsibleForField?: string;
+	    training?: ITraining;
+	    /** Experimental: comma separated list of labels to show in published site -> if they are set */
+	    showLabels?: string;
+	    /** obsolete */
+	    legacyRoles: boolean;
+	}
+	interface ITraining {
+	    messages?: ITrainingMessages;
+	}
+	interface ITrainingMessages {
+	    trainingSub?: string;
+	    trainingText?: string;
+	    overdueSub?: string;
+	    overdueText?: string;
+	}
+	interface IPublication {
+	    /** information for each publishable category */
+	    rules: IPublicationCategory[];
+	    /** needs to be PUB right now */
+	    toCategory: string;
+	    /** needs to be pub right now */
+	    target: string;
+	    /** comma separated list of users who can publish */
+	    publisher: string;
+	    /** beta: userMode: default 0 - select the logged in user, 1 no user pre selected, 2: hide all other users , 3: hide all other users (Strict mode) */
+	    userMode?: number;
+	    /** obsolete */
+	    keepFlatList: boolean;
+	}
+	interface IPublicationCategory {
+	    /** the category for which the rule applies  */
+	    category: string;
+	    /** a list of labels which must be set to be able to publish (approved labels)*/
+	    readyLabels: string[];
+	    /** how individual items can be published:  0 - only if they are not in a group, 1 - independently of groups, 2 - only as part of a group*/
+	    itemRules: EnumItemPublish;
+	    /** name of the group, displayed in the UI as heading in the navigation of the live qms */
+	    groupName?: string;
+	    /** identification of labels which define the group (groupType setting in labels)  */
+	    groupLabelType?: string;
+	    /** if a PROC should only be published with its WI,s the group down would be WI*/
+	    groupDown?: string[];
+	}
+	interface IPublicationCategoryGroup {
+	    category: string;
+	    groupName: string;
+	    groupLabelType: string;
+	}
+	const qmsDefaultConfig: IQMSConfig;
+	interface IPublishLegacy {
+	    publisher: string;
+	}
+	interface ILabelsConfig {
+	    /** basic label definitions */
+	    labels: ILabel[];
+	    /** grouping of labels to or, xor or review groups */
+	    groups: ILabelGroup[];
+	    /** array of the design review labels */
+	    design_reviews?: IDesignReview[];
+	    /** allows to change the background color of the top bar if a filter is selected */
+	    filterBackgroundColor?: string;
+	    /** if set to true, the filters are shown in a drop down menu (each group needs to be added as well)*/
+	    useFilterMenu?: boolean;
+	    /** beta: when looking at an item, it shows the labels underneath the item if set to true - this allows for more items.. */
+	    useLabelBar?: boolean;
+	    /** invert groups in items (this will make groups show in the wrong order... as it was in 2.2 and before) */
+	    invertGroups?: boolean;
+	}
+	interface ILabelStyle {
+	    label: {
+	        on: {
+	            foreground: string;
+	            background: string;
+	            icon?: string;
+	            displayName: string;
+	            tooltip?: string;
+	        };
+	        off: {
+	            foreground: string;
+	            background: string;
+	            icon?: string;
+	            displayName: string;
+	            tooltip?: string;
+	        };
+	    };
+	    filter: {
+	        on: {
+	            foreground: string;
+	            background: string;
+	            icon?: string;
+	            displayName: string;
+	            tooltip?: string;
+	        };
+	        off: {
+	            foreground: string;
+	            background: string;
+	            icon?: string;
+	            displayName: string;
+	            tooltip?: string;
+	        };
 	    };
 	}
-	class WidgetPluginsConstants {
-	    static defaultDashboardId: string;
-	    static defaultDashboard: IDashboard;
+	interface ILabel {
+	    label: string;
+	    categories: string[];
+	    editors?: string[];
+	    reportName: string;
+	    reportHide?: string;
+	    default?: boolean | string;
+	    defaultAsk?: boolean;
+	    style: ILabelStyle;
+	    isSelected?: boolean;
+	    isNegative?: boolean;
+	    askForComment?: boolean;
+	    displayName?: string;
+	    toolTipFilterOn?: string;
+	    color?: string;
+	    template?: ILabelTemplate;
+	    dontCopy?: boolean;
 	}
-	interface IWidgetPluginsContainer {
-	    visible: boolean;
-	    previousUrl: string;
-	    toggle(): any;
-	    addNewWidget(): any;
-	    render(dashboardId: string): any;
-	    loadServerSettingWidgets(loadAllUser: boolean): any;
-	    exit(destination: string): any;
-	    hideWidget(id: string): any;
-	    unhide(id: string): any;
-	    deleteWidget(displayedWidget: IDisplayedWidget): any;
-	    showUpdateShowHiddenButton(): any;
+	interface ILabelInstance extends ILabel {
+	    btn: JQuery;
 	}
-	class WidgetPluginsContainer implements IWidgetPluginsContainer {
-	    visible: boolean;
-	    private currentDashboard;
-	    previousUrl: string;
-	    toggle(): void;
-	    private _root;
-	    constructor();
-	    addNewWidget(): void;
-	    private grid;
-	    render(dashboardId?: string): void;
-	    loadServerSettingWidgets(loadAllUser?: boolean): void;
-	    exit(destination: string): void;
-	    hideWidget(id: string): void;
-	    unhide(id: string): void;
-	    deleteWidget(displayedWidget: IDisplayedWidget): void;
-	    showUpdateShowHiddenButton(): void;
+	interface ILabelTemplate {
+	    id: number;
+	    name: string;
+	    key: string;
 	}
-	//# sourceMappingURL=WidgetPluginsContainer.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ILineEditorLine {
-	    id?: string;
-	    key?: number;
-	    help: string;
-	    explanation?: string;
-	    value: string;
+	interface ILabelGroup {
+	    selection: string;
+	    labels: string[];
+	    filterMenu?: IFilterMenu;
+	    default?: string;
+	    defaultAsk?: boolean;
+	    noColor?: string;
+	    noName?: string;
+	    noIcon?: string;
+	    reset?: boolean;
+	    foreground?: string;
+	    background?: string;
+	    askForComment?: boolean;
+	    showComments?: boolean;
+	    tooltip?: string;
+	    reviewers?: string[];
+	    groupType?: string;
+	    labelDef?: ILabel[];
+	    filterSelection?: string;
+	    virtualGroup?: boolean;
+	}
+	interface IFilterMenu {
+	    displayName: string;
+	    on?: {
+	        foreground: string;
+	        background: string;
+	        icon?: string;
+	        displayName: string;
+	        tooltip?: string;
+	    };
+	    off?: {
+	        foreground: string;
+	        background: string;
+	        icon?: string;
+	        displayName: string;
+	        tooltip?: string;
+	    };
+	}
+	interface IDesignReview {
+	    /** id of label (no spaces, special characters) */
+	    label: string;
+	    /** define who can approve the review. Empty array -> everybody.  */
+	    reviewers?: string[];
+	    /** beta: allow to specify the name of a field from which to take possible approvers. If set it has precedence over reviewers */
+	    reviewerField?: string;
+	    /** set to true if labels should be reset if item is changed */
+	    reset: boolean;
+	    /** title of review  */
+	    reviewName: string;
+	    /** sub title */
+	    reviewHelp: string;
+	    /** list of questions, checkboxes, or a signature box */
+	    reviewDetails: {
+	        name: string;
+	        help?: string;
+	        type?: string;
+	    }[];
+	    /**  can be set to rename comment field to something else than "Design Review Comment" */
+	    commentHeading?: string;
+	    /** can be used to set a group type (used internally e.g. to indicate a group is a design review for a Process) */
+	    groupType?: string;
+	    /** can be used to put the reviews' filter into the filter menu if enabled */
+	    filterMenu?: IFilterMenu;
+	    /** beta: allows to name a table field. If this exists, the revision need to increase when setting the label */
+	    revisionTableName?: string;
+	}
+	interface IMailConfig {
+	    canned?: IMailConfigCanned;
+	    defaultCC?: string[];
+	}
+	interface IMailConfigCanned {
+	    /**  replacement for please sign message (in SIGN page)*/
+	    please_sign?: string;
+	    /** replacement for look at item message (in tool menu)*/
+	    look_at?: string;
+	    /** replacement for training message (in SIGN page)*/
+	    training?: string;
+	    /** replacement for document released message (in SIGN page)*/
+	    release_note?: string;
+	    /** Generic replacement */
+	    [key: string]: string | undefined;
+	}
+	interface IMailConfigCustom {
+	    name: string;
+	    categories: string[];
+	    to: string[];
+	    subject: string;
+	    message: string;
+	}
+	interface ISearchConfig {
+	    searches: ISearchConfigSearch[];
+	    init?: IInitialSearches[];
+	}
+	interface ISearchConfigSearch {
+	    name: string;
+	    expr: string;
+	}
+	interface IInitialSearches {
+	    expr: string;
+	    style: string;
+	    computeFolder: number;
+	}
+	interface ILabelLockConfig {
+	    locks: ILabelLockConfigLocks[];
+	}
+	interface ILabelLockConfigLocks {
+	    label: string;
+	    lockKeeper: string[];
+	}
+	interface IRiskConfig {
+	    factors?: IRiskConfigFactor[];
+	    method?: IRiskConfigMethod;
+	    maxGreen?: number;
+	    maxYellow?: number;
+	    charts?: IRiskConfigZone[];
+	    rpns?: IRiskConfigRPN[];
+	    riskCategory?: string;
+	    riskCategories?: string[];
+	    mitigationTypes?: IRiskConfigMitgationType[];
+	    mitigationTable?: IRiskConfigMitgationTable;
+	    mitigationColDef?: IColDef;
+	    reductions?: IRiskConfigReduction[];
+	    postReduction?: IRiskPostReduction;
+	    rbm?: IRiskConfigRT;
+	    ram?: IRiskConfigRT;
+	    controls?: string;
+	    hazard_category?: string;
+	}
+	type IRiskConfigMethod = "+" | "*" | "lookup";
+	interface IRiskConfigRT {
+	    short: string;
+	    long: string;
+	    report: string;
+	    hidden?: boolean;
+	    colDef?: IColDef;
+	}
+	interface IRiskConfigMitgationType {
 	    type: string;
-	    options?: IDropdownOption[];
-	    multiple?: boolean;
-	    groups?: IDropdownGroup[];
-	    columns?: ITableControlOptionsColumn[];
-	    noEdit?: boolean;
+	    name: string;
+	}
+	interface IRiskConfigFactor {
+	    type: string;
+	    label: string;
+	    weights: IRiskConfigFactorWeight[];
+	    hideTextInput?: boolean;
 	    readonly?: boolean;
-	    hide?: boolean;
-	    required?: boolean;
-	    extraOptions?: IAnyMap;
+	    inputType?: IRiskConfigFactorInputType;
+	    options?: IRiskConfigFactorOption[];
+	    spancols?: boolean;
+	    colDef?: IColDef;
 	}
-	class LineEditorExt {
-	    constructor();
-	    showDialog(title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number, showUserAndGroupsSelectWithDialog?: (container: JQuery, showUsers: boolean, showGroups: boolean, help: string, empty: string, selected: string[], dialogTitle: string, onSelect: (selection: string[]) => void) => void): JQueryDeferred<any>;
-	    static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
-	    private setEnabled;
-	    private getValue;
-	    private isEnabled;
+	interface IColDef {
+	    width?: string;
+	    minWidth?: string;
+	    maxWidth?: string;
+	    rowSpan?: boolean;
 	}
-	//# sourceMappingURL=ILineEditor.d.ts.map
-
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ITableControlParams {
-	    readonly?: boolean;
-	    columns?: ITableControlOptionsColumn[];
-	    onDblClick?: Function;
-	    canBeModified?: boolean;
-	    create?: boolean;
-	    showLineNumbers?: boolean;
-	    maxRows?: number;
-	    fixRows?: number;
-	    readonly_allowfocus?: boolean;
-	    passFailEditorConfig?: any;
-	    readOnlyFields?: string[];
-	    limitEditRow?: string;
-	    manualTableHeights?: boolean;
-	    doNotRememberWidth?: boolean;
-	    onColumnsResized?: Function;
-	    cellAskEdit?: string;
-	    disableColumnReorder?: boolean;
-	    inlineHelp?: string;
-	    initialContent?: IStringMap[];
-	    autoUpdate?: string;
+	interface IRiskConfigMitgationTable {
+	    columns: IRiskConfigTablesColumn[];
 	}
-	interface ITableControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    dummyData?: any;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: ITableControlParams;
-	}
-	interface ITableControlOptionsColumn {
+	interface IRiskConfigTablesColumn {
 	    name: string;
 	    field: string;
-	    editor: string;
-	    options?: {
-	        [key: string]: string;
-	    } | IDropdownOption[];
-	    relativeWidth?: Number;
-	    headerCssClass?: string;
-	    cssClass?: string;
+	    editor: RiskTableCellEditor;
+	    options?: any;
 	}
-	interface ITableRow {
-	    idx: number;
-	    id: string;
+	type RiskTableCellEditor = "control" | "reduction";
+	type IRiskConfigFactorInputType = "text" | "select" | "textarea" | "richtext";
+	interface IRiskConfigFactorOption {
+	    value: string;
+	    label: string;
+	    changes: IRiskConfigSelectChanges[];
+	}
+	interface IRiskConfigSelectChanges {
+	    changesFactor?: string;
+	    changesWeight?: string;
+	    value: number | string;
+	}
+	interface IRiskConfigFactorWeight {
+	    type: string;
+	    help: boolean;
+	    label: string;
+	    readonly?: boolean;
+	    hidden?: boolean;
+	    values: IRiskConfigFactorWeightValue[];
+	    colDef?: IColDef;
+	}
+	interface IRiskConfigFactorWeightValue {
+	    shortname: string;
+	    help: string;
+	    factor: number;
+	}
+	interface IRiskConfigReduction {
 	    name: string;
+	    options: IRiskConfigReductionOptions[];
+	}
+	interface IRiskConfigReductionOptions {
+	    shortname: string;
+	    by: number;
+	    changes: string;
+	}
+	interface IRiskConfigZone {
+	    zone?: string;
+	    foreground?: string;
+	    background?: string;
+	    textColor?: string;
+	    label?: string;
+	}
+	interface IRiskConfigRPN {
+	    zone: string;
+	    text: string;
+	    [key: string]: string | number;
+	}
+	interface IRiskPostReduction {
+	    weights: IRiskConfigFactorWeight[];
+	    help?: string;
+	}
+	interface ICascadingSelect {
+	    startGroupId: string;
+	    groups: ICascadingSelectGroup[];
+	}
+	interface ICascadingSelectGroup {
+	    groupId: string;
+	    type: "text" | "number" | "select";
+	    spec: ICascadingSelectText | ICascadingSelectNumber | ICascadingSelectSelect[];
+	}
+	interface ICascadingSelectNumber {
+	    counter: string;
+	    format: string;
+	    nextGroupId: string;
+	}
+	interface ICascadingSelectSelect {
+	    text: string;
+	    help?: string;
+	    nextGroupId: string;
+	}
+	interface ICascadingSelectText {
+	    text: string;
+	    nextGroupId: string;
+	}
+	interface IDHFConfig {
+	    /** if set to true the created PDFs won't be locked */
+	    doNotLockPDF?: boolean;
+	    /** default formats for different report types */
+	    defaultFormats?: IDHFConfigDefaultFormats;
+	    /** table configuration for audit trail table */
+	    audittrail?: IDHFConfigTable;
+	    /** table configuration for signature table*/
+	    signatures?: IDHFConfigTable;
+	    /** table configuration for responsibilities table */
+	    responsibilities?: IDHFConfigTable;
+	    /** list with predefined document sections when creating new DOC items */
+	    controlledDocs?: IDHFConfigStandardDocs;
+	    /** can be used to define custom table columns (e.g. dropdowns) */
+	    customColumns?: IDHFConfigCustomColumn[];
+	    /** allows to specify an alternative for "Ready to Sign / Release" button*/
+	    archiveButtonName?: string;
+	    /** if set to true a warning will be shown if there's a missing signature */
+	    warnMissingSign?: boolean;
+	    /** possibility to overwrite options in signature meaning column */
+	    signatureMeanings?: IStringMap;
+	    /**  beta: if true a user can reject instead of signing. the reject comment will be stored and showed, other cannot sign anymore */
+	    canReject?: boolean;
+	    /**  beta:  if canReject is true and this is true the user can reject without supplying a password */
+	    rejectWithoutPass?: boolean;
+	    /** beta: if canReject is true and this is true the user needs to supply special comment to reject */
+	    rejectNeedsComment?: boolean;
+	    /** beta: text shown in signature box if someone needs to sign something */
+	    signatureHint?: string;
+	    /** beta: list of users who can change name of person who needs to sign */
+	    proxyRights?: string[];
+	    /** beta: a list of options to what user is signing for ["i release", "i confirm correct","I don't know"], */
+	    signedMeaning?: string[];
+	    /** beta: removes not needed notifications and adds new ones when changing signatures proxies */
+	    fixNotifications?: boolean;
+	    /** beta: 0 leave original sign info. 1 replace name and title when changing signature proxies */
+	    proxySignTableUpdate?: number;
+	    /** beta: set to true show a column with sign meaning in SIGN */
+	    showOriginalSignMeaning?: boolean;
+	    /** obsolete */
+	    hideFileFormats?: IDHFConfigHideFormat[];
+	    /** obsolete */
+	    customTables?: IDHFConfigCustomTable[];
+	    /** obsolete  */
+	    customReports?: IDHFConfigCustomReports;
+	    /**  obsolete */
+	    categories?: IDHFCategories;
+	    /**  obsolete */
+	    captions?: ICaptions;
+	    /**  obsolete */
+	    renderInTree?: string[];
+	    /** obsolete */
+	    toolFolderName?: string;
+	    /** obsolete */
+	    functionDefaults?: IPrintFunctionParamsOverwrites;
+	}
+	interface ICaptions {
+	    figure?: ICaption;
+	    table?: ICaption;
+	}
+	interface ICaption {
+	    preNo: string;
+	    postNo: string;
+	}
+	interface IDHFCategories {
+	    documentTypes: string[];
+	    documentForms: string[];
+	    documentSigned: string[];
+	    documentTemplates: string[];
+	    signAs: string;
+	}
+	interface IDHFConfigCustomReports {
+	    group: string;
+	}
+	interface IDHFConfigDefaultFormats {
+	    DOC: IDHFConfigDefaultFormatsOption;
+	    SIGN: IDHFConfigDefaultFormatsOption;
+	    REPORT: IDHFConfigDefaultFormatsOption;
+	    [map: string]: IDHFConfigDefaultFormatsOption;
+	}
+	type IDHFConfigDefaultFormatsOption = "docx" | "pdf" | "html";
+	interface IDHFConfigHideFormat {
+	    category: string;
+	    format: IDHFConfigDefaultFormatsOption;
+	}
+	interface IDHFConfigCustomColumn {
+	    type: string;
+	    options: IDropdownOption[] | any;
+	    name: string;
+	    editor?: string;
+	}
+	interface IDHFConfigTable {
+	    columns: IDHFConfigTableColumn[];
+	}
+	interface IDHFConfigTableColumn {
+	    name: string;
+	    field: string;
+	    columnType: IDHFConfigTableColumnType;
+	    pos: number;
+	    editor?: TableCellEditor;
+	    options?: IDropdownOption[];
+	}
+	type IDHFConfigTableColumnType = "type0" | "type1" | "type2" | "type3" | "type4" | "type5" | "type6" | "type7" | "type8" | "type9" | "type10" | "type11" | "type12" | "type13" | "type14";
+	interface IDHFConfigCustomTable {
+	    name: string;
+	    id: string;
+	}
+	interface IDHFConfigStandardDocs {
+	    [key: string]: IDHFConfigStandardDocsDef;
+	}
+	interface IDHFConfigStandardDocsDef {
+	    fields: IDHFConfigStandardDocsSection[];
+	}
+	interface IDHFConfigStandardDocsSection {
+	    [key: string]: string;
+	}
+	interface IContextPageConfig {
+	    categoryHelp?: IContextPageConfigHelp;
+	    itemHelp?: IContextPageConfigHelp;
+	    tabs?: IContextPageConfigTab[];
+	}
+	interface IContextPageConfigHelp {
+	    [key: string]: string;
+	}
+	interface IContextPageConfigTab {
+	    title: string;
+	    type: ContextPageConfigTabOption;
+	    tabId?: string;
+	    hipchat?: boolean;
+	    baseURL?: string;
+	}
+	type ContextPageConfigTabOption = "help" | "support" | "faq" | "references" | "smartlinks" | "iframe" | "iframeget" | "upreferences" | "downreferences" | "foldercontent" | "trainings";
+	interface ITestConfig {
+	    xtcType: string;
+	    cloneSources: string[];
+	    presetFields: ITestConfigPresetField[];
+	    render: ITestConfigTables;
+	    defaultTestResultResult: string;
+	    automatic: ITestRuleAuto[];
+	    manual: ITestRuleManual[];
+	    perStep: ITestRuleStep[];
+	    reExecute?: string;
+	    autoFillTester?: string;
+	}
+	interface ITestConfigPresetField {
+	    field: string;
+	    value: string;
+	}
+	interface ITestConfigTables {
+	    [key: string]: ITestConfigTablesColumns;
+	}
+	interface ITestConfigTablesColumns {
+	    columns: ITestConfigTablesColumn[];
+	}
+	interface ITestConfigTablesColumn {
+	    name: string;
+	    field: string;
+	    editor: TableCellEditor;
+	    options?: IDropdownOption[] | any;
+	}
+	type TableCellEditor = "text" | "none" | "textline" | "design" | "uprules" | "downrules" | "rules" | "result" | "user" | "versionletter" | "date" | "select";
+	interface ITestRule {
+	    human: string;
+	    code: string;
+	    render: TestResultType;
+	}
+	interface ITestRuleAuto extends ITestRule {
+	    rule: TestResultRule;
+	    param: string;
+	}
+	interface ITestRuleManual extends ITestRule {
+	    command: string;
+	}
+	interface ITestRuleStep extends ITestRuleManual {
+	    key: string;
+	    image: string;
+	}
+	type TestResultType = "ok" | "error" | "warning";
+	type TestResultRule = "all" | "one" | "";
+	interface ICategorySetting {
+	}
+	interface ICategorySettingTitle extends ICategorySetting {
+	    create?: string;
+	    placeholder?: string;
+	}
+	interface ICategorySettingTextIcon extends ICategorySetting {
+	    color?: string;
+	    text?: string;
+	}
+	interface ICategorySettingTabs extends ICategorySetting {
+	    tabs: ICategorySettingTab[];
+	}
+	interface ICategorySettingTab {
+	    id?: string;
+	    name: string;
+	    fields: string[];
+	}
+	interface ICategoryGroups {
+	    groups: ICategoryGroup[];
+	}
+	interface ICategoryGroup {
+	    categories: string[];
+	    text: string;
+	    name: string;
+	    color: string;
+	    position?: number;
+	    helpPage?: string;
+	}
+	const ACL_SETTING: string;
+	interface IACL {
+	    rules: IACLRules[];
+	}
+	interface IACLRules {
+	    name: string;
+	    groups: string[];
+	    acl: IACLGroupsAcl[];
+	}
+	interface IACLGroupsAcl {
+	    category: string;
+	    fields?: string[];
+	    rights: string[];
+	}
+	interface IFieldParameter {
+	    [key: string]: any;
+	    /** if set to true, the control will not be editable by the user */
+	    readonly?: boolean;
+	    /** if set to true the field will not be shown in reports */
+	    hide_report?: boolean;
+	    /** if set to true the field will not be shown in documents */
+	    hide_document?: boolean;
+	    /** if set to true the field will not be shown in published (QMS) */
+	    hide_publication?: boolean;
+	    hide_UI?: boolean;
+	    /** set to 1 to not clean the field values */
+	    unsafeHtml?: number;
+	    /** this can be set to point to a an external website which is openend when user clicks on a link, e.g.
+	     * "externalHelp":"matrix.com". Note this must be a website which is accesible through https://url */
+	    externalHelp?: string;
+	    /** this can be set to show help as a tooltip, e.g. "popupHelp":"enter a short description" */
+	    popupHelp?: string;
+	    /** this can be set to render a help line underneath the "heading":"enter a long description" */
+	    inlineHelp?: string;
+	    /** for folder category */
+	    visibleOption?: string;
+	    /** for SIGN category
+	     * if set to true, the field is not visible (only makes sense with the above flag)
+	     */
+	    invisible?: boolean;
+	    /** this allows to copy fields from underlying DOC into the SIGN item.
+	     * Note: Fields are copied only if this is set to true and the labels (names) of the field is the same in the
+	     * DOC and the SIGN */
+	    copyfromdoc?: boolean;
+	    /** legacy options */
+	    adminVisibility?: boolean;
+	    /** legacy options */
+	    requiresContent?: boolean;
+	}
+	interface IDropDownConfig {
+	    fieldMeaning?: string;
+	    placeholder?: string;
+	    options: IDropdownOption[];
+	    groups?: IDropdownGroup[];
+	}
+	interface IDropdownGroup {
+	    value: string;
+	    label: string;
+	}
+	interface IDropdownOption {
+	    id: string;
+	    label: string;
+	    class?: string;
+	    disabled?: boolean;
+	    strikethrough?: boolean;
+	}
+	interface IAutoFillSetting {
+	    allowAutoFill: boolean;
+	    allowLoginAutoFill: boolean;
+	    allowDocSignAutoFill: boolean;
+	    allowLabelSignAutoFill: boolean;
+	    allowGateAutoFill: boolean;
+	    allowPublishAutoFill: boolean;
+	}
+	interface ISmartTextConfig {
+	    replacements?: ISmartTextConfigReplacement[];
+	}
+	interface ISmartTextConfigReplacement {
+	    /** id of the macro: needs to be simple combination of letters and digits */
+	    what: string;
+	    /** the text to display */
+	    with: string;
+	    /** value from 1 to 4: 1=plain text 2=rich text 3=term 4=abbreviation */
+	    tagType: number;
+	    /**  additional explanation for terms*/
+	    description?: string;
+	    /** set to true to ask user to review before creating document */
+	    warn: boolean;
+	    /** date/time of creation */
+	    when: string;
+	    /** internal: not to be used */
+	    projectSetting?: boolean;
+	    /** legacy: now handled by tagType */
+	    plain?: boolean;
+	    /**  Include this term/abv in the List of Terms and abbreviation doc section when not surrounded with _ */
+	    tableNoUnderscore?: boolean;
+	}
+	interface IProjectLogo {
+	    fileId: string;
+	}
+	interface IExtras {
+	    tableCanImport: boolean | string;
+	    copyPaste: boolean | string;
+	    moveIn: boolean | string;
+	    excelImport: boolean | string;
+	    deepTouch: boolean | string;
+	    noTouch: boolean | string;
+	    setLabel: boolean | string;
+	    compareX: boolean | string;
+	    compareInsideX: boolean | string;
+	    indexer: boolean;
+	    cleanup: boolean | string;
+	    defaultToNewEditor: boolean | string;
+	    enableLegacyReport?: "0" | "1" | "2";
+	}
+	interface IEmbeddedReport {
+	    reportId: string;
+	}
+	interface IProjectGroups {
+	    groups: IProjectGroup[];
+	}
+	interface IProjectGroup {
+	    name: string;
+	    projects: string[];
+	}
+	interface IFieldCapabilities {
+	    onlyOne?: boolean;
+	    canBePublished: boolean;
+	    canBeReadonly: boolean;
+	    canHideInDoc: boolean;
+	    canBeXtcPreset: boolean;
+	    canRequireContent?: boolean;
+	    canBeUsedInDocs?: boolean;
+	    validationFunction?: JsonEditorValidation;
+	    schema?: string;
+	    needsConfiguration?: boolean;
+	    canBeUnsafe?: boolean;
+	}
+	interface IFieldDescription {
+	    id: string;
+	    label: string;
+	    class: string;
+	    help: string;
+	    capabilities: IFieldCapabilities;
+	}
+	interface INotificationConfig {
+	    enabled: boolean;
+	    closeAuto: boolean;
+	    manualCreate: boolean;
+	    browserNotificationDisabled?: boolean;
+	    browserNotificationAutoCloseAfter?: number;
+	}
+	let notificationSetting: string;
+	let defaultNotificationConfig: INotificationConfig;
+	/** allow to set cell in table column if another dropdown cell in same row changes*/
+	interface IAutoColumn {
+	    /** a list of mappings (which cell is updated upon change of which cell) */
+	    maps: IAutoColumnMap[];
+	}
+	interface IAutoColumnMap {
+	    /** name of cell which triggers change */
+	    dropdownColumnName: string;
+	    /** name of cell which is updated  */
+	    textColumnName: string;
+	    /** mapping from selected to set value */
+	    mapping: IAutoColumnMapping[];
+	}
+	interface IAutoColumnMapping {
+	    /** selected value */
+	    dropdownValue: string;
+	    /** set value */
+	    textValue: string;
+	}
+	let autoColumnSetting: string;
+	let autoColumnDefault: IAutoColumn;
+	interface ICleanup {
+	    "cleanup": boolean;
+	    "tags": string[];
+	    "attributes": IStringStringArrayMap;
+	    "enforcedAttributes": IStringStringArrayMap;
+	    "protocolAttributes": ICleanupProtocol[];
+	}
+	interface ICleanupProtocol {
+	    "element": string;
+	    "attribute": string;
+	    "protocols": string[];
+	}
+	//# sourceMappingURL=ProjectSettings.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ISingleSelectOptions extends IDHFSectionOptions {
+	    search?: string;
+	}
+	interface IDoubleSelectOptions extends IDHFSectionOptions {
+	    searchFrom?: string;
+	    searchTo?: string;
+	}
+	interface ISingleDefaultControllerConfig {
+	    default: ISingleSelectOptions;
+	}
+	interface IDoubleDefaultControllerConfig {
+	    default: ISingleSelectOptions;
+	}
+	abstract class SingleSelectBase implements IDHFSection {
+	    protected abstract config: ISingleDefaultControllerConfig;
+	    abstract renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
+	    abstract updateXmlValue(ctrl: IDHFControlDefinition): void;
+	    getConfig(ctrl: IDHFControlDefinition): ISingleSelectOptions;
+	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
+	    abstract showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
+	    protected addSpecificSettings(controllerConfig: ISingleSelectOptions, custom: JQuery): void;
+	    abstract saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
+	    protected setSpecificSettings(controllerConfig: ISingleSelectOptions, custom: JQuery): boolean;
+	    hasSearch(ctrl: IDHFControlDefinition): boolean;
+	    executeSearch(ctrl: IDHFControlDefinition): void;
+	    verifySearch(ctrl: IDHFControlDefinition): void;
+	    verifyContent(ctrl: IDHFControlDefinition): void;
+	    protected removeSpaces(str: string): string;
+	}
+	abstract class DoubleSelectBase implements IDHFSection {
+	    protected abstract config: IDoubleDefaultControllerConfig;
+	    abstract renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
+	    abstract updateXmlValue(ctrl: IDHFControlDefinition): void;
+	    getConfig(ctrl: IDHFControlDefinition): IDoubleSelectOptions;
+	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
+	    abstract showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
+	    protected addSpecificSettings(controllerConfig: IDoubleSelectOptions, custom: JQuery): void;
+	    abstract saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
+	    protected setSpecificSettings(controllerConfig: IDoubleSelectOptions, custom: JQuery): boolean;
+	    hasSearch(ctrl: IDHFControlDefinition): boolean;
+	    executeSearch(ctrl: IDHFControlDefinition): void;
+	    verifySearch(ctrl: IDHFControlDefinition): void;
+	    verifyContent(ctrl: IDHFControlDefinition): void;
+	    protected removeSpaces(str: string): string;
+	}
+	//# sourceMappingURL=SingleSelectBase.d.ts.map
+
+	/**
+	 * This class maintains a list of searches to be executed in order to fill DOC sections.
+	 *
+	 * The searches are executed one after the other. This prevents the client from spamming
+	 * the server and allows the client to show progress.
+	 *
+	 */
+	export abstract class SelectSearchQueue {
+	    protected static verifySearchQueue: Function[];
+	    /** this function can be used if the user changes the selection in the tree to avoid unnecessary searches.
+	     *
+	     */
+	    static resetSearchQueue(): void;
+	    static launchTimer: number;
+	    /** adds a search to the queue.
+	     *
+	     * if there's no new search in the next 100ms, the searches are launched.
+	     * the idea is that the GUI is rendered completely before running the searches.
+	     * so that spinning wheels can indicate the needed action.
+	     */
+	    static addToSearchQueue(search: Function): void;
+	    static runSearches(): void;
+	}
+	//# sourceMappingURL=SelectSearchQueue.d.ts.map
+
+	/************************************************************************
+	 
+	Formatter deal with an array or a single item/folder/label/field and convert that to an "html" string
+	 There are 5 main different types of formatters:
+	 * sequential: print folders/items in a list by mixing html with macros
+	 * tables: print folders arrays in a tabular form by mixing html with macros
+	 * blocks: print something about an item/folder/label/field by mixing html with macros
+	 * traces: know how to iterate over traces
+	 * fields / labels: know how to iterate over fields or labels
+	 
+	 These are implemented as JSON objects or javascript functions
+	************************************************************************/
+	interface IPrintFormatter {
+	    /**
+	     * a unique id required for user defined id's if the uid is not unique it will overwrite the defaults
+	     */
+	    uid: string;
+	    /**
+	     * to display to user
+	     */
+	    name: string;
+	    /**
+	     * explains what the entity  is for
+	     */
+	    help: string;
+	    /**
+	     * indicates if an item was deleted
+	     */
+	    deleted?: boolean;
+	    /**
+	     * last modification date of print item
+	    */
+	    modDate?: string;
+	}
+	/** a top level formatter - this can be selected by the user  */
+	interface IPrintFormatterTop extends IPrintFormatter {
+	    /**
+	     * Items with this flag will be displayed in the Layouter dialog as
+	     * a selection option. Right now only for LIST and TABLE
+	     */
+	    topLevelTemplate?: boolean;
+	    /**
+	     * breadcrumbs (parent folders and item itself in PRINT project)
+	     */
+	    path: string;
+	}
+	/** a hierarchical structure */
+	interface IPrintFormatterTree extends IPrintFormatter {
+	    /** what to render for items */
+	    item: string;
+	    /** before parents nodes (e.g. <ul>)*/
+	    before: string;
+	    /** after parents nodes (e.g </ul>)*/
+	    after: string;
+	}
+	/** prints a hierarchy of folders and items as sequential list / tree */
+	interface IPrintFormatterList extends IPrintFormatterTree, IPrintFormatterTop {
+	    folder: string;
+	    hideFolder?: boolean;
+	}
+	/** prints recursively traces */
+	interface IPrintFormatterTraces extends IPrintFormatterTree {
+	    iterator: string;
+	    params: IPrintItemIteratorParams;
+	}
+	/** a conditional object structure */
+	interface IPrintFormatterBlock extends IPrintFormatter {
+	    /** what to render for items */
+	    render: string;
+	    /** condition evaluation function */
+	    condition: string;
+	    /** condition params */
+	    params: IPrintConditionParams;
+	}
+	/** template for rendering fields and labels  */
+	interface IPrintFormatterFields extends IPrintFormatter {
+	    /** what to render for items */
+	    render: string;
+	    /** iterator function */
+	    iterator: string;
+	    /** iterator params */
+	    params: IPrintConditionParams;
+	    /** render before fields/labels */
+	    before: string;
+	    /** render after fields/labels */
+	    after: string;
+	}
+	/** takes an array of items and folders as input an renders them as table with possibly some sub tables (one after the other) */
+	interface IPrintFormatterTable extends IPrintFormatterTree {
+	    iterator: string;
+	    params: IPrintItemIteratorParams;
+	    subTable: string;
+	    subTableFolder: string;
+	    before: string;
+	    after: string;
+	    renderFolderRow: IPrintTableRow;
+	    renderItemRow: IPrintTableRow;
+	}
+	/**  defines a sub table: e.g. if the main table shows REQs the sub table can define how to show TCs for each REQ*/
+	interface IPrintFormatterSubTable extends IPrintFormatter {
+	    iterator: string;
+	    params: IPrintItemIteratorParams;
+	    subTable: string;
+	    cells: IPrintSubTableCell[];
+	    tableRow?: Number;
+	}
+	interface IPrintFunctionMacro {
+	    renderFunction: string;
+	}
+	interface IPrintItemMacro {
+	    renderItem: string;
+	}
+	interface IPrintTableRow {
+	    before: string;
+	    after: string;
+	    cells: ITableTableCell[];
+	}
+	interface ITableTableCell {
+	    before: string;
+	    after: string;
+	    render?: string;
+	    merge?: boolean;
+	    fetchColumn?: number;
+	    fetchColumnAlt?: string;
+	    sortFunction?: string;
+	    sortPriority?: number;
+	}
+	interface IPrintSubTableCell {
+	    render: string;
+	    fetchColumn?: number;
+	    fetchColumnAlt?: string;
+	}
+	interface IPrintCustomFormatter {
+	    /**
+	     * The project on this instance that is used as the source
+	     * for the definitions. By default this is PRINT
+	     */
+	    source?: string;
+	    /**
+	     * Definition of LIST iterators
+	     */
+	    items: {
+	        [key: string]: IPrintFormatter;
+	    };
+	    /**
+	     * Overwrites for default function parameters
+	     */
+	    functionDefaults: IPrintFunctionParamsOverwrites;
+	}
+	interface IPrintFormatterMap {
+	    [key: string]: IPrintFormatter;
+	}
+	interface IPrintConditionParams {
+	    negate?: boolean;
+	}
+	//# sourceMappingURL=PrintFormatter.d.ts.map
+
+	/************************************************************************
+	 
+	Print Functions item/folder/label/field and convert that to an "html" string or boolean
+	  
+	 These are implemented as javascript functions
+	************************************************************************/
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IPrintFunctionMap {
+	    [key: string]: IPrintFunction;
+	}
+	interface IConditionFunctionMap {
+	    [key: string]: IConditionFunction;
+	}
+	interface IPrintBaseFunction {
+	    getName: () => string;
+	    getHelp: (hideDetails?: boolean) => string;
+	    editParams?: (json: {}, onUpdate: (newParams: {}) => void) => JQuery;
+	}
+	interface IPrintBaseFunctionMap {
+	    [key: string]: IPrintBaseFunction;
+	}
+	interface IPrintFunction extends IPrintBaseFunction {
+	    getGroup: () => string;
+	    getSubGroup?: () => string;
+	    render: (overwrites: IGlobalPrintFunctionParams, params: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void, printProcessor?: IPrintProcessor) => string;
+	}
+	interface IPrintFunctionParams {
+	}
+	interface IPrintFunctionParamsOverwrites {
+	    debug: number;
+	    [key: string]: IPrintFunctionParams;
+	}
+	interface IPrePostProcessor {
+	    processor: string;
 	    [key: string]: any;
 	}
-	interface MyData extends Slick.SlickData {
-	    options?: string[];
+	interface IGlobalPrintFunctionParams {
+	    outputFormat: string;
+	    customer: IPrintFunctionParamsOverwrites;
+	    project: IPrintFunctionParamsOverwrites;
+	    section: IPrintFunctionParamsOverwrites;
+	    tableRow?: number;
 	}
-	class TableControlImpl extends BaseControl {
-	    private settings;
-	    constructor(control: JQuery);
-	    init(options: ITableControlOptions): void;
-	    getValue(): string;
-	    hasChanged(): boolean;
-	    destroy(): void;
-	    resizeItem(): void;
-	    static checkConfig(json: ITableControlParams): Promise<string | null>;
+	interface IConditionFunction extends IPrintBaseFunction {
+	    itemOrFolder: boolean;
+	    evaluate: (overwrites: IGlobalPrintFunctionParams, params: {}, itemOrFolderRef: any, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => boolean;
 	}
-	//# sourceMappingURL=tableCtrl.d.ts.map
+	//# sourceMappingURL=PrintFunction.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -4906,592 +2766,97 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IWidgetDashboardSettings {
-	    enabled: boolean;
-	    displayedWidgets: IDisplayedWidget[];
+	/************************************************************************
+	 
+	Iterators return children of an item, items or folders in a folder, or field / label objects
+	 There are 3 main different types of formatters:
+	 * Item operators return item ids based on an reference item or folder
+	 * Label iterators return label objects for an item
+	 * Field iterators return field objects for an item or folder
+	  
+	 These are implemented as javascript functions
+	 
+	************************************************************************/
+	interface IPrintIteratorMap {
+	    [key: string]: IPrintIterator;
 	}
-	interface IDisplayedWidget {
-	    id: string;
-	    pluginName: string;
-	    parameters: IWidgetParameters;
-	    createdBy?: string;
+	interface IPrintItemIteratorParams {
+	    maxDepth?: number;
+	    sorting?: IPrintSortParams[];
 	}
-	enum widgetRenderEvent {
-	    load = 0,
-	    scroll = 1,
-	    click = 2
+	interface IPrintIterator extends IPrintBaseFunction {
+	    worksOnItem: boolean;
+	    worksOnFolder: boolean;
 	}
-	enum renderMode {
-	    placeholder = 0,
-	    minimized = 1,
-	    maximized = 2
+	interface IPrintItemIterator extends IPrintIterator {
+	    iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => string[];
+	    getValidation: () => JsonEditorValidation | null;
+	    folderIterator: boolean;
+	    traceIterator: boolean;
+	    tableRowIterator: boolean;
 	}
-	enum IWidgetScope {
-	    admin = 0,
-	    user = 1,
-	    superAdmin = 2
+	interface IPrintTracesIterator extends IPrintIterator {
+	    iterator: string;
+	    params: IPrintItemIteratorParams;
+	    iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => string[];
+	    getValidation: () => JsonEditorValidation | null;
 	}
-	interface IWidgetPosition {
-	    dashboard: string;
-	    w: number;
-	    h: number;
-	    x?: number;
-	    y?: number;
+	interface IPrintFieldIteratorParams {
 	}
-	interface IWidgetParameters {
-	    canBeAddedOrDeletedBy: IWidgetScope;
-	    position: IWidgetPosition;
-	    users?: string[];
-	    options: {
-	        title: string;
-	        canBeHidden: boolean;
-	        [key: string]: any;
-	    };
-	}
-	interface IWidgetPlugin {
-	    id: string;
-	    help: string;
-	    _root: JQuery;
-	    displayedWidget: IDisplayedWidget;
-	    pluginName(): string;
-	    defaultParameters(): IWidgetParameters;
-	    mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
-	    render(root: JQuery, displayedWidget: IDisplayedWidget): void;
-	    updatePosition(w: number, h: number, x: number, y: number): any;
-	    hide(showConfirm: boolean): any;
-	    unload?(): void;
-	    scrollIntoView?(): void;
-	    clicked?(): void;
-	    refresh?(): void;
-	}
-	class WidgetPluginManager {
-	    pluginList: {
-	        [key: string]: IWidgetPlugin;
-	    };
-	    loadedWidgets: {
-	        [key: string]: IWidgetPlugin;
-	    };
-	    constructor();
-	    registerPlugin(plugin: IWidgetPlugin): void;
-	    addLoadedWidget(key: string, widget: IWidgetPlugin): void;
-	    unLoadAllWidgets(): void;
-	    removeLoadedWidget(displayedWidget: IDisplayedWidget): void;
-	}
-	interface IGridStackWidget {
-	    /** widget position x (default?: 0) */
-	    x?: number;
-	    /** widget position y (default?: 0) */
-	    y?: number;
-	    /** widget dimension width (default?: 1) */
-	    w?: number;
-	    /** widget dimension height (default?: 1) */
-	    h?: number;
-	    /** if true then x, y parameters will be ignored and widget will be places on the first available position (default?: false) */
-	    autoPosition?: boolean;
-	    /** minimum width allowed during resize/creation (default?: undefined = un-constrained) */
-	    minW?: number;
-	    /** maximum width allowed during resize/creation (default?: undefined = un-constrained) */
-	    maxW?: number;
-	    /** minimum height allowed during resize/creation (default?: undefined = un-constrained) */
-	    minH?: number;
-	    /** maximum height allowed during resize/creation (default?: undefined = un-constrained) */
-	    maxH?: number;
-	    /** prevent resizing (default?: undefined = un-constrained) */
-	    noResize?: boolean;
-	    /** prevents moving (default?: undefined = un-constrained) */
-	    noMove?: boolean;
-	    /** prevents moving and resizing (default?: undefined = un-constrained) */
-	    locked?: boolean;
-	    /** widgets can have their own resize handles. For example 'e,w' will make the particular widget only resize east and west. */
-	    resizeHandles?: string;
-	    /** value for `gs-id` stored on the widget (default?: undefined) */
-	    id?: number | string;
-	    /** html to append inside as content */
-	    content?: string;
-	}
-	var widgetPluginManager: WidgetPluginManager;
-	//# sourceMappingURL=WidgetPluginManager.d.ts.map
-
-	/// <reference types="jquery" />
-	class WidgetSettingsManager {
-	    static getHiddenWidgets(): string[];
-	    static hide(widget: IDisplayedWidget): JQueryDeferred<any>;
-	    static unhide(displayedWidget: IDisplayedWidget): JQueryDeferred<any>;
-	    static updatePosition(widget: IDisplayedWidget): JQueryDeferred<any>;
-	    static setSettings(widget: IDisplayedWidget): JQueryDeferred<any>;
-	    static deleteDeleteWidgetSettings(widget: IDisplayedWidget): JQueryDeferred<any>;
-	    static canBeEdited(displayedWidget: IDisplayedWidget, configurator: ILineEditorLine[]): boolean;
-	    static canBeDeleted(displayedWidget: IDisplayedWidget): boolean;
-	}
-	//# sourceMappingURL=WidgetSettingsManager.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ILinkRenderParams {
-	    linkTypes?: ILinkCategories[];
-	    none?: string;
-	    disableCreate?: boolean;
-	    readonly?: boolean;
-	    reviewMode?: boolean;
-	    render?: {
-	        category?: string;
-	        hideLink?: boolean;
-	        buttonName?: string;
-	        hideCreate?: boolean;
-	        hideSelect?: boolean;
-	        ignoreOutOfDate?: boolean;
-	    }[];
-	}
-	interface ILinkCollectionOptions extends IBaseControlOptions {
-	    item?: any;
-	    fieldValue?: IReference[];
-	    parameter?: ILinkRenderParams;
-	    doNotSave?: boolean;
-	    mitigationRenderer?: Function;
-	    id?: string;
-	    tiny?: boolean;
-	}
-	interface ILinkCategories {
-	    name?: string;
-	    required?: boolean;
-	    type: string;
-	}
-	class LinkCollectionImpl extends BaseControl {
-	    private settings;
-	    private saveInDb;
-	    private itemReferences;
-	    private hideSelect;
-	    private ignoreOutOfDate;
-	    private showLinks;
-	    constructor(control: JQuery);
-	    init(options: ILinkCollectionOptions): void;
-	    refreshLinks(): void;
-	    hasChanged(): boolean;
-	    getValue(): any;
-	    setValue(newVal: IReference[]): void;
-	    resizeItem(): void;
-	    destroy(): void;
-	    updateItem(newItem: IItem): void;
-	    private deleteReference;
-	    private removeDeletedReference;
-	    private addReference;
-	    private selectionChange;
-	    private renderRefs;
-	}
-	//# sourceMappingURL=linkCollection.d.ts.map
-
-	enum refLinkStyle {
-	    edit = 1,
-	    link = 2,
-	    show = 3,
-	    select = 4,
-	    selectTree = 5
-	}
-	enum refLinkTooltip {
-	    none = 1,
-	    html = 2
-	}
-	interface IRefLinkOptions {
-	    style?: refLinkStyle;
-	    tooltip?: refLinkTooltip;
-	    callback?: Function;
-	    id?: string;
-	    title?: string;
-	    folder?: boolean;
-	    showVersion?: boolean;
-	    validate?: boolean;
-	    isHidden?: boolean;
-	    placeholder?: string;
-	    hideTitle?: boolean;
-	    crossProject?: string;
-	    css?: string;
-	}
-	//# sourceMappingURL=RefLinkDefines.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ICreateDialogOptions {
-	    type: string;
+	interface IPrintFieldInfo {
+	    fieldId: string;
+	    field: JQuery;
 	    name: string;
-	    folder: boolean;
-	    created?: (newItems: IReference) => void;
-	    singleCreate?: boolean;
-	    dontOpenNewItem: boolean;
-	    parent: string;
-	    closed?: Function;
+	    type: string;
+	    config: JQuery;
+	    jsonConfig: any;
+	    jsonValue: any;
 	}
-	interface ICreateDialogEventOptions {
-	    data: ICreateDialogOptions;
+	interface IPrintFieldIterator extends IPrintIterator {
+	    iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintFieldIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => IPrintFieldInfo[];
 	}
-	interface ICreateDialogButtonOptions {
-	    control: JQuery;
-	    linkTypes: ILinkType[];
-	    singleCreate?: boolean;
-	    created?: (newRef: IReference) => void;
-	    isRiskControl?: boolean;
-	    type?: string;
-	    parent?: string;
-	    docTemplate?: boolean;
-	    open?: (view: ItemControl) => void;
-	    tinybuttons?: boolean;
-	    dontOpenNewItem: boolean;
+	interface IPrintLabelIteratorParams {
 	}
-	class ItemCreationTools {
-	    private onOpenDlg;
-	    showDialog(options: ICreateDialogOptions): void;
-	    renderButtons(options: ICreateDialogButtonOptions): void;
-	    private showCreateDialog;
-	    private onDialogOpen;
-	    private showCreateDialogEvent;
+	interface IPrintLabelInfo {
+	    id: string;
+	    printName: string;
+	    icon: string;
+	    set: boolean;
+	    jsonConfig: {};
 	}
-	//# sourceMappingURL=ItemCreationView.d.ts.map
+	interface IPrintLabelIterator extends IPrintIterator {
+	    iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintLabelIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => IPrintLabelInfo[];
+	}
+	//# sourceMappingURL=PrintIterators.d.ts.map
 
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IItemSelectDialogOptions {
-	    linkTypes: ILinkType[];
-	    getSelectedItems: () => IReference[];
-	    selectionChange: (newSelection: IReference[]) => void;
-	    crossProjectInit?: Function;
-	    crossProject?: boolean;
-	    crossProjectProject?: string;
-	    crossProjectFilter?: string;
-	    crossProjectFilterStrict?: boolean;
-	    selectMode?: SelectMode;
-	    selectOptions?: JQuery;
-	    dialogTitle?: string;
-	    focusOn?: string;
-	    height?: number;
-	    autoScroll?: boolean;
-	}
-	interface IItemSelectButtonOptions extends IItemSelectDialogOptions {
-	    buttonName?: string;
-	    smallbutton?: boolean;
-	    isRiskControl?: boolean;
-	    control: JQuery;
-	    tinybutton?: boolean;
-	}
-	class ItemSelectionTools {
-	    constructor();
-	    showDialog(options: IItemSelectDialogOptions): void;
-	    renderButtons(options: IItemSelectButtonOptions): void;
-	    private showSelectDialog;
-	    private toggleSelect;
-	    showCrossProjectDialog(options: IItemSelectDialogOptions): void;
-	    private removeHidden;
-	}
-	//# sourceMappingURL=ItemSelectionView.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IRichTextParams {
-	    showSmartText?: boolean;
-	    autoEdit?: boolean;
-	    height?: number;
-	    docMode?: boolean;
-	    tableMode?: boolean;
-	    readonly?: boolean;
-	    wiki?: boolean;
-	    tiny?: boolean;
-	    noConvertTiny?: boolean;
-	    requiresContent?: boolean;
-	    printMode?: boolean;
-	    width?: string;
-	    initialContent?: string;
-	    visibleOption?: string;
-	}
-	interface IRichTextControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: IRichTextParams;
-	}
-	class RichTextImpl extends BaseControl {
-	    private settings;
-	    private lastClient;
-	    private editStart;
-	    private data;
-	    private lastScroll;
-	    private hiddenPasteBuffer;
-	    private _editor;
-	    private editable;
-	    private lastValueChanged;
-	    private form;
-	    private resizable;
-	    private heightDelta;
-	    private failedImages;
-	    private recCall;
-	    static editorInstanceCount: number;
-	    constructor(control: JQuery);
-	    init(options: IRichTextControlOptions, form?: ItemControl): void;
-	    getValue(): string;
-	    setValue(newVal: string): void;
-	    hasChanged(): boolean;
-	    getText(): void;
-	    getValueRaw(): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    static useTiny(ctrlParameter: IRichTextControlOptions): boolean;
-	    private triggerValueChange;
-	    private valueChanged;
-	    private showMenu;
-	    private markBadImages;
-	    private importImages;
-	    private importImagesRec;
-	    private showBadImages;
-	    private hideMenu;
-	    private uploadAndInsertImages;
-	    private cleanPastedHTML;
-	    private processpaste;
-	    private ddUploadFiles;
-	    private ddCreateLink;
-	    private ddUploadHTML;
-	    private onDragOver;
-	    private onDrop;
-	    private addVerticalResizer;
-	}
-	//# sourceMappingURL=richText.d.ts.map
-
-	//# sourceMappingURL=index.d.ts.map
-
-	class SearchTools implements ISearchTools {
-	    private globalFilter;
-	    private highlightContext;
-	    OnCancelSearch: EventDispatcher<ICancelSearchEvent>;
-	    getFilter(): string;
-	    cancelSearch(): void;
-	    searchInDialog(): void;
-	    endSearchInDialog(): void;
-	    highlight(term: string): void;
-	    hideHighlight(): void;
-	    renderHighlight(): void;
-	    private updateTinys;
-	}
-	//# sourceMappingURL=SearchTools.d.ts.map
-
-	/// <reference types="jquery" />
-	interface IItemViewEvent {
-	    caller: any;
-	    item: IItem;
-	    view: ItemControl;
-	}
-	interface IItemChangeEvent {
-	    caller: any;
-	    view: ItemControl;
-	    before: IItem;
-	    after: IItem;
-	}
-	interface IPreCreateItemEvent {
-	    caller: any;
-	    view: ItemControl;
-	    isItem: boolean;
-	    category: string;
-	}
-	interface IPreCreateCloseEvent {
-	    caller: any;
-	    ok: boolean;
-	}
-	interface IGenericItemEvent {
-	    caller: any;
-	    item: IItem;
-	}
-	interface IGenericItemIdEvent {
-	    caller: any;
-	    itemId: string;
-	}
-	interface INewItemIdEvent {
-	    caller: any;
-	    item: IDBParent;
-	}
-	interface ILabelChangeEvent {
-	    caller: any;
-	    item: IItem;
-	    set: string[];
-	    unset: string[];
-	}
-	interface ISignatureEvent {
-	    caller: any;
-	    item: IItem;
-	    lastuser: boolean;
-	}
-	interface IEvent<TArgs, TMode> {
-	    subscribe(caller: any, fn: (args: TArgs) => TMode): void;
-	    unsubscribe(fn: (args: TArgs) => TMode): void;
-	    dispatch(args: TArgs): TMode;
-	}
-	class EventDispatcher<TArgs> implements IEvent<TArgs, void> {
-	    private _subscriptions;
-	    private _callers;
-	    subscribe(caller: any, fn: (args: TArgs) => void): void;
-	    unsubscribe(fn: (args: TArgs) => void): void;
-	    dispatch(args: TArgs): void;
-	}
-	class EventDispatcherAsync<TArgs> implements IEvent<TArgs, JQueryDeferred<{}>> {
-	    private _subscriptionsAsync;
-	    private _callersAsync;
-	    subscribe(caller: any, fn: (args: TArgs) => JQueryDeferred<{}>): void;
-	    unsubscribe(fn: (args: TArgs) => JQueryDeferred<{}>): void;
-	    dispatch(args: TArgs): JQueryDeferred<{}>;
-	    private dispatchAsyncOne;
-	}
-	class MR1Impl {
-	    cbsItemDisplayed: EventDispatcher<IItemViewEvent>;
-	    cbsCreateItemDisplayed: EventDispatcher<IPreCreateItemEvent>;
-	    cbsCreateItemDisplayedClose: EventDispatcher<IPreCreateCloseEvent>;
-	    cbsBeforeSave: EventDispatcherAsync<IItemChangeEvent>;
-	    cbsAfterSave: EventDispatcher<IItemChangeEvent>;
-	    cbsAfterRestore: EventDispatcher<IGenericItemIdEvent>;
-	    cbsAfterDelete: EventDispatcher<IGenericItemEvent>;
-	    cbsAfterCreate: EventDispatcher<INewItemIdEvent>;
-	    cbsAfterCreateSign: EventDispatcher<IGenericItemEvent>;
-	    cbsBeforeDelete: EventDispatcherAsync<IGenericItemEvent>;
-	    cbsAfterLabelChange: EventDispatcher<ILabelChangeEvent>;
-	    cbsAfterSignature: EventDispatcher<ISignatureEvent>;
-	    triggerItemCreate(view: ItemControl, isItem: boolean, category: string): void;
-	    triggerItemCreateClose(ok: boolean): void;
-	    triggerItemDisplayed(item: IItem, view: ItemControl): void;
-	    triggerBeforeSaveAsync(view: ItemControl, before: IItem, after: IItem): JQueryDeferred<{}>;
-	    triggerAfterSave(view: ItemControl, before: IItem, after: IItem): void;
-	    triggerAfterRestore(itemId: string): void;
-	    triggerAfterDelete(item: IItem): void;
-	    triggerAfterItemCreate(item: IDBParent): void;
-	    triggerAfterCreateSign(item: IItem): void;
-	    triggerBeforeDeleteAsync(item: IItem): JQueryDeferred<{}>;
-	    triggerAfterLabelChange(item: IItem, before: string[], after: string[]): void;
-	    triggerAfterSignature(item: IItem, lastuser: boolean): void;
-	    onItemDisplayed(): IEvent<IItemViewEvent, void>;
-	    onItemCreateDlgOpen(): IEvent<IPreCreateItemEvent, void>;
-	    onItemCreateDlgClose(): IEvent<IPreCreateCloseEvent, void>;
-	    onAfterSave(): IEvent<IItemChangeEvent, void>;
-	    onAfterRestore(): IEvent<IGenericItemIdEvent, void>;
-	    onAfterDelete(): IEvent<IGenericItemEvent, void>;
-	    onAfterCreate(): IEvent<INewItemIdEvent, void>;
-	    onAfterCreateSign(): IEvent<IGenericItemEvent, void>;
-	    onAfterLabelChange(): IEvent<ILabelChangeEvent, void>;
-	    onAfterSignature(): IEvent<ISignatureEvent, void>;
-	    onBeforeSaveAsync(): IEvent<IItemChangeEvent, JQueryDeferred<{}>>;
-	    onBeforeDeleteAsync(): IEvent<IGenericItemEvent, JQueryDeferred<{}>>;
-	}
-	var MR1: MR1Impl;
-	/** tests...
-	// MR1.onAfterLabelChange().subscribe( this, function (event:ILabelChangeEvent) { console.log("Label changed for " + event.item.id + " set: '" + event.set.join() + "' unset: '" + event.unset.join() + "'");} );
-	MR1.onBeforeDeleteAsync().subscribe( this, function (event:IGenericItemEvent) {
-	    console.log("MR1 >>>Could cancel item delete " + event.item.id);
-	    let res = $.Deferred();
-	    res.resolve(); // res.reject(); to cancel
-	    return res;
-	});
-	MR1.onBeforeSaveAsync().subscribe( this, function (event:IItemChangeEvent) {
-	    console.log("MR1 >>>Could cancel save of " + event.before.id);
-	    let res = $.Deferred();
-	    res.resolve(); // res.reject(); to cancel
-	    return res;
-	});
-	MR1.onAfterCreate().subscribe( this, function (event:INewItemIdEvent) { console.log("MR1 >>>Item created " + event.item.item.id);} );
-	MR1.onAfterCreateSign().subscribe( this, function (event:IGenericItemEvent) { console.log("MR1 >>>SIGN created " + event.item.id);} );
-	MR1.onAfterSignature().subscribe( this, function (event:ISignatureEvent) { console.log("MR1 >>>SIGNED " + event.item.id + " by " + matrixSession.getUser() +  ( event.lastuser?" as last signature":" but not last signature"));} );
-	MR1.onAfterSave().subscribe( this, function (event:IItemChangeEvent) { console.log("MR1 >>>Item saved " + event.after.id);} );
-	MR1.onAfterRestore().subscribe( this, function (event:IGenericItemIdEvent) { console.log("MR1 >>>Item restored " + event.itemId);} );
-	MR1.onAfterDelete().subscribe( this, function (event:IGenericItemEvent) { console.log("MR1 >>>Item deleted " + event.item.id);} );
-	MR1.onItemDisplayed().subscribe( this, function (event:IGenericItemEvent) { console.log("MR1 >>>Item displayed " + event.item.id);} );
-	MR1.onItemCreateDlgOpen().subscribe( this, function (event:IPreCreateItemEvent) {  console.log("MR1 >>>Create item dialog with " + event.view.getControls().length + " controls.");}  );
+	/**
+	    Macro's are used in format strings to call/embed iterators, or primitive functions or other formatters in a formatting
 	*/
-	/** example extract all italic from text and put in title when saving if title is " " or ""
-	MR1.onBeforeSaveAsync().subscribe( this, function (event:IItemChangeEvent) {
-	    console.log("MR1 >>>Could cancel save of " + event.before.title);
-	    if (event.after.title == " " || event.after.title == "") {
-	        let tf = IC.getFieldsOfType("richtext",event.after.type);
-	        let italics="";
-	        $.each( tf, function(idx, tfd) {
-	            let tfc = $("<div>").html(event.after[tfd.field.id]);
-	            $("span", tfc).each( function(spanIdx,span) {
-	                if ($(span).css("font-style").indexOf("italic")!=-1) {
-	                    italics += italics?(" "+$(span).text()):$(span).text();
-	                }
-	            });
-	        });
-	        event.after.title = italics?italics:"title required";
-	    }
-	    let res = $.Deferred();
-	    res.resolve();
-	    return res;
-	});
-	 */
-	//# sourceMappingURL=MatrixRequirementsAPI.d.ts.map
-
-	//# sourceMappingURL=index.d.ts.map
-
-	/// <reference types="jquery" />
-	interface IShortcut {
-	    disableEdge: boolean;
-	    disableSafari: boolean;
-	    withCtrl: boolean;
-	    keyCode: number;
-	    key: string;
-	    help: string;
-	    category: string;
-	    inElement: string[];
-	    notInElement: string[];
-	    fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void;
+	interface IPrintMacro {
 	}
-	interface IShortCutOverWrite {
-	    orgCtrl: boolean;
-	    newCtrl: boolean;
-	    orgKey: string;
-	    newKey: string;
-	    orgKeyCode: number;
-	    newKeyCode: number;
+	interface IPrintMacroFunction extends IPrintMacro {
+	    renderFunction: string;
 	}
-	class KeyboardShortcuts {
-	    private lastKeyDown;
-	    private shortCuts;
-	    private documentSectionIdx;
-	    constructor();
-	    private defineShortcuts;
-	    print(): void;
-	    resetCustomKeys(): void;
-	    setKey(orgCtrl: boolean, newCtrl: boolean, orgKey: string, newKey: string): void;
-	    setKeyCode(orgCtrl: boolean, newCtrl: boolean, orgKeyCode: number, newKeyCode: number): void;
-	    addCtrlShortcut(key: string, category: string, help: string, inElement: string[], notInElement: string[], fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void, disableEdge: boolean, disableSafari: boolean): void;
-	    addShortcut(key: string, category: string, help: string, inElement: string[], notInElement: string[], fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void, disableEdge: boolean, disableSafari: boolean): void;
-	    addCtrlShortcutCode(keyCode: number, category: string, key: string, help: string, inElement: string[], notInElement: string[], fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void, disableEdge: boolean, disableSafari: boolean): void;
-	    addShortcutCode(keyCode: number, category: string, key: string, help: string, inElement: string[], notInElement: string[], fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void, disableEdge: boolean, disableSafari: boolean): void;
-	    init(): void;
-	    private isGoodTarget;
-	    private isDialogOpen;
-	    private static isDialogOpen;
-	    private showInReview;
-	    private showZen;
-	    private save;
-	    static doSave(): void;
-	    private createSelect;
-	    private toggleSections;
-	    private delete;
-	    private initToggleSection;
-	    private toggleSection;
-	    private downloadDocument;
-	    private focusSearch;
-	    private help;
+	interface IPrintArrayMacro extends IPrintMacro {
+	    iterator?: string;
+	    maxDepth?: number;
 	}
-	//# sourceMappingURL=KeyboardShortcuts.d.ts.map
+	interface IPrintTableMacro extends IPrintArrayMacro {
+	    renderItem: string;
+	}
+	interface IPrintMacroParams {
+	    itemIterator?: string;
+	    labelIterator?: string;
+	    fieldIterator?: string;
+	    maxDepth?: number;
+	    value?: string;
+	    values?: string[];
+	    render?: string;
+	    fieldDetails?: IPrintLabelInfo;
+	    formatter?: string;
+	    rowspan?: number;
+	}
+	//# sourceMappingURL=PrintMacros.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -5499,25 +2864,79 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	class ReviewContextFrame implements IPlugin {
-	    static reviewContextFrame: string;
-	    static lastDisplayedItemId: string;
-	    constructor();
-	    onUpdate(ui: JQuery, config: IContextPageConfigTab, context: IContextInformation): void;
-	    static lastRenderedItem: string;
-	    static lastRenderedVersion: number;
-	    static renderItem(itemId: string, version: number, showContextFrameIfNotVisible: boolean): void;
-	    private _item;
-	    isDefault: boolean;
-	    initItem(item: IItem, jui: JQuery): void;
-	    initServerSettings(): void;
-	    initProject(): void;
-	    getProjectPages(): IProjectPageParam[];
-	    updateMenu(ul: JQuery): void;
-	    supportsControl(): boolean;
+	/************************************** Main section definition  ********************************************/
+	interface ICustomSection {
+	    description?: string;
+	    descriptionContent?: string;
+	    descriptionNoContent?: string;
+	    formatter: string;
+	    functionDefaults?: IPrintFunctionParamsOverwrites;
 	}
-	function initialize(): void;
-	//# sourceMappingURL=ReviewContextFrame.d.ts.map
+	interface IPrintProcessorOptions {
+	    headers?: {
+	        maxDepth?: number;
+	        altBefore?: string;
+	        altAfter?: string;
+	    };
+	}
+	interface IProcessResult {
+	    /** generated html */
+	    html: string;
+	    /** primary list of items from selection + first level interators */
+	    redlining: string[];
+	}
+	interface IPrintProcessor {
+	    prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): any;
+	    processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): IProcessResult;
+	    getCustomStylesheet(): string;
+	    /**
+	     * This can be used by render functions to get a table and process its data,
+	     * for example for a row count
+	     * @param tableId The (sub)table to render
+	     * @param selection The selection to use as the root
+	     */
+	    getTableData(tableId: string, selection: string[]): string;
+	    globals: IPrintGlobals;
+	}
+	const PrintFindAllScriptsRegex: RegExp;
+	interface IPrintConfig {
+	    getPrintProcessor(): IPrintProcessor;
+	    getFieldAndLabelsIteratorsDropdown(): IDropdownOption[];
+	    getItemIteratorsDropdown(items: boolean, folders: boolean, allowNoIterator: boolean): any;
+	    getItemConditionDropdown(): any;
+	    showOptionsEditor(fctName: string, currentValue: string, onUpdate: (newValue: string) => void): any;
+	    editFunctionOptions(currentValue: string, onUpdate: (newOptions: string) => void): any;
+	    editStyle(wrap: JQuery): any;
+	    functionHasOptions(functionUid: string): any;
+	    getFunctions(group: string): any;
+	    getItemSorters(): IPrintSorterMap;
+	    getAllFunctions(): IPrintBaseFunctionMap;
+	    getAllIterators(): IPrintBaseFunctionMap;
+	}
+	var globalPrintConfig: IPrintConfig;
+	function setGlobalPrintConfig(config: IPrintConfig): void;
+	interface IStringRiskConfigMap {
+	    [key: string]: IRiskConfig;
+	}
+	interface IFieldCache {
+	    [key: string]: IPrintFieldInfo;
+	}
+	interface IPrintGlobals {
+	    itemMap: IStringJQueryMap;
+	    riskControlCategories: IStringStringArrayMap;
+	    categories: IStringJQueryMap;
+	    fieldsPerCategory: IStringJQueryMap;
+	    fieldIdByLabel: IStringMap;
+	    fieldDefById: IStringJQueryMap;
+	    riskConfigs: IStringRiskConfigMap;
+	    down: IStringStringArrayMap;
+	    up: IStringStringArrayMap;
+	    children: IStringStringArrayMap;
+	    count: number;
+	    lastItem: string;
+	    lastFields: IFieldCache;
+	}
+	//# sourceMappingURL=PrintProcessorInterfaces.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -5525,74 +2944,28 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	class SearchBox {
-	    private spinnerServerSearch;
-	    private currentStatus;
-	    private currentResults;
-	    private currentSearchExpression;
-	    private delayedAction;
-	    private panel;
-	    private filterHighlight_timeout;
-	    private filterSearch_timeout;
-	    private searchMetaInfo;
-	    private isEnabled;
-	    private isConfigSearch;
-	    private savedSearchIndex;
-	    constructor(panel: ProjectView);
-	    updateHeights(): void;
-	    renderSearchField(filter: JQuery, enableServerSearch: boolean, highlightResults: boolean, isConfigSearch: boolean): void;
-	    private setPrefixCategory;
-	    render(): void;
-	    protected showMatches(matches: ISearchCounts, localSearch: boolean): void;
-	    resetSearch(): void;
-	    private getMiracleControl;
-	    addToSavedSearch(str: string, filter: JQuery): void;
-	    getSavedSearches(): string[];
-	    private filterAgainExpression;
-	    private filter;
-	    private filterAgain;
-	    private search;
-	    private doDelayed;
-	    private showSearchStatus;
-	    private updateSearchStatusHeights;
+	/************************************************************************
+	 
+	print sorter allow to sort items in tables
+	 
+	************************************************************************/
+	interface IPrintSorterMap {
+	    [key: string]: IPrintSorter;
 	}
-	//# sourceMappingURL=SearchBox.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class ViewModeSelector {
-	    private isMainTree;
-	    private btn;
-	    private img;
-	    private searchVizModes;
-	    private panel;
-	    constructor(panel: ProjectView);
-	    private selectFoldersOnly;
-	    getVizModeControl(onChange: Function): JQuery;
-	    setEnabled(enabled: boolean): void;
-	    showAsList(): boolean;
-	    hideMismatches(): boolean;
-	    isExpandTree(): boolean;
-	    private getMode;
-	    private setMode;
+	interface IPrintSorterParams {
+	    reverse: boolean;
 	}
-	//# sourceMappingURL=ViewModeSelector.d.ts.map
-
-	class ItemTools implements IItemTools {
-	    parseRef(itemRef: string): IItemIdParts;
-	    getCreator(item: IItem): string;
-	    getLastEditor(item: IItem): string;
-	    refListToDisplayString(inputItems: IReference[] | null, prefix: string, shorten?: number): string;
-	    renderLink(itemId: string, itemTitle?: string, newWindow?: boolean): any;
-	    updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
-	    clone(item: IItemGet, copyLabels: boolean): IItemPut;
-	    sort(a: string, b: string): number;
+	interface IPrintSorter {
+	    getName: () => string;
+	    getHelp: () => string;
+	    sort: (a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => number;
 	}
-	//# sourceMappingURL=ItemTools.d.ts.map
+	interface IPrintSortParams {
+	    sorter: string;
+	    descending: boolean;
+	    params?: any;
+	}
+	//# sourceMappingURL=PrintSorter.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -5641,6 +3014,14 @@ declare module matrixApi
 	    init(): void;
 	}
 	//# sourceMappingURL=ContextFramesTools.d.ts.map
+
+	class DeveloperTools implements IDeveloperTools {
+	    private static THE_SETTING;
+	    getStagingCode(): string;
+	    setStagingCode(newCode: string): void;
+	    runStagingCode(): void;
+	}
+	//# sourceMappingURL=DeveloperTools.d.ts.map
 
 	/// <reference types="jquery" />
 	class FileTools implements IFileTools {
@@ -5720,6 +3101,18 @@ declare module matrixApi
 	    }
 	}
 	//# sourceMappingURL=HTMLCleaner.d.ts.map
+
+	class ItemTools implements IItemTools {
+	    parseRef(itemRef: string): IItemIdParts;
+	    getCreator(item: IItem): string;
+	    getLastEditor(item: IItem): string;
+	    refListToDisplayString(inputItems: IReference[] | null, prefix: string, shorten?: number): string;
+	    renderLink(itemId: string, itemTitle?: string, newWindow?: boolean): any;
+	    updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
+	    clone(item: IItemGet, copyLabels: boolean): IItemPut;
+	    sort(a: string, b: string): number;
+	}
+	//# sourceMappingURL=ItemTools.d.ts.map
 
 	class JSONTools implements IJSONTools {
 	    private cloner2;
@@ -5851,6 +3244,612 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
+	interface IContextInformation {
+	    project: string;
+	    user: string;
+	    server: string;
+	    version: string;
+	    product: string;
+	    itemId: string;
+	    item: string;
+	    fieldList: string;
+	}
+	interface IContextFramesTools {
+	    showContextFrame(tabType: string, makeVisible: boolean): any;
+	    getExpender(): any;
+	    visibility(enabled: boolean): any;
+	    hideContextFrames(): any;
+	    showContextFrames(): any;
+	    renderContextFrames(): any;
+	    fillContextFrame(_data: IItem, itemId: string): any;
+	    init(): any;
+	}
+	interface IUploadedFileInfo {
+	    fileName: string;
+	    fileId?: string;
+	    uploaded?: boolean;
+	    fileObj?: any;
+	}
+	interface IFileDefinition {
+	    name: string;
+	}
+	interface IFileTools {
+	    UploadFilesAsync(files: FileList | File[]): JQueryDeferred<IUploadedFileInfo[]>;
+	    UploadFileAsync(file: File): JQueryDeferred<IUploadedFileInfo[]>;
+	    convertXLSXAsync(file: IFileParam): JQueryDeferred<string>;
+	}
+	interface IDeveloperTools {
+	    getStagingCode(): string;
+	    setStagingCode(newCode: string): any;
+	    runStagingCode(): any;
+	}
+	interface IItemTools {
+	    parseRef(itemRef: string): IItemIdParts;
+	    getCreator(item: IItem): string;
+	    getLastEditor(item: IItem): string;
+	    refListToDisplayString(inputItems: IReference[] | null, prefix: string, shorten?: number): string;
+	    renderLink(itemId: string, itemTitle?: string, newWindow?: boolean): any;
+	    updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
+	    clone(item: IItemGet, copyLabels: boolean): IItemPut;
+	    sort(a: string, b: string): any;
+	}
+	interface IJSONTools {
+	    mergeOptions(defaultOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
+	    setOptions(newOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
+	    isTrue(obj: undefined | null | boolean | string | number): boolean;
+	    isFalse(obj: undefined | null | boolean | string | number): boolean;
+	    fromString(str: null | string): {
+	        status: string;
+	        value: {};
+	    };
+	    clone(src: any): any;
+	}
+	interface IReportTask {
+	    reportId: string;
+	    jobId: number;
+	    progress: number;
+	    postCreateCallback: Function;
+	    postFailCallback?: Function;
+	    postProgressCallback?: Function;
+	    reportOptions?: IReportOptions;
+	}
+	interface IJobList {
+	    allGood: boolean;
+	    tasks: IReportTask[];
+	    doneBatch: number;
+	}
+	interface IReportOptions extends IRestParam {
+	    format?: string;
+	    inline?: boolean;
+	    reason?: string;
+	    filter?: string;
+	    isSignedReport?: boolean;
+	    includeSignatures?: string;
+	    newTitle?: string;
+	    copyFields?: string;
+	    itemList?: string;
+	    url?: string;
+	    resturl?: string;
+	}
+	interface IReportTransferField {
+	    fromId: string;
+	    toId: string;
+	}
+	interface IReportSetField {
+	    toId: string;
+	    value: string;
+	}
+	interface IGetReportProgressResult {
+	    status: string;
+	    progress: number;
+	    jobFile: IGetReportProgressJobFileResult[];
+	    visibleName: string;
+	}
+	interface IGetReportProgressJobFileResult {
+	    internalPath: string;
+	    jobFileId: number;
+	    mimeType: string;
+	    restUrl: string;
+	    visibleName: string;
+	}
+	interface IPostCreateSignOrDocResult {
+	    jobId: number;
+	}
+	interface IReportInput {
+	    to: string;
+	}
+	interface IReportGeneratorTools {
+	    SaveAndCreate(itemId: string, reportOptions: IReportOptions, progressInfo: string, postCreateCallback: Function, postFailCallback?: Function, postProgressCallback?: Function): void;
+	    CreateSignedDoc(docId: string, signatures: string[], signedDocumentsControl: JQuery, labelFilter: string, signName: string, transferFields: IReportTransferField[], defaultLabels: string[], docUpdateCb: (createdDocumentId: string) => void): void;
+	    createSIGN(target: string, comment: string, docId: string, signatures: string[], signedDocumentsControl: JQuery, labelFilter: string, signName: string, transferFields: IReportTransferField[], defaultLabels: string[], docUpdateCb: (createdDocumentId: string) => void): void;
+	    CreateDoc(docId: string, format: IReportOptions, labelFilter: string): void;
+	    CreateReport(reportId: string, format: IReportOptions, inputItems?: IReportInput[], requiredItems?: IReportInput[]): void;
+	    DownloadSignedDoc(signedId: string, format: IReportOptions): any;
+	}
+	interface IChangedLabels {
+	    changed: boolean;
+	    added: string[];
+	    removed: string[];
+	    delta: string;
+	}
+	const DOCUMENT_STATUS_LABEL_GROUP_TYPE = "_DOCUMENT_STATUS_";
+	interface ILabelTools {
+	    ignoreProjectFilter: boolean;
+	    getFilterColor(): string;
+	    getFilter(): string;
+	    getDisplayName(labelId: string): any;
+	    getFilterName(labelId: string): any;
+	    getLabelDefinitions(categories: string[]): ILabel[];
+	    setFilter(filter: string[]): any;
+	    resetReviewLabels(labelIds: string[], category: string, addXor?: boolean): string[];
+	    getDefaultLabels(category: string): string[];
+	    hasLabels(): any;
+	    setLabels(oldLabelIds: string, labels: string[]): string;
+	    setLabel(oldLabelIds: string[], label: string): string[];
+	    unsetLabel(oldLabelIds: string[], label: string): string[];
+	    compareLabels(before: string[], after: string[]): IChangedLabels;
+	    getLabelNames(): string[];
+	    getDesignReview(labelId: string): IDesignReview | null;
+	    isFiltered(category: string, labels: string): boolean;
+	    getLabelsOfLabelGroupsType(labelGroupType: string): string[];
+	    getLabelGroups(category?: string): ILabelGroup[];
+	    getLastTimeLabelWasSet(itemId: string, label: string, beforeRevision: number): any;
+	}
+	interface ILabelSwitches extends ILabelTools {
+	    labelsExist(): boolean;
+	}
+	interface ILoggerTools {
+	    log(id: string, msg: string): any;
+	    debug(message: string): void;
+	    info(message: string): void;
+	    warning(message: string): void;
+	    error(message: string): void;
+	    weirdState(message: string): void;
+	    brokenState(message: string): void;
+	    getLog(): string;
+	}
+	interface IUserDropDown {
+	    id: string;
+	    label: string;
+	}
+	interface ITestCanned extends IMailConfigCanned {
+	    [key: string]: string | undefined;
+	}
+	interface IUserLookup extends XRUserPermissionType {
+	    [key: string]: string | number;
+	}
+	interface IMailTools {
+	    /** send mail
+	    * @param {type} to comma separated list of user ids
+	    * @param {type} cc comma separated  list of user ids
+	    * @param {type} bcc comma separated  list of user ids
+	    * @param {type} subject default subject
+	    * @param {type} body default body
+	    * @param {type} systemMail set to 1 to send mail in name of system rather than user
+	    *
+	    * @returns {undefined} nothing
+	    */
+	    sendMail(to: string, cc: string, bcc: string, subject: string, body: string, systemMail?: number, noSuccess?: boolean, noReply?: number): JQueryDeferred<{}>;
+	    /** show send mail dialog and send mail
+	    * @param {type} sendTo comma separated list of user ids
+	    * @param {type} preSelectedUsers available users or null if to use all project users
+	    * @param {type} subject default subject
+	    * @param {type} body default body
+	    * @param {type} includeSupport whether to send it to matrix support
+	    * @param {type} sendCc
+	    
+	    * @returns {undefined} nothing
+	    */
+	    sendMailDlg(sendTo: string, preSelectedUsers: XRUserPermissionType[], subject: string, body: string, sendCc: string): void;
+	    replacePlaceholders(template: string, itemId: string, rejectComment: string, reviewers: string[], readers: string[], trainers: string[], trainees: string[]): string;
+	    /** get default messages, replace a few strings
+	     *
+	     * @param {type} messageId
+	     * @param {type} itemId
+	     * @returns {undefined}
+	     */
+	    getCannedMessage(messageId: string, to: string, itemId: string, custom?: string, body?: string): string;
+	    sendMails(sendTos: string[], subject: string, messages: string[]): any;
+	}
+	interface ICancelSearchEvent {
+	}
+	interface ISearchTools {
+	    OnCancelSearch: IEvent<ICancelSearchEvent, void>;
+	    getFilter(): any;
+	    cancelSearch(): any;
+	    searchInDialog(): any;
+	    endSearchInDialog(): any;
+	    highlight(term: string): any;
+	    hideHighlight(): any;
+	    renderHighlight(): any;
+	}
+	interface ICaptionFormat extends ICaption {
+	    captionDetails: string;
+	    captionClass: string;
+	    referenceClassNo: string;
+	}
+	interface ISmartTextTools {
+	    createMenu(docMode: boolean, tableMode: boolean): void;
+	    deleteTag(what: string): void;
+	    insertFigReference(reference: string, editor: any, editable: any): any;
+	    insertTabReference(reference: string, editor: any, editable: any): any;
+	    pasteBuffer(editor: any, editable: any): any;
+	    createCaption(isTable: boolean, editor: Summernote.editor, editable: any): any;
+	    updateCaptionsAndReferences(): any;
+	    createEditTag(tagType: number, what: string, data?: ISmartTextConfigReplacement, saveFct?: Function, forceTiny?: boolean): void;
+	    selectEditCreateTag(mode: number, tagType: number, tagSelected: Function): void;
+	    removeOuterParagraph(edit: string): any;
+	    replaceTextFragments(text: string, showTooltips?: boolean, encoded?: boolean): string;
+	    showTooltips(node: JQuery, noContainer?: boolean): any;
+	    prepareForReadReadRender(itemDetails: JQuery): any;
+	}
+	interface IToolTipCache {
+	    date: Date;
+	    item: IItem;
+	}
+	interface IDropDownButtonOption {
+	    name: string;
+	    class?: string;
+	    click: Function;
+	}
+	interface IDialogOptions {
+	    container: JQuery;
+	    title: string;
+	    buttons: any[];
+	    content?: JQuery;
+	    minMaxWidth?: number;
+	    minMaxHeight?: number;
+	    scrolling?: UIToolsConstants.Scroll;
+	    autoResize?: boolean;
+	    maximizeButton?: boolean;
+	    noXButton?: boolean;
+	    onClose?: Function;
+	    onOpen?: Function;
+	    onResize?: Function;
+	    noCloseOnEscape?: boolean;
+	}
+	interface ICIColor {
+	    color: string;
+	    alternateColor: string;
+	}
+	interface ICIColorList {
+	    [key: string]: ICIColor;
+	}
+	interface IUIToolsEnum {
+	    widgetPluginsContainer: IWidgetPluginsContainer;
+	    DateTime: IDateTimeUI;
+	    BlockingProgress: IBlockingProgressUI;
+	    SelectUserOrGroup: ISelectUserOrGroupUI;
+	    lt: ILT;
+	    Progress: IProgressUI;
+	    ThemeSelector: IThemeSelector;
+	    fixC3ForCopy(copied: JQuery): any;
+	    createDropDownButton(defaultText: string, options: IDropDownButtonOption[], isUp: boolean, isJui: boolean, buttonId?: string, disableDefaultButtonClick?: boolean): JQuery;
+	    getNiceDialogSize(minWidth: number, minHeight: number): {
+	        width: number;
+	        height: number;
+	    };
+	    showSuccess(messageTitle: string, hideAfter?: number): void;
+	    hideSuccess(): void;
+	    hideError(): void;
+	    showError(messageTitle: string, messageBody: string, showForMS?: number): void;
+	    showAck(ackId: number, messageTitle: string, dlgTitle?: string): void;
+	    showConfirm(confId: number, messageInfo: {
+	        title: string;
+	        ok: string;
+	        nok?: string;
+	        third?: string;
+	    }, confFunction: Function, noConfFunction: Function, thirdFunction?: Function): void;
+	    confirmSpinningWait(message: string): any;
+	    closeConfirmSpinningWait(): any;
+	    showTooltip(itemId: string, target: JQuery, event: Event, crossProject?: string): void;
+	    showTaskAsTooltip(id: string, title: string, url: string, htmlContent: string, target: JQuery): void;
+	    hideTooltip(now?: boolean): void;
+	    updateTooltip(): void;
+	    spaceMessage(userHasSpaces: boolean, passwordHasSpaces: boolean): string;
+	    getSpinningWait(message?: string): JQuery;
+	    setEnabled(button: JQuery, enabled: boolean): any;
+	    getDisplayError(jqxhr: IJcxhr, textStatus: string, error: string): any;
+	    showDialog(dlg: JQuery, title: string, content: JQuery, minMaxWidth: number, minMaxHeight: number, buttons: any[], // DialogButtonOptions 
+	    scrolling: UIToolsConstants.Scroll, autoResize?: boolean, maximizeButton?: boolean, close?: Function, open?: Function, resize?: Function, noCloseOnEscape?: boolean): any;
+	    showDialogDes({ maximizeButton, // = false
+	    noXButton, // = false
+	    autoResize, // = false
+	    onClose, // = null
+	    onOpen, // = null
+	    onResize, // = null
+	    noCloseOnEscape, // = false
+	    minMaxWidth, // = $(document).width() * 0.9
+	    minMaxHeight, // = app.itemForm.height() * 0.9
+	    scrolling, // = UIToolsConstants.Scroll.None
+	    content, // = null
+	    container, title, buttons }: IDialogOptions): any;
+	    pushDialog(thisDialog: JQuery): any;
+	    popDialog(thisDialog: JQuery): any;
+	    serverHtmlCleanupBlob(content: JQuery): JQueryDeferred<string>;
+	    copyBuffer(anchor: JQuery, tooltip: string, content: JQuery, catchKey?: JQuery, onProcessCopy?: Function, btnText?: string, beforeCopy?: Function, afterCopy?: Function): any;
+	    getIconOptions(): any;
+	    calculateColorFrom(input: string): ICIColor;
+	    getAvatar(info: string, size: number): JQuery;
+	    doCopy(content: JQuery, onProcessCopy: Function): any;
+	    addChevronSection(container: JQuery, text: string, help: string, open?: boolean): any;
+	    enableIf(cb: JQuery, state: boolean, ctrls: JQuery[]): any;
+	    addCheckboxD(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, defaultValue: string): any;
+	    addCheckbox(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
+	    addCheckboxIsTrue(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
+	    addCheckboxIsFalse(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
+	    addPassInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onUnFocus?: Function): any;
+	    addTextInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function, isPass?: boolean, help?: string, readonly?: boolean, rows?: number, allowResize?: boolean): any;
+	    addRichTextInput(ui: JQuery, params: IRichTextParams, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function): any;
+	    addDateSelect(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, help?: string, readonly?: boolean): any;
+	    addIconInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function, isPass?: boolean): any;
+	    addDropdownToArray(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, options: IDropdownOption[], grouping: IDropdownGroup[], maxItems: number, create: boolean, sort: boolean, onChange: Function, placeholder?: string): any;
+	    addDropdownNumber(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, first: number, last: number, onChange: Function, placeholder?: string, paramsBase?: IDropdownParams): any;
+	    addDropdownToValue(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, options: IDropdownOption[], create: boolean, sort: boolean, onChange: Function, placeholder?: string, paramsBase?: IDropdownParams): any;
+	    getPageTitle(title: string, getPanel?: () => JQuery, resize?: () => void): JQuery;
+	    createConfigLine(lineId: string, linePrefix: string, lineName: string, lineArray: any[], idProp: string, onChangedOrder: () => void, onEdit: (lineId: string) => void, needsEdit: boolean, onDelete: (lineId: string) => void): any;
+	    fixArrows(ul: JQuery): any;
+	    createConfigAddLine(action: string, onAdd: () => void): any;
+	}
+	class UIToolsConstants {
+	    static CIColors: ICIColorList;
+	    static CIColorsGrey: ICIColorList;
+	    static allGrey: string[];
+	    static CIColorsPrimary: ICIColorList;
+	}
+	module UIToolsConstants {
+	    enum Scroll {
+	        Auto = 0,
+	        Vertical = 1,
+	        None = 2
+	    }
+	}
+	interface ITimeZoneOption {
+	    val: string;
+	    text: string;
+	    timeformat?: string;
+	    dateformat?: string;
+	}
+	interface ITimeZoneSetting {
+	    [key: string]: string | ITimeZoneOption[] | undefined;
+	    timeZoneOptions: ITimeZoneOption[];
+	    settingsSource: string;
+	    timeformat?: string;
+	    dateformat?: string;
+	    timezone?: string;
+	}
+	interface IDateTimeUI {
+	    initDateTimeSettings(update?: boolean): JQueryDeferred<{}>;
+	    renderHumanDate(date: Date, dateOnly?: boolean): string;
+	    renderCustomerHumanDate(date: Date, dateOnly?: boolean): string;
+	    renderHumanMonth(dateObj: Date): string;
+	    renderDashFormat(dateObj: Date): string;
+	    renderSettingControls(options: {
+	        table: JQuery;
+	        user: string;
+	        help: string;
+	    }): void;
+	    renderSettingDialog(user: string): void;
+	    requiresTimeZoneWarning(): boolean;
+	    getTimeZoneCTA(): JQuery;
+	    getSimpleDateFormat(): string;
+	    getSimpleDateFormatMoment(): any;
+	    getSimpleDateTimeFormatMoment(): any;
+	}
+	interface IBlockingProgressUITask {
+	    name: string;
+	    progress?: number;
+	}
+	interface IBlockingProgressUI {
+	    Init(tasks: IBlockingProgressUITask[], animate?: boolean): void;
+	    SetProgress(taskIdx: number, percent: number, newText?: string): void;
+	    SetProgressError(taskIdx: number, problem: string): void;
+	}
+	interface IProgressUI {
+	    Init(message: string, warning?: boolean): void;
+	    Update(progress: number): void;
+	    SuccessHide(message: string, ms: number): void;
+	    ErrorHide(message: string, ms: number): void;
+	}
+	interface ISelectUserOrGroupUI {
+	    showMultiUserSelect(container: JQuery, help: string, selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): any;
+	    getUsersInSelection(selection: string[]): any;
+	    getGroupId(group: XRGroupPermissionType | XRGroupType): any;
+	    getGroupDisplayNameFromId(groupOrUserId: string): any;
+	    isGroup(groupOrUserId: string): any;
+	    exists(groupOrUserId: string): any;
+	    showSelectDialog(selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): any;
+	    getUserDropDownOptions(showUsers: boolean, showGroups: boolean, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUsername?: string): IDropdownOption[];
+	    showSingleSelect(control: JQuery, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUsername?: string): any;
+	    getAllUsersAndGroups(): JQueryDeferred<IDropdownOption[]>;
+	    combinedName(user: XRUserPermissionType): any;
+	    showSingleSelectDialog(selected: string, title: string, help: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[]): any;
+	}
+	interface ILT {
+	    forDB(code: string, fieldId: number): any;
+	    forUI(code: string, fieldId: number): any;
+	}
+	interface IMatrixUrlParts {
+	    project: string;
+	    item: string;
+	    params: IStringMap;
+	}
+	interface IURLTools {
+	    getParameterByName(url: string, name: string): string | null;
+	    parseUrl(url: String): IMatrixUrlParts;
+	}
+	interface IXPathToolsComp {
+	    name?: string;
+	    position: number;
+	}
+	interface IXPathTools {
+	    get(node: JQuery): any;
+	    hardCopy(element: JQuery): any;
+	}
+	interface IMatrix {
+	    Search: ISearchTools;
+	    Item: IItemTools;
+	    ContextFrames: IContextFramesTools;
+	    JSON: IJSONTools;
+	    XPath: IXPathTools;
+	    URL: IURLTools;
+	    Mail: IMailTools;
+	    Logger: ILoggerTools;
+	    LabelTools: ILabelTools;
+	    UI: IUIToolsEnum;
+	    File: IFileTools;
+	    DeveloperTools: IDeveloperTools;
+	    ReportGenerator: IReportGeneratorTools;
+	    SmartText: ISmartTextTools;
+	}
+	export interface IApp extends IBaseApp {
+	    mainApp: boolean;
+	    mainTreeLoaded: boolean;
+	    setCache(externalCache: DBCache): void;
+	    loadProject(project: string, item: string): void;
+	    loadTree(project: string): JQueryDeferred<{}>;
+	    loadTreeAndItem(project: string, item: string): JQueryDeferred<IItem>;
+	    updateFavicon(project: string, notification: boolean): void;
+	    waitForMainTree(callback: () => void): void;
+	    getTree(subtreeFilter?: string[]): IDB[];
+	    getSubTree(itemId: string): ISimpleTree;
+	    getAuditDetailsAsync(auditId?: number, ignoreErrors?: boolean): JQueryDeferred<XRTrimAudit>;
+	    getItemAsync(itemId: string, version?: number, ignoreErrors?: boolean, noHistory?: boolean): JQueryDeferred<IItem>;
+	    getNeedlesAsync(searchExpr: string, up: boolean, down: boolean, fields: string, labels: boolean, ignoreFilters?: boolean): JQueryDeferred<IItem[]>;
+	    getItemProjectAsync(project: string, itemId: string, ignoreErrors?: boolean): JQueryDeferred<IItem>;
+	    getProjectItemAsync(project: string, itemId: string, version?: number, includeHistory?: boolean): JQueryDeferred<IItem>;
+	    getProjectCatFields(project: string): JQueryDeferred<XRCategoryExtendedType[]>;
+	    getItemFromTree(itemId: string): IDB;
+	    getChildrenIds(parentId: string): string[];
+	    getChildrenIdsRec(itemId: string): string[];
+	    getParentId(itemId: string): string;
+	    getCategoryBreadcrumbs(category: string): string[];
+	    getBreadcrumbs(itemId: string): string[];
+	    setStyle(itemIds: string[], style: string, computeFolder: number): void;
+	    getRootOfType(category: string): string;
+	    startReportAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<{}>;
+	    canLaunchReport(): JQueryDeferred<boolean>;
+	    startCreateDocumentAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<XRPostProject_LaunchReport_CreateReportJobAck>;
+	    getReportDetails(jobId: number): JQueryDeferred<XRGetProject_JobStatus_JobsStatusWithUrl>;
+	    compareHTML(compareParams: XCPostCompareHtml): JQueryDeferred<XRPostProject_CompareHtml_HtmlCompareResult>;
+	    isFolder(itemId: string): boolean;
+	    getItemTitle(itemId: string, display?: boolean): string;
+	    download(jobId: number, file: number, param?: string[]): void;
+	    downloadFromUrl(url: string, param?: IStringMap): void;
+	    downloadInMemory(jobId: number, file: string, dataType?: string): JQueryDeferred<string>;
+	    downloadInMemoryFromUrl(url: string): JQueryDeferred<string>;
+	    searchAsync(term: string, filter?: string, ignoreFilters?: boolean, fieldList?: string, crossProject?: string, labels?: boolean, down?: boolean, up?: boolean, treeOrder?: boolean): JQueryDeferred<ISearchResult[]>;
+	    searchAsyncMinimalOutput(term: string, filter?: string, ignoreFilters?: boolean, crossProject?: string): JQueryDeferred<string[]>;
+	    updateItemInDBAsync(itemJson: IItemPut, auditAction: string, requireVersion?: number): JQueryDeferred<IItemGet>;
+	    getItemFromDBAsync(itemId: string): Promise<IItem>;
+	    getFieldFromDBAsync(itemId: string, fieldName: string): Promise<any>;
+	    setFieldInDBAsync(itemId: string, fieldName: string, value: string): Promise<any>;
+	    setFieldsInDBAsync(itemId: string, data: ISetField[]): Promise<any>;
+	    createItemOfTypeAsync(category: string, itemJson: IItemPut, actions: string, parentId: string, dontFailOnCleanup?: boolean): JQueryDeferred<IDBParent>;
+	    restoreItemAsync(itemId: string, title: string, version: number): JQueryDeferred<IRestoreItemResult>;
+	    deleteItem(itemId: string): JQueryDeferred<{}>;
+	    uploadFileProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<{}>;
+	    fetchFileAsync(url: string, progress: (p: IFileUploadProgress) => void): JQueryDeferred<XRPostProject_AddFile_AddFileAck>;
+	    resizeItem(force?: boolean): void;
+	    itemChanged(needsSave: boolean): void;
+	    updateItem(newItem: IItem): void;
+	    setFieldValue(fieldId: number, newValue: string): void;
+	    getFieldValue(fieldId: number): any;
+	    getCurrentTitle(): string;
+	    addDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
+	    removeDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
+	    setSettingJSON(key: string, valueJSON: {}): JQueryDeferred<{}>;
+	    readSettingJSONAsync(key: string, otherProject?: string, noRetry?: boolean): JQueryDeferred<{}>;
+	    setSettingCustomerJSON(key: string, valueJSON: {}): JQueryDeferred<unknown>;
+	    readSettingCustomerJSONAsync(key: string): JQueryDeferred<{}>;
+	    getMissingUpLinks(item: IItem): string[];
+	    isUpLinkMissing(item: IItem): boolean;
+	    getMissingDownLinks(item: IItem): string[];
+	    getLinkCategories(item: IItem, ctrlParameter: ILinkCollectionOptions): ILinkCategories[];
+	    isDownLinkMissing(item: IItem): boolean;
+	    isAnyLinkOutdated(item: IItem): boolean;
+	    hasLinks(item: IItem): boolean;
+	    isHiddenLink(itemId: string): {};
+	    setHiddenLink(itemId: string, hidden: number): void;
+	    saveAsync(sendUnEdit: boolean): JQueryDeferred<{}>;
+	    forceReadonly(itemId: string): void;
+	    cancel(): void;
+	    someOneElseChanged(): void;
+	    someOneIsChangingTheItem(): void;
+	    waitForEditRights(): void;
+	    someOneElseIsChanging(watcherInfo: IItemWatched): void;
+	    someOneElseWasChanging(watcherInfo: IItemWatched): void;
+	    someOneElseStoppedEditing(watcherInfo: IItemWatched, previousWatcherInfo: IItemWatched): void;
+	    updateItemViewers(watcherInfo: IItemWatched): void;
+	    getVersion(): string;
+	    getVersionQualifier(): string;
+	    getNeedsSave(): boolean;
+	    getType(itemId: string): string;
+	    getAvailableReportsAsync(): JQueryDeferred<XRGetProject_Reports_GetReportsAck>;
+	    getDeletedItemsAsync(insertInList: (item: IVersionDetails) => void, progress: (p: number) => void, deleteLog?: IVersionDetails[], startAt?: number): JQueryDeferred<{}>;
+	    getActivityAsync(insertInList: (item: IVersionDetails, first?: number, last?: number, referenceChange?: IReferenceUpdate) => void, startAt?: number, count?: number, auditIdMin?: number, auditIdMax?: number): JQueryDeferred<number>;
+	    canNavigateAwayAsync(): JQueryDeferred<{}>;
+	    treeSelectionChangeAsync(newItemId: string): JQueryDeferred<{}>;
+	    moveItemsAsync(itemIds: string, newFolder: string, newPosition?: number, useComment?: string): JQueryDeferred<{}>;
+	    updateMaxVersion(itemId: string): JQueryDeferred<{}>;
+	    removedFromTree(itemId: string, parentId: string): void;
+	    insertInTree(newItem: IDBParent): void;
+	    copyFrom(target: string, source: IDB): void;
+	    updateCache(newItem: IUpdateCache): void;
+	    createItemUrl(itemId?: string, crossProject?: string): string;
+	    renderItem(cachedItem?: IItem): void;
+	    print(): void;
+	    touchAsync(itemOrFolderId: string, depth: number): JQueryDeferred<string>;
+	    setLabels(newLabels: IItemGet): JQueryDeferred<{}>;
+	    needsSave(): boolean;
+	    signItemAsync(itemId: string, password: string, meaning?: string): JQueryDeferred<XRPostProject_SignItem_SignItemAck>;
+	    checkPassword(password: string): JQueryDeferred<IRestResult>;
+	    convertDocAsync(fileNo: number, targetDocumentFolder?: string, useOriginal?: boolean): JQueryDeferred<string>;
+	    pingCurrentItem(): void;
+	    getCurrentItemId(): string;
+	    commitChangeListAsync(changeList: IReferenceChange[]): JQueryDeferred<{}>;
+	    isMedical(strict?: boolean): boolean;
+	    commentRequired(): boolean;
+	    touchToolAvailable(item: IItem): boolean;
+	    auditTrailAvailable(): boolean;
+	    mailToolAvailable(): boolean;
+	    postLogin(user: string): void;
+	    canDeleteItem(item: IItem): boolean;
+	    canViewItem(item: IItem): boolean;
+	    canEditItem(item: IItem): boolean;
+	    canCreateItemType(category: string, folder?: boolean): boolean;
+	    canDragDrop(category: string, id: string): boolean;
+	    canSeeField(category: string, field: number): boolean;
+	    canEditField(category: string, field: number): boolean;
+	    evaluateTraceRule(item: IItem, checkDownRule: boolean): ITraceRules;
+	    dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
+	}
+	export interface IBaseApp {
+	    getParentId(itemId: string): string;
+	    itemChanged(needsSave: boolean): void;
+	    getVersion(): string;
+	    getVersionQualifier(): string;
+	    getNeedsSave(): boolean;
+	    getCurrentItemId(): string;
+	    pingCurrentItem(): void;
+	    canDragDrop(nodeType: string, pageId: string): boolean;
+	    dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
+	    getTree(subtreeFilter?: string[]): IDB[];
+	    pingCurrentItem(): void;
+	    itemForm: JQuery;
+	    printForm: JQuery;
+	    dlgForm: JQuery;
+	    postLogin(user: string): void;
+	    isConfigApp(): boolean;
+	}
+	//# sourceMappingURL=MatrixLibInterfaces.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
 	class ReportGeneratorTools implements IReportGeneratorTools {
 	    private reportJoblist;
 	    private reportProc;
@@ -5870,6 +3869,21 @@ declare module matrixApi
 	    DownloadSignedDoc(signedId: string, format: IReportOptions): void;
 	}
 	//# sourceMappingURL=ReportGeneratorTools.d.ts.map
+
+	class SearchTools implements ISearchTools {
+	    private globalFilter;
+	    private highlightContext;
+	    OnCancelSearch: EventDispatcher<ICancelSearchEvent>;
+	    getFilter(): string;
+	    cancelSearch(): void;
+	    searchInDialog(): void;
+	    endSearchInDialog(): void;
+	    highlight(term: string): void;
+	    hideHighlight(): void;
+	    renderHighlight(): void;
+	    private updateTinys;
+	}
+	//# sourceMappingURL=SearchTools.d.ts.map
 
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="jquery" />
@@ -6098,34 +4112,6 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=UITools.d.ts.map
 
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IThemes {
-	    [key: string]: string;
-	}
-	interface IThemeSelector {
-	    themeSelectorAdded: boolean;
-	    loadTheme(themeName: string): any;
-	    init(): any;
-	    renderThemeSelectorControl(help: string, table: JQuery): any;
-	}
-	class ThemeSelector implements IThemeSelector {
-	    themeSelectorAdded: boolean;
-	    constructor();
-	    private currentCSS;
-	    private injectCSS;
-	    private reloadCurrentCSS;
-	    loadTheme(themeName: string): void;
-	    init(): void;
-	    renderThemeSelectorControl(help: string, table: JQuery): void;
-	    private themes;
-	}
-	//# sourceMappingURL=ThemeSelector.d.ts.map
-
 	class URLTools implements IURLTools {
 	    getParameterByName(url: string, name: string): string | null;
 	    parseUrl(url: String): IMatrixUrlParts;
@@ -6144,6 +4130,1218 @@ declare module matrixApi
 	    hardCopy(element: JQuery): string;
 	}
 	//# sourceMappingURL=XPathTools.d.ts.map
+
+	//# sourceMappingURL=index.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IPanel {
+	    destroy: Function;
+	    title: string;
+	    toggleZen?: Function;
+	}
+	interface IItemPanelOptions {
+	    control: JQuery;
+	    itemId: string;
+	    changed: Function;
+	    cachedItem: IItem;
+	}
+	class Application {
+	    lastMainItemForm: ItemControl;
+	    currentPanel: IPanel;
+	    protected currentPrintPanel: IPanel;
+	    protected saveEnabled: boolean;
+	    currentItem: IItem;
+	    protected currentItemForcedReadonly: boolean;
+	    protected isSaving: boolean;
+	    constructor();
+	    saveSave(): void;
+	    updateMainUI(disabled?: boolean): void;
+	    setSaveCancelState(enabled: boolean, quietCancel: boolean): void;
+	    editConfiguration(): void;
+	    destroyOldControls(): void;
+	    refreshLinks(): void;
+	    updateControl(watcherInfo: IItemWatched, itemChanged: (needsSave: boolean) => void): void;
+	    forceReadonly(itemId: string): void;
+	    highlightReferences(): void;
+	    createControl(folderType: string, itemId: string, itemChanged?: (needsSave: boolean) => void, cachedItem?: IItem): void;
+	    renderErrorControl(control: JQuery, header: string, text: string, contextFrame?: boolean): void;
+	    private createItemControlCached;
+	    private createItemControl;
+	}
+	//# sourceMappingURL=Application.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ILineEditorLine {
+	    id?: string;
+	    key?: number;
+	    help: string;
+	    explanation?: string;
+	    value: string;
+	    type: string;
+	    options?: IDropdownOption[];
+	    multiple?: boolean;
+	    groups?: IDropdownGroup[];
+	    columns?: ITableControlOptionsColumn[];
+	    noEdit?: boolean;
+	    readonly?: boolean;
+	    hide?: boolean;
+	    required?: boolean;
+	    extraOptions?: IAnyMap;
+	}
+	class LineEditorExt {
+	    constructor();
+	    showDialog(title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number, showUserAndGroupsSelectWithDialog?: (container: JQuery, showUsers: boolean, showGroups: boolean, help: string, empty: string, selected: string[], dialogTitle: string, onSelect: (selection: string[]) => void) => void): JQueryDeferred<any>;
+	    static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
+	    private setEnabled;
+	    private getValue;
+	    private isEnabled;
+	}
+	//# sourceMappingURL=ILineEditor.d.ts.map
+
+	interface IValidationSpec {
+	    validationFunction?: JsonEditorValidation | null | any;
+	    schema?: string;
+	    apiHelp?: string;
+	}
+	class JsonEditor {
+	    constructor();
+	    showDialog(title: string, value: string, onOk: (update: string) => void, semanticValidate?: IValidationSpec): void;
+	}
+	//# sourceMappingURL=JsonEditor.d.ts.map
+
+	function InitializeUI(): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IItemControlOptions extends IBaseControlOptions {
+	    id?: string;
+	    control?: JQuery;
+	    type?: string;
+	    item?: IItemGet;
+	    dummyData?: {};
+	    parent?: string;
+	    changed?: Function;
+	    isForm?: boolean;
+	    isItem?: boolean;
+	    isPrint?: boolean;
+	    isHistory?: number;
+	    isDialog?: boolean;
+	    canEdit?: boolean;
+	    canEditLabels?: boolean;
+	    canEditTitle?: boolean;
+	}
+	interface ILinkType {
+	    type: string;
+	    name?: string;
+	    buttonName?: string;
+	    folder?: boolean;
+	    import?: boolean;
+	    required?: boolean;
+	}
+	class ItemControl {
+	    private settings;
+	    private defaultOptions;
+	    private resizeItTimer;
+	    controls: IControlDefinition[];
+	    private _title;
+	    private _riders;
+	    private _outerbody;
+	    private _body;
+	    private config;
+	    private title;
+	    private links;
+	    private orginalControlState;
+	    private startEdit;
+	    private duringFill;
+	    private restrictUnlockTo;
+	    static lastTab: IStringNumberMap;
+	    constructor(options: IItemControlOptions);
+	    destroy(): void;
+	    getValues(update: IItemPut, latest?: IItemGet): IItemPut;
+	    saveAsync(category: string, auditAction: string, valueOverwrites?: IItemGet): JQueryDeferred<IDBParent | IItemGet>;
+	    addMove(itemId: string, newVersion: number): void;
+	    resizeItem(force?: boolean): void;
+	    refreshLinks(): void;
+	    fillControls(): void;
+	    needsSave(): boolean;
+	    hasTitle(): boolean;
+	    updateItem(newItem: IItem): void;
+	    setFieldValue(fieldId: number, newValue: string): void;
+	    getFieldValue(fieldId: number): any;
+	    getCurrentTitle(): any;
+	    setViewers(viewers: IItemWatched): void;
+	    getControls(fieldType?: string): JQuery[];
+	    /** returns (first) control with a given title */
+	    getControlByName(name: string): JQuery;
+	    /** returns control with a given id */
+	    getControlById(fieldId: number): JQuery;
+	    wasUpdated(itemId: string, historyLength: number): boolean;
+	    private addTabs;
+	    private showTab;
+	    private allowSectionClose;
+	    resizeIt(forceRedraw?: boolean): void;
+	    private needsSaveImpl;
+	    private getFieldType;
+	    private sendNeedsSave;
+	    private renderActionButtonsReport;
+	}
+	//# sourceMappingURL=ItemForm.d.ts.map
+
+	/// <reference types="jquery" />
+	interface IShortcut {
+	    disableEdge: boolean;
+	    disableSafari: boolean;
+	    withCtrl: boolean;
+	    keyCode: number;
+	    key: string;
+	    help: string;
+	    category: string;
+	    inElement: string[];
+	    notInElement: string[];
+	    fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void;
+	}
+	interface IShortCutOverWrite {
+	    orgCtrl: boolean;
+	    newCtrl: boolean;
+	    orgKey: string;
+	    newKey: string;
+	    orgKeyCode: number;
+	    newKeyCode: number;
+	}
+	class KeyboardShortcuts {
+	    private lastKeyDown;
+	    private shortCuts;
+	    private documentSectionIdx;
+	    constructor();
+	    private defineShortcuts;
+	    print(): void;
+	    resetCustomKeys(): void;
+	    setKey(orgCtrl: boolean, newCtrl: boolean, orgKey: string, newKey: string): void;
+	    setKeyCode(orgCtrl: boolean, newCtrl: boolean, orgKeyCode: number, newKeyCode: number): void;
+	    addCtrlShortcut(key: string, category: string, help: string, inElement: string[], notInElement: string[], fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void, disableEdge: boolean, disableSafari: boolean): void;
+	    addShortcut(key: string, category: string, help: string, inElement: string[], notInElement: string[], fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void, disableEdge: boolean, disableSafari: boolean): void;
+	    addCtrlShortcutCode(keyCode: number, category: string, key: string, help: string, inElement: string[], notInElement: string[], fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void, disableEdge: boolean, disableSafari: boolean): void;
+	    addShortcutCode(keyCode: number, category: string, key: string, help: string, inElement: string[], notInElement: string[], fct: (event: JQueryEventObject, that?: KeyboardShortcuts) => void, disableEdge: boolean, disableSafari: boolean): void;
+	    init(): void;
+	    private isGoodTarget;
+	    private isDialogOpen;
+	    private static isDialogOpen;
+	    private showInReview;
+	    private showZen;
+	    private save;
+	    static doSave(): void;
+	    private createSelect;
+	    private toggleSections;
+	    private delete;
+	    private initToggleSection;
+	    private toggleSection;
+	    private downloadDocument;
+	    private focusSearch;
+	    private help;
+	}
+	//# sourceMappingURL=KeyboardShortcuts.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface INavigationBar {
+	    disableTabs: boolean;
+	    tabs: INavigationBarTab[];
+	}
+	interface INavigationBarRuntime extends INavigationBar {
+	    tabs: INavigationBarTabRuntime[];
+	}
+	interface INavigationBarTab {
+	    name: string;
+	    icon: string;
+	    mode: TabMode;
+	    other: string[];
+	}
+	interface INavigationBarTabRuntime extends INavigationBarTab {
+	    node?: JQuery;
+	    trees?: JQuery[];
+	    isActive?: boolean;
+	}
+	interface IStringTabMap {
+	    [key: string]: INavigationBarTab;
+	}
+	enum TabMode {
+	    ShowAsDefault = 1,
+	    HideAsDefault = 2
+	}
+	class NavigationBar {
+	    static navbarWidth: number;
+	    protected rootTabMap: IStringTabMap;
+	    protected workFolders: string[];
+	    protected enabled: boolean;
+	    protected bar: INavigationBarRuntime;
+	    protected helpButton: JQuery;
+	    static getDefaultBar(project: string): INavigationBar;
+	    constructor();
+	    init(): void;
+	    isEnabled(): boolean;
+	    isInCurrentTab(itemId: string): boolean;
+	    getCurrentTab(): string;
+	    countPerTab(itemIds: string[]): ISearchCountsTab[];
+	    activateItemsTab(itemId: string): void;
+	    updateNotificationCounters(): void;
+	    protected drawNavigationBar(): void;
+	    setWorkFolders(folders: string[]): void;
+	    protected resizeBarItems(): void;
+	    protected createTabs(): void;
+	    switchTab(tabName: string): boolean;
+	    protected activateTab(tab: INavigationBarTabRuntime): void;
+	    private getTab;
+	}
+	var NavBar: NavigationBar;
+	function initialize(): void;
+	//# sourceMappingURL=NavigationBar.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IUIMap {
+	    [key: string]: JQuery;
+	}
+	interface IKeyTitle {
+	    key: string;
+	    title: string;
+	}
+	class ListView {
+	    private control;
+	    private hits;
+	    private selected;
+	    private projectWarn;
+	    private panel;
+	    private sRoot;
+	    private uRoot;
+	    private nodes;
+	    private noSelected;
+	    constructor(panel: ProjectView);
+	    show(): void;
+	    hide(): void;
+	    setSelectedItems(selectedItems: string[]): void;
+	    redrawItem(itemId: string): void;
+	    filterList(match: string): ISearchCounts;
+	    showSearchResults(serverSearchResults: string[]): ISearchCounts;
+	    selectAll(setSelected: boolean): void;
+	    private getTitleFromTree;
+	    private showNodes;
+	    private createNode;
+	    getFancyRootNode(): Fancytree.FancytreeNode;
+	    getFancyTree(): Fancytree.Fancytree;
+	}
+	//# sourceMappingURL=ProjectList.d.ts.map
+
+	/// <reference types="matrixrequirements-type-declarations" />
+	interface ISearchCounts {
+	    current: number;
+	    total: number;
+	    perTab: ISearchCountsTab[];
+	}
+	interface ISearchCountsTab {
+	    tabName: string;
+	    count: number;
+	}
+	class ProjectTree {
+	    private hits;
+	    private allHits;
+	    private lastFilterFct;
+	    private panel;
+	    private canBeFiltered;
+	    private delayedFilter;
+	    private lt;
+	    private lit;
+	    private legacyColors;
+	    constructor(panel: ProjectView, canBeFiltered: boolean);
+	    show(): void;
+	    hide(): void;
+	    setSelectedItems(selectedItems: string[]): void;
+	    applyFilter(): void;
+	    redrawItem(itemId: string): void;
+	    openTree(key: string): void;
+	    closeTree(key: string): void;
+	    selectAll(isSelected: boolean): void;
+	    selectChildren(node: Fancytree.FancytreeNode): void;
+	    unSelectChildren(node: Fancytree.FancytreeNode): void;
+	    unselectParents(node: Fancytree.FancytreeNode): void;
+	    setHideMismatches(hideMismatches: boolean): void;
+	    forcePartial(): void;
+	    filterTree(match?: string): ISearchCounts;
+	    removeFilter(): number;
+	    showSearchResults(serverSearchResults: string[]): ISearchCounts;
+	    getFancyRootNode(): Fancytree.FancytreeNode;
+	    getFancyTree(): Fancytree.Fancytree;
+	    getNode(key: string): Fancytree.FancytreeNode;
+	    removeNode(key: string): void;
+	    setTitle(key: string, title: string): boolean;
+	    select(key: string): void;
+	    isSelected(key: string): boolean;
+	    updateRec(item: IDB): void;
+	    insertRec(parentKey: string, item: IDB): void;
+	    moveNode(parentId: string, itemId: string, position: number): void;
+	    addNode(treeNode: Fancytree.FancytreeNode, item: IDB, position?: {
+	        at: number;
+	    }): Fancytree.FancytreeNode;
+	    treeFromDb(dbTree: IDB[]): void;
+	    updateItemIsUnselected(itemId: string, isUnselected: boolean): boolean;
+	    updateNotificationCounters(): void;
+	    private addNodes;
+	}
+	//# sourceMappingURL=ProjectTree.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class ProjectView implements IBaseControl {
+	    settings: IProjectPanelControlOptions;
+	    viewModeSelector: ViewModeSelector;
+	    searchBox: SearchBox;
+	    projectTree: ProjectTree;
+	    listView: ListView;
+	    prefixCategory: string;
+	    tree: JQuery;
+	    private _root;
+	    needsLatest: boolean;
+	    constructor(control: JQuery);
+	    init(options: IBaseControlOptions): void;
+	    private forceSelectChildren;
+	    hasChanged(): boolean;
+	    getValue(): IReference[];
+	    setValue(selectedItems: string[]): void;
+	    toggleSelection(selected: boolean): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    clearFilter(): void;
+	    filterStatusChanged(itemId: string): void;
+	    insertNode(parentKey: string, item: IDB, position: {
+	        at: number;
+	    }): void;
+	    moveNode(parentId: string, itemId: string, position: number): void;
+	    refresh(): void;
+	    updateRec(item: IDB): void;
+	    insertRec(parentKey: string, item: IDB): void;
+	    updateTopPosition(top: number): void;
+	    appendController(controller: JQuery): void;
+	    render(subtree?: number, itemId?: string, item?: IDB): void;
+	    openTree(key: string): void;
+	    closeTree(key: string): void;
+	    setTitle(key: string, title: string): void;
+	    removeNode(key: string): void;
+	    select(key: string): void;
+	    isSelected(key: string): boolean;
+	    updateItemIsUnselected(itemId: string, isUnselected: boolean): void;
+	    updateNotificationCounters(): void;
+	    private saveSelection;
+	    private calculateDropTarget;
+	}
+	//# sourceMappingURL=ProjectView.d.ts.map
+
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IProjectPanelControlOptions extends IBaseControlOptions {
+	    parameter?: {
+	        readonly?: boolean;
+	        placeholder?: string;
+	        maxItems?: number;
+	        options?: any;
+	    };
+	    noAnimation?: boolean;
+	    dragAndDrop?: boolean;
+	    controlState?: ControlState;
+	    highlight?: boolean;
+	    canFilter?: boolean;
+	    isConfigSearch?: boolean;
+	    serverSearch?: boolean;
+	    expand?: number;
+	    tree?: IDB[];
+	    tooltips?: boolean;
+	    collectionChanged?: (count: number) => void;
+	    selectionChanged?: (id: string) => void;
+	    onExpand?: (id: string) => void;
+	    dropCallback?: Function;
+	    crossProject?: string;
+	    selectedItems?: IReference[];
+	    selectMode?: SelectMode;
+	    glueToBottom?: boolean;
+	    isMainTree?: boolean;
+	    autoScroll?: boolean;
+	}
+	enum SelectMode {
+	    /*** DO NOT CHANGED numbers use from baseControl */
+	    none = 0,
+	    items = 1,
+	    folders = 2,
+	    singleItem = 3,
+	    singleFolder = 4,
+	    independent = 5,
+	    auto = 6,
+	    independentAuto = 7,
+	    autoPrecise = 8
+	}
+	interface MyNodeData extends Fancytree.FancytreeNode {
+	    cstrender?: boolean;
+	    background?: string;
+	    shortTitle?: string;
+	    border?: string;
+	    type?: string;
+	    icon?: string;
+	    hideCheckbox?: boolean;
+	    isUnselected?: boolean;
+	    extraStyle?: string;
+	    classes?: string[];
+	}
+	interface MyNode extends Fancytree.FancytreeNode {
+	    selected?: boolean;
+	    unselectable?: boolean;
+	    ul?: JQuery;
+	    span?: JQuery;
+	    type?: string;
+	    subMatch?: boolean;
+	    shortTitle?: string;
+	}
+	interface MyDDData {
+	    otherNode?: MyNode;
+	    hitMode?: string;
+	}
+	interface MyFancytree extends Fancytree.Fancytree {
+	    options?: Fancytree.FancytreeOptions;
+	}
+	interface MyFancytreeOption extends Fancytree.FancytreeOptions {
+	    filter?: {
+	        mode?: string;
+	    };
+	}
+	enum SearchState {
+	    NoSearch = 0,
+	    FilterDone = 1,
+	    ServerRunning = 2,
+	    ServerDone = 3
+	}
+	enum SearchUpdate {
+	    inserted_node = 1,
+	    updated_rec = 2,
+	    filter_status_changed = 3,
+	    title_changed = 4,
+	    item_dropped = 5
+	}
+	interface IVizMode {
+	    uid: string;
+	    icon: string;
+	    text: string;
+	    mainTree: boolean;
+	    asList: boolean;
+	    hide: boolean;
+	    check: boolean;
+	    expand: boolean;
+	}
+	interface IDelayedAction {
+	    type: string;
+	    expression: string;
+	}
+	//# sourceMappingURL=ProjectViewDefines.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class SearchBox {
+	    private spinnerServerSearch;
+	    private currentStatus;
+	    private currentResults;
+	    private currentSearchExpression;
+	    private delayedAction;
+	    private panel;
+	    private filterHighlight_timeout;
+	    private filterSearch_timeout;
+	    private searchMetaInfo;
+	    private isEnabled;
+	    private isConfigSearch;
+	    private savedSearchIndex;
+	    constructor(panel: ProjectView);
+	    updateHeights(): void;
+	    renderSearchField(filter: JQuery, enableServerSearch: boolean, highlightResults: boolean, isConfigSearch: boolean): void;
+	    private setPrefixCategory;
+	    render(): void;
+	    protected showMatches(matches: ISearchCounts, localSearch: boolean): void;
+	    resetSearch(): void;
+	    private getMiracleControl;
+	    addToSavedSearch(str: string, filter: JQuery): void;
+	    getSavedSearches(): string[];
+	    private filterAgainExpression;
+	    private filter;
+	    private filterAgain;
+	    private search;
+	    private doDelayed;
+	    private showSearchStatus;
+	    private updateSearchStatusHeights;
+	}
+	//# sourceMappingURL=SearchBox.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class ViewModeSelector {
+	    private isMainTree;
+	    private btn;
+	    private img;
+	    private searchVizModes;
+	    private panel;
+	    constructor(panel: ProjectView);
+	    private selectFoldersOnly;
+	    getVizModeControl(onChange: Function): JQuery;
+	    setEnabled(enabled: boolean): void;
+	    showAsList(): boolean;
+	    hideMismatches(): boolean;
+	    isExpandTree(): boolean;
+	    private getMode;
+	    private setMode;
+	}
+	//# sourceMappingURL=ViewModeSelector.d.ts.map
+
+	class Zen {
+	    private mainItem;
+	    private isMobile;
+	    constructor(item: IItem);
+	    stopZen(): void;
+	    toggleZen(): void;
+	    protected showVersion(itemVersionId: string, actualId: string, actualTitle: string): void;
+	    protected showCurrentVersion(localChanges: IRestParam): void;
+	    private showZen;
+	    private applyZenMode;
+	    private makeZen;
+	    private renderItemMeat;
+	}
+	//# sourceMappingURL=Zen.d.ts.map
+
+	//# sourceMappingURL=index.d.ts.map
+
+	function InitializeComponents(): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ITableParams {
+	    canBeModified?: boolean;
+	    create?: boolean;
+	    showLineNumbers?: boolean;
+	    maxRows?: number;
+	    fixRows?: number;
+	    readonly_allowfocus?: boolean;
+	    columns: any;
+	    onCellChanged?: Function;
+	}
+	interface IBaseControl {
+	    getValue: (latestItem?: IItemGet) => any;
+	    hasChanged: () => boolean;
+	    resizeItem: (width?: number, forceRedraw?: boolean) => void;
+	    destroy: () => void;
+	    highlightReferences?: () => void;
+	    getText?: Function;
+	    getValueRaw?: Function;
+	    setValue?: Function;
+	    updateItem?: Function;
+	    refreshLinks?: Function;
+	    linksToCreate?: Function;
+	    labelsToSet?: Function;
+	    redraw?: Function;
+	    refresh?: Function;
+	    needsLatest: boolean;
+	    requiresContent?: () => boolean;
+	    disableDelayedShow?: boolean;
+	}
+	interface IBaseControlOptions {
+	    [key: string]: any;
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldType?: string;
+	    fieldId?: number;
+	    valueChanged?: Function;
+	    parameter?: IFieldParameter;
+	    fieldValue?: any;
+	    fieldValueJSON?: {};
+	    isItem?: boolean;
+	    item?: IItem;
+	    isForm?: boolean;
+	    isPrint?: boolean;
+	    isTooltip?: boolean;
+	    id?: string;
+	    isHistory?: number;
+	    type?: string;
+	    isFolder?: boolean;
+	    requiresContent?: boolean;
+	}
+	abstract class BaseControl implements IBaseControl {
+	    protected _root: JQuery;
+	    disableDelayedShow: boolean;
+	    needsLatest: boolean;
+	    constructor(control: JQuery);
+	    protected createHelp(settings: IBaseControlOptions): JQuery;
+	    abstract getValue(): any;
+	    abstract hasChanged(): boolean;
+	    abstract resizeItem(newWidth?: number, force?: boolean): void;
+	    abstract destroy(): void;
+	}
+	//# sourceMappingURL=BaseControl.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IGenericTableRow {
+	    [key: string]: string;
+	}
+	type IGenericTableData = IGenericTableRow[];
+	class PrintProjectUIMods implements IPlugin {
+	    isDefault: boolean;
+	    static CAT_TABLE: string;
+	    static CAT_SEQUENTIAL: string;
+	    static CAT_TRACES: string;
+	    static CAT_BLOCK: string;
+	    static CAT_FIELDS: string;
+	    static CAT_SUBTABLE: string;
+	    static TYPE_TOP: string[];
+	    static TYPE_HIERARCHY: string[];
+	    static TYPE_FORMATTER: string[];
+	    static MENU_FIELD_AND_LABEL: string[];
+	    static MENU_CSS: string[];
+	    static MENU_ITEM: string[];
+	    static MENU_RECURSION: string[];
+	    static getMenu(): string;
+	    static cssMenus: string[];
+	    static addTinyMenus(editor: any, valueChanged: Function, category: string): void;
+	    static buildMenu(fcts: any, editor: any): any[];
+	    private _item;
+	    private _jui;
+	    private codeFieldId;
+	    private enabledProject;
+	    initItem(item: IItem, jui: JQuery): void;
+	    initProject(): void;
+	    subscribe(): void;
+	    private saveToInstance;
+	    private itemsToDelete;
+	    private markDeleted;
+	    private isOnlyRecursion;
+	    private convertPrintToJson;
+	    private getTableBefore;
+	    private getTableAfter;
+	    private getTable;
+	    private rowBefore;
+	    private rowAfter;
+	    private getSubTableCells;
+	    private getTableItemRow;
+	    private getTableItemRowSubtable;
+	    private toPrintScript;
+	    private getBeforeAfter;
+	    private toJSON;
+	    private toXML;
+	    private toText;
+	}
+	function initialize(): void;
+	//# sourceMappingURL=PrintProjectUIMods.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ICascadingSelectOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        cascadingOptions?: ICascadingSelect;
+	    };
+	}
+	interface ICascadingOptionSelector {
+	    groupId: string;
+	    groupValue: string;
+	}
+	class CascadingSelect extends BaseControl {
+	    private settings;
+	    private optionsChain;
+	    constructor(control: JQuery);
+	    init(options: ICascadingSelectOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    getGuid(): string;
+	    private completeChain;
+	    private getGroup;
+	    private renderControls;
+	    private updateControls;
+	}
+	//# sourceMappingURL=cascadingSelect.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ICheckBoxControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        inlineHelp?: string;
+	        initialContent?: boolean;
+	    };
+	}
+	class CheckBoxImpl extends BaseControl {
+	    private settings;
+	    constructor(control: JQuery);
+	    init(options: ICheckBoxControlOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): any;
+	    setValue(value: boolean): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	}
+	//# sourceMappingURL=checkBox.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IColorPickerParams {
+	    externalHelp?: string;
+	    readonly?: boolean;
+	    allowResize?: boolean;
+	    requiresContent?: boolean;
+	    inlineHelp?: string;
+	    initialContent?: string;
+	    hideFullscreen?: boolean;
+	}
+	interface IColorPickerControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    lostFocus?: Function;
+	    parameter?: IColorPickerParams;
+	}
+	class ColorPickerImpl extends BaseControl {
+	    private settings;
+	    private lastValueChanged;
+	    private _editor;
+	    private doesRequireContent;
+	    constructor(control: JQuery);
+	    init(options: IColorPickerControlOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    requiresContent(): boolean;
+	    refresh(): void;
+	    setValue(newValue: string, reset?: boolean): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private valueChanged;
+	}
+	//# sourceMappingURL=colorPicker.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDateSelectParams {
+	    allowClear?: boolean;
+	    readonly?: boolean;
+	    vertical?: string;
+	    horizontal?: string;
+	    minDate?: Date;
+	    requiresContent?: boolean;
+	    initialContent?: boolean;
+	    inlineHelp?: string;
+	}
+	interface IDateSelectOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: IDateSelectParams;
+	}
+	class DateSelectImpl extends BaseControl {
+	    private settings;
+	    private data;
+	    private lastSelectedDate;
+	    private ctrl;
+	    private doesRequireContent;
+	    constructor(control: JQuery);
+	    init(options: IDateSelectOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    setValue(date: string): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    requiresContent(): boolean;
+	    private setDateFromString;
+	    static getDateFromString(dateStr: string): Date;
+	    private valueChanged;
+	    private renderHuman;
+	}
+	//# sourceMappingURL=dateselect.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ISignaturesInfo {
+	    signatures: ISignature[];
+	    missing: string[];
+	    given: string[];
+	    signatureDate: {
+	        [key: string]: string;
+	    };
+	    missingSignatures: number;
+	    givenSignatures: number;
+	    needSignature: boolean;
+	    hasSignature: boolean;
+	    isTemplate: boolean;
+	}
+	abstract class DocBaseImpl extends BaseControl {
+	    constructor(control: JQuery);
+	    static readSignatureInfo(item: IItemGet): ISignaturesInfo;
+	    static isMeTest(user: string): boolean;
+	    protected isMe(user: string): boolean;
+	}
+	//# sourceMappingURL=docBase..d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDocFilterOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {};
+	}
+	class DocFilterImpl extends BaseControl {
+	    private settings;
+	    constructor(control: JQuery);
+	    init(options: IDocFilterOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): any;
+	    setValue(): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	}
+	//# sourceMappingURL=docFilter.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDocReviewOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        hideReview?: boolean;
+	        allowModifyOthers?: boolean;
+	    };
+	}
+	interface IReviewData {
+	    inlineComments: IInlineComment[];
+	}
+	interface IInlineComment {
+	    ranges: IInlineCommentRange[];
+	    quote: string;
+	    text: string;
+	    id: string;
+	    changedBy: string;
+	    createdBy: string;
+	    changedAt: string;
+	    createdAt: string;
+	    highlights?: JQuery[];
+	}
+	interface IInlineCommentRange {
+	    start: string;
+	    startOffset: number;
+	    end: string;
+	    endOffset: number;
+	}
+	interface IAnnotationChange {
+	    action: string;
+	    value: IInlineComment;
+	}
+	interface ISignature {
+	    orgid: string;
+	    userid: string;
+	    signDate: string;
+	    signDateCustomer?: string;
+	    signaturefileid: string;
+	}
+	interface ISignatureChange {
+	    action: string;
+	    value: string;
+	}
+	class DocReviewImpl extends DocBaseImpl {
+	    private settings;
+	    private data;
+	    private annotationRecording;
+	    private commentSortedBy;
+	    private uiCtrl;
+	    private reportBuffer;
+	    constructor(control: JQuery);
+	    init(options: IDocReviewOptions): void;
+	    hasChanged(): boolean;
+	    getValue(currentItem?: IItemGet): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private applyRecordings;
+	    private parseValue;
+	    /********************************************
+	     
+	     ******************************************** */
+	    protected reviewButton(signatureStatus: ISignaturesInfo): void;
+	    recordAnnotation(action: string, annotation: IInlineComment): void;
+	    protected showReviewComments(canEdit: boolean, comments: IInlineComment[]): void;
+	    private showReportWithComments;
+	    private showComments;
+	    sortCommentsBy(sortBy: number): void;
+	}
+	class HTMLAnnotator {
+	    private annotationsBefore;
+	    private annotationsAfter;
+	    private commentSortedBy;
+	    constructor();
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    /**
+	     * this function merges annotations done locally with the changes happened in parallel on the server.
+	     *
+	     * @param serverVersion these are the annotations last saved (by another user)
+	     * @param localBefore these are the ones which existed locally, before starting to edit
+	     * @param localAfter  these are the ones which existed locally when user saves
+	     * @returns
+	     */
+	    static mergeAnnotation(serverVersion: string, localBefore: string, localAfter: string): string;
+	    static hasAnnotations(reviewComments: string): boolean;
+	    showReviewDialog(canEdit: boolean, itemId: string, version: number, data: IItem, reviewComments: string, isSuperUser: boolean, onUpdate: Function): void;
+	    protected recordAnnotation(action: string, annotation: IInlineComment): void;
+	    private showHTMLWithComments;
+	    private showCommentList;
+	    private sortCommentsBy;
+	}
+	//# sourceMappingURL=docReview.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDocSignOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        inlineHelp?: string;
+	    };
+	}
+	interface ISignData {
+	    rejectComments: ISignComment[];
+	    acceptComments: ISignComment[];
+	}
+	interface ISignComment {
+	    user: string;
+	    comment: string;
+	    createdAt: string;
+	}
+	interface ISignature {
+	    orgid: string;
+	    userid: string;
+	    signDate: string;
+	    signDateCustomer?: string;
+	    signaturefileid: string;
+	}
+	interface ISignatureChange {
+	    action: string;
+	    value: string;
+	}
+	class DocSignImpl extends DocBaseImpl {
+	    protected settings: IDocSignOptions;
+	    private data;
+	    private uiCtrl;
+	    private static iHaveSignature;
+	    private static iUser;
+	    constructor(control: JQuery);
+	    init(options: IDocSignOptions): void;
+	    hasChanged(): boolean;
+	    getValue(currentItem?: IItemGet): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private parseValue;
+	    protected addSignMeaning(uiCtrl: JQuery): void;
+	    protected renderSignatureTable(signatureInfo: ISignaturesInfo, uiCtrl: JQuery, notSigned: string, youSign: string, signedAt: string): void;
+	    protected removeNotifications(itemId: string, user?: string): void;
+	    protected removeNotificationsRec(toDelete: XRTodo[], idx: number): void;
+	    protected getUserId(login: string): number;
+	    protected showSignatureField(signatureInfo: ISignaturesInfo, uiCtrl: JQuery, columnSize: number, btnName: string, onSign: (pwd: string) => void, templateApproval: boolean): void;
+	    protected replaceSignButton(): void;
+	    protected rejectSignWithPass(): void;
+	    protected rejectSign(): void;
+	    protected signFromDropdown(meaning?: string): void;
+	    protected signDocument(pwd: string, meaning?: string): void;
+	}
+	//# sourceMappingURL=docSign.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDropdownParams {
+	    readonly?: boolean;
+	    placeholder?: string;
+	    maxItems?: number;
+	    options?: IDropdownOption[];
+	    groups?: IDropdownGroup[];
+	    create?: boolean;
+	    sort?: boolean;
+	    optionSetting?: string;
+	    splitHuman?: boolean;
+	    inlineHelp?: string;
+	    requiresContent?: boolean;
+	    maxHeight?: string;
+	    printProcessor?: {
+	        dropdownOptions?: string;
+	        parameterField?: string;
+	    };
+	    width?: string;
+	    initialContent?: string;
+	}
+	interface IDropDownControlOptions extends IBaseControlOptions {
+	    controlState: any;
+	    parameter?: IDropdownParams;
+	    noMarkup?: boolean;
+	}
+	interface IUserSelect extends IDropDownControlOptions {
+	    parameter?: {
+	        readonly?: boolean;
+	        placeholder?: string;
+	        maxItems?: number;
+	        showGroups?: boolean;
+	        showUsers?: boolean;
+	    };
+	    options?: IDropdownOption[];
+	    create?: boolean;
+	}
+	class DropdownImpl extends BaseControl {
+	    private settings;
+	    private rawValue;
+	    private ctrl;
+	    private human;
+	    private duringInit;
+	    private beforeDisplay;
+	    private doesRequireContent;
+	    constructor(control: JQuery);
+	    init(options: IDropDownControlOptions): void;
+	    getValueRaw(): string;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    getText(): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    requiresContent(): boolean;
+	    setValue(newValueDirty: string, force?: boolean): void;
+	    private valueChanged;
+	    private parseValue;
+	}
+	//# sourceMappingURL=dropdown.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IErrorControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {};
+	}
+	class ErrorControlImpl extends BaseControl {
+	    private settings;
+	    constructor(control: JQuery);
+	    init(options: IErrorControlOptions): void;
+	    getValue(): void;
+	    hasChanged(): boolean;
+	    destroy(): void;
+	    resizeItem(): void;
+	}
+	//# sourceMappingURL=errorControl.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -6199,6 +5397,649 @@ declare module matrixApi
 	    private onDrop;
 	}
 	//# sourceMappingURL=fileManager.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IGateControlControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter: IGate;
+	}
+	/** define behavior of a gate */
+	interface IGate {
+	    /** define different reviews/approvals which need to be made for gate to pass */
+	    lines: IGateLine[];
+	    /** if set to true the user can add some comment when approving */
+	    hasComments: boolean;
+	    /** defines behavior when all reviews/approvals have passed */
+	    allPass: {
+	        /** locks the fields above the gate if all reviews/approvals have passed */
+	        lockAbove: boolean;
+	        /** enables the fields below the gate if all reviews/approvals have passed */
+	        enableBelow: boolean;
+	        /** sets the specified labels if all reviews/approvals have passed */
+	        setLabels?: string[];
+	        /** hides the tools menu if all reviews/approvals have passed */
+	        hideMenu?: boolean | string[];
+	        /** hides the reference view if all reviews/approvals have passed */
+	        hideReferences?: boolean;
+	        /** locks the title if all reviews/approvals have passed */
+	        lockTitle?: boolean;
+	        /** disables delete if all reviews/approvals have passed */
+	        lockDelete?: boolean;
+	        notifyEmailPassed?: string[];
+	        notifyPassed?: string[];
+	        notifyFirstReject?: string[];
+	    };
+	    notifyFirstReject?: string[];
+	    /** text to show in printed reports if all reviews/approvals have passed */
+	    printAllPassed: string;
+	    /** text to show in printed reports if reviews/approvals has been rejected */
+	    printNotPassed: string;
+	    /** text to show in printed reports if reviews/approvals still need to be finished */
+	    printTodo: string;
+	    /** button allowing to approve a gate, leave empty ("") to hide*/
+	    pass: string;
+	    /** button allowing to reject a gate, leave empty  ("") to hide*/
+	    fail: string;
+	    /** text to show instead of pass button if gate was approved, leave empty ("") to use same as pass, set to "hide" to hide the button in this state*/
+	    passPassed?: string;
+	    /** text to show instead of pass button if gate was rejected, leave empty ("") to use same as pass, set to "hide" to hide the button in this state */
+	    passFailed?: string;
+	    /** text to show instead of fail button if gate was approved, leave empty ("") to use same as fail, set to "hide" to hide the button in this state */
+	    failPassed?: string;
+	    /** text to show instead of fail button if gate was rejected, leave empty ("") to use same as fail, set to "hide" to hide the button in this state */
+	    failFailed?: string;
+	    /** ask for signature to approve a gate */
+	    requireSignature?: boolean;
+	    /** ask for signature to reject a gate */
+	    requireSignatureReject?: boolean;
+	    /**  reset gate if any of these fields change. enter field names or ids  */
+	    reset?: string[];
+	    readOnly?: boolean;
+	    /** legacy mode (don't show in UI and printed documents who approved/rejected a line) */
+	    hideApprovalInfo?: boolean;
+	    /** show a line per given signature when printing */
+	    printSignaturesApproved?: boolean;
+	    /** show a line per missing signature when printing */
+	    printSignaturesRequired?: boolean;
+	    /** show a line per rejected signature when printing */
+	    printSignaturesRejected: boolean;
+	    /**   if set to true only allow a user to sign only one line in a gate  */
+	    strictSign?: boolean;
+	}
+	interface IGateLine {
+	    /** a unique id for the line */
+	    id: string;
+	    /** define which users can approve */
+	    users: string[];
+	    /** info to show before user (e.g. to hint what the approval means) */
+	    hint?: string;
+	    /** info to show before user (... once approved) */
+	    hintDone?: string;
+	    /** info to show before user (... if rejected) */
+	    hintRejected?: string;
+	}
+	interface IGateStatus {
+	    passed: boolean;
+	    failed: boolean;
+	    lines: IGateStatusLine[];
+	    search: string;
+	}
+	interface IGateStatusLine {
+	    id: string;
+	    passed: boolean;
+	    failed: boolean;
+	    user: string;
+	    date: string;
+	    dateUser: string;
+	    comment: string;
+	}
+	class GateControlImpl extends BaseControl {
+	    private settings;
+	    constructor(control: JQuery);
+	    private currentValue;
+	    private uiCtrl;
+	    private triggerUpdate;
+	    private allPassed;
+	    init(options: IGateControlControlOptions): void;
+	    private postSave;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    setValue(): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    labelsToSet(): string[];
+	    changed(fieldId: number, fieldName: string): void;
+	    private formatUserLogin;
+	    private showControl;
+	    private askForSignature;
+	    private setStatus;
+	    private update;
+	    private setColor;
+	    private getLine;
+	    private parseFieldValue;
+	    private updateOverallStatus;
+	}
+	//# sourceMappingURL=gateControl.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IHiddenOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {};
+	}
+	class HiddenImpl extends BaseControl {
+	    private curValue;
+	    constructor(control: JQuery);
+	    init(options: IHiddenOptions): void;
+	    getValue(): any;
+	    setValue(newValue: any): void;
+	    hasChanged(): boolean;
+	    destroy(): void;
+	    resizeItem(): void;
+	}
+	//# sourceMappingURL=hidden.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IHtmlFormOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        readonly?: boolean;
+	        htmlSetting?: string;
+	    };
+	}
+	interface IHTMLFormValue {
+	    name: string;
+	    value: string;
+	    pos?: number;
+	}
+	interface IFormValue {
+	    data: IHTMLFormValue[];
+	    html: string;
+	}
+	class HtmlFormImpl extends BaseControl {
+	    private settings;
+	    private timer;
+	    private form;
+	    constructor(control: JQuery);
+	    init(options: IHtmlFormOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    setValue(newValue: string): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private readData;
+	    private writeData;
+	    private getHtml;
+	}
+	//# sourceMappingURL=htmlform.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IHyperlinkOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {};
+	    fieldValueLabel?: string;
+	    linkPrefix?: string;
+	}
+	class HyperlinkImpl extends BaseControl {
+	    private settings;
+	    private lastValueChanged;
+	    private _editor;
+	    constructor(control: JQuery);
+	    init(options: IHyperlinkOptions): void;
+	    protected showLink(container: JQuery): void;
+	    hasChanged(): boolean;
+	    getValue(): any;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private valueChanged;
+	}
+	//# sourceMappingURL=hyperlink.d.ts.map
+
+	function InitializeControls(): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IItemSelectionParams {
+	    prefix?: string;
+	    buttonName?: string;
+	    showOnly?: string[];
+	    showNot?: string[];
+	    crossProject?: boolean;
+	    singleFolderOnly?: boolean;
+	    readOnly?: boolean;
+	    linkTypes?: {}[];
+	    readonly?: boolean;
+	    crossProjectHideDelete?: boolean;
+	    crossProjectAsList?: boolean;
+	}
+	interface IItemSelectionOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: IItemSelectionParams;
+	}
+	class ItemSelectionImpl extends BaseControl {
+	    private settings;
+	    private selectedItems;
+	    private uiCtrl;
+	    private currentSelection;
+	    constructor(control: JQuery);
+	    init(options: IItemSelectionOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    setValue(itemIds: string[]): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private addUnlink;
+	    private showCurrentSelection;
+	}
+	//# sourceMappingURL=itemSelection.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IItemSelectionFromToOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        /** Do not include these CATs in the FROM selection list */
+	        showNotFrom?: string[];
+	        /** Only include these CATs in the TO selection list */
+	        showOnlyTo?: string[];
+	        /** Initially select all possible items as to items */
+	        allTo?: boolean;
+	        buttonNameFrom?: string;
+	        buttonNameTo?: string;
+	        prefixFrom?: string;
+	        prefixTo?: string;
+	    };
+	}
+	interface IFromToSelection {
+	    from: IReference[];
+	    to: IReference[];
+	}
+	class ItemSelectionFromToImpl extends BaseControl {
+	    private settings;
+	    private selectedItems;
+	    private defaultSelection;
+	    constructor(control: JQuery);
+	    init(options: IItemSelectionFromToOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    setValue(newValue: string): void;
+	    setValueFrom(itemIds: string[]): void;
+	    setValueTo(itemIds: string[]): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private getSelectionString;
+	    private isDefaultSelection;
+	}
+	//# sourceMappingURL=itemSelectionFromTo.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ILabelsControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        titleBarControl?: JQuery;
+	        renderSliders?: boolean;
+	        hide_UI?: boolean;
+	    };
+	    type?: string;
+	    restrictEditTo?: string[];
+	}
+	class LabelsControlImpl extends BaseControl {
+	    private settings;
+	    private space;
+	    private mode;
+	    constructor(control: JQuery);
+	    init(options: ILabelsControlOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): any;
+	    setValue(labelStr: string): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private showLabels;
+	}
+	//# sourceMappingURL=labelsControl.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ILinkRenderParams {
+	    linkTypes?: ILinkCategories[];
+	    none?: string;
+	    disableCreate?: boolean;
+	    readonly?: boolean;
+	    reviewMode?: boolean;
+	    render?: {
+	        category?: string;
+	        hideLink?: boolean;
+	        buttonName?: string;
+	        hideCreate?: boolean;
+	        hideSelect?: boolean;
+	        ignoreOutOfDate?: boolean;
+	    }[];
+	}
+	interface ILinkCollectionOptions extends IBaseControlOptions {
+	    item?: any;
+	    fieldValue?: IReference[];
+	    parameter?: ILinkRenderParams;
+	    doNotSave?: boolean;
+	    mitigationRenderer?: Function;
+	    id?: string;
+	    tiny?: boolean;
+	}
+	interface ILinkCategories {
+	    name?: string;
+	    required?: boolean;
+	    type: string;
+	}
+	class LinkCollectionImpl extends BaseControl {
+	    private settings;
+	    private saveInDb;
+	    private itemReferences;
+	    private hideSelect;
+	    private ignoreOutOfDate;
+	    private showLinks;
+	    constructor(control: JQuery);
+	    init(options: ILinkCollectionOptions): void;
+	    refreshLinks(): void;
+	    hasChanged(): boolean;
+	    getValue(): any;
+	    setValue(newVal: IReference[]): void;
+	    resizeItem(): void;
+	    destroy(): void;
+	    updateItem(newItem: IItem): void;
+	    private deleteReference;
+	    private removeDeletedReference;
+	    private addReference;
+	    private selectionChange;
+	    private renderRefs;
+	}
+	//# sourceMappingURL=linkCollection.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDocMarkAsTemplateOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        inlineHelp?: string;
+	    };
+	}
+	interface IPasteSourceSetting {
+	    templates: IPasteSource[];
+	}
+	interface IPasteSource {
+	    fromProject: string;
+	    fromSign: string;
+	    fromName: string;
+	    fromDOC: string;
+	    canUseIn: string[];
+	}
+	interface ITempSignatures {
+	    signatures: ITempSignature[];
+	}
+	interface ITempSignature {
+	    user: string;
+	    datetime: string;
+	}
+	interface ITemplateProjects {
+	    projects: string[];
+	    targets: string[];
+	}
+	class MarkAsTemplateImpl extends DocSignImpl {
+	    static PROJECT_SETTING: string;
+	    static PROJECT_SETTING_Projects: string;
+	    private originalValue;
+	    private newValue;
+	    private pub;
+	    private publishTo;
+	    constructor(control: JQuery);
+	    private formatUserLogin;
+	    init(options: IDocMarkAsTemplateOptions): void;
+	    private getHelpPart;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    setValue(): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    static getRequiredApprovals(value: string): string[];
+	    static getTemplateSignatureStatus(value: string): ISignaturesInfo;
+	    static removeFromTemplates(deletedItems: string[]): void;
+	    private hideSignatureCtrl;
+	    private showProjects;
+	    private showCurrentUsages;
+	    private showSignatureTableEdit;
+	    static removeDeletedUsers(userList: string[]): string[];
+	    private getTemplateSignatureStatus;
+	    private askForSignatures;
+	    protected signTemplate(pwd: string): void;
+	}
+	//# sourceMappingURL=markAsTemplate.d.ts.map
+
+	//# sourceMappingURL=oldTableCtrl.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IPlainTextParams extends IFieldParameter {
+	    externalHelp?: string;
+	    readonly?: boolean;
+	    allowResize?: boolean;
+	    rows?: number;
+	    code?: boolean | CodeLanguage;
+	    lineNumbers?: boolean;
+	    tabSize?: number;
+	    height?: number;
+	    password?: boolean;
+	    autoEdit?: boolean;
+	    autoFormat?: boolean;
+	    showJSONFormat?: boolean;
+	    requiresContent?: boolean;
+	    inlineHelp?: string;
+	    magic?: boolean;
+	    apiHelp?: string;
+	    initialContent?: string;
+	    hideFullscreen?: boolean;
+	    purify?: boolean;
+	}
+	interface IPlainTextControlOptions extends IBaseControlOptions {
+	    dummyData?: any;
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    lostFocus?: Function;
+	    parameter?: IPlainTextParams;
+	}
+	type CodeLanguage = "xml" | "json" | "css";
+	class PlainTextImpl extends BaseControl {
+	    private settings;
+	    private lastValueChanged;
+	    private isCode;
+	    private myCodeMirror;
+	    private changedBefore;
+	    private _editor;
+	    private doesRequireContent;
+	    constructor(control: JQuery);
+	    init(options: IPlainTextControlOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    requiresContent(): boolean;
+	    refresh(): void;
+	    setValue(newValueDirty: string, reset?: boolean): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private valueChanged;
+	    private compactizeJSON;
+	}
+	//# sourceMappingURL=plainText.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class PublishedContentImpl extends BaseControl {
+	    private settings;
+	    constructor(control: JQuery);
+	    init(options: ICheckBoxControlOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    setValue(value: boolean): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	}
+	//# sourceMappingURL=publishedContent.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IRichTextParams {
+	    showSmartText?: boolean;
+	    autoEdit?: boolean;
+	    height?: number;
+	    docMode?: boolean;
+	    tableMode?: boolean;
+	    readonly?: boolean;
+	    wiki?: boolean;
+	    tiny?: boolean;
+	    noConvertTiny?: boolean;
+	    requiresContent?: boolean;
+	    printMode?: boolean;
+	    width?: string;
+	    initialContent?: string;
+	    visibleOption?: string;
+	}
+	interface IRichTextControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: IRichTextParams;
+	}
+	class RichTextImpl extends BaseControl {
+	    private settings;
+	    private lastClient;
+	    private editStart;
+	    private data;
+	    private lastScroll;
+	    private hiddenPasteBuffer;
+	    private _editor;
+	    private editable;
+	    private lastValueChanged;
+	    private form;
+	    private resizable;
+	    private heightDelta;
+	    private failedImages;
+	    private recCall;
+	    static editorInstanceCount: number;
+	    constructor(control: JQuery);
+	    init(options: IRichTextControlOptions, form?: ItemControl): void;
+	    getValue(): string;
+	    setValue(newVal: string): void;
+	    hasChanged(): boolean;
+	    getText(): void;
+	    getValueRaw(): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    static useTiny(ctrlParameter: IRichTextControlOptions): boolean;
+	    private triggerValueChange;
+	    private valueChanged;
+	    private showMenu;
+	    private markBadImages;
+	    private importImages;
+	    private importImagesRec;
+	    private showBadImages;
+	    private hideMenu;
+	    private uploadAndInsertImages;
+	    private cleanPastedHTML;
+	    private processpaste;
+	    private ddUploadFiles;
+	    private ddCreateLink;
+	    private ddUploadHTML;
+	    private onDragOver;
+	    private onDrop;
+	    private addVerticalResizer;
+	}
+	//# sourceMappingURL=richText.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -6314,59 +6155,132 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IGenericTableRow {
-	    [key: string]: string;
+	interface IRiskControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: IRiskParameter;
+	    links?: IReference[];
+	    hideReadonlyColumns?: boolean;
 	}
-	type IGenericTableData = IGenericTableRow[];
-	class PrintProjectUIMods implements IPlugin {
-	    isDefault: boolean;
-	    static CAT_TABLE: string;
-	    static CAT_SEQUENTIAL: string;
-	    static CAT_TRACES: string;
-	    static CAT_BLOCK: string;
-	    static CAT_FIELDS: string;
-	    static CAT_SUBTABLE: string;
-	    static TYPE_TOP: string[];
-	    static TYPE_HIERARCHY: string[];
-	    static TYPE_FORMATTER: string[];
-	    static MENU_FIELD_AND_LABEL: string[];
-	    static MENU_CSS: string[];
-	    static MENU_ITEM: string[];
-	    static MENU_RECURSION: string[];
-	    static getMenu(): string;
-	    static cssMenus: string[];
-	    static addTinyMenus(editor: any, valueChanged: Function, category: string): void;
-	    static buildMenu(fcts: any, editor: any): any[];
-	    private _item;
-	    private _jui;
-	    private codeFieldId;
-	    private enabledProject;
-	    initItem(item: IItem, jui: JQuery): void;
-	    initProject(): void;
-	    subscribe(): void;
-	    private saveToInstance;
-	    private itemsToDelete;
-	    private markDeleted;
-	    private isOnlyRecursion;
-	    private convertPrintToJson;
-	    private getTableBefore;
-	    private getTableAfter;
-	    private getTable;
-	    private rowBefore;
-	    private rowAfter;
-	    private getSubTableCells;
-	    private getTableItemRow;
-	    private getTableItemRowSubtable;
-	    private toPrintScript;
-	    private getBeforeAfter;
-	    private toJSON;
-	    private toXML;
-	    private toText;
+	interface IRiskParameter {
+	    riskConfig?: IRiskConfig;
+	    showAttributeNames?: boolean;
+	    forceAfterWeightsInPrint?: boolean;
+	    hide_UI?: boolean;
 	}
-	function initialize(): void;
-	//# sourceMappingURL=PrintProjectUIMods.d.ts.map
-
-	//# sourceMappingURL=RefLink.d.ts.map
+	interface IRiskValue {
+	    factors: IRiskValueFactor[];
+	    mitigations: IRiskValueMitigation[];
+	    postWeights?: IRiskValueFactorWeight[];
+	}
+	interface IRiskValueFactor {
+	    label: string;
+	    type: string;
+	    value: string;
+	    inputType?: string;
+	    weights: IRiskValueFactorWeight[];
+	}
+	interface IRiskValueFactorWeight {
+	    description: string;
+	    label: string;
+	    type: string;
+	    value: number;
+	}
+	interface IRiskValueMitigation {
+	    to: string;
+	    title: string;
+	    changes: IRiskValueMitigationChange[];
+	}
+	interface IRiskValueMitigationChange {
+	    by: number;
+	    changes: string;
+	    description: string;
+	    name: string;
+	}
+	interface IRiskValueMap {
+	    [key: string]: number;
+	}
+	interface IRiskRender {
+	    text: string;
+	    foregroundColor: string;
+	    backgroundColor: string;
+	    css: string;
+	}
+	class RiskCalculator {
+	    private riskValue;
+	    private config;
+	    constructor(config: IRiskConfig);
+	    parse(fieldValue: string): void;
+	    updateMitigations(possibleRefs: IReference[]): boolean;
+	    updateMitigationTitles(possibleLinks: IReference[]): void;
+	    init(riskValue: IRiskValue): void;
+	    /** get the value */
+	    getValue(): IRiskValue;
+	    getAttributeHTML(attributeIn: string): string;
+	    getWeight(factorType: string, weightType: string): number;
+	    getRBM(): IRiskValueMap;
+	    getRAMByMath(rbm: IRiskValueMap): IRiskValueMap;
+	    getRAMByUser(rbm: IRiskValueMap): IRiskValueMap;
+	    getRAM(rbm: IRiskValueMap): IRiskValueMap;
+	    getRiskSumText(riskValues: IRiskValueMap): {
+	        text: string;
+	        foregroundColor: string;
+	        backgroundColor: string;
+	        css: string;
+	    };
+	    getRiskSumSpan(riskValues: IRiskValueMap): string;
+	    getColor(riskValues: IRiskValueMap, foreground: boolean): string;
+	    static labelDisplay(weightValue: IRiskConfigFactorWeightValue): string;
+	}
+	class RiskControlImpl extends BaseControl {
+	    private settings;
+	    private config;
+	    private risk;
+	    private mitbody;
+	    private isPrint;
+	    private riskCalculator;
+	    private mitigationsRemoved;
+	    constructor(control: JQuery);
+	    init(options: IRiskControlOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private syncTheLinks;
+	    private controlsFromTable;
+	    private controlsToTable;
+	    private renderFactorWithWeightsLine;
+	    private editRichText;
+	    private setFactorRichValue;
+	    private renderWeight;
+	    private setWeight;
+	    private setFactor;
+	    riskChange(): void;
+	    private mitigationChanged;
+	    private getLabelFactor;
+	    private getLabelWeight;
+	    private getLabelWeightFactor;
+	    private createMitigationSelect;
+	    private mitigationRenderer;
+	    private setSelectValues;
+	    private setSelectValue;
+	    private canBeMitigation;
+	    /********************************
+	     * render as table control
+	     ********************************/
+	    private renderTableBodyRow;
+	    /********************************
+	     * user inputs
+	     ********************************/
+	    private renderFactorInput;
+	    private renderWeightInput;
+	    highlightReferences(): void;
+	    private renderMitigationSelect;
+	}
+	//# sourceMappingURL=riskCtrl2.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -6374,43 +6288,293 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IItemSelectionParams {
-	    prefix?: string;
-	    buttonName?: string;
-	    showOnly?: string[];
-	    showNot?: string[];
-	    crossProject?: boolean;
-	    singleFolderOnly?: boolean;
-	    readOnly?: boolean;
-	    linkTypes?: {}[];
-	    readonly?: boolean;
-	    crossProjectHideDelete?: boolean;
-	    crossProjectAsList?: boolean;
+	interface ISectionOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    help?: string;
+	    parameter?: ISectionParams;
 	}
-	interface IItemSelectionOptions extends IBaseControlOptions {
+	interface ISectionParams {
+	    lineBefore?: boolean;
+	    lineAfter?: boolean;
+	}
+	class SectionImpl extends BaseControl {
+	    private curValue;
+	    constructor(control: JQuery);
+	    init(options: ISectionOptions): void;
+	    getValue(): string;
+	    setValue(newValue: any): void;
+	    hasChanged(): boolean;
+	    destroy(): void;
+	    resizeItem(): void;
+	}
+	//# sourceMappingURL=section.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDocSourceRefOptions extends IBaseControlOptions {
 	    controlState?: ControlState;
 	    canEdit?: boolean;
 	    help?: string;
 	    fieldValue?: string;
 	    valueChanged?: Function;
-	    parameter?: IItemSelectionParams;
+	    parameter?: {
+	        readonly?: boolean;
+	    };
 	}
-	class ItemSelectionImpl extends BaseControl {
+	class SourceRefImpl extends DocBaseImpl {
 	    private settings;
-	    private selectedItems;
-	    private uiCtrl;
-	    private currentSelection;
+	    private originalValue;
+	    private newValue;
+	    private lastValueChanged;
 	    constructor(control: JQuery);
-	    init(options: IItemSelectionOptions): void;
+	    init(options: IDocSourceRefOptions): void;
 	    hasChanged(): boolean;
 	    getValue(): string;
-	    setValue(itemIds: string[]): void;
+	    setValue(newInfo: string): string;
 	    destroy(): void;
 	    resizeItem(): void;
-	    private addUnlink;
-	    private showCurrentSelection;
 	}
-	//# sourceMappingURL=itemSelection.d.ts.map
+	//# sourceMappingURL=sourceRef.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ISyncSourceInfoOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        readonly?: boolean;
+	    };
+	}
+	interface ISyncSourceInfo {
+	    param: string;
+	    type: string;
+	    value: string;
+	}
+	class SyncSourceInfoImpl extends BaseControl {
+	    private settings;
+	    constructor(control: JQuery);
+	    init(options: IHtmlFormOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    setValue(syncStatusString: string): void;
+	    destroy(): void;
+	    resizeItem(): void;
+	    private renderValue;
+	}
+	//# sourceMappingURL=syncSourceInfo.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ISyncStatusOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: {
+	        readonly?: boolean;
+	    };
+	}
+	interface ISyncCatgoryInfo {
+	    categories: string;
+	    sourceName: string;
+	    new?: ISyncMapping[];
+	    resync?: ISyncMapping[];
+	}
+	interface ISyncMapping {
+	    from: string;
+	    to: string;
+	    fromId?: number;
+	    toId?: number;
+	}
+	interface ISyncStatusValue {
+	    targetItemId?: string;
+	    targetSyncedVersion?: number;
+	    thisSyncedVersion?: number;
+	}
+	interface IMergeResult {
+	    targetFieldId: string;
+	    targetFieldValue: string;
+	}
+	enum SyncStatus {
+	    NeverSynced = 0,
+	    InSync = 1,
+	    BothChanged = 2,
+	    MatrixChanged = 3,
+	    OtherChanged = 4
+	}
+	class SyncStatusImpl extends BaseControl {
+	    private settings;
+	    private syncStatus;
+	    private syncCatgoryInfo;
+	    private labelStatus;
+	    private target;
+	    private source;
+	    private newCreated;
+	    static syncBlackList: string[];
+	    private mergeResults;
+	    constructor(control: JQuery);
+	    init(options: IHtmlFormOptions): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    preSaveHook(isItem: boolean, type: string, controls: IControlDefinition[]): JQueryDeferred<{}>;
+	    static createNew(externalCategory: string, items: string[], targetCategory: string): JQueryDeferred<{}>;
+	    static reSyncItems(externalCategory: string, items: string[]): JQueryDeferred<{}>;
+	    static breakLinks(externalCategory: string, items: string[]): JQueryDeferred<{}>;
+	    private static breakLinksRec;
+	    private static createNewRec;
+	    private static reSyncItemsRec;
+	    private static updateSyncDetails;
+	    private static getFieldIdMapping;
+	    private static matchSyncDetails;
+	    private getSyncStatus;
+	    private setSyncStatus;
+	    /** function called if item is not yet synced or ignored
+	     *
+	     */
+	    private offerLinking;
+	    private showSyncInfo;
+	    private showLinkInfo;
+	    private fillCreateDialog;
+	    private createItemLink;
+	    private offerBreakLink;
+	    /** function called if item is linked - it can or cannot be in sync
+	   
+	    */
+	    private offerAutoSync;
+	    private saveMergeInfo;
+	    private autoSync;
+	    private saveAndLink;
+	    private offerManualSync;
+	    /** render dialog to sync items */
+	    private showSyncDialog;
+	    /** render info that the item behind exists and can be loaded (or doesn't exist...) */
+	    private lazyLoad;
+	    /** hide input fields which cannot be synced (no setValue method) */
+	    private hideNonSyncFields;
+	}
+	function initialize(): void;
+	//# sourceMappingURL=syncStatus.d.ts.map
+
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ITableControlParams {
+	    readonly?: boolean;
+	    columns?: ITableControlOptionsColumn[];
+	    onDblClick?: Function;
+	    canBeModified?: boolean;
+	    create?: boolean;
+	    showLineNumbers?: boolean;
+	    maxRows?: number;
+	    fixRows?: number;
+	    readonly_allowfocus?: boolean;
+	    passFailEditorConfig?: any;
+	    readOnlyFields?: string[];
+	    limitEditRow?: string;
+	    manualTableHeights?: boolean;
+	    doNotRememberWidth?: boolean;
+	    onColumnsResized?: Function;
+	    cellAskEdit?: string;
+	    disableColumnReorder?: boolean;
+	    inlineHelp?: string;
+	    initialContent?: IStringMap[];
+	    autoUpdate?: string;
+	}
+	interface ITableControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    dummyData?: any;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: ITableControlParams;
+	}
+	interface ITableControlOptionsColumn {
+	    name: string;
+	    field: string;
+	    editor: string;
+	    options?: {
+	        [key: string]: string;
+	    } | IDropdownOption[];
+	    relativeWidth?: Number;
+	    headerCssClass?: string;
+	    cssClass?: string;
+	}
+	interface ITableRow {
+	    idx: number;
+	    id: string;
+	    name: string;
+	    [key: string]: any;
+	}
+	interface MyData extends Slick.SlickData {
+	    options?: string[];
+	}
+	class TableControlImpl extends BaseControl {
+	    private settings;
+	    constructor(control: JQuery);
+	    init(options: ITableControlOptions): void;
+	    getValue(): string;
+	    hasChanged(): boolean;
+	    destroy(): void;
+	    resizeItem(): void;
+	    static checkConfig(json: ITableControlParams): Promise<string | null>;
+	}
+	//# sourceMappingURL=tableCtrl.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ITasksControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: any;
+	    valueChanged?: Function;
+	    parameter?: {
+	        readonly?: boolean;
+	        plugins?: number[];
+	    };
+	    readOnly?: boolean;
+	}
+	class TasksControlImpl extends BaseControl {
+	    private settings;
+	    private dragCounter;
+	    constructor(control: JQuery);
+	    init(options: ITasksControlOptions): void;
+	    updateControl(): void;
+	    init2(): void;
+	    hasChanged(): boolean;
+	    getValue(): string;
+	    destroy(): void;
+	    resizeItem(): void;
+	    getPluginFilter(): number[];
+	    private onDrop;
+	}
+	//# sourceMappingURL=tasksControl.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -6463,197 +6627,54 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IDocMarkAsTemplateOptions extends IBaseControlOptions {
+	interface IUpLinkInfoOptions extends IBaseControlOptions {
 	    controlState?: ControlState;
 	    canEdit?: boolean;
 	    help?: string;
-	    fieldValue?: string;
+	    fieldValue?: string | {};
 	    valueChanged?: Function;
-	    parameter?: {
-	        inlineHelp?: string;
-	    };
+	    parameter?: IUpLinkDetails;
+	    validate?: boolean;
 	}
-	interface IPasteSourceSetting {
-	    templates: IPasteSource[];
+	interface IUpLinkDetails {
+	    /** a comma separated list of categories */
+	    cats: string;
+	    /** it is possible to show a specific text with some icons if there are (set to true)/ are no links (set to false) */
+	    exists?: boolean;
+	    /** depends on exist:  shows an icon if there's at least one (or none)  */
+	    icon?: string;
+	    /** depends on exist:  color of icon  */
+	    iconfg?: string;
+	    /** depends on exist:  background color of icon  */
+	    iconbg?: string;
+	    /** depends on exist:  text behind icon  */
+	    text?: string;
+	    /** to show information about the actualy uplinks: false (don't show)|true (shows a simple list with all id's)|listref (shows a list with id's as links and titles)|ref (shows id's as links and titles inline behind text) */
+	    itemInfo?: string | boolean;
+	    /** show create button */
+	    showCreate?: boolean;
+	    /**  a comma separated list of categories for which to hide the create button (subset of cats) */
+	    hideCreate?: string;
+	    /**  a comma separated list of categories for which to hide in selection (subset of cats) */
+	    hideSelect?: string;
+	    reports?: boolean;
 	}
-	interface IPasteSource {
-	    fromProject: string;
-	    fromSign: string;
-	    fromName: string;
-	    fromDOC: string;
-	    canUseIn: string[];
-	}
-	interface ITempSignatures {
-	    signatures: ITempSignature[];
-	}
-	interface ITempSignature {
-	    user: string;
-	    datetime: string;
-	}
-	interface ITemplateProjects {
-	    projects: string[];
-	    targets: string[];
-	}
-	class MarkAsTemplateImpl extends DocSignImpl {
-	    static PROJECT_SETTING: string;
-	    static PROJECT_SETTING_Projects: string;
-	    private originalValue;
-	    private newValue;
-	    private pub;
-	    private publishTo;
-	    constructor(control: JQuery);
-	    private formatUserLogin;
-	    init(options: IDocMarkAsTemplateOptions): void;
-	    private getHelpPart;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    setValue(): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	    static getRequiredApprovals(value: string): string[];
-	    static getTemplateSignatureStatus(value: string): ISignaturesInfo;
-	    static removeFromTemplates(deletedItems: string[]): void;
-	    private hideSignatureCtrl;
-	    private showProjects;
-	    private showCurrentUsages;
-	    private showSignatureTableEdit;
-	    static removeDeletedUsers(userList: string[]): string[];
-	    private getTemplateSignatureStatus;
-	    private askForSignatures;
-	    protected signTemplate(pwd: string): void;
-	}
-	//# sourceMappingURL=markAsTemplate.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ISignaturesInfo {
-	    signatures: ISignature[];
-	    missing: string[];
-	    given: string[];
-	    signatureDate: {
-	        [key: string]: string;
-	    };
-	    missingSignatures: number;
-	    givenSignatures: number;
-	    needSignature: boolean;
-	    hasSignature: boolean;
-	    isTemplate: boolean;
-	}
-	abstract class DocBaseImpl extends BaseControl {
-	    constructor(control: JQuery);
-	    static readSignatureInfo(item: IItemGet): ISignaturesInfo;
-	    static isMeTest(user: string): boolean;
-	    protected isMe(user: string): boolean;
-	}
-	//# sourceMappingURL=docBase..d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IDocReviewOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        hideReview?: boolean;
-	        allowModifyOthers?: boolean;
-	    };
-	}
-	interface IReviewData {
-	    inlineComments: IInlineComment[];
-	}
-	interface IInlineComment {
-	    ranges: IInlineCommentRange[];
-	    quote: string;
-	    text: string;
-	    id: string;
-	    changedBy: string;
-	    createdBy: string;
-	    changedAt: string;
-	    createdAt: string;
-	    highlights?: JQuery[];
-	}
-	interface IInlineCommentRange {
-	    start: string;
-	    startOffset: number;
-	    end: string;
-	    endOffset: number;
-	}
-	interface IAnnotationChange {
-	    action: string;
-	    value: IInlineComment;
-	}
-	interface ISignature {
-	    orgid: string;
-	    userid: string;
-	    signDate: string;
-	    signDateCustomer?: string;
-	    signaturefileid: string;
-	}
-	interface ISignatureChange {
-	    action: string;
-	    value: string;
-	}
-	class DocReviewImpl extends DocBaseImpl {
+	class UpLinkInfoImpl extends BaseControl {
 	    private settings;
-	    private data;
-	    private annotationRecording;
-	    private commentSortedBy;
-	    private uiCtrl;
-	    private reportBuffer;
 	    constructor(control: JQuery);
-	    init(options: IDocReviewOptions): void;
-	    hasChanged(): boolean;
-	    getValue(currentItem?: IItemGet): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private applyRecordings;
-	    private parseValue;
-	    /********************************************
-	     
-	     ******************************************** */
-	    protected reviewButton(signatureStatus: ISignaturesInfo): void;
-	    recordAnnotation(action: string, annotation: IInlineComment): void;
-	    protected showReviewComments(canEdit: boolean, comments: IInlineComment[]): void;
-	    private showReportWithComments;
-	    private showComments;
-	    sortCommentsBy(sortBy: number): void;
-	}
-	class HTMLAnnotator {
-	    private annotationsBefore;
-	    private annotationsAfter;
-	    private commentSortedBy;
-	    constructor();
+	    init(options: IUpLinkInfoOptions): void;
+	    refreshLinks(): void;
 	    hasChanged(): boolean;
 	    getValue(): string;
 	    destroy(): void;
 	    resizeItem(): void;
-	    /**
-	     * this function merges annotations done locally with the changes happened in parallel on the server.
-	     *
-	     * @param serverVersion these are the annotations last saved (by another user)
-	     * @param localBefore these are the ones which existed locally, before starting to edit
-	     * @param localAfter  these are the ones which existed locally when user saves
-	     * @returns
-	     */
-	    static mergeAnnotation(serverVersion: string, localBefore: string, localAfter: string): string;
-	    static hasAnnotations(reviewComments: string): boolean;
-	    showReviewDialog(canEdit: boolean, itemId: string, version: number, data: IItem, reviewComments: string, isSuperUser: boolean, onUpdate: Function): void;
-	    protected recordAnnotation(action: string, annotation: IInlineComment): void;
-	    private showHTMLWithComments;
-	    private showCommentList;
-	    private sortCommentsBy;
+	    updateItem(newItem: IItemGet): void;
+	    private renderRefs;
+	    private renderCreateButtons;
+	    private addReference;
+	    private selectionChange;
 	}
-	//# sourceMappingURL=docReview.d.ts.map
+	//# sourceMappingURL=uplinkinfo.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -6661,98 +6682,511 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface ITableConfig {
-	    default: IDhfTableOptions;
-	}
-	interface IDhfTableOptions extends IDHFSectionOptions {
-	    columns: ITableConfigColumn[];
-	}
-	interface ITableConfigColumn extends IDHFSectionOptions {
-	    columnType: string;
-	    field: string;
-	    pos: number;
-	    editor: string;
-	    name: string;
-	    options: IDropdownOption[];
-	}
-	class DhfTable implements IDHFSection {
-	    private config;
-	    private dhfTypeXML;
-	    private columnTypes;
-	    constructor(defaultConfig: IDHFConfig, dhfTypeXML: string, dhfType: string, columnTypes: ColumnTypesInfo);
-	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    updateXmlValue(ctrl: IDHFControlDefinition): void;
-	    getConfig(ctrl: IDHFControlDefinition): IDhfTableOptions;
-	    addSignatures(signatures: string[], ctrl: IDHFControlDefinition, includeAll: boolean): void;
-	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
-	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
-	    verifyContent(ctrl: IDHFControlDefinition): void;
-	    protected GetColumnCount(controllerConfig: IDhfTableOptions): number;
-	}
-	//# sourceMappingURL=DHFTable.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IDocSignOptions extends IBaseControlOptions {
+	interface IWorkflowControlOptions extends IBaseControlOptions {
 	    controlState?: ControlState;
 	    canEdit?: boolean;
 	    help?: string;
 	    fieldValue?: string;
 	    valueChanged?: Function;
 	    parameter?: {
-	        inlineHelp?: string;
+	        titleBarControl?: JQuery;
+	        pollFrequencyMS?: number;
+	        pollCount?: number;
 	    };
 	}
-	interface ISignData {
-	    rejectComments: ISignComment[];
-	    acceptComments: ISignComment[];
-	}
-	interface ISignComment {
-	    user: string;
-	    comment: string;
-	    createdAt: string;
-	}
-	interface ISignature {
-	    orgid: string;
-	    userid: string;
-	    signDate: string;
-	    signDateCustomer?: string;
-	    signaturefileid: string;
-	}
-	interface ISignatureChange {
-	    action: string;
-	    value: string;
-	}
-	class DocSignImpl extends DocBaseImpl {
-	    protected settings: IDocSignOptions;
-	    private data;
-	    private uiCtrl;
-	    private static iHaveSignature;
-	    private static iUser;
+	class WorkflowControlImpl extends BaseControl {
+	    private settings;
+	    private btn;
+	    private issue;
+	    private waitForChange;
+	    private poll;
 	    constructor(control: JQuery);
-	    init(options: IDocSignOptions): void;
+	    init(options: IWorkflowControlOptions): void;
 	    hasChanged(): boolean;
-	    getValue(currentItem?: IItemGet): string;
+	    getValue(): any;
+	    setValue(issueId: string): void;
 	    destroy(): void;
 	    resizeItem(): void;
-	    private parseValue;
-	    protected addSignMeaning(uiCtrl: JQuery): void;
-	    protected renderSignatureTable(signatureInfo: ISignaturesInfo, uiCtrl: JQuery, notSigned: string, youSign: string, signedAt: string): void;
-	    protected removeNotifications(itemId: string, user?: string): void;
-	    protected removeNotificationsRec(toDelete: XRTodo[], idx: number): void;
-	    protected getUserId(login: string): number;
-	    protected showSignatureField(signatureInfo: ISignaturesInfo, uiCtrl: JQuery, columnSize: number, btnName: string, onSign: (pwd: string) => void, templateApproval: boolean): void;
-	    protected replaceSignButton(): void;
-	    protected rejectSignWithPass(): void;
-	    protected rejectSign(): void;
-	    protected signFromDropdown(meaning?: string): void;
-	    protected signDocument(pwd: string, meaning?: string): void;
+	    private updateButton;
+	    private setButtonSpinning;
 	}
-	//# sourceMappingURL=docSign.d.ts.map
+	function initialize(): void;
+	//# sourceMappingURL=workflowControl.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface MatrixTreeOptions {
+	    noAnimation: boolean;
+	    highlight: boolean;
+	    canFilter: boolean;
+	    serverSearch: boolean;
+	    expand: number;
+	    canSelectItems: boolean;
+	    canFilterExclusiv: boolean;
+	    selectedItems: IReference[];
+	    isConfigSearch?: boolean;
+	    tree?: IDB[];
+	    controlState: ControlState;
+	    dropCallback: (moveDetails: ITreeDropInfo) => boolean;
+	    selectionChanged: (id: string) => void;
+	    onExpand?: (id: string) => void;
+	    isMainTree?: boolean;
+	}
+	interface ITreeDropInfo {
+	    parentId: string;
+	    itemId: string;
+	    index: number;
+	    updateUI?: () => void;
+	}
+	class MainTreeImpl {
+	    private settings;
+	    private _jui;
+	    private triggerSelectionChange;
+	    constructor();
+	    init(control: JQuery): void;
+	    render(treeSettings?: MatrixTreeOptions): void;
+	    update(item: IItem): void;
+	    remove(itemId: string): void;
+	    openFolder(itemId: string, expandToRoot?: boolean): void;
+	    closeFolder(itemId: string): void;
+	    select(itemId: string): void;
+	    isSelected(itemId: string): boolean;
+	    insertInTree(newItem: IDBParent, noEscape?: boolean): void;
+	    moveInTree(itemId: string, newParentId: string, newPosition: number): void;
+	    insertUpdateTreeRec(target: string, source: IDB): void;
+	    destroy(): void;
+	    clearFilter(): void;
+	    updateItemIsUnselected(itemId: string, isUnselected: boolean): void;
+	    updateNotificationCounters(): void;
+	}
+	var NavigationPanel: MainTreeImpl;
+	//# sourceMappingURL=MainTree.d.ts.map
+
+	class ActivityPanel implements IPanel {
+	    title: string;
+	    constructor(first?: number, last?: number);
+	    destroy(): void;
+	}
+	//# sourceMappingURL=ActivityPanel.d.ts.map
+
+	interface IInfoPerDay {
+	    auditIdMin: number;
+	    auditIdMax: number;
+	    details?: IInfoPerDayDetail[];
+	    nbChanges: number;
+	    dejaVu?: boolean;
+	}
+	interface IInfoPerDayDetail {
+	    itemId: string;
+	    type: string;
+	    title: string;
+	    version: number;
+	    action: string;
+	    human: string;
+	    reason: string;
+	}
+	interface IInfoPerDayMap {
+	    [key: string]: IInfoPerDay;
+	}
+	class CalendarPanel implements IPanel {
+	    private control;
+	    private infoPerDay;
+	    private selectFromDate;
+	    private selectToDate;
+	    private cats;
+	    private select;
+	    private results;
+	    private auditIdMin;
+	    private auditIdMax;
+	    private killed;
+	    private timewarpColors;
+	    title: string;
+	    constructor();
+	    destroy(): void;
+	    private resetSelection;
+	    private changeSelection;
+	    private updateSelection;
+	    private dayOfTimeWarp;
+	    private renderMonth;
+	    private renderMonths;
+	    private renderEmptySelectionHelp;
+	    private appendSelectionTime;
+	    private selectCalendar;
+	    private addFilter;
+	    private delayedFilter;
+	    private filterCalendar;
+	    private renderCalendar;
+	    private renderCalendarSelection;
+	    private renderLastChanges;
+	}
+	//# sourceMappingURL=CalendarPanel.d.ts.map
+
+	class ChangeLogPanel implements IPanel {
+	    private control;
+	    title: string;
+	    constructor();
+	    destroy(): void;
+	}
+	//# sourceMappingURL=ChangeLogPanel.d.ts.map
+
+	class DeletedItemPanel implements IPanel {
+	    title: string;
+	    private delayedFilter;
+	    private filterDeletedItems;
+	    private addFilter;
+	    constructor();
+	    destroy(): void;
+	}
+	//# sourceMappingURL=DeletedItemsPanel.d.ts.map
+
+	class DocumentPanel implements IPanel {
+	    title: string;
+	    constructor();
+	    destroy(): void;
+	}
+	//# sourceMappingURL=DocumentPanel.d.ts.map
+
+	class GroupPanel implements IPanel {
+	    title: string;
+	    constructor(categoryGroup: string, title: string);
+	    destroy(): void;
+	    private createProjectControl;
+	    private addChildren;
+	}
+	//# sourceMappingURL=GroupPanel.d.ts.map
+
+	class ItemPanel implements IPanel {
+	    private itemForm;
+	    private zen;
+	    title: string;
+	    constructor(options: IItemControlOptions);
+	    destroy(): void;
+	    getItemForm(): ItemControl;
+	    toggleZen(): void;
+	}
+	//# sourceMappingURL=ItemPanel.d.ts.map
+
+	class MyDocsPanel implements IPanel {
+	    private control;
+	    title: string;
+	    constructor();
+	    destroy(): void;
+	    render(): void;
+	}
+	//# sourceMappingURL=MyDocsPanel.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IPublishInfo {
+	    target: string;
+	    SOPLabelGroupType: string;
+	    ProcReviewLabelGroupType: string;
+	    WiReviewLabelGroupType: string;
+	    publisher: string;
+	}
+	interface IPublished {
+	    item: string;
+	    version: number;
+	    wis: string[];
+	    sop: string;
+	}
+	interface IToPublish {
+	    itemInfo: ISearchResult;
+	    approved: boolean;
+	    lastPublishedVersion: number;
+	    wis: string[];
+	    sop: string;
+	    rolesAndUsers: string[];
+	}
+	interface IToPublishMap {
+	    [key: string]: IToPublish;
+	}
+	interface IPublicationGroup {
+	    groupInfo: IPublicationCategory;
+	    label: string;
+	    groupItems: string[];
+	    approved: boolean;
+	    needsPublication: boolean;
+	}
+	interface IDocTitle {
+	    id: string;
+	    title: string;
+	}
+	interface IPublicationHistory {
+	    history: IPublicationHistoryItem[];
+	}
+	interface IPublicationHistoryItem {
+	    item: string;
+	    date: string;
+	    comment: string;
+	}
+	interface INewPublication {
+	    item: string;
+	    version: number;
+	    wis: string[];
+	    sop: string;
+	}
+	class PublishPanel implements IPanel {
+	    title: string;
+	    private control;
+	    private body;
+	    private pubConfig;
+	    private selectedForPublication;
+	    private selectedForUnPublication;
+	    private deletedStillPublished;
+	    private itemMap;
+	    private unGrouped;
+	    private groups;
+	    constructor(folderType: string);
+	    private paint;
+	    destroy(): void;
+	    private renderTabs;
+	    private renderPublishUi;
+	    renderReadyToPublish(isForPublication: boolean, panel: JQuery): void;
+	    private renderNotReadyToPublish;
+	    private enablePublish;
+	    private showGroup;
+	    private updateItems;
+	    private getItemsFromCheckBoxes;
+	    private showItem;
+	    private showDeletedItem;
+	    private showGroupDetails;
+	    private showItemDetails;
+	    private addInfoLastPublication;
+	    private computePublicationNeeds;
+	    private getPublicationItemsAndGroups;
+	    private publishSelected;
+	    private getIncludedDownlinksRec;
+	    private doPublish;
+	    private doPublishInFolder;
+	    private waitForPublication;
+	    private createDateFolder;
+	    private createFolders;
+	}
+	//# sourceMappingURL=PublishPanel.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class ITrainingFilter {
+	    userRaw: string[];
+	    user: string[];
+	    itemInfo: string;
+	    new: boolean;
+	    due: boolean;
+	    overdue: boolean;
+	    ok: boolean;
+	    none: boolean;
+	    overdueAfter: string;
+	    retrainingAfter: string;
+	}
+	interface ITrainingAnalysis {
+	    title: string;
+	    hasTraining: boolean;
+	    users: {
+	        [key: string]: ITrainingAnalysisUsers;
+	    };
+	    labels: string[];
+	}
+	interface ITrainingAnalysisUsers {
+	    /** true if there is an open training notification */
+	    thereIsATraining: boolean;
+	    /** if thereIsATraining number of days since it was created */
+	    theTrainingExistsSinceDays: number;
+	    /** true thereIsATraining if the training notification is overdue */
+	    theTrainingIsOverdue: boolean;
+	    /** true if there should be a training (either because there never has been one or there was no retraining) */
+	    thereShouldBeATraining: boolean;
+	    /** info about each training done */
+	    trainingsDone: ITrainingDone[];
+	    /** if there was a completed training, how many days ago the last training was completed */
+	    lastTrainingAgeDays: number;
+	    /** if there was a completed training, when last training was completed */
+	    lastTrainingDate: Date;
+	}
+	interface ITrainingDone {
+	    trainingCreated: string;
+	    trainingDone: string;
+	    trainingDays: number;
+	    trainingOverdue: boolean;
+	}
+	interface ITrainingCellStatus {
+	    classes: string;
+	    text: string;
+	    verbose: string;
+	}
+	enum ETrainingStatus {
+	    notNeeded = 0,
+	    needed = 1,
+	    due = 2,
+	    overdue = 3,
+	    done = 4
+	}
+	class TrainingTable {
+	    private vscroll;
+	    protected ivscroll: JQuery;
+	    private hscroll;
+	    protected ihscroll: JQuery;
+	    protected filterBox: JQuery;
+	    private mainTable;
+	    private leftTable;
+	    private leftContainer;
+	    protected leftBody: JQuery;
+	    protected topTable: JQuery;
+	    private topContainer;
+	    protected headerRow: JQuery;
+	    protected accessTable: JQuery;
+	    private accessContainer;
+	    protected accessBody: JQuery;
+	    protected topLeft: JQuery;
+	    protected destroyTable(): void;
+	    protected intiTableTimer: number;
+	    protected createMainContainer(place: JQuery): void;
+	    protected initTooltipBox(onShow: (cell: JQuery) => string): void;
+	    protected placeChangeMenu(uio: JQuery, cell: JQuery): void;
+	    protected initCellMenu(change: (cell: JQuery, option: string) => void): void;
+	    protected hideMenu(): void;
+	    protected scrollTop(): void;
+	    protected scrollLeft(): void;
+	    protected initTableScrolling(where: JQuery, paddingBottom: number): void;
+	    private scrollFunction;
+	}
+	function initialize(): void;
+	//# sourceMappingURL=QMSTraining.d.ts.map
+
+	class SyncPanel implements IPanel {
+	    private control;
+	    private syncCatgoryInfo;
+	    private body;
+	    private syncLists;
+	    title: string;
+	    constructor();
+	    destroy(): void;
+	    private renderSyncCategory;
+	    /** show items from external database which never have been synched */
+	    private renderNew;
+	    private showItemList;
+	    /** toggle items in table */
+	    private toggleTable;
+	    /** create a new items from selected external items */
+	    private createNew;
+	    /** re-sync existing links */
+	    private reSync;
+	    /** re-sync existing links */
+	    private ignore;
+	    /** create a clickable link */
+	    private createItemLink;
+	}
+	//# sourceMappingURL=SyncPanel.d.ts.map
+
+	class TagPanel implements IPanel {
+	    private control;
+	    title: string;
+	    constructor();
+	    destroy(): void;
+	    render(): void;
+	}
+	//# sourceMappingURL=TagsPanel.d.ts.map
+
+	function InitializePanels(): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	function InitializeCodeMirrorPlugins(): void;
+	//# sourceMappingURL=CodeMirrorPlugins.d.ts.map
+
+	class Email {
+	    private element;
+	    private resultBox;
+	    constructor(e: string);
+	    isOK(): boolean;
+	    private validate;
+	}
+	//# sourceMappingURL=EmailValidator.d.ts.map
+
+	interface PasswordOptions {
+	    minChar?: number;
+	    passIndex?: number;
+	    label?: string;
+	    verdicts?: string[];
+	    colors?: string[];
+	    width?: string[];
+	    scores?: number[];
+	    passFail?: (result: boolean) => void;
+	    other?: string;
+	}
+	class StrongPass {
+	    private options;
+	    private bannedPasswords;
+	    private checks;
+	    private element;
+	    private resultBox;
+	    constructor(element: string, param: PasswordOptions);
+	    setPassIndex(newIndex: number): void;
+	    isOK(): boolean;
+	    private attachEvents;
+	    private createBox;
+	    private runPassword;
+	    private checkPassword;
+	}
+	//# sourceMappingURL=PasswordValidator.d.ts.map
+
+	//# sourceMappingURL=RefLink.d.ts.map
+
+	enum refLinkStyle {
+	    edit = 1,
+	    link = 2,
+	    show = 3,
+	    select = 4,
+	    selectTree = 5
+	}
+	enum refLinkTooltip {
+	    none = 1,
+	    html = 2
+	}
+	interface IRefLinkOptions {
+	    style?: refLinkStyle;
+	    tooltip?: refLinkTooltip;
+	    callback?: Function;
+	    id?: string;
+	    title?: string;
+	    folder?: boolean;
+	    showVersion?: boolean;
+	    validate?: boolean;
+	    isHidden?: boolean;
+	    placeholder?: string;
+	    hideTitle?: boolean;
+	    crossProject?: string;
+	    css?: string;
+	}
+	//# sourceMappingURL=RefLinkDefines.d.ts.map
+
+	//# sourceMappingURL=SummernotePlugins.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class TokenControl {
+	    static showUserTokens(container: JQuery, login: string): void;
+	    static showTokenList(body: JQuery, createUser: string, displayUser: string, tokenList: XRTokenType[]): void;
+	    static showTokenAdd(body: JQuery, user: string, allUsers: XRUserType[], onAdded: Function): void;
+	    private static updateCreate;
+	    private static createToken;
+	}
+	//# sourceMappingURL=TokenControl.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -6819,89 +7253,61 @@ declare module matrixApi
 	var userControls: UserControl;
 	//# sourceMappingURL=UserControl.d.ts.map
 
+	class User {
+	    private element;
+	    private resultBox;
+	    constructor(el: string);
+	    isOK(): boolean;
+	    private validate;
+	}
+	//# sourceMappingURL=UserNameValidator.d.ts.map
+
+	function InitializeParts(): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	//# sourceMappingURL=jqueryFunctions.d.ts.map
+
 	/// <reference types="jquery" />
-	interface IRestConfig {
-	    server: string;
-	}
-	interface IRestTimer {
-	    start: number;
-	    end?: number;
-	    status?: number;
-	    command?: string;
-	    type?: string;
-	}
-	interface IJcxhr {
-	    status: number;
-	    responseText: string;
-	    responseJSON: IResponseJson;
-	    displayError: string;
-	    statusText?: string;
-	}
-	interface IResponseJson {
-	    category: string;
-	    detailsList: string[];
-	    displayError?: string;
-	    code?: string;
-	}
-	interface IFileParam {
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ICreateDialogOptions {
+	    type: string;
 	    name: string;
+	    folder: boolean;
+	    created?: (newItems: IReference) => void;
+	    singleCreate?: boolean;
+	    dontOpenNewItem: boolean;
+	    parent: string;
+	    closed?: Function;
 	}
-	interface IFileUploadProgress {
-	    position?: number;
-	    loaded?: number;
-	    totalSize?: number;
-	    total?: number;
+	interface ICreateDialogEventOptions {
+	    data: ICreateDialogOptions;
 	}
-	interface IFileUploadResult {
-	    fileId: string;
-	    fileFullPath: string;
-	    key: string;
+	interface ICreateDialogButtonOptions {
+	    control: JQuery;
+	    linkTypes: ILinkType[];
+	    singleCreate?: boolean;
+	    created?: (newRef: IReference) => void;
+	    isRiskControl?: boolean;
+	    type?: string;
+	    parent?: string;
+	    docTemplate?: boolean;
+	    open?: (view: ItemControl) => void;
+	    tinybuttons?: boolean;
+	    dontOpenNewItem: boolean;
 	}
-	interface IError224 {
-	    fields: IError224Field[];
+	class ItemCreationTools {
+	    private onOpenDlg;
+	    showDialog(options: ICreateDialogOptions): void;
+	    renderButtons(options: ICreateDialogButtonOptions): void;
+	    private showCreateDialog;
+	    private onDialogOpen;
+	    private showCreateDialogEvent;
 	}
-	interface IError224Field {
-	    fieldId: number;
-	    beforeCleanup: string;
-	    afterCleanup: string;
-	}
-	class RestConnector {
-	    private restServer;
-	    private restServerProject;
-	    private timer;
-	    private keepAlive;
-	    constructor(config: IRestConfig);
-	    setProject(projectName: string): void;
-	    getProject(cmd: string, ignoreErrors?: boolean, ignoreFilters?: boolean): JQueryDeferred<IRestResult>;
-	    getServer(cmd: string, noRetry?: boolean): JQueryDeferred<IRestResult>;
-	    postServer(cmd: string, param?: IRestParam, payload?: boolean): JQueryDeferred<IRestResult>;
-	    postProject(cmd: string, param: IRestParam, payload?: boolean): JQueryDeferred<IRestResult>;
-	    postProjectJson(cmd: string, data: unknown): JQueryDeferred<IRestResult>;
-	    putServer(cmd: string, param: IRestParam, asPayload?: boolean): JQueryDeferred<IRestResult>;
-	    putProject(cmd: string, param: IRestParam, itemId?: string): JQueryDeferred<IRestResult>;
-	    deleteProjectAsync(cmd: string, param: IRestParam, asString?: boolean): JQueryDeferred<IRestResult>;
-	    deleteServerAsync(cmd: string, param: IRestParam, asString?: boolean): JQueryDeferred<IRestResult>;
-	    download(cmd: string, params?: string[] | IStringMap): void;
-	    getFile(cmd: string, dataType?: string): JQueryDeferred<IRestResult>;
-	    uploadFileProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<IFileUploadResult>;
-	    fetchFileAsync(url: string, progress: (p: IFileUploadProgress) => void): JQueryDeferred<IFileUploadResult>;
-	    uploadFileCustomerAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<IFileUploadResult>;
-	    importProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void, params: {}): any;
-	    uploadFileServerAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void, target: string, params: {}, urlSuffix: string): JQueryDeferred<IFileUploadResult>;
-	    convertExcelProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<string>;
-	    convertExcelServerAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<string>;
-	    isTimeout(jqxhr: IJcxhr): boolean;
-	    isGatewayTimeout(jqxhr: IJcxhr): boolean;
-	    handleError(jqxhr: IJcxhr, textStatus: string, error: string, cmd: string, param?: IRestParam, itemId?: string): JQueryDeferred<IRestResult>;
-	    private get;
-	    private post;
-	    private postJson;
-	    postSpecialServer(cmd: string, param: IRestParam): JQueryDeferred<IRestResult>;
-	    private postSpecial;
-	    private put;
-	    private deleteRestAsync;
-	}
-	//# sourceMappingURL=RestConnector.d.ts.map
+	//# sourceMappingURL=ItemCreationView.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -7040,257 +7446,6 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=ItemHistoryView.d.ts.map
 
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class BranchBase extends ImportMergeBase implements IPlugin {
-	    protected pageRoot: string;
-	    protected pageID: string;
-	    protected pageTitle: string;
-	    static BRANCH_INFO_SETTING: string;
-	    protected mergeType: EMergeType;
-	    protected msg_na: string;
-	    protected msg_ignore: string;
-	    protected msg_add_restore: string;
-	    protected msg_add_restore_now: string;
-	    protected msg_replace: string;
-	    protected msg_restore_replace: string;
-	    protected msg_delete: string;
-	    protected msg_bothChanged: string;
-	    protected msg_changedInBranchOnly: string;
-	    protected msg_changedInMainlineOnly: string;
-	    protected msg_explain_merge_push: string;
-	    protected msg_explain_merge_push_help: string;
-	    protected msg_links_added: string;
-	    protected msg_links_removed: string;
-	    protected msg_links_not_in_other: string;
-	    isDefault: boolean;
-	    private branchProject;
-	    private branchInfo;
-	    private lastMerges;
-	    private mainlineBaseItemMap;
-	    private mainlineNowItemMap;
-	    private branchBaseItemMap;
-	    private branchNowItemMap;
-	    private branchBaseItems;
-	    private branchNowItems;
-	    private mainBaseItems;
-	    private mainNowItems;
-	    private mergeLineCount;
-	    private mergeLineNoAction;
-	    private mergeOptions;
-	    initItem(_item: IItem, _jui: JQuery): void;
-	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
-	    supportsControl(ctrlType: string): boolean;
-	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
-	    initProject(): void;
-	    isEnabled(): boolean;
-	    getProjectPages(): IProjectPageParam[];
-	    protected showPage(control: JQuery): void;
-	    protected showBranchHistory(container: JQuery): void;
-	    private showMergeDetails;
-	    private addMergeDetail;
-	    static renderItemLink(fullItem: string, otherProject?: string): string;
-	    static addMergeDetail(ul: JQuery, detail: XRMergeAction, targetProject: string, isFromBranch: boolean): void;
-	    protected wizardShowBranchSelect(container: JQuery): void;
-	    private isMerge;
-	    private isPush;
-	    private wizardContentChanges;
-	    private showChanges;
-	    private showMergeDecisionsToTake;
-	    private getPairs;
-	    private getItemsOnlyInBranch;
-	    private getItemsByChangeStatus;
-	    private getOptionButtons;
-	    private getOptionButton;
-	    private showPairs;
-	    private activateContentChangesNext;
-	    private isBranchMaster;
-	    private getUserContentChoices;
-	    private wizardLinkChanges;
-	    private addLinkList;
-	    private wizardStructuralChanges;
-	    private wizardExecuteMerge;
-	    private renderSingleItem;
-	    private compareMainVsBranch;
-	    private renderBranchId;
-	    private renderMainId;
-	    private renderBranchOrMainId;
-	    private createMap;
-	    private mergeSelect;
-	    private rememberMergeInfo;
-	    protected getToolTip(actionText: any): string;
-	}
-	function initialize(): void;
-	//# sourceMappingURL=Merge.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	/**this is the information about a branch (including the merge history) */
-	interface IBranchInfo {
-	    /** tag set in mainline and branch just after the creation of the branch */
-	    branchTag: string;
-	    /** UTC date / time when the branch was created */
-	    branchDate: string;
-	    /** if of the mainline project */
-	    sourceProject: string;
-	    /** mapping of fields between mainline and branch */
-	    fieldMapping: IFieldMergeMapping[];
-	    /** allows you to not merge some categories, if not set it defaults to ["REPORT", FOLDER"] */
-	    dontMerge?: string[];
-	    /** these labels are set in new /updated items in mainline (if they exist in the given category) */
-	    setLabels?: string[];
-	    /** these labels are reset in new /updated items in mainline (if they exist in the given category) */
-	    resetLabels?: string[];
-	    /**  these labels are not copied in case they changed in the branch */
-	    ignoreLabels?: string[];
-	    /**  these labels are set (next to set labels) if there was a conflict and the user decided to mark the conflicts */
-	    conflictLabels?: string[];
-	    /** user ids of user who can merge branch back into main */
-	    branchMasters?: string[];
-	}
-	enum EMergeChangeStatus {
-	    deleted = 0,
-	    created = 1,
-	    changed = 2,
-	    unchanged = 3,
-	    notExist = 4
-	}
-	interface IFieldMergeMapping {
-	    /** field id in mainline project */
-	    mainline: number;
-	    /** field id of same field in branch project */
-	    branch: number;
-	}
-	interface IMergeResults {
-	    utcDate: string;
-	    user: string;
-	    comment: string;
-	    tag: string;
-	    results: IMergeDetails[];
-	}
-	enum EItemChangeState {
-	    never = 0,
-	    notNow = 1,
-	    now = 2
-	}
-	enum EMergeActionChoice {
-	    noActionNeeded = -1,
-	    undecided = 0,
-	    ignore = 1,
-	    add_restore = 2,
-	    replace = 3,
-	    delete = 4
-	}
-	interface IMergeDetails {
-	    id: string;
-	    mV: number;
-	    bV: number;
-	    a: EMergeActionChoice;
-	    np: string;
-	    l: string[];
-	    u: string;
-	}
-	interface IMergeLookup {
-	    [key: string]: XRMergeItem;
-	}
-	interface ILastMerges {
-	    [key: string]: ILastMerge;
-	}
-	interface ILastMerge {
-	    [key: string]: number;
-	}
-	interface IMove {
-	    id: string;
-	    parent: string;
-	}
-	interface IMergeCommand {
-	    copy: string[];
-	    conflicted: string[];
-	    delete: string[];
-	    add_links: ILink[];
-	    remove_links: ILink[];
-	    move: IMove[];
-	    push?: number;
-	}
-	interface IMergeCommandTarget {
-	    id: string;
-	    m: number;
-	}
-	interface IImportMergeItem {
-	    instance?: string;
-	    project?: string;
-	    id: string;
-	    revision: number;
-	    description: string;
-	}
-	enum EMergeType {
-	    undefined = 0,
-	    merge = 1,
-	    push = 2
-	}
-	class ImportMergeBase {
-	    protected fieldMapping: IStringNumberMap;
-	    protected compare3Way(item1: IImportMergeItem, item2: IImportMergeItem, commonBase: IImportMergeItem): void;
-	    protected showItem(show: IImportMergeItem): void;
-	    protected remapItem(itemFromOtherProject: IItem): IItem;
-	    protected getItem(item: IImportMergeItem): JQueryDeferred<unknown>;
-	    protected renderVersion(hi: JQuery, source: string, item: IItem, version: number, category: string, branch?: string): void;
-	}
-	//# sourceMappingURL=ImportMergeBase.d.ts.map
-
-	class Email {
-	    private element;
-	    private resultBox;
-	    constructor(e: string);
-	    isOK(): boolean;
-	    private validate;
-	}
-	//# sourceMappingURL=EmailValidator.d.ts.map
-
-	interface PasswordOptions {
-	    minChar?: number;
-	    passIndex?: number;
-	    label?: string;
-	    verdicts?: string[];
-	    colors?: string[];
-	    width?: string[];
-	    scores?: number[];
-	    passFail?: (result: boolean) => void;
-	    other?: string;
-	}
-	class StrongPass {
-	    private options;
-	    private bannedPasswords;
-	    private checks;
-	    private element;
-	    private resultBox;
-	    constructor(element: string, param: PasswordOptions);
-	    setPassIndex(newIndex: number): void;
-	    isOK(): boolean;
-	    private attachEvents;
-	    private createBox;
-	    private runPassword;
-	    private checkPassword;
-	}
-	//# sourceMappingURL=PasswordValidator.d.ts.map
-
-	class User {
-	    private element;
-	    private resultBox;
-	    constructor(el: string);
-	    isOK(): boolean;
-	    private validate;
-	}
-	//# sourceMappingURL=UserNameValidator.d.ts.map
-
 	interface IReferenceToolsOptions {
 	    item: IItem;
 	    canEdit: boolean;
@@ -7307,161 +7462,39 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IXmlCharIssues {
-	    itemId: string;
-	    details: string;
+	interface IItemSelectDialogOptions {
+	    linkTypes: ILinkType[];
+	    getSelectedItems: () => IReference[];
+	    selectionChange: (newSelection: IReference[]) => void;
+	    crossProjectInit?: Function;
+	    crossProject?: boolean;
+	    crossProjectProject?: string;
+	    crossProjectFilter?: string;
+	    crossProjectFilterStrict?: boolean;
+	    selectMode?: SelectMode;
+	    selectOptions?: JQuery;
+	    dialogTitle?: string;
+	    focusOn?: string;
+	    height?: number;
+	    autoScroll?: boolean;
 	}
-	class Cleanup implements IPlugin {
-	    private item;
-	    private jui;
-	    static FIX_THE_ZOMBIE: string;
-	    static FIX_THE_IMAGE: string;
-	    static FIX_INVALID_XML: string;
-	    static badEncodedChars: string[];
-	    isDefault: boolean;
+	interface IItemSelectButtonOptions extends IItemSelectDialogOptions {
+	    buttonName?: string;
+	    smallbutton?: boolean;
+	    isRiskControl?: boolean;
+	    control: JQuery;
+	    tinybutton?: boolean;
+	}
+	class ItemSelectionTools {
 	    constructor();
-	    initItem(_item: IItem, _jui: JQuery): void;
-	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
-	    updateMenu(ul: JQuery, hook: number): void;
-	    supportsControl(ctrlType: string): boolean;
-	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
-	    initProject(): void;
-	    getProjectPages(): IProjectPageParam[];
-	    private renderProjectPage;
-	    private runCleanupSmartZombies;
-	    private createSmartZombieNotifications;
-	    private getZombieNotificationName;
-	    private getSmartLinks;
-	    private runCleanupImageZombies;
-	    private createImageZombieNotifications;
-	    private getZombieImageName;
-	    private removeNotifications;
-	    private getFolders;
-	    private getImages;
-	    /*****************************************
-	     *
-	     * invalid xml characters
-	     *
-	    */
-	    private runCleanupCharacters;
-	    static textOk(fieldVal: any): boolean;
-	    private testXML;
+	    showDialog(options: IItemSelectDialogOptions): void;
+	    renderButtons(options: IItemSelectButtonOptions): void;
+	    private showSelectDialog;
+	    private toggleSelect;
+	    showCrossProjectDialog(options: IItemSelectDialogOptions): void;
+	    private removeHidden;
 	}
-	function initialize(): void;
-	//# sourceMappingURL=Cleanup.d.ts.map
-
-	interface IInfoPerDay {
-	    auditIdMin: number;
-	    auditIdMax: number;
-	    details?: IInfoPerDayDetail[];
-	    nbChanges: number;
-	    dejaVu?: boolean;
-	}
-	interface IInfoPerDayDetail {
-	    itemId: string;
-	    type: string;
-	    title: string;
-	    version: number;
-	    action: string;
-	    human: string;
-	    reason: string;
-	}
-	interface IInfoPerDayMap {
-	    [key: string]: IInfoPerDay;
-	}
-	class CalendarPanel implements IPanel {
-	    private control;
-	    private infoPerDay;
-	    private selectFromDate;
-	    private selectToDate;
-	    private cats;
-	    private select;
-	    private results;
-	    private auditIdMin;
-	    private auditIdMax;
-	    private killed;
-	    private timewarpColors;
-	    title: string;
-	    constructor();
-	    destroy(): void;
-	    private resetSelection;
-	    private changeSelection;
-	    private updateSelection;
-	    private dayOfTimeWarp;
-	    private renderMonth;
-	    private renderMonths;
-	    private renderEmptySelectionHelp;
-	    private appendSelectionTime;
-	    private selectCalendar;
-	    private addFilter;
-	    private delayedFilter;
-	    private filterCalendar;
-	    private renderCalendar;
-	    private renderCalendarSelection;
-	    private renderLastChanges;
-	}
-	//# sourceMappingURL=CalendarPanel.d.ts.map
-
-	class DeletedItemPanel implements IPanel {
-	    title: string;
-	    private delayedFilter;
-	    private filterDeletedItems;
-	    private addFilter;
-	    constructor();
-	    destroy(): void;
-	}
-	//# sourceMappingURL=DeletedItemsPanel.d.ts.map
-
-	class DocumentPanel implements IPanel {
-	    title: string;
-	    constructor();
-	    destroy(): void;
-	}
-	//# sourceMappingURL=DocumentPanel.d.ts.map
-
-	class GroupPanel implements IPanel {
-	    title: string;
-	    constructor(categoryGroup: string, title: string);
-	    destroy(): void;
-	    private createProjectControl;
-	    private addChildren;
-	}
-	//# sourceMappingURL=GroupPanel.d.ts.map
-
-	class ItemPanel implements IPanel {
-	    private itemForm;
-	    private zen;
-	    title: string;
-	    constructor(options: IItemControlOptions);
-	    destroy(): void;
-	    getItemForm(): ItemControl;
-	    toggleZen(): void;
-	}
-	//# sourceMappingURL=ItemPanel.d.ts.map
-
-	class Zen {
-	    private mainItem;
-	    private isMobile;
-	    constructor(item: IItem);
-	    stopZen(): void;
-	    toggleZen(): void;
-	    protected showVersion(itemVersionId: string, actualId: string, actualTitle: string): void;
-	    protected showCurrentVersion(localChanges: IRestParam): void;
-	    private showZen;
-	    private applyZenMode;
-	    private makeZen;
-	    private renderItemMeat;
-	}
-	//# sourceMappingURL=Zen.d.ts.map
-
-	class MyDocsPanel implements IPanel {
-	    private control;
-	    title: string;
-	    constructor();
-	    destroy(): void;
-	    render(): void;
-	}
-	//# sourceMappingURL=MyDocsPanel.d.ts.map
+	//# sourceMappingURL=ItemSelectionView.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -7469,223 +7502,314 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IPublishInfo {
-	    target: string;
-	    SOPLabelGroupType: string;
-	    ProcReviewLabelGroupType: string;
-	    WiReviewLabelGroupType: string;
-	    publisher: string;
+	class Layouter {
+	    private itemId;
+	    private mf;
+	    private sectionConfig;
+	    private fromSelection;
+	    private toSelection;
+	    private isLandScape;
+	    private displayStyle;
+	    constructor();
+	    show(itemId: string, fieldId: number, sectionConfig: ICustomSectionOptions, fromSelection: string, toSelection: string, labelFilter: string, onUpdate: (code: string) => void, previewOnly?: boolean, previewDiv?: JQuery): void;
+	    private initEditor;
+	    private formatterList;
+	    private displayPreview;
+	    private introOptions;
+	    private advancedOptions;
+	    private static sortItems;
+	    private static filterTopLevelFormatters;
+	    private waitForJob;
+	    static convert(customSectionConfig: ICustomSection, customSectionFroms: string, customSectionTo: string, paperWidth: string, mf: JQuery, container: JQuery): void;
 	}
-	interface IPublished {
-	    item: string;
-	    version: number;
-	    wis: string[];
-	    sop: string;
+	//# sourceMappingURL=Layouter.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IThemes {
+	    [key: string]: string;
 	}
-	interface IToPublish {
-	    itemInfo: ISearchResult;
-	    approved: boolean;
-	    lastPublishedVersion: number;
-	    wis: string[];
-	    sop: string;
-	    rolesAndUsers: string[];
+	interface IThemeSelector {
+	    themeSelectorAdded: boolean;
+	    loadTheme(themeName: string): any;
+	    init(): any;
+	    renderThemeSelectorControl(help: string, table: JQuery): any;
 	}
-	interface IToPublishMap {
-	    [key: string]: IToPublish;
+	class ThemeSelector implements IThemeSelector {
+	    themeSelectorAdded: boolean;
+	    constructor();
+	    private currentCSS;
+	    private injectCSS;
+	    private reloadCurrentCSS;
+	    loadTheme(themeName: string): void;
+	    init(): void;
+	    renderThemeSelectorControl(help: string, table: JQuery): void;
+	    private themes;
 	}
-	interface IPublicationGroup {
-	    groupInfo: IPublicationCategory;
+	//# sourceMappingURL=ThemeSelector.d.ts.map
+
+	interface IDB {
+	    children?: IDB[];
+	    id?: string;
+	    title?: string;
+	    type?: string;
+	    isUnselected?: number;
+	    background?: string;
+	    border?: string;
+	    icon?: string;
+	    iconClass?: string;
+	    version?: string;
+	    extraStyle?: string;
+	    order?: number;
+	}
+	interface IDBParent {
+	    parent: string;
+	    position: number;
+	    item: IItem;
+	}
+	interface XRCategoryAndSettingListTypeExt {
+	    settingList: XRSettingType[];
+	    categoryId: number | string;
+	    categoryShort: string;
+	}
+	interface IDBCache {
+	    sortChildren(itemId: string): any;
+	    initMatrixTree(init: IDB[], includeActivity: boolean): any;
+	    initConfigTree(init: IDB[]): any;
+	    getTree(subtreeFilter: string[]): IDB[];
+	    getParentId(itemId: string): string;
+	    getCategoryBreadcrumbs(category: string): any;
+	    getBreadcrumbs(itemId: string): string[];
+	    getType(itemId: string): string;
+	    getIcon(itemId: string): string;
+	    setStyle(itemIds: string[], style: string, computeFolder: number): any;
+	    setStyleRec(folder: IDB[], itemIds: string[], style: string, computeFolder: number): boolean;
+	    isFolder(itemId: string): boolean;
+	    getItemTitle(itemId: string): string;
+	    getItemType(itemId: string): string;
+	    isHiddenLink(itemId: string): boolean;
+	    setHiddenLink(itemId: string, hidden: number): void;
+	    hasChildren(itemId: string): boolean;
+	    doesExist(itemId: string): boolean;
+	    insertItem(itemJson: IItem, parentId: string): IDBParent;
+	    copyFrom(target: string, source: IDB): boolean;
+	    getRootOfType(category: string): string;
+	    deleteItem(itemId: string): IDB;
+	    moveItem(itemId: string, newFolder: string, newPosition: number): any;
+	    updateItem(itemJson: IItem): void;
+	    getChildrenIds(parentId: string): string[];
+	    getItemFromCache(itemId: string): IDB;
+	}
+	class DBCache implements IDBCache {
+	    private db;
+	    private activities;
+	    private groupPos;
+	    private groupDefintion;
+	    private breadCrumbs;
+	    constructor();
+	    protected createVirtualFolder(id: string, title: string, icon?: string, color?: string): IDB;
+	    protected createVirtualItem(order: number, id: string, title: string, icon?: string): IDB;
+	    sortChildren(itemId: string): void;
+	    initMatrixTree(init: IDB[], includeActivity: boolean): void;
+	    initConfigTree(init: IDB[]): void;
+	    /** getTree returns a tree or a sub tree of the project.
+	     * this call is synchronous. The database tree is created once during the
+	     * initialization and filtered after as needed.
+	     *
+	     * @param {type} subtreeFilter
+	     * @returns tree object
+	     */
+	    getTree(subtreeFilter: string[]): IDB[];
+	    getParentId(itemId: string): string;
+	    getCategoryBreadcrumbs(category: string): string[];
+	    getBreadcrumbs(itemId: string): string[];
+	    getType(itemId: string): string;
+	    getIcon(itemId: string): string;
+	    setStyle(itemIds: string[], style: string, computeFolder: number): void;
+	    setStyleRec(folder: IDB[], itemIds: string[], style: string, computeFolder: number): boolean;
+	    isFolder(itemId: string): boolean;
+	    getItemTitle(itemId: string): string;
+	    getItemType(itemId: string): string;
+	    isHiddenLink(itemId: string): boolean;
+	    setHiddenLink(itemId: string, hidden: number): void;
+	    hasChildren(itemId: string): boolean;
+	    doesExist(itemId: string): boolean;
+	    insertItem(itemJson: IItem, parentId: string): IDBParent;
+	    copyFrom(target: string, source: IDB): boolean;
+	    getRootOfType(category: string): string;
+	    deleteItem(itemId: string): IDB;
+	    moveItem(itemId: string, newFolder: string, newPosition: number): void;
+	    updateItem(itemJson: IItem): void;
+	    getChildrenIds(parentId: string): string[];
+	    getItemFromCache(itemId: string): IDB;
+	    private internalReplace;
+	    private findInChildren;
+	    private findInDB;
+	    private findParentId;
+	    private deleteItemRec;
+	    private insertAtRec;
+	}
+	//# sourceMappingURL=DBCache.d.ts.map
+
+	interface ISettingMapString {
+	    [key: string]: string;
+	}
+	interface ISettingMapStringArray {
+	    [key: string]: string[];
+	}
+	interface ISettingMapJSON {
+	    [key: string]: {};
+	}
+	interface ICategoryConfig {
+	    fieldList: XRFieldTypeAnnotated[];
 	    label: string;
-	    groupItems: string[];
-	    approved: boolean;
-	    needsPublication: boolean;
+	    downLinksRequired: string[];
+	    downLinksOptional: string[];
+	    enable: string[];
 	}
-	interface IDocTitle {
+	interface ICategoryConfigMap {
+	    [key: string]: ICategoryConfig;
+	}
+	interface XRFieldTypeAnnotated extends XRFieldType {
+	    parameterJson?: XRFieldTypeAnnotatedParamJson;
+	}
+	interface XRFieldTypeAnnotatedParamJson extends IFieldParameter {
+	    linkTypes?: XRFieldTypeAnnotatedParamJsonLinkType[];
+	}
+	interface XRFieldTypeAnnotatedParamJsonLinkType {
+	    required: boolean;
+	    type: string;
+	}
+	interface IFieldsOfType {
+	    category: string;
+	    field: XRFieldTypeAnnotated;
+	}
+	interface IUserPermission {
+	    userPermission: XRUserPermissionType[];
+	}
+	interface ISettingValidationFinding {
+	    category?: string;
+	    findings: ISettingValidationFindingDetail[];
+	}
+	interface ISettingValidationFindingDetail {
+	    message: string;
+	    path: string;
+	}
+	interface IDropDownInfo {
 	    id: string;
-	    title: string;
+	    label: string;
+	    value: IDropDownConfig;
 	}
-	interface IPublicationHistory {
-	    history: IPublicationHistoryItem[];
-	}
-	interface IPublicationHistoryItem {
-	    item: string;
-	    date: string;
-	    comment: string;
-	}
-	interface INewPublication {
-	    item: string;
-	    version: number;
-	    wis: string[];
-	    sop: string;
-	}
-	class PublishPanel implements IPanel {
-	    title: string;
-	    private control;
-	    private body;
-	    private pubConfig;
-	    private selectedForPublication;
-	    private selectedForUnPublication;
-	    private deletedStillPublished;
-	    private itemMap;
-	    private unGrouped;
-	    private groups;
-	    constructor(folderType: string);
-	    private paint;
-	    destroy(): void;
-	    private renderTabs;
-	    private renderPublishUi;
-	    renderReadyToPublish(isForPublication: boolean, panel: JQuery): void;
-	    private renderNotReadyToPublish;
-	    private enablePublish;
-	    private showGroup;
-	    private updateItems;
-	    private getItemsFromCheckBoxes;
-	    private showItem;
-	    private showDeletedItem;
-	    private showGroupDetails;
-	    private showItemDetails;
-	    private addInfoLastPublication;
-	    private computePublicationNeeds;
-	    private getPublicationItemsAndGroups;
-	    private publishSelected;
-	    private getIncludedDownlinksRec;
-	    private doPublish;
-	    private doPublishInFolder;
-	    private waitForPublication;
-	    private createDateFolder;
-	    private createFolders;
-	}
-	//# sourceMappingURL=PublishPanel.d.ts.map
-
-	interface IItemCopyBuffer extends IItem {
-	    [key: string]: any;
-	}
-	function initialize(): void;
-	//# sourceMappingURL=CopyPaste.d.ts.map
-
-	class SyncPanel implements IPanel {
-	    private control;
-	    private syncCatgoryInfo;
-	    private body;
-	    private syncLists;
-	    title: string;
-	    constructor();
-	    destroy(): void;
-	    private renderSyncCategory;
-	    /** show items from external database which never have been synched */
-	    private renderNew;
-	    private showItemList;
-	    /** toggle items in table */
-	    private toggleTable;
-	    /** create a new items from selected external items */
-	    private createNew;
-	    /** re-sync existing links */
-	    private reSync;
-	    /** re-sync existing links */
-	    private ignore;
-	    /** create a clickable link */
-	    private createItemLink;
-	}
-	//# sourceMappingURL=SyncPanel.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ISyncStatusOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        readonly?: boolean;
-	    };
-	}
-	interface ISyncCatgoryInfo {
-	    categories: string;
-	    sourceName: string;
-	    new?: ISyncMapping[];
-	    resync?: ISyncMapping[];
-	}
-	interface ISyncMapping {
-	    from: string;
-	    to: string;
-	    fromId?: number;
-	    toId?: number;
-	}
-	interface ISyncStatusValue {
-	    targetItemId?: string;
-	    targetSyncedVersion?: number;
-	    thisSyncedVersion?: number;
-	}
-	interface IMergeResult {
-	    targetFieldId: string;
-	    targetFieldValue: string;
-	}
-	enum SyncStatus {
-	    NeverSynced = 0,
-	    InSync = 1,
-	    BothChanged = 2,
-	    MatrixChanged = 3,
-	    OtherChanged = 4
-	}
-	class SyncStatusImpl extends BaseControl {
+	class ItemConfiguration {
+	    private configuration;
 	    private settings;
-	    private syncStatus;
-	    private syncCatgoryInfo;
-	    private labelStatus;
-	    private target;
-	    private source;
-	    private newCreated;
-	    static syncBlackList: string[];
-	    private mergeResults;
-	    constructor(control: JQuery);
-	    init(options: IHtmlFormOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	    preSaveHook(isItem: boolean, type: string, controls: IControlDefinition[]): JQueryDeferred<{}>;
-	    static createNew(externalCategory: string, items: string[], targetCategory: string): JQueryDeferred<{}>;
-	    static reSyncItems(externalCategory: string, items: string[]): JQueryDeferred<{}>;
-	    static breakLinks(externalCategory: string, items: string[]): JQueryDeferred<{}>;
-	    private static breakLinksRec;
-	    private static createNewRec;
-	    private static reSyncItemsRec;
-	    private static updateSyncDetails;
-	    private static getFieldIdMapping;
-	    private static matchSyncDetails;
-	    private getSyncStatus;
-	    private setSyncStatus;
-	    /** function called if item is not yet synced or ignored
+	    private settingsString;
+	    private settingsJSON;
+	    private users;
+	    private userList;
+	    private userGroups;
+	    private modules;
+	    private accessRights;
+	    private timewarpDate;
+	    isConfigured(): boolean;
+	    addUsers(userPer: XRGetProject_ProjectInfo_ProjectInfo): void;
+	    getUserInfo(login: string): XRUserPermissionType;
+	    getFullName(login: string): string;
+	    hasGroupInfo(group: string): boolean;
+	    hasUserInfo(login: string): boolean;
+	    getUserIds(): string[];
+	    getEmail(user?: string): string;
+	    activateTimewarp(date: string): void;
+	    getTimeWarp(): string;
+	    isAfterTimeWarp(date: string): boolean;
+	    hasWriteAccess(user: string): boolean;
+	    getPermission(user: string): number;
+	    getUserNames(sorted?: boolean): XRUserPermissionType[];
+	    getUserGroups(): XRGroupPermissionType[];
+	    addGroupMember(gid: number, user: string): void;
+	    removeGroupMember(gid: number, user: string): void;
+	    amIAllowedUser(limitedTo: string[]): boolean;
+	    addSettings(s: XRGetProject_ProjectInfo_ProjectInfo | XRGetProject_ProjectSettingAll_GetSettingAck): void;
+	    getSettings(): XRSettingType[];
+	    getSetting(s: string): string;
+	    getSettingJSON(s: string, def?: {}): {};
+	    getDropDowns(dropdownId?: string): IDropDownInfo[];
+	    getTasksConfig(): ITasksConfiguration;
+	    getDHFConfig(): IDHFConfig;
+	    getExtrasConfig(): IExtras;
+	    getLabelsConfig(): ILabelsConfig;
+	    getQMSConfig(): IQMSConfig;
+	    getRiskConfig(): IRiskConfig;
+	    getCategoryGroupConfig(): ICategoryGroups;
+	    getACLConfig(): IACL;
+	    getTraceConfig(): ITraceConfig;
+	    getNavigationBarConfig(project: string): INavigationBar;
+	    getContextPagesConfig(): IContextPageConfig;
+	    getMailConfig(includeServerSettings?: boolean): IMailConfig;
+	    getSearchConfig(): ISearchConfig;
+	    getLabelLockConfig(): ILabelLockConfig;
+	    getTestConfig(): ITestConfig;
+	    setSettingJSON(key: string, valueJSON: {}): void;
+	    getSmartText(): ISmartTextConfig;
+	    setSmartText(config: ISmartTextConfig): void;
+	    addCategorySetting(categorySetting: XRCategoryAndSettingListType): void;
+	    getCategorySettings(category: string): XRSettingType[];
+	    getPluginSetting(pluginId: number, setting: string): string;
+	    getPluginSettings(): XRPluginSetting[];
+	    getFieldsOfType(fieldType: string, categoryType?: string): IFieldsOfType[];
+	    getCategorySetting(category: string, setting: string): ICategorySetting;
+	    getCategories(noFolders?: boolean): string[];
+	    getCategoryLabel(category: string): string;
+	    getCategoryId(category: string): string;
+	    getDownLinkTypes(category: string, required: boolean): string[];
+	    getUpLinkTypes(category: string, required: boolean): string[];
+	    addCategories(config: XRGetProject_ProjectInfo_ProjectInfo | XRGetProject_CategoryList_GetProjectStructAck): void;
+	    init(config: XRGetProject_ProjectInfo_ProjectInfo): void;
+	    canEdit(category: string): boolean;
+	    canEditTitle(category: string): boolean;
+	    canMove(category: string): boolean;
+	    canCreate(category: string): boolean;
+	    canDelete(category: string): boolean;
+	    canModifyLabels(category: string): boolean;
+	    canSign(category: string): boolean;
+	    canReport(category: string): boolean;
+	    private canDo;
+	    private addCategory;
+	    getItemConfiguration(category: string): ICategoryConfig;
+	    getFieldId(category: string, fieldLabel: string): number;
+	    getFields(category: string): XRFieldTypeAnnotated[];
+	    getFieldByName(category: string, name: string): XRFieldTypeAnnotated;
+	    getFieldById(category: string, fieldId: number): XRFieldTypeAnnotated;
+	    getFieldConfig(fieldId: number): XRFieldTypeAnnotatedParamJson;
+	    getFieldName(fieldId: number): string;
+	    getFieldType(category: string, fieldId: number): string;
+	    getLinkTypes(category: string, down: boolean, required: boolean): string[];
+	    getLinkInfo(category: string, down: boolean, required: boolean, groupByRule: boolean): ILinkInfo[];
+	    validateTraceability(tc?: ITraceConfig, cats?: string[], testCats?: string[], mitCats?: ISettingMapStringArray): ISettingValidationFinding[];
+	    getMitigations(): IStringStringArrayMap;
+	    /** return cleanup rules, if there's a project setting that wins, if there's no rules or it's disabled it returns -1 */
+	    getCleanupRules(): ICleanup;
+	    private verifyNoTracesTo;
+	    private verifyTracesBetween;
+	    private checkReporting;
+	    private checkNoRules;
+	    getTraceRule(tc: ITraceConfig, category: string): ITraceConfigDetails;
+	    /** validate xtc settings
 	     *
 	     */
-	    private offerLinking;
-	    private showSyncInfo;
-	    private showLinkInfo;
-	    private fillCreateDialog;
-	    private createItemLink;
-	    private offerBreakLink;
-	    /** function called if item is linked - it can or cannot be in sync
-	   
-	    */
-	    private offerAutoSync;
-	    private saveMergeInfo;
-	    private autoSync;
-	    private saveAndLink;
-	    private offerManualSync;
-	    /** render dialog to sync items */
-	    private showSyncDialog;
-	    /** render info that the item behind exists and can be loaded (or doesn't exist...) */
-	    private lazyLoad;
-	    /** hide input fields which cannot be synced (no setValue method) */
-	    private hideNonSyncFields;
+	    validateTestConfiguration(tc?: ITestConfig, cats?: string[]): ISettingValidationFinding[];
+	    private goodResultClass;
+	    private wrongResultClass;
+	    private wrongResultHuman;
+	    private countResultCodes;
+	    private verifyColumns;
+	    private addTraceFinding;
 	}
-	function initialize(): void;
-	//# sourceMappingURL=syncStatus.d.ts.map
+	//# sourceMappingURL=ItemConfiguration.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -7693,51 +7817,727 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IHtmlFormOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        readonly?: boolean;
-	        htmlSetting?: string;
-	    };
+	interface ITraceRules {
+	    valid: boolean;
+	    mustHaveCategories: string[];
+	    canHaveCategories: string[];
+	    exstingCategories: string[];
+	    missingMustHaveCategories: string[];
+	    missingCanHaveCategories: string[];
+	    outdatedReferences: string[];
 	}
-	interface IHTMLFormValue {
-	    name: string;
-	    value: string;
-	    pos?: number;
+	interface ILinkInfo {
+	    category: string | string[];
+	    reason: string;
 	}
-	interface IFormValue {
-	    data: IHTMLFormValue[];
-	    html: string;
-	}
-	class HtmlFormImpl extends BaseControl {
-	    private settings;
-	    private timer;
-	    private form;
-	    constructor(control: JQuery);
-	    init(options: IHtmlFormOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    setValue(newValue: string): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private readData;
-	    private writeData;
-	    private getHtml;
-	}
-	//# sourceMappingURL=htmlform.d.ts.map
-
-	class TagPanel implements IPanel {
-	    private control;
+	interface IVersionDetails {
+	    action: string;
+	    id: string;
 	    title: string;
-	    constructor();
-	    destroy(): void;
-	    render(): void;
+	    user: string;
+	    date: string;
+	    dateUserFormat: string;
+	    job?: number;
+	    reason?: string;
+	    comment: string;
+	    version: number;
+	    fullVersion: string;
+	    auditId: number;
+	    tags: XRTag[];
 	}
-	//# sourceMappingURL=TagsPanel.d.ts.map
+	interface XRTrimNeedleItemJob extends XRTrimNeedleItem {
+	    job?: number;
+	}
+	interface ILogoConfig {
+	    fileId?: string;
+	    logoId?: string;
+	}
+	interface IReferenceUpdate {
+	    added: boolean;
+	    fromId: string;
+	    toId: string;
+	    date: string;
+	    dateUserFormat: string;
+	    comment: string;
+	    user: string;
+	}
+	interface ISimpleTree {
+	    itemId: string;
+	    title: string;
+	    children?: ISimpleTree[];
+	}
+	interface ISetField {
+	    fieldName: string;
+	    value: string;
+	}
+	class MatrixReq implements IApp {
+	    private dbConnection;
+	    private _itemId;
+	    _needsSave: boolean;
+	    private forceUIRefreshTimer;
+	    private lastState;
+	    private freezeDuringSave;
+	    mainApp: boolean;
+	    itemForm: JQuery;
+	    printForm: JQuery;
+	    dlgForm: JQuery;
+	    mainTreeLoaded: boolean;
+	    constructor(dataSource: RestDB);
+	    setCache(externalCache: DBCache): void;
+	    loadProject(project: string, item: string): void;
+	    loadTree(project: string): JQueryDeferred<{}>;
+	    loadTreeAndItem(project: string, item: string): JQueryDeferred<IItem>;
+	    updateFavicon(project: string, notification: boolean): void;
+	    waitForMainTree(callback: () => void): void;
+	    private loadTreeWithSearches;
+	    private colorBySearches;
+	    private showTree;
+	    getTree(subtreeFilter?: string[]): IDB[];
+	    getSubTree(itemId: string): ISimpleTree;
+	    getAuditDetailsAsync(auditId?: number, ignoreErrors?: boolean): JQueryDeferred<XRTrimAudit>;
+	    getItemAsync(itemId: string, version?: number, ignoreErrors?: boolean, noHistory?: boolean): JQueryDeferred<IItem>;
+	    getNeedlesAsync(searchExpr: string, up: boolean, down: boolean, fields: string, labels: boolean, ignoreFilters?: boolean): JQueryDeferred<IItem[]>;
+	    getItemProjectAsync(project: string, itemId: string, ignoreErrors?: boolean): JQueryDeferred<IItem>;
+	    getProjectItemAsync(project: string, itemId: string, version?: number, includeHistory?: boolean): JQueryDeferred<IItem>;
+	    getProjectCatFields(project: string): JQueryDeferred<XRCategoryExtendedType[]>;
+	    getItemFromTree(itemId: string): IDB;
+	    getChildrenIds(parentId: string): string[];
+	    getChildrenIdsRec(itemId: string): string[];
+	    getParentId(itemId: string): string;
+	    getCategoryBreadcrumbs(category: string): string[];
+	    getBreadcrumbs(itemId: string): string[];
+	    setStyle(itemIds: string[], style: string, computeFolder: number): void;
+	    getRootOfType(category: string): string;
+	    startReportAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<{}>;
+	    canLaunchReport(): JQueryDeferred<boolean>;
+	    startCreateDocumentAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<XRPostProject_LaunchReport_CreateReportJobAck>;
+	    getReportDetails(jobId: number): JQueryDeferred<XRGetProject_JobStatus_JobsStatusWithUrl>;
+	    compareHTML(compareParams: XCPostCompareHtml): JQueryDeferred<XRPostProject_CompareHtml_HtmlCompareResult>;
+	    isFolder(itemId: string): boolean;
+	    getItemTitle(itemId: string, display?: boolean): string;
+	    download(jobId: number, file: number, param?: string[]): void;
+	    downloadFromUrl(url: string, param?: IStringMap): void;
+	    downloadInMemory(jobId: number, file: string, dataType?: string): JQueryDeferred<string>;
+	    downloadInMemoryFromUrl(url: string): JQueryDeferred<string>;
+	    searchAsync(term: string, filter?: string, ignoreFilters?: boolean, fieldList?: string, crossProject?: string, labels?: boolean, down?: boolean, up?: boolean, treeOrder?: boolean): JQueryDeferred<ISearchResult[]>;
+	    searchAsyncMinimalOutput(term: string, filter?: string, ignoreFilters?: boolean, crossProject?: string): JQueryDeferred<string[]>;
+	    updateItemInDBAsync(itemJson: IItemPut, auditAction: string, requireVersion?: number): JQueryDeferred<IItemGet>;
+	    getItemFromDBAsync(itemId: string): Promise<IItem>;
+	    getFieldFromDBAsync(itemId: string, fieldName: string): Promise<any>;
+	    setFieldInDBAsync(itemId: string, fieldName: string, value: string): Promise<any>;
+	    setFieldsInDBAsync(itemId: string, data: ISetField[]): Promise<unknown>;
+	    createItemOfTypeAsync(category: string, itemJson: IItemPut, actions: string, parentId: string, dontFailOnCleanup?: boolean): JQueryDeferred<IDBParent>;
+	    restoreItemAsync(itemId: string, title: string, version: number): JQueryDeferred<IRestoreItemResult>;
+	    deleteItem(itemId: string): JQueryDeferred<{}>;
+	    private verifyNoLockedItems;
+	    uploadFileProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<{}>;
+	    fetchFileAsync(url: string, progress: (p: IFileUploadProgress) => void): JQueryDeferred<XRPostProject_AddFile_AddFileAck>;
+	    resizeItem(force?: boolean): void;
+	    itemChanged(needsSave: boolean): void;
+	    updateItem(newItem: IItem): void;
+	    setFieldValue(fieldId: number, newValue: string): void;
+	    getFieldValue(fieldId: number): any;
+	    getCurrentTitle(): string;
+	    isConfigApp(): boolean;
+	    addDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
+	    removeDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
+	    setSettingJSON(key: string, valueJSON: {}): JQueryDeferred<{}>;
+	    readSettingJSONAsync(key: string, otherProject?: string, noRetry?: boolean): JQueryDeferred<{}>;
+	    setSettingCustomerJSON(key: string, valueJSON: {}): JQueryDeferred<unknown>;
+	    readSettingCustomerJSONAsync(key: string): JQueryDeferred<{}>;
+	    getMissingUpLinks(item: IItem): string[];
+	    isUpLinkMissing(item: IItem): boolean;
+	    getMissingDownLinks(item: IItem): string[];
+	    getLinkCategories(item: IItem, ctrlParameter: ILinkCollectionOptions): ILinkCategories[];
+	    isDownLinkMissing(item: IItem): boolean;
+	    isAnyLinkOutdated(item: IItem): boolean;
+	    hasLinks(item: IItem): boolean;
+	    isHiddenLink(itemId: string): boolean;
+	    setHiddenLink(itemId: string, hidden: number): void;
+	    saveAsync(sendUnEdit: boolean): JQueryDeferred<{}>;
+	    forceReadonly(itemId: string): void;
+	    cancel(): void;
+	    someOneElseChanged(): void;
+	    private waitingForEditRights;
+	    someOneIsChangingTheItem(): void;
+	    waitForEditRights(): void;
+	    someOneElseIsChanging(watcherInfo: IItemWatched): void;
+	    someOneElseWasChanging(watcherInfo: IItemWatched): void;
+	    someOneElseStoppedEditing(watcherInfo: IItemWatched, previousWatcherInfo: IItemWatched): void;
+	    updateItemViewers(watcherInfo: IItemWatched): void;
+	    protected updateItemDisplay(watcherInfo: IItemWatched): void;
+	    getVersion(): string;
+	    getVersionQualifier(): string;
+	    getNeedsSave(): boolean;
+	    getType(itemId: string): string;
+	    getAvailableReportsAsync(): JQueryDeferred<XRGetProject_Reports_GetReportsAck>;
+	    getDeletedItemsAsync(insertInList: (item: IVersionDetails) => void, progress: (p: number) => void, deleteLog?: IVersionDetails[], startAt?: number): JQueryDeferred<{}>;
+	    getActivityAsync(insertInList: (item: IVersionDetails, first?: number, last?: number, referenceChange?: IReferenceUpdate) => void, startAt?: number, count?: number, auditIdMin?: number, auditIdMax?: number): JQueryDeferred<number>;
+	    canNavigateAwayAsync(): JQueryDeferred<{}>;
+	    treeSelectionChangeAsync(newItemId: string): JQueryDeferred<{}>;
+	    moveItemsAsync(itemIds: string, newFolder: string, newPosition?: number, useComment?: string): JQueryDeferred<{}>;
+	    updateMaxVersion(itemId: string): JQueryDeferred<{}>;
+	    removedFromTree(itemId: string, parentId: string): void;
+	    insertInTree(newItem: IDBParent): void;
+	    copyFrom(target: string, source: IDB): void;
+	    updateCache(newItem: IUpdateCache): void;
+	    createItemUrl(itemId?: string, crossProject?: string): string;
+	    renderItem(cachedItem?: IItem): void;
+	    print(): void;
+	    touchAsync(itemOrFolderId: string, depth: number): JQueryDeferred<string>;
+	    setLabels(newLabels: IItemGet): JQueryDeferred<{}>;
+	    needsSave(): boolean;
+	    signItemAsync(itemId: string, password: string, meaning?: string): JQueryDeferred<XRPostProject_SignItem_SignItemAck>;
+	    checkPassword(password: string): JQueryDeferred<IRestResult>;
+	    convertDocAsync(fileNo: number, targetDocumentFolder?: string, useOriginal?: boolean): JQueryDeferred<string>;
+	    pingCurrentItem(): void;
+	    getCurrentItemId(): string;
+	    /** sessions */
+	    commitChangeListAsync(changeList: IReferenceChange[]): JQueryDeferred<{}>;
+	    /**
+	     *  product variations
+	     * */
+	    isMedical(strict?: boolean): boolean;
+	    commentRequired(): boolean;
+	    touchToolAvailable(item: IItem): boolean;
+	    auditTrailAvailable(): boolean;
+	    mailToolAvailable(): boolean;
+	    postLogin(user: string): void;
+	    canDeleteItem(item: IItem): boolean;
+	    canViewItem(item: IItem): boolean;
+	    canEditItem(item: IItem): boolean;
+	    canCreateItemType(category: string, folder?: boolean): boolean;
+	    canDragDrop(category: string, id: string): boolean;
+	    dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
+	    canSeeField(category: string, field: number): boolean;
+	    canEditField(category: string, field: number): boolean;
+	    private refreshUIAsync;
+	    evaluateTraceRule(item: IItem, checkDownRule: boolean): ITraceRules;
+	    private commitChangeListRec;
+	    static getProjectIcon(customLogo: string, alternateValue?: string): any;
+	    static getProjectLogo(customLogo: string): any;
+	}
+	//# sourceMappingURL=MatrixReq.d.ts.map
+
+	/// <reference types="jquery" />
+	interface IItemViewEvent {
+	    caller: any;
+	    item: IItem;
+	    view: ItemControl;
+	}
+	interface IItemChangeEvent {
+	    caller: any;
+	    view: ItemControl;
+	    before: IItem;
+	    after: IItem;
+	}
+	interface IPreCreateItemEvent {
+	    caller: any;
+	    view: ItemControl;
+	    isItem: boolean;
+	    category: string;
+	}
+	interface IPreCreateCloseEvent {
+	    caller: any;
+	    ok: boolean;
+	}
+	interface IGenericItemEvent {
+	    caller: any;
+	    item: IItem;
+	}
+	interface IGenericItemIdEvent {
+	    caller: any;
+	    itemId: string;
+	}
+	interface INewItemIdEvent {
+	    caller: any;
+	    item: IDBParent;
+	}
+	interface ILabelChangeEvent {
+	    caller: any;
+	    item: IItem;
+	    set: string[];
+	    unset: string[];
+	}
+	interface ISignatureEvent {
+	    caller: any;
+	    item: IItem;
+	    lastuser: boolean;
+	}
+	interface IEvent<TArgs, TMode> {
+	    subscribe(caller: any, fn: (args: TArgs) => TMode): void;
+	    unsubscribe(fn: (args: TArgs) => TMode): void;
+	    dispatch(args: TArgs): TMode;
+	}
+	class EventDispatcher<TArgs> implements IEvent<TArgs, void> {
+	    private _subscriptions;
+	    private _callers;
+	    subscribe(caller: any, fn: (args: TArgs) => void): void;
+	    unsubscribe(fn: (args: TArgs) => void): void;
+	    dispatch(args: TArgs): void;
+	}
+	class EventDispatcherAsync<TArgs> implements IEvent<TArgs, JQueryDeferred<{}>> {
+	    private _subscriptionsAsync;
+	    private _callersAsync;
+	    subscribe(caller: any, fn: (args: TArgs) => JQueryDeferred<{}>): void;
+	    unsubscribe(fn: (args: TArgs) => JQueryDeferred<{}>): void;
+	    dispatch(args: TArgs): JQueryDeferred<{}>;
+	    private dispatchAsyncOne;
+	}
+	class MR1Impl {
+	    cbsItemDisplayed: EventDispatcher<IItemViewEvent>;
+	    cbsCreateItemDisplayed: EventDispatcher<IPreCreateItemEvent>;
+	    cbsCreateItemDisplayedClose: EventDispatcher<IPreCreateCloseEvent>;
+	    cbsBeforeSave: EventDispatcherAsync<IItemChangeEvent>;
+	    cbsAfterSave: EventDispatcher<IItemChangeEvent>;
+	    cbsAfterRestore: EventDispatcher<IGenericItemIdEvent>;
+	    cbsAfterDelete: EventDispatcher<IGenericItemEvent>;
+	    cbsAfterCreate: EventDispatcher<INewItemIdEvent>;
+	    cbsAfterCreateSign: EventDispatcher<IGenericItemEvent>;
+	    cbsBeforeDelete: EventDispatcherAsync<IGenericItemEvent>;
+	    cbsAfterLabelChange: EventDispatcher<ILabelChangeEvent>;
+	    cbsAfterSignature: EventDispatcher<ISignatureEvent>;
+	    triggerItemCreate(view: ItemControl, isItem: boolean, category: string): void;
+	    triggerItemCreateClose(ok: boolean): void;
+	    triggerItemDisplayed(item: IItem, view: ItemControl): void;
+	    triggerBeforeSaveAsync(view: ItemControl, before: IItem, after: IItem): JQueryDeferred<{}>;
+	    triggerAfterSave(view: ItemControl, before: IItem, after: IItem): void;
+	    triggerAfterRestore(itemId: string): void;
+	    triggerAfterDelete(item: IItem): void;
+	    triggerAfterItemCreate(item: IDBParent): void;
+	    triggerAfterCreateSign(item: IItem): void;
+	    triggerBeforeDeleteAsync(item: IItem): JQueryDeferred<{}>;
+	    triggerAfterLabelChange(item: IItem, before: string[], after: string[]): void;
+	    triggerAfterSignature(item: IItem, lastuser: boolean): void;
+	    onItemDisplayed(): IEvent<IItemViewEvent, void>;
+	    onItemCreateDlgOpen(): IEvent<IPreCreateItemEvent, void>;
+	    onItemCreateDlgClose(): IEvent<IPreCreateCloseEvent, void>;
+	    onAfterSave(): IEvent<IItemChangeEvent, void>;
+	    onAfterRestore(): IEvent<IGenericItemIdEvent, void>;
+	    onAfterDelete(): IEvent<IGenericItemEvent, void>;
+	    onAfterCreate(): IEvent<INewItemIdEvent, void>;
+	    onAfterCreateSign(): IEvent<IGenericItemEvent, void>;
+	    onAfterLabelChange(): IEvent<ILabelChangeEvent, void>;
+	    onAfterSignature(): IEvent<ISignatureEvent, void>;
+	    onBeforeSaveAsync(): IEvent<IItemChangeEvent, JQueryDeferred<{}>>;
+	    onBeforeDeleteAsync(): IEvent<IGenericItemEvent, JQueryDeferred<{}>>;
+	}
+	var MR1: MR1Impl;
+	/** tests...
+	// MR1.onAfterLabelChange().subscribe( this, function (event:ILabelChangeEvent) { console.log("Label changed for " + event.item.id + " set: '" + event.set.join() + "' unset: '" + event.unset.join() + "'");} );
+	MR1.onBeforeDeleteAsync().subscribe( this, function (event:IGenericItemEvent) {
+	    console.log("MR1 >>>Could cancel item delete " + event.item.id);
+	    let res = $.Deferred();
+	    res.resolve(); // res.reject(); to cancel
+	    return res;
+	});
+	MR1.onBeforeSaveAsync().subscribe( this, function (event:IItemChangeEvent) {
+	    console.log("MR1 >>>Could cancel save of " + event.before.id);
+	    let res = $.Deferred();
+	    res.resolve(); // res.reject(); to cancel
+	    return res;
+	});
+	MR1.onAfterCreate().subscribe( this, function (event:INewItemIdEvent) { console.log("MR1 >>>Item created " + event.item.item.id);} );
+	MR1.onAfterCreateSign().subscribe( this, function (event:IGenericItemEvent) { console.log("MR1 >>>SIGN created " + event.item.id);} );
+	MR1.onAfterSignature().subscribe( this, function (event:ISignatureEvent) { console.log("MR1 >>>SIGNED " + event.item.id + " by " + matrixSession.getUser() +  ( event.lastuser?" as last signature":" but not last signature"));} );
+	MR1.onAfterSave().subscribe( this, function (event:IItemChangeEvent) { console.log("MR1 >>>Item saved " + event.after.id);} );
+	MR1.onAfterRestore().subscribe( this, function (event:IGenericItemIdEvent) { console.log("MR1 >>>Item restored " + event.itemId);} );
+	MR1.onAfterDelete().subscribe( this, function (event:IGenericItemEvent) { console.log("MR1 >>>Item deleted " + event.item.id);} );
+	MR1.onItemDisplayed().subscribe( this, function (event:IGenericItemEvent) { console.log("MR1 >>>Item displayed " + event.item.id);} );
+	MR1.onItemCreateDlgOpen().subscribe( this, function (event:IPreCreateItemEvent) {  console.log("MR1 >>>Create item dialog with " + event.view.getControls().length + " controls.");}  );
+	*/
+	/** example extract all italic from text and put in title when saving if title is " " or ""
+	MR1.onBeforeSaveAsync().subscribe( this, function (event:IItemChangeEvent) {
+	    console.log("MR1 >>>Could cancel save of " + event.before.title);
+	    if (event.after.title == " " || event.after.title == "") {
+	        let tf = IC.getFieldsOfType("richtext",event.after.type);
+	        let italics="";
+	        $.each( tf, function(idx, tfd) {
+	            let tfc = $("<div>").html(event.after[tfd.field.id]);
+	            $("span", tfc).each( function(spanIdx,span) {
+	                if ($(span).css("font-style").indexOf("italic")!=-1) {
+	                    italics += italics?(" "+$(span).text()):$(span).text();
+	                }
+	            });
+	        });
+	        event.after.title = italics?italics:"title required";
+	    }
+	    let res = $.Deferred();
+	    res.resolve();
+	    return res;
+	});
+	 */
+	//# sourceMappingURL=MatrixRequirementsAPI.d.ts.map
+
+	/// <reference types="jquery" />
+	interface IGetProjectResult {
+	    settings: IGetProjectResultSetting[];
+	    currentUser: string;
+	    customerAdmin: number;
+	    superAdmin: number;
+	    dateInfo: IGetProjectResultDateInfo;
+	    customerSettings: IGetProjectResultSetting[];
+	    project: XRProjectType[];
+	}
+	interface IGetProjectResultSetting {
+	    key: string;
+	    value: string;
+	}
+	interface IGetProjectResultDateInfo {
+	    timeformat: string;
+	    dateformat: string;
+	    timeZone: string;
+	    customerDateformat: string;
+	    customerTimeformat: string;
+	    customerTimezone: string;
+	    dateIso8601: string;
+	    timeUserFormat: string;
+	}
+	interface IGetProjectResultDateInfos {
+	    key: string;
+	    value: string;
+	}
+	interface ICustomerSettingString {
+	    [key: string]: string;
+	}
+	interface ICustomerSettingJSON {
+	    [key: string]: {};
+	}
+	interface IPostLoginResult {
+	    actualLogin: string;
+	    userId: number;
+	    userDetails: IPostLoginResultUserDetail;
+	    maxAge: number;
+	}
+	interface IPostLoginResultUserDetail {
+	    id: number;
+	    login: string;
+	    email: string;
+	    firstName: string;
+	    lastName: string;
+	    signatureImage: number;
+	    customerAdmin: number;
+	    passwordAgeInDays: number;
+	    badLogins: number;
+	    badLoginsBefore: number;
+	    superAdmin: number;
+	    userSettingsList: IGetProjectResultSetting[];
+	}
+	interface ICompanyUISettings {
+	    /** allow to add links to locked items */
+	    allowAddLinkToLocked?: boolean;
+	    /** if true the save button is always on the left */
+	    saveLeft?: boolean;
+	    /** if set to true, auto clean the input of text fields */
+	    purify?: boolean;
+	    /** editor setting */
+	    tiny?: ICompanyTiny;
+	    /** always use new editor (also for old projects) */
+	    tinyAsDefault?: boolean;
+	    /** true if user should be able to switch from editor to tiny per field */
+	    tinyUpgradeOption?: boolean;
+	    /** how many items to show in list view (after running searches, default 200) */
+	    maxHits?: number;
+	    /** @experimental: Enable the widget dashboard on instance root */
+	    widgetDashboardOption?: boolean;
+	    /** internal: url of draw io editor */
+	    drawioURL?: string;
+	    /** @experimental: if set to anything > 0 the fields in a form are rendered in a non blocking way if there are more than largeFormRender fields */
+	    largeFormRender?: number;
+	    /** @internal beta - do not auto select parents if single item is selected for DOC */
+	    preciseDocSelect?: boolean;
+	    /** @internal obsolete */
+	    legacyPrint?: boolean;
+	    /** @internal obsolete */
+	    legacyUserDropdown?: number;
+	    /** @internal obsolete */
+	    legacyKeepFolder?: boolean;
+	}
+	interface ICompanyTiny {
+	    /** true if browser context menu should be used as default */
+	    tinyHideMenu?: boolean;
+	    /** enable or disable editor plugins */
+	    plugins?: string[];
+	    extraPlugins?: string[];
+	    /** toolbar definition */
+	    toolbar?: string;
+	    /** menubar definition  default: edit view insert format table matrix */
+	    menubar?: string;
+	    /** menu entries can be used to change default menus or add details of new menu bar */
+	    menu?: ICompanyTinyMenuMap;
+	    /** allows to overwrite any default setting (e.g. misc: { "table_toolbar": ""} )  to hide table toolbar */
+	    misc?: any;
+	    /** html entities to accept in text */
+	    extended_valid_elements?: string;
+	    /**  optional: formats in Paragraph menu (for docs) */
+	    block_formats_doc?: any;
+	    /** optional: rules for formats (for docs) */
+	    apply_formats_doc?: any;
+	    /** optional: formats in style menu (for docs) */
+	    style_formats_doc?: any;
+	    /** optional: formats in Paragraph menu (for items) */
+	    block_formats?: any;
+	    /** optional: rules for formats (for items)  */
+	    apply_formats?: any;
+	    /** optional: formats in style menu (for items) */
+	    style_formats?: any;
+	    /** elements which don't need content (e.g. a TD cell can be empty, needs to be the complete list) */
+	    short_ended_elements?: string;
+	    /** a custom css name/path */
+	    css?: string;
+	    /** if true it used dom purify to super clean the html */
+	    dompurify?: boolean;
+	    /** requires textpattern plugin! see https://www.tiny.cloud/docs/plugins/opensource/textpattern/ */
+	    textpattern_patterns?: any[];
+	}
+	interface ICompanyTinyMenuMap {
+	    [key: string]: ICompanyTinyMenu;
+	}
+	interface ICompanyTinyMenu {
+	    /** display name of menu */
+	    title: string;
+	    /** items to show */
+	    items: string;
+	}
+	class MatrixSession {
+	    private quiet;
+	    private CurrentUser;
+	    private CurrentProject;
+	    private CurrentComment;
+	    private customerAdmin;
+	    private superAdmin;
+	    private dateInfo;
+	    private customerSettingsString;
+	    private customerSettingsJSON;
+	    private ProjectList;
+	    private CommitTransaction;
+	    private CommitTransactionComment;
+	    private CommitTransactionCancelled;
+	    private postConnect;
+	    duringBrowserNavigation: boolean;
+	    private userPermissions;
+	    private licensedModules;
+	    lastManualComment: string;
+	    serverConfig: XRGetProject_StartupInfo_ListProjectAndSettings;
+	    private myTodoCount;
+	    private myTodos;
+	    pushMessages: PushMessages;
+	    private customParams;
+	    private branches;
+	    constructor();
+	    startCommitTransaction(): void;
+	    stopCommitTransaction(): void;
+	    getUser(): string;
+	    setUser(login: string): void;
+	    private setDateInfo;
+	    getDateInfo(): IGetProjectResultDateInfo;
+	    private setCustomerSettings;
+	    setCustomerSettingJSON(s: string, setting: {}): void;
+	    getCustomerSetting(s: string): string;
+	    getCustomerSettingJSON(s: string, defaultValue?: {}): any;
+	    getUISettings(defaultValues?: {}): ICompanyUISettings;
+	    setUISetting(setting: string, value: any): void;
+	    showUISettings(): void;
+	    isEditor(): boolean;
+	    isCustomerAdmin(): boolean;
+	    isSuperAdmin(): boolean;
+	    isAdmin(): boolean;
+	    getProject(): string;
+	    setProject(projectId: string): void;
+	    getCommentAsync(): JQueryDeferred<string>;
+	    getComment(): string;
+	    private makeTeaser;
+	    getCommentTeaser(): string;
+	    setComment(comment?: string, internal?: boolean): void;
+	    isGroup(): boolean;
+	    isQMS(): boolean;
+	    isMerge(): boolean;
+	    isReview(): boolean;
+	    isACL(): boolean;
+	    isQMSProject(project?: string): boolean;
+	    limitAdmin(): boolean;
+	    hasRisks(): boolean;
+	    hasVariants(): boolean;
+	    hasDocs(): boolean;
+	    hasAgileSync(): boolean;
+	    private setModules;
+	    private getLastComments;
+	    tryReconnect(): JQueryDeferred<{}>;
+	    signInAfterTimeout(): JQueryDeferred<{}>;
+	    triggerLoginWithDialog(): void;
+	    changePassword(): void;
+	    getProjectList(readOrWriteOnly: boolean): XRProjectType[];
+	    canSeeProject(project: string): boolean;
+	    private changeToken;
+	    setProjectColor(projectShort: string, color: string): void;
+	    getProjectColor(projectShort: string): string;
+	    getImgFromProject(pRef: string, offsetTop?: number): string;
+	    private createProjectSelectLink;
+	    updateUI(afterTimeout?: boolean): void;
+	    addLiveQMSProjects(): 0 | 1;
+	    updateCommentCheckboxBoxVisibility(): any;
+	    loadProject(projectId: string, projectURL?: string, setAsProjectUrl?: boolean): void;
+	    oAuthOnly(): boolean;
+	    private showProjectSelectMessage;
+	    private filterProjects;
+	    private getItemFromUrlOrStorage;
+	    private getProjectFromUrlOrStorage;
+	    browserNavigation(): void;
+	    signOut(requestAdminRights: boolean): void;
+	    editComment(): void;
+	    showLoginWindow(): void;
+	    hideLoginWindow(): void;
+	    private requestLogin;
+	    private receiveMessage;
+	    private addHelpButton;
+	    getHelpButton(): string;
+	    private showUserMenu;
+	    setNotificationCounts(todos: XRTodoCount[]): void;
+	    getNotificationCounts(): XRTodoCount[];
+	    getNotifications(): XRTodo[];
+	    setNotifications(todos: XRTodo[]): void;
+	    initPushMessaging(): JQueryDeferred<{}>;
+	    private lastWatchInfo;
+	    updateWatchItemVersion(itemId: string, newVersion: number): void;
+	    isConfigClient(): boolean;
+	    private updateSettings;
+	    getBranches(mainline: string, branch: string): XRMainAndBranch[];
+	    private signOutCleanUp;
+	    getCustomParams(): IStringMap;
+	    getDashboardConfig(): IDashboardConfig;
+	}
+	//# sourceMappingURL=MatrixSession.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IPlugin {
+	    initItem?: (item: IItem, jui: JQuery) => void;
+	    initServerSettings?: (serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings) => void;
+	    updateMenu?: (ul: JQuery, hook: number) => void;
+	    supportsControl?: (ctrl: string) => boolean;
+	    createControl?: (ctrlObj: JQuery, settings: IBaseControlOptions) => void;
+	    initProject?: (project: string) => void;
+	    isDefault?: boolean;
+	    filterProject?: (db: IDB[]) => void;
+	    updateSearchPanel?: () => void;
+	    updateItemPanel?: () => void;
+	    updateItem?: (item: IItem) => void;
+	    getProjectPages?: () => IProjectPageParam[];
+	    preSaveHook?: (isItem: boolean, type: string, controls: IControlDefinition[]) => JQueryDeferred<{}>;
+	    renderActionButtons?: (options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]) => boolean;
+	    updateTree?: () => void;
+	    getFieldConfigOptions?: () => IFieldDescription[];
+	    addFieldSettings?: (configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean) => void;
+	    getProjectSettingPages?: () => ISettingPage[];
+	    getCustomerSettingPages?: () => ISettingPage[];
+	    getPluginName?: () => string;
+	    getPluginVersion?: () => string;
+	    categorySetting?: (key: string) => string;
+	    editCategorySetting?: (key: string, category: string) => void;
+	    helpUrl?: string;
+	}
+	let pluginHooks: {
+	    shares: number;
+	};
+	interface ISettingPage {
+	    id: string;
+	    title: string;
+	    type?: string;
+	    help?: string;
+	    externalHelp?: string;
+	    render: (ui: JQuery) => void;
+	    advanced?: () => void;
+	    del?: () => void;
+	    saveAsync?: () => JQueryDeferred<unknown>;
+	    getNode?: () => IDB;
+	}
+	interface IProjectPageParam {
+	    id: string;
+	    title: string;
+	    render: any;
+	    destroy?: any;
+	    folder?: string;
+	    order: number;
+	    folderTitle?: string;
+	    icon?: string;
+	    usesFilters: boolean;
+	}
+	interface IPluginControl {
+	    [key: string]: Function;
+	}
+	interface IPluginPanelOptions {
+	    type: string;
+	    control: JQuery;
+	    controlState: number;
+	}
+	class PluginManager {
+	    private _jui;
+	    private _plugins;
+	    private controls;
+	    private destructors;
+	    private titles;
+	    private usesFilters;
+	    private activeControlPage;
+	    /** Called by the main UI handing over a div which can be used inside a plugin
+	     * to display modal popups
+	     *
+	     * @param {jquery object} jui a $("<div />") object
+	     * @returns {undefined}
+	     */
+	    setUI(jui: JQuery): void;
+	    /** function to register a plugin for a specific menu (specified by the hook)
+	     *
+	     * @param {instance of plugin} plugin
+	     * @returns {undefined}
+	     */
+	    register(plugin: IPlugin): void;
+	    /** this method is called from the main UI whenever an item is selected to be
+	     * displayed. The information is forwarded to all plugins
+	     *
+	     * @param {json object} item for example a requirement. see the json documention of item types
+	     * @returns {undefined}
+	     */
+	    init(item: IItem): void;
+	    /** this method is called after connecting to server using getServer ("")
+	     *
+	     * @param {json serverSettings} serverSettings or null after unsucessful login
+	     * @returns {undefined}
+	     */
+	    initServerSettings(serverSettings?: XRGetProject_StartupInfo_ListProjectAndSettings): void;
+	    /** this method is called when creating a menu which has a hook. it allows the plugins to add
+	     * li's to the ul supplied
+	     *
+	     * @param {number} hook identifies the menu
+	     * @param {jquery object} ul  a $("<ul />) object
+	     * @returns {undefined}
+	     */
+	    updateMenu(hook: number, ul: JQuery): void;
+	    getFieldConfigOptions(): IFieldDescription[];
+	    addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean): void;
+	    supportsControl(ctrl: string): boolean;
+	    createControl(ctrlObj: JQuery, settings: IBaseControlOptions): void;
+	    initProject(project: string): void;
+	    filterProject(db: IDB[]): void;
+	    updateSearchPanel(): void;
+	    updateItemPanel(): void;
+	    updateItem(updates: IItem): void;
+	    updateTree(): void;
+	    getProjectPages(): IProjectPageParam[];
+	    supportsControlPage(controlType: string): boolean;
+	    createControlPage(options: IPluginPanelOptions): void;
+	    destroyActiveControlPage(): void;
+	    callPreSaveHook(isItem: boolean, type: string, controls: IControlDefinition[]): JQueryDeferred<{}>;
+	    renderActionButtons(options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]): boolean;
+	    /******************** admin function  */
+	    getPlugins(): IPlugin[];
+	}
+	var plugins: PluginManager;
+	function InitializePluginManager(): void;
+	//# sourceMappingURL=PluginManager.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -7990,213 +8790,175 @@ declare module matrixApi
 	function InitializePluginManagerDocuments(): void;
 	//# sourceMappingURL=PluginManagerDocuments.d.ts.map
 
+	interface ITableDataRow {
+	    [key: string]: number | string;
+	}
+	interface ITableFunction {
+	    (table: ITableDataRow[], parameterJson: ITableParams): string;
+	}
+	interface ITableFunctions {
+	    [key: string]: ITableFunction;
+	}
+	class TableMath {
+	    protected functions: ITableFunctions;
+	    /** allow to add new functions:  */
+	    registerFunction(functionId: string, execute: ITableFunction): void;
+	    /** executes function on a table */
+	    execute(functionId: string, table: ITableDataRow[], parameterJson: ITableParams): string;
+	}
+	var tableMath: TableMath;
+	function InitializePluginManagerFormulas(): void;
+	//# sourceMappingURL=PluginManagerFormulas.d.ts.map
+
 	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ITraceRules {
-	    valid: boolean;
-	    mustHaveCategories: string[];
-	    canHaveCategories: string[];
-	    exstingCategories: string[];
-	    missingMustHaveCategories: string[];
-	    missingCanHaveCategories: string[];
-	    outdatedReferences: string[];
-	}
-	interface ILinkInfo {
-	    category: string | string[];
-	    reason: string;
-	}
-	interface IVersionDetails {
-	    action: string;
-	    id: string;
+	interface IPushMessage {
+	    subject: string;
+	    project: string;
+	    item: string;
+	    version: string;
+	    users: string;
+	    parent: string;
 	    title: string;
+	    error?: string;
+	}
+	interface IItemEditor {
 	    user: string;
-	    date: string;
-	    dateUserFormat: string;
-	    job?: number;
-	    reason?: string;
-	    comment: string;
+	    thisSocket: boolean;
+	}
+	interface IItemWatched {
+	    item: string;
+	    users: string[];
+	    editor: IItemEditor;
 	    version: number;
-	    fullVersion: string;
-	    auditId: number;
-	    tags: XRTag[];
 	}
-	interface XRTrimNeedleItemJob extends XRTrimNeedleItem {
-	    job?: number;
-	}
-	interface ILogoConfig {
-	    fileId?: string;
-	    logoId?: string;
-	}
-	interface IReferenceUpdate {
-	    added: boolean;
-	    fromId: string;
-	    toId: string;
-	    date: string;
-	    dateUserFormat: string;
-	    comment: string;
-	    user: string;
-	}
-	interface ISimpleTree {
-	    itemId: string;
+	interface IItemUpdated {
+	    item: string;
+	    version: number;
 	    title: string;
-	    children?: ISimpleTree[];
+	    thisSocket: boolean;
 	}
-	interface ISetField {
-	    fieldName: string;
-	    value: string;
+	interface IItemCreated {
+	    item: string;
+	    parent: string;
+	    title: string;
 	}
-	class MatrixReq implements IApp {
-	    private dbConnection;
-	    private _itemId;
-	    _needsSave: boolean;
-	    private forceUIRefreshTimer;
-	    private lastState;
-	    private freezeDuringSave;
-	    mainApp: boolean;
-	    itemForm: JQuery;
-	    printForm: JQuery;
-	    dlgForm: JQuery;
-	    mainTreeLoaded: boolean;
-	    constructor(dataSource: RestDB);
-	    setCache(externalCache: DBCache): void;
-	    loadProject(project: string, item: string): void;
-	    loadTree(project: string): JQueryDeferred<{}>;
-	    loadTreeAndItem(project: string, item: string): JQueryDeferred<IItem>;
-	    updateFavicon(project: string, notification: boolean): void;
-	    waitForMainTree(callback: () => void): void;
-	    private loadTreeWithSearches;
-	    private colorBySearches;
-	    private showTree;
-	    getTree(subtreeFilter?: string[]): IDB[];
-	    getSubTree(itemId: string): ISimpleTree;
-	    getAuditDetailsAsync(auditId?: number, ignoreErrors?: boolean): JQueryDeferred<XRTrimAudit>;
-	    getItemAsync(itemId: string, version?: number, ignoreErrors?: boolean, noHistory?: boolean): JQueryDeferred<IItem>;
-	    getNeedlesAsync(searchExpr: string, up: boolean, down: boolean, fields: string, labels: boolean, ignoreFilters?: boolean): JQueryDeferred<IItem[]>;
-	    getItemProjectAsync(project: string, itemId: string, ignoreErrors?: boolean): JQueryDeferred<IItem>;
-	    getProjectItemAsync(project: string, itemId: string, version?: number, includeHistory?: boolean): JQueryDeferred<IItem>;
-	    getProjectCatFields(project: string): JQueryDeferred<XRCategoryExtendedType[]>;
-	    getItemFromTree(itemId: string): IDB;
-	    getChildrenIds(parentId: string): string[];
-	    getChildrenIdsRec(itemId: string): string[];
-	    getParentId(itemId: string): string;
-	    getCategoryBreadcrumbs(category: string): string[];
-	    getBreadcrumbs(itemId: string): string[];
-	    setStyle(itemIds: string[], style: string, computeFolder: number): void;
-	    getRootOfType(category: string): string;
-	    startReportAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<{}>;
-	    canLaunchReport(): JQueryDeferred<boolean>;
-	    startCreateDocumentAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<XRPostProject_LaunchReport_CreateReportJobAck>;
-	    getReportDetails(jobId: number): JQueryDeferred<XRGetProject_JobStatus_JobsStatusWithUrl>;
-	    compareHTML(compareParams: XCPostCompareHtml): JQueryDeferred<XRPostProject_CompareHtml_HtmlCompareResult>;
-	    isFolder(itemId: string): boolean;
-	    getItemTitle(itemId: string, display?: boolean): string;
-	    download(jobId: number, file: number, param?: string[]): void;
-	    downloadFromUrl(url: string, param?: IStringMap): void;
-	    downloadInMemory(jobId: number, file: string, dataType?: string): JQueryDeferred<string>;
-	    downloadInMemoryFromUrl(url: string): JQueryDeferred<string>;
-	    searchAsync(term: string, filter?: string, ignoreFilters?: boolean, fieldList?: string, crossProject?: string, labels?: boolean, down?: boolean, up?: boolean, treeOrder?: boolean): JQueryDeferred<ISearchResult[]>;
-	    searchAsyncMinimalOutput(term: string, filter?: string, ignoreFilters?: boolean, crossProject?: string): JQueryDeferred<string[]>;
-	    updateItemInDBAsync(itemJson: IItemPut, auditAction: string, requireVersion?: number): JQueryDeferred<IItemGet>;
-	    getItemFromDBAsync(itemId: string): Promise<IItem>;
-	    getFieldFromDBAsync(itemId: string, fieldName: string): Promise<any>;
-	    setFieldInDBAsync(itemId: string, fieldName: string, value: string): Promise<any>;
-	    setFieldsInDBAsync(itemId: string, data: ISetField[]): Promise<unknown>;
-	    createItemOfTypeAsync(category: string, itemJson: IItemPut, actions: string, parentId: string, dontFailOnCleanup?: boolean): JQueryDeferred<IDBParent>;
-	    restoreItemAsync(itemId: string, title: string, version: number): JQueryDeferred<IRestoreItemResult>;
-	    deleteItem(itemId: string): JQueryDeferred<{}>;
-	    private verifyNoLockedItems;
-	    uploadFileProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<{}>;
-	    fetchFileAsync(url: string, progress: (p: IFileUploadProgress) => void): JQueryDeferred<XRPostProject_AddFile_AddFileAck>;
-	    resizeItem(force?: boolean): void;
-	    itemChanged(needsSave: boolean): void;
-	    updateItem(newItem: IItem): void;
-	    setFieldValue(fieldId: number, newValue: string): void;
-	    getFieldValue(fieldId: number): any;
-	    getCurrentTitle(): string;
-	    isConfigApp(): boolean;
-	    addDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
-	    removeDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
-	    setSettingJSON(key: string, valueJSON: {}): JQueryDeferred<{}>;
-	    readSettingJSONAsync(key: string, otherProject?: string, noRetry?: boolean): JQueryDeferred<{}>;
-	    setSettingCustomerJSON(key: string, valueJSON: {}): JQueryDeferred<unknown>;
-	    readSettingCustomerJSONAsync(key: string): JQueryDeferred<{}>;
-	    getMissingUpLinks(item: IItem): string[];
-	    isUpLinkMissing(item: IItem): boolean;
-	    getMissingDownLinks(item: IItem): string[];
-	    getLinkCategories(item: IItem, ctrlParameter: ILinkCollectionOptions): ILinkCategories[];
-	    isDownLinkMissing(item: IItem): boolean;
-	    isAnyLinkOutdated(item: IItem): boolean;
-	    hasLinks(item: IItem): boolean;
-	    isHiddenLink(itemId: string): boolean;
-	    setHiddenLink(itemId: string, hidden: number): void;
-	    saveAsync(sendUnEdit: boolean): JQueryDeferred<{}>;
-	    forceReadonly(itemId: string): void;
-	    cancel(): void;
-	    someOneElseChanged(): void;
-	    private waitingForEditRights;
-	    someOneIsChangingTheItem(): void;
-	    waitForEditRights(): void;
-	    someOneElseIsChanging(watcherInfo: IItemWatched): void;
-	    someOneElseWasChanging(watcherInfo: IItemWatched): void;
-	    someOneElseStoppedEditing(watcherInfo: IItemWatched, previousWatcherInfo: IItemWatched): void;
-	    updateItemViewers(watcherInfo: IItemWatched): void;
-	    protected updateItemDisplay(watcherInfo: IItemWatched): void;
-	    getVersion(): string;
-	    getVersionQualifier(): string;
-	    getNeedsSave(): boolean;
-	    getType(itemId: string): string;
-	    getAvailableReportsAsync(): JQueryDeferred<XRGetProject_Reports_GetReportsAck>;
-	    getDeletedItemsAsync(insertInList: (item: IVersionDetails) => void, progress: (p: number) => void, deleteLog?: IVersionDetails[], startAt?: number): JQueryDeferred<{}>;
-	    getActivityAsync(insertInList: (item: IVersionDetails, first?: number, last?: number, referenceChange?: IReferenceUpdate) => void, startAt?: number, count?: number, auditIdMin?: number, auditIdMax?: number): JQueryDeferred<number>;
-	    canNavigateAwayAsync(): JQueryDeferred<{}>;
-	    treeSelectionChangeAsync(newItemId: string): JQueryDeferred<{}>;
-	    moveItemsAsync(itemIds: string, newFolder: string, newPosition?: number, useComment?: string): JQueryDeferred<{}>;
-	    updateMaxVersion(itemId: string): JQueryDeferred<{}>;
-	    removedFromTree(itemId: string, parentId: string): void;
-	    insertInTree(newItem: IDBParent): void;
-	    copyFrom(target: string, source: IDB): void;
-	    updateCache(newItem: IUpdateCache): void;
-	    createItemUrl(itemId?: string, crossProject?: string): string;
-	    renderItem(cachedItem?: IItem): void;
-	    print(): void;
-	    touchAsync(itemOrFolderId: string, depth: number): JQueryDeferred<string>;
-	    setLabels(newLabels: IItemGet): JQueryDeferred<{}>;
-	    needsSave(): boolean;
-	    signItemAsync(itemId: string, password: string, meaning?: string): JQueryDeferred<XRPostProject_SignItem_SignItemAck>;
-	    checkPassword(password: string): JQueryDeferred<IRestResult>;
-	    convertDocAsync(fileNo: number, targetDocumentFolder?: string, useOriginal?: boolean): JQueryDeferred<string>;
-	    pingCurrentItem(): void;
-	    getCurrentItemId(): string;
-	    /** sessions */
-	    commitChangeListAsync(changeList: IReferenceChange[]): JQueryDeferred<{}>;
-	    /**
-	     *  product variations
-	     * */
-	    isMedical(strict?: boolean): boolean;
-	    commentRequired(): boolean;
-	    touchToolAvailable(item: IItem): boolean;
-	    auditTrailAvailable(): boolean;
-	    mailToolAvailable(): boolean;
-	    postLogin(user: string): void;
-	    canDeleteItem(item: IItem): boolean;
-	    canViewItem(item: IItem): boolean;
-	    canEditItem(item: IItem): boolean;
-	    canCreateItemType(category: string, folder?: boolean): boolean;
-	    canDragDrop(category: string, id: string): boolean;
-	    dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
-	    canSeeField(category: string, field: number): boolean;
-	    canEditField(category: string, field: number): boolean;
-	    private refreshUIAsync;
-	    evaluateTraceRule(item: IItem, checkDownRule: boolean): ITraceRules;
-	    private commitChangeListRec;
-	    static getProjectIcon(customLogo: string, alternateValue?: string): any;
-	    static getProjectLogo(customLogo: string): any;
+	interface IItemDeleted {
+	    item: string;
 	}
-	//# sourceMappingURL=MatrixReq.d.ts.map
+	interface ITodoChanged {
+	}
+	class PushMessages {
+	    private webSocket;
+	    private itemWatched;
+	    private itemUpdated;
+	    private itemCreated;
+	    private itemDeleted;
+	    private todoChanged;
+	    static socketId: number;
+	    constructor();
+	    newConnection(): JQueryDeferred<{}>;
+	    connect(): JQueryDeferred<number>;
+	    private preventConcurrentEdit;
+	    private reconnectAfterCloseMessage;
+	    trigger(message: any): void;
+	    private sendCurrentEditingStatus;
+	    private retryTimer;
+	    private send;
+	    watchItem(itemId: string): void;
+	    unWatchItem(): void;
+	    editItem(itemId: string): void;
+	    unEditItem(): void;
+	    onTodoChanged(fn: (args: ITodoChanged) => void): void;
+	    onItemUpdated(fn: (args: IItemUpdated) => void): void;
+	    onItemCreated(fn: (args: IItemCreated) => void): void;
+	    onItemDeleted(fn: (args: IItemDeleted) => void): void;
+	    onItemWatched(fn: (args: IItemWatched) => void): void;
+	}
+	//# sourceMappingURL=PushMessages.d.ts.map
+
+	/// <reference types="jquery" />
+	interface IRestConfig {
+	    server: string;
+	}
+	interface IRestTimer {
+	    start: number;
+	    end?: number;
+	    status?: number;
+	    command?: string;
+	    type?: string;
+	}
+	interface IJcxhr {
+	    status: number;
+	    responseText: string;
+	    responseJSON: IResponseJson;
+	    displayError: string;
+	    statusText?: string;
+	}
+	interface IResponseJson {
+	    category: string;
+	    detailsList: string[];
+	    displayError?: string;
+	    code?: string;
+	}
+	interface IFileParam {
+	    name: string;
+	}
+	interface IFileUploadProgress {
+	    position?: number;
+	    loaded?: number;
+	    totalSize?: number;
+	    total?: number;
+	}
+	interface IFileUploadResult {
+	    fileId: string;
+	    fileFullPath: string;
+	    key: string;
+	}
+	interface IError224 {
+	    fields: IError224Field[];
+	}
+	interface IError224Field {
+	    fieldId: number;
+	    beforeCleanup: string;
+	    afterCleanup: string;
+	}
+	class RestConnector {
+	    private restServer;
+	    private restServerProject;
+	    private timer;
+	    private keepAlive;
+	    constructor(config: IRestConfig);
+	    setProject(projectName: string): void;
+	    getProject(cmd: string, ignoreErrors?: boolean, ignoreFilters?: boolean): JQueryDeferred<IRestResult>;
+	    getServer(cmd: string, noRetry?: boolean): JQueryDeferred<IRestResult>;
+	    postServer(cmd: string, param?: IRestParam, payload?: boolean): JQueryDeferred<IRestResult>;
+	    postProject(cmd: string, param: IRestParam, payload?: boolean): JQueryDeferred<IRestResult>;
+	    postProjectJson(cmd: string, data: unknown): JQueryDeferred<IRestResult>;
+	    putServer(cmd: string, param: IRestParam, asPayload?: boolean): JQueryDeferred<IRestResult>;
+	    putProject(cmd: string, param: IRestParam, itemId?: string): JQueryDeferred<IRestResult>;
+	    deleteProjectAsync(cmd: string, param: IRestParam, asString?: boolean): JQueryDeferred<IRestResult>;
+	    deleteServerAsync(cmd: string, param: IRestParam, asString?: boolean): JQueryDeferred<IRestResult>;
+	    download(cmd: string, params?: string[] | IStringMap): void;
+	    getFile(cmd: string, dataType?: string): JQueryDeferred<IRestResult>;
+	    uploadFileProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<IFileUploadResult>;
+	    fetchFileAsync(url: string, progress: (p: IFileUploadProgress) => void): JQueryDeferred<IFileUploadResult>;
+	    uploadFileCustomerAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<IFileUploadResult>;
+	    importProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void, params: {}): any;
+	    uploadFileServerAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void, target: string, params: {}, urlSuffix: string): JQueryDeferred<IFileUploadResult>;
+	    convertExcelProjectAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<string>;
+	    convertExcelServerAsync(file: IFileParam, progress: (p: IFileUploadProgress) => void): JQueryDeferred<string>;
+	    isTimeout(jqxhr: IJcxhr): boolean;
+	    isGatewayTimeout(jqxhr: IJcxhr): boolean;
+	    handleError(jqxhr: IJcxhr, textStatus: string, error: string, cmd: string, param?: IRestParam, itemId?: string): JQueryDeferred<IRestResult>;
+	    private get;
+	    private post;
+	    private postJson;
+	    postSpecialServer(cmd: string, param: IRestParam): JQueryDeferred<IRestResult>;
+	    private postSpecial;
+	    private put;
+	    private deleteRestAsync;
+	}
+	//# sourceMappingURL=RestConnector.d.ts.map
 
 	/// <reference types="jquery" />
 	interface ISearchResult {
@@ -8293,162 +9055,6 @@ declare module matrixApi
 	    private parseItemJSON;
 	}
 	//# sourceMappingURL=RestDB.d.ts.map
-
-	interface ISettingMapString {
-	    [key: string]: string;
-	}
-	interface ISettingMapStringArray {
-	    [key: string]: string[];
-	}
-	interface ISettingMapJSON {
-	    [key: string]: {};
-	}
-	interface ICategoryConfig {
-	    fieldList: XRFieldTypeAnnotated[];
-	    label: string;
-	    downLinksRequired: string[];
-	    downLinksOptional: string[];
-	    enable: string[];
-	}
-	interface ICategoryConfigMap {
-	    [key: string]: ICategoryConfig;
-	}
-	interface XRFieldTypeAnnotated extends XRFieldType {
-	    parameterJson?: XRFieldTypeAnnotatedParamJson;
-	}
-	interface XRFieldTypeAnnotatedParamJson extends IFieldParameter {
-	    linkTypes?: XRFieldTypeAnnotatedParamJsonLinkType[];
-	}
-	interface XRFieldTypeAnnotatedParamJsonLinkType {
-	    required: boolean;
-	    type: string;
-	}
-	interface IFieldsOfType {
-	    category: string;
-	    field: XRFieldTypeAnnotated;
-	}
-	interface IUserPermission {
-	    userPermission: XRUserPermissionType[];
-	}
-	interface ISettingValidationFinding {
-	    category?: string;
-	    findings: ISettingValidationFindingDetail[];
-	}
-	interface ISettingValidationFindingDetail {
-	    message: string;
-	    path: string;
-	}
-	interface IDropDownInfo {
-	    id: string;
-	    label: string;
-	    value: IDropDownConfig;
-	}
-	class ItemConfiguration {
-	    private configuration;
-	    private settings;
-	    private settingsString;
-	    private settingsJSON;
-	    private users;
-	    private userList;
-	    private userGroups;
-	    private modules;
-	    private accessRights;
-	    private timewarpDate;
-	    isConfigured(): boolean;
-	    addUsers(userPer: XRGetProject_ProjectInfo_ProjectInfo): void;
-	    getUserInfo(login: string): XRUserPermissionType;
-	    getFullName(login: string): string;
-	    hasGroupInfo(group: string): boolean;
-	    hasUserInfo(login: string): boolean;
-	    getUserIds(): string[];
-	    getEmail(user?: string): string;
-	    activateTimewarp(date: string): void;
-	    getTimeWarp(): string;
-	    isAfterTimeWarp(date: string): boolean;
-	    hasWriteAccess(user: string): boolean;
-	    getPermission(user: string): number;
-	    getUserNames(sorted?: boolean): XRUserPermissionType[];
-	    getUserGroups(): XRGroupPermissionType[];
-	    addGroupMember(gid: number, user: string): void;
-	    removeGroupMember(gid: number, user: string): void;
-	    amIAllowedUser(limitedTo: string[]): boolean;
-	    addSettings(s: XRGetProject_ProjectInfo_ProjectInfo | XRGetProject_ProjectSettingAll_GetSettingAck): void;
-	    getSettings(): XRSettingType[];
-	    getSetting(s: string): string;
-	    getSettingJSON(s: string, def?: {}): {};
-	    getDropDowns(dropdownId?: string): IDropDownInfo[];
-	    getTasksConfig(): ITasksConfiguration;
-	    getDHFConfig(): IDHFConfig;
-	    getExtrasConfig(): IExtras;
-	    getLabelsConfig(): ILabelsConfig;
-	    getQMSConfig(): IQMSConfig;
-	    getRiskConfig(): IRiskConfig;
-	    getCategoryGroupConfig(): ICategoryGroups;
-	    getACLConfig(): IACL;
-	    getTraceConfig(): ITraceConfig;
-	    getNavigationBarConfig(project: string): INavigationBar;
-	    getContextPagesConfig(): IContextPageConfig;
-	    getMailConfig(includeServerSettings?: boolean): IMailConfig;
-	    getSearchConfig(): ISearchConfig;
-	    getLabelLockConfig(): ILabelLockConfig;
-	    getTestConfig(): ITestConfig;
-	    setSettingJSON(key: string, valueJSON: {}): void;
-	    getSmartText(): ISmartTextConfig;
-	    setSmartText(config: ISmartTextConfig): void;
-	    addCategorySetting(categorySetting: XRCategoryAndSettingListType): void;
-	    getCategorySettings(category: string): XRSettingType[];
-	    getPluginSetting(pluginId: number, setting: string): string;
-	    getPluginSettings(): XRPluginSetting[];
-	    getFieldsOfType(fieldType: string, categoryType?: string): IFieldsOfType[];
-	    getCategorySetting(category: string, setting: string): ICategorySetting;
-	    getCategories(noFolders?: boolean): string[];
-	    getCategoryLabel(category: string): string;
-	    getCategoryId(category: string): string;
-	    getDownLinkTypes(category: string, required: boolean): string[];
-	    getUpLinkTypes(category: string, required: boolean): string[];
-	    addCategories(config: XRGetProject_ProjectInfo_ProjectInfo | XRGetProject_CategoryList_GetProjectStructAck): void;
-	    init(config: XRGetProject_ProjectInfo_ProjectInfo): void;
-	    canEdit(category: string): boolean;
-	    canEditTitle(category: string): boolean;
-	    canMove(category: string): boolean;
-	    canCreate(category: string): boolean;
-	    canDelete(category: string): boolean;
-	    canModifyLabels(category: string): boolean;
-	    canSign(category: string): boolean;
-	    canReport(category: string): boolean;
-	    private canDo;
-	    private addCategory;
-	    getItemConfiguration(category: string): ICategoryConfig;
-	    getFieldId(category: string, fieldLabel: string): number;
-	    getFields(category: string): XRFieldTypeAnnotated[];
-	    getFieldByName(category: string, name: string): XRFieldTypeAnnotated;
-	    getFieldById(category: string, fieldId: number): XRFieldTypeAnnotated;
-	    getFieldConfig(fieldId: number): XRFieldTypeAnnotatedParamJson;
-	    getFieldName(fieldId: number): string;
-	    getFieldType(category: string, fieldId: number): string;
-	    getLinkTypes(category: string, down: boolean, required: boolean): string[];
-	    getLinkInfo(category: string, down: boolean, required: boolean, groupByRule: boolean): ILinkInfo[];
-	    validateTraceability(tc?: ITraceConfig, cats?: string[], testCats?: string[], mitCats?: ISettingMapStringArray): ISettingValidationFinding[];
-	    getMitigations(): IStringStringArrayMap;
-	    /** return cleanup rules, if there's a project setting that wins, if there's no rules or it's disabled it returns -1 */
-	    getCleanupRules(): ICleanup;
-	    private verifyNoTracesTo;
-	    private verifyTracesBetween;
-	    private checkReporting;
-	    private checkNoRules;
-	    getTraceRule(tc: ITraceConfig, category: string): ITraceConfigDetails;
-	    /** validate xtc settings
-	     *
-	     */
-	    validateTestConfiguration(tc?: ITestConfig, cats?: string[]): ISettingValidationFinding[];
-	    private goodResultClass;
-	    private wrongResultClass;
-	    private wrongResultHuman;
-	    private countResultCodes;
-	    private verifyColumns;
-	    private addTraceFinding;
-	}
-	//# sourceMappingURL=ItemConfiguration.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -8704,40 +9310,6 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface ITasksControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: any;
-	    valueChanged?: Function;
-	    parameter?: {
-	        readonly?: boolean;
-	        plugins?: number[];
-	    };
-	    readOnly?: boolean;
-	}
-	class TasksControlImpl extends BaseControl {
-	    private settings;
-	    private dragCounter;
-	    constructor(control: JQuery);
-	    init(options: ITasksControlOptions): void;
-	    updateControl(): void;
-	    init2(): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	    getPluginFilter(): number[];
-	    private onDrop;
-	}
-	//# sourceMappingURL=tasksControl.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
 	interface ITestWizardParams {
 	    single?: number;
 	    input?: string[];
@@ -8828,217 +9400,2383 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IRiskControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: IRiskParameter;
-	    links?: IReference[];
-	    hideReadonlyColumns?: boolean;
-	}
-	interface IRiskParameter {
-	    riskConfig?: IRiskConfig;
-	    showAttributeNames?: boolean;
-	    forceAfterWeightsInPrint?: boolean;
-	    hide_UI?: boolean;
-	}
-	interface IRiskValue {
-	    factors: IRiskValueFactor[];
-	    mitigations: IRiskValueMitigation[];
-	    postWeights?: IRiskValueFactorWeight[];
-	}
-	interface IRiskValueFactor {
-	    label: string;
-	    type: string;
-	    value: string;
-	    inputType?: string;
-	    weights: IRiskValueFactorWeight[];
-	}
-	interface IRiskValueFactorWeight {
-	    description: string;
-	    label: string;
-	    type: string;
-	    value: number;
-	}
-	interface IRiskValueMitigation {
-	    to: string;
+	interface IContextFramePlugin {
+	    id: string;
 	    title: string;
-	    changes: IRiskValueMitigationChange[];
+	    adminOption: string;
+	    onUpdate: (ui: JQuery, config: IContextPageConfigTab, context: IContextInformation) => void;
 	}
-	interface IRiskValueMitigationChange {
-	    by: number;
-	    changes: string;
-	    description: string;
+	class ContextFrameManagerImpl {
+	    private pages;
+	    constructor();
+	    getPages(): IContextFramePlugin[];
+	    register(plugin: IContextFramePlugin): void;
+	    implements(id: string): boolean;
+	    renderTab(panel: JQuery, id: string, config: IContextPageConfigTab, context: IContextInformation): void;
+	    private getPlugin;
+	}
+	var ContextFrameManager: ContextFrameManagerImpl;
+	function InitializeTrainingManager(): void;
+	//# sourceMappingURL=TrainingManager.d.ts.map
+
+	function InitializeBusinessLogic(): void;
+	//# sourceMappingURL=index.d.ts.map
+
+	class ProjectStorageAdmin implements IDataStorage {
+	    setItem(itemKey: string, itemVal: string): void;
+	    getItem(itemKey: string): string;
+	    getItemDefault(itemKey: string, defaultValue: string): string;
+	}
+	//# sourceMappingURL=ProjectStorageAdmin.d.ts.map
+
+	class ServerStorageAdmin implements IDataStorage {
+	    setItem(itemKey: string, itemVal: string): void;
+	    getItem(itemKey: string): string;
+	    getItemDefault(itemKey: string, defaultValue: string): string;
+	}
+	//# sourceMappingURL=ServerStorageAdmin.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IConfigPage {
+	    getNode(): IDB;
+	    saveAsync(): JQueryDeferred<{}>;
+	    load(pageId: string): void;
+	    getProject(): string;
+	    getCategory(): string;
+	    getField(): string;
+	    willUnload(): void;
+	}
+	interface IGroupsUsers {
+	    users: XRUserType[];
+	    groups: XRGroupType[];
+	}
+	class ConfigPage implements IConfigPage {
+	    static PROJECT_SETTING_FOLDER_BASE_ID: string;
+	    static PROJECT_SETTING_FOLDER_TYPE: string;
+	    protected pageId: string;
+	    protected simple: JQuery;
+	    protected allUsers: XRUserType[];
+	    protected allGroups: XRGroupType[];
+	    configApp: IConfigApp;
+	    getNode(): IDB;
+	    saveAsync(): JQueryDeferred<{}>;
+	    load(pageId: string): void;
+	    constructor(configApp: IConfigApp);
+	    getProject(): string;
+	    getCategory(): string;
+	    getField(): string;
+	    willUnload(): void;
+	    protected initPage(title: string, showAdvancedBtn: boolean, showDeleteText: string, help: string, externalHelp?: string, showCopy?: boolean): void;
+	    protected showAdvanced(): void;
+	    protected doCopy(): void;
+	    protected doDelete(): void;
+	    protected showSimple(): void;
+	    protected showWarning(text: string, id?: string): JQuery;
+	    protected showNote(text: string): void;
+	    protected showAdvancedCode(code: string, success: (code: string) => void, semanticValidate?: IValidationSpec): void;
+	    protected getProjectSettingLink(setting: string): string;
+	    protected getProjectSettingLinkA(setting: string, name: string): string;
+	    protected getCategorySettingLink(): string;
+	    protected getTraceSettingLink(): string;
+	    protected getPluginLink(): string;
+	    protected getGroupId(group: XRGroupType): any;
+	    protected getGroupDisplayNameFromId(groupOrUserId: string): string;
+	    protected combinedName(user: XRUserType): string;
+	    private resizeUserSelectDlg;
+	    showUserAndGroupsSelectWithDialog(container: JQuery, showUsers: boolean, showGroups: boolean, help: string, empty: string, selected: string[], dialogTitle: string, onSelect: (selection: string[]) => void): void;
+	    protected showSelectDialog(selectedIn: string[], showUsers: boolean, showGroups: boolean, dialogTitle: string, onSelect: (selection: string[]) => void): void;
+	    protected markUsersWithoutAccess(lis: JQuery): void;
+	    protected filterGroupsAndUsers(lis: JQuery, sex: string, writeOnly: boolean): void;
+	    protected updateUsersAndGroups(withDetails: boolean): JQueryDeferred<{}>;
+	    initMeta(users: XRUserType[], groups: XRGroupType[], pageId: string): void;
+	}
+	class GenericAdminPage extends ConfigPage {
+	    private page;
+	    project: string;
+	    category: string;
+	    constructor(configApp: IConfigApp, page: ISettingPage);
+	    getNode(): IDB;
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	    protected doDelete(): void;
+	}
+	//# sourceMappingURL=ConfigPage.d.ts.map
+
+	interface IDynParent {
+	    parent: string;
+	    node: IConfigPage;
+	    superadminOnly: boolean;
+	}
+	class ConfigPageFactory extends Application {
+	    private registered_pages;
+	    private dynamicParents;
+	    private delayedRegister;
+	    configApp: IConfigApp;
+	    constructor(configApp: IConfigApp);
+	    updateMainUI(disabled?: boolean): void;
+	    createPage(pageId: string, type: string): IConfigPage;
+	    registerPage(ext: IConfigPage, parentId?: string, dynamicParentId?: string, superadminOnly?: boolean): void;
+	    delayedPageAdd(updateUI?: boolean): void;
+	    insertProjectCopy(projectId: string): void;
+	    insertProjectSettings(projectId: string): void;
+	    insertProjectExtensionFolder(projectId: string): void;
+	    insertProjectCategoryFolder(projectId: string, categoryExtended: XRCategoryExtendedType[]): void;
+	    insertProjectExtension(projectId: string, parentId: string, plugin: any): void;
+	    insertCategory(projectId: string, categories: XRCategoryExtendedType[]): void;
+	}
+	//# sourceMappingURL=ConfigPageFactory.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	export interface IConfigApp extends IBaseApp {
+	    configPages: ConfigPageFactory;
+	    plugins: IServerPluginSettings[];
+	    getConfigPages(): ConfigPageFactory;
+	    init(itemForm: JQuery, dlgForm: JQuery): void;
+	    getUser(): string;
+	    getVersion(): string;
+	    getVersionQualifier(): string;
+	    getNeedsSave(): boolean;
+	    getLastProject(): string;
+	    getType(): string;
+	    getParentId(itemId: string): string;
+	    saveAsync(): JQueryDeferred<any>;
+	    cancel(): void;
+	    resizeItem(): void;
+	    postLogin(user: string): void;
+	    treeSelectionChange(pageId: string): void;
+	    selectItem(itemId: string, itemLabel: string): void;
+	    getTree(): IDB[];
+	    getItem(itemId: string): IDB;
+	    getCurrentItemId(): string;
+	    pingCurrentItem(): void;
+	    registerPage(item: IItem, parent: string, updateUI: boolean): void;
+	    insertItem(item: IItem, parent: string): void;
+	    itemChanged(needsSave: boolean): void;
+	    setLastConnection(): void;
+	    canNavigateAwayAsync(): JQueryDeferred<any>;
+	    canDragDrop(nodeType: string, pageId: string): boolean;
+	    dragEnter(dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode): string[] | boolean;
+	    getJSONProjectSettings(projectId: string, settingId: string): IJsonSetting[];
+	    settingExists(projectId: string, settingId: string): boolean;
+	    setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<IRestResult>;
+	    setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<IRestResult>;
+	    setServerSettingAsync(settingId: string, settingValue: string): JQueryDeferred<any>;
+	    getServerSetting(settingId: string, defaultValue: any): any;
+	    setServerSetting(settingId: string, property: string, newValue: any): void;
+	    getCustomerSetting(setting: string): string;
+	    setCategorySettingAsync(projectId: string, category: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<any>;
+	    getProjectConfig(projectId: string): XRGetProject_ProjectInfo_ProjectInfo;
+	    getCatgegoryConfig(projectId: string, category: string): XRCategoryExtendedType;
+	    getCategories(projectId: string): string[];
+	    getUserPermission(projectId: string): XRUserPermissionType[];
+	    getGroupPermission(projectId: string): XRGroupPermissionType[];
+	    canUserWrite(projectId: string, login: string): boolean;
+	    canGroupWrite(projectId: string, groupId: number): boolean;
+	    getFieldConfig(projectId: string, category: string, field: string): XRFieldType;
+	    updateFieldConfig(projectId: string, category: string, field: string, newConfig: XRFieldType): void;
+	    removedFromTree(itemId: string, newId: string): void;
+	    renamePage(pageId: string, label: string, parent: string): void;
+	    updateProjectData(projectId: string): JQueryDeferred<IRestResult>;
+	    reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
+	    signOut(): void;
+	    initConfigPages(): void;
+	}
+	//# sourceMappingURL=IConfigApp.d.ts.map
+
+	class LineEditor {
+	    editor: LineEditorExt;
+	    constructor();
+	    showDialog(configPage: ConfigPage, title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number): void;
+	    static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
+	}
+	//# sourceMappingURL=LinEditor.d.ts.map
+
+	class TextEditor {
+	    constructor();
+	    showDialog(title: string, value: string, onOk: (update: string) => void): void;
+	}
+	//# sourceMappingURL=TextEditor.d.ts.map
+
+	class TextMacroBase extends ConfigPage {
+	    protected macrosOriginal: ISmartTextConfig;
+	    protected macrosChanged: ISmartTextConfig;
+	    protected isServerMacros: boolean;
+	    protected moveToServer: string[];
+	    protected useTiny: boolean;
+	    protected paramChanged(): void;
+	    protected init(): void;
+	    protected showSimple(): void;
+	    protected showMacroList(title: string, type: number, help: string, projectId: string): void;
+	    protected deleteMacro(midx: number, projectId?: string): void;
+	    protected editMacro(tidx: number, type: number): void;
+	    protected updateMacro(tidx: number, newMac: ISmartTextConfigReplacement): boolean;
+	    protected globalMacro(tidx: number, type: number): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=TextMacroBase.d.ts.map
+
+	function InitializeSettingsLib(configApp: IConfigApp): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class CategoryFolder extends ConfigPage {
+	    static CATEGORY_FOLDER_ID: string;
+	    static CATEGORY_FOLDER_TYPE: string;
+	    private project;
+	    private help;
+	    private category;
+	    private newLabel;
+	    private newType;
+	    private hint;
+	    private create;
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        icon: string;
+	        title: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    protected enableCreateField(): void;
+	    protected doDoCopy(selectedProject: string, dialog: JQuery): void;
+	    protected doCopy(): void;
+	    protected doDelete(): void;
+	    protected changeCategoryLabels(newShort: string, newLong: string): void;
+	    protected changeCategoryLabels_doIt(newShort: string, newLong: string): void;
+	    protected dodoDelete(): void;
+	}
+	//# sourceMappingURL=CategoryFolder.d.ts.map
+
+	/// <reference types="jquery" />
+	class CategoryFolders extends ConfigPage {
+	    static CATEGORY_FOLDERS_ID: string;
+	    private catId;
+	    private catName;
+	    private includeDefaultFields;
+	    private create;
+	    private ctype;
+	    private hint;
+	    getNode(): {
+	        id: string;
+	        title: string;
+	        type: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	    protected enableCreateField(): void;
+	}
+	//# sourceMappingURL=CategoryFolders.d.ts.map
+
+	/// <reference types="jquery" />
+	class CategorySetting extends ConfigPage {
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    private createEdit;
+	    private editConcurrentEdit;
+	    private editItemTabbing;
+	    private editCategoryIcon;
+	    private editSyncInfo;
+	    private createNew;
+	}
+	//# sourceMappingURL=CategorySetting.d.ts.map
+
+	/// <reference types="jquery" />
+	class Field extends ConfigPage {
+	    static FIELD_TYPE: string;
+	    private help;
+	    private project;
+	    private category;
+	    private fieldId;
+	    private field;
+	    private fieldOriginal;
+	    private fieldOptions;
+	    constructor(configApp: IConfigApp);
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    static getFieldDescription(fieldType: string): IFieldDescription;
+	    static fieldHelp(fieldType: string): string;
+	    static fieldDescription: IFieldDescription[];
+	    static getDHFConfig(): IDHFConfig;
+	    static getPossibleFieldsForCategory(project: string, category: string): IFieldDescription[];
+	    static fieldGroupsBase: {
+	        value: string;
+	        label: string;
+	    }[];
+	    static fieldGroupsNormal: {
+	        value: string;
+	        label: string;
+	    }[];
+	    static fieldGroupsDocs: {
+	        value: string;
+	        label: string;
+	    }[];
+	    static getFieldGroups(category: string): {
+	        value: string;
+	        label: string;
+	    }[];
+	    protected isInternal(fieldType: string): boolean;
+	    protected showSimple(): void;
+	    protected showAdvanced(): void;
+	    protected addTabSelect(): void;
+	    protected doDelete(): void;
+	    private paramChanged;
+	    private addCommonFields;
+	    private canBePublished;
+	    private addRichtextFields;
+	    private addDateFields;
+	    private addSectionFields;
+	    private addPlainTextFields;
+	    private addFileManagerFields;
+	    private addDropdownFields;
+	    private showEditDropDown;
+	    private addUserFields;
+	    private addCascadingSelectFields;
+	    private addDownLinkFields;
+	    private addCheckboxFields;
+	    private addCrossLinkFields;
+	    private addGateFields;
+	    private editGateButtons;
+	    private editGateLine;
+	    private addUplinkInfo;
+	    private addRiskFields;
+	    private addTestFields;
+	    private addSyncFields;
+	    private addInternal;
+	    private addDocPropertySelector;
+	}
+	//# sourceMappingURL=Field.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class TableConfigPlugin implements IPlugin {
+	    getFieldConfigOptions(): IFieldDescription[];
+	    private static columnTypes;
+	    addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished: boolean): void;
+	    addColumnEditor(ui: JQuery, options: ITableParams, isQMSProject: boolean, paramChanged: () => void): void;
+	    private askForColumnType;
+	    private editOptions;
+	    private static askForName;
+	    private static askForDropdownOptions;
+	    private static askForCategoryOptions;
+	    private static askForCategoryUpDownOptions;
+	    private static askForReferenceOptions;
+	}
+	//# sourceMappingURL=TableConfig.d.ts.map
+
+	function InitializeCategoriesSettings(configApp: IConfigApp): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	class ExtensionFolder extends ConfigPage {
+	    static EXTENSION_FOLDER_ID: string;
+	    getNode(): {
+	        id: string;
+	        title: string;
+	        type: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): Promise<void>;
+	    showExtensions(users: IDropdownOption[]): void;
+	    setPluginSetting(wfgw: RestConnector, pluginId: string, key: string, value: string, encrypted: boolean, ok: Function, failure: Function): void;
+	}
+	//# sourceMappingURL=ExtensionFolder.d.ts.map
+
+	function InitializeExtensionSettings(configApp: IConfigApp): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	interface IActualSetting {
+	    projectId: number;
+	    projectName: string;
+	    settingName: string;
+	    settingValue: any;
+	}
+	interface ISetupSetting {
+	    key: string;
+	    type: string;
+	    userTitle: string;
+	}
+	interface IProjectPlugin {
+	    owner: string;
+	    projectId: number;
+	    projectName: string;
+	    pwd: string;
+	    repo: string;
+	    user: string;
+	}
+	interface IServerPluginSettings {
+	    pluginName: string;
+	    displayName: string;
+	    capabilities: IGenericMap;
+	    needed: boolean;
+	    pluginId: number;
+	    comments: string;
+	    actualSettings: IActualSetting[];
+	    projects: IProjectPlugin[];
+	    setupSettings: ISetupSetting[];
+	}
+	class ProjectPluginSetting extends ConfigPage {
+	    static PROJECT_EXTENSION_BASE_ID: string;
+	    static PROJECT_EXTENSION_TYPE: string;
+	    private plugin;
+	    private pluginOrginal;
+	    private pluginChanged;
+	    private projectId;
+	    private clientConfig;
+	    private wfgw;
+	    constructor(configApp: IConfigApp, projectId: string, plugin: IServerPluginSettings);
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        icon: string;
+	        title: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    protected saveAsyncRec(idx: number): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected getActualSetting(key: string): string;
+	    protected setActualSetting(key: string, newvalue: string): void;
+	    protected showServerSettings(): void;
+	    protected showTextInput(key: string, help: string, password: boolean): void;
+	    protected showclientConfigs(): void;
+	    protected showBool(field: string, text: string): void;
+	    protected showCreate(): void;
+	    protected editCreate(gidx: number): void;
+	    protected showSmartTasks(asSimpleId: boolean): void;
+	    protected editSmart(matchJustAnId: boolean, gidx: number): void;
+	    protected showSearches(): void;
+	    protected editSearch(gidx: number): void;
+	}
+	//# sourceMappingURL=ProjectPluginSetting.d.ts.map
+
+	/// <reference types="jquery" />
+	class ProjectPluginSettingFolder extends ConfigPage {
+	    static PROJECT_EXTENSION_FOLDER_BASE_ID: string;
+	    static PROJECT_EXTENSION_FOLDER_TYPE: string;
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        icon: string;
+	        title: string;
+	        children: any;
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	}
+	//# sourceMappingURL=ProjectPluginSettingFolder.d.ts.map
+
+	function InitializeProjectPluginSettings(configApp: IConfigApp): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class Project extends ConfigPage {
+	    static PROJECT_FOLDER_TYPE: string;
+	    spinningWait: JQuery;
+	    exportBtn: JQuery;
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    private waitForJob;
+	    protected showSimple(): void;
+	    private showBranchInfoPage;
+	    protected deleteProject(): void;
+	    protected analyze(): void;
+	}
+	//# sourceMappingURL=Project.d.ts.map
+
+	/// <reference types="jquery" />
+	class ProjectLoad extends ConfigPage {
+	    static PROJECTLOAD_FOLDER_TYPE: string;
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        title: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	}
+	//# sourceMappingURL=ProjectLoad.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class Projects extends ConfigPage {
+	    static PROJECT_FOLDER_ID: string;
+	    static PROJECT_FOLDER_TYPE: string;
+	    protected copyName: JQuery;
+	    protected copyId: JQuery;
+	    protected copyIdHint: JQuery;
+	    protected copyTemplate: JQuery;
+	    protected copyRemoveContent: JQuery;
+	    protected copyRemoveAccess: JQuery;
+	    protected copyKeepHistory: JQuery;
+	    protected copyCreate: JQuery;
+	    private projectCreationProgress;
+	    protected backName: JQuery;
+	    protected backId: JQuery;
+	    protected backIdHint: JQuery;
+	    protected backTemplate: JQuery;
+	    protected backTag: JQuery;
+	    protected backTagHint: JQuery;
+	    protected backOver: JQuery;
+	    protected enableUserImportCheckbox: JQuery;
+	    protected backNewTag: JQuery;
+	    protected backNewTagDescription: JQuery;
+	    protected backCreate: JQuery;
+	    protected backLastFile: FileList;
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    protected showBackup(): void;
+	    protected waitForProjectJob(jobId: number, projectId: string): void;
+	    protected enableCreateBackup(): void;
+	    protected showCopy(): void;
+	    protected enableCreateCopy(): void;
+	    protected waitForProject(projectId: string): void;
+	    protected projectIdTest(projcectId: string, complainHere: JQuery, allowProjectOverwrite?: boolean): boolean;
+	    static checkProjectId(projcectId: string): "" | "the project id must be shorter than 20 characters" | "the project id must start with an uppercase letter" | "the project id can only consist of letters, digits and underscore";
+	}
+	//# sourceMappingURL=Projects.d.ts.map
+
+	function InitializeProjectListSettings(configApp: IConfigApp): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class ACL extends ConfigPage {
+	    static ACL_BASE_ID: string;
+	    protected aclChanged: IACL;
+	    protected aclOriginal: IACL;
+	    protected grouped: IGenericMap;
+	    private readonly DOCSECTIONS;
+	    private readonly DOCSECTIONSTYPE;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected showRules(): void;
+	    protected editRule(gidx: number): void;
+	    protected showGroupsInRule(ul: JQuery, gidx: number): void;
+	    protected showAccessRightsDialog(gidx: number): void;
+	    private displayAccessRights;
+	    private yesNo;
+	    private na;
+	    private getCatAcl;
+	    private paramChanged;
+	    protected analyze(): void;
+	}
+	//# sourceMappingURL=ACL.d.ts.map
+
+	/// <reference types="jquery" />
+	class Branch extends ConfigPage {
+	    static BRANCH_BASE_ID: string;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        iconClass: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	    private showCreatePage;
+	    private validate;
+	    private startCopy;
+	    protected waitForProjectJob(jobId: number, projectId: string): void;
+	}
+	//# sourceMappingURL=Branch.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class BranchConfig extends ConfigPage {
+	    protected uploader: JQuery;
+	    private settingOriginal;
+	    private settingNow;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	}
+	//# sourceMappingURL=BranchConfig.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class CategoryGroups extends ConfigPage {
+	    static CATEGORYGROUPS_BASE_ID: string;
+	    protected groupsChanged: ICategoryGroups;
+	    protected groupsOriginal: ICategoryGroups;
+	    protected grouped: IGenericMap;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected showGroups(): void;
+	    protected editGroup(gidx: number): void;
+	    protected showCategoriesInGroup(ul: JQuery, gidx: number): void;
+	    protected getAvailableCategories(cats: string[]): IDropdownOption[];
+	    private paramChanged;
+	    protected analyze(): void;
+	}
+	//# sourceMappingURL=CategoryGroups.d.ts.map
+
+	/// <reference types="jquery" />
+	class ContextPages extends ConfigPage {
+	    static CONTEXTPAGE_BASE_ID: string;
+	    private settingOriginal;
+	    private settingNow;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showSimple(): void;
+	    protected showSimpleProp(key: string, title: string, label: string): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=ContextPages.d.ts.map
+
+	/// <reference types="jquery" />
+	interface ISectionDef {
 	    name: string;
+	    type: string;
 	}
-	interface IRiskValueMap {
+	class DhfConfig extends ConfigPage {
+	    static LOCK_BASE_ID: string;
+	    private settingOriginal;
+	    private settingNow;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected showDocumentStructures(): void;
+	    protected showSignatureMeanings(): void;
+	    protected editStructure(docId: string): void;
+	    protected editSignatureMeaning(sicId: string): void;
+	}
+	//# sourceMappingURL=DHF.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class DropDowns extends ConfigPage {
+	    static DROPDOWN_BASE_ID: string;
+	    private project;
+	    private newId;
+	    private hint;
+	    private tests;
+	    private updates;
+	    private guiTools;
+	    create: JQuery;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    setProject(project: string): void;
+	    showDropDownAdd(ui: JQuery, text: string, pageId?: string, created?: (id: string) => void): void;
+	    editDropDownOptions(ddid: string, saveDirect: boolean): void;
+	    editDropDownGroups(ddid: string, saveDirect: boolean): void;
+	    editAdvanced(ddid: string): void;
+	    private paramChanged;
+	    private showDropDowns;
+	}
+	//# sourceMappingURL=DropDowns.d.ts.map
+
+	/// <reference types="jquery" />
+	class Extras extends ConfigPage {
+	    static EXTRAS_BASE_ID: string;
+	    private settingOriginal;
+	    private settingNow;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showSimple(): void;
+	    protected showSimpleProp(key: string, label: string, help: string): void;
+	    protected showSelect(key: string, label: string, help: string, options: IDropdownOption[]): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=Extras.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class ItemLock extends ConfigPage {
+	    static LOCK_BASE_ID: string;
+	    private settingOriginal;
+	    private settingNow;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showSimple(): void;
+	    protected showLocks(): void;
+	    protected editGroup(gidx: number): void;
+	    protected showLockMasters(ul: JQuery, gidx: number): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=ItemLock.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class Labels extends ConfigPage {
+	    static LABELS_BASE_ID: string;
+	    private labelsOriginal;
+	    private labelsChanged;
+	    private labelTools;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected analyze(): void;
+	    static getName(label: ILabel): string;
+	    protected showShared(): void;
+	    protected showOr(): void;
+	    protected showXor(): void;
+	    protected showReview(): void;
+	    protected showDesignReview(): void;
+	    protected showGroup(groupType: string): void;
+	    protected sortGroup(groupIdx: number): void;
+	    protected editGroup(groupType: string, groupIdx: number): void;
+	    protected editOrGroup(groupType: string, groupIdx: number): void;
+	    protected showDesignReviewLabels(ul: JQuery): void;
+	    protected showLabelsInGroup(ul: JQuery, groupType: string, gidx: number): void;
+	    protected editLabel(groupIdx: number, groupType: string, label: string): void;
+	    protected getLabelProp(ldef: ILabel, ps: string): any;
+	    protected groupsAreSame(g1: ILabelGroup, g2: ILabelGroup): boolean;
+	    static getLabelName(projectId: string, label: string): string;
+	    static getLabelOptions(includeDesignReviews?: boolean): IDropdownOption[];
+	    static hasCategory(projectId: string, category: string): boolean;
+	    static removeCategory(configApp: IConfigApp, projectId: string, category: string): JQueryDeferred<IRestResult>;
+	}
+	//# sourceMappingURL=Labels.d.ts.map
+
+	/// <reference types="jquery" />
+	class Mail extends ConfigPage {
+	    static MAIL_BASE_ID: string;
+	    private mailChanged;
+	    private mailOriginal;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    paramChanged(): void;
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=Mail.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class NavigationBarConfig extends ConfigPage {
+	    protected uploader: JQuery;
+	    private settingOriginal;
+	    private settingNow;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected editTab(idx: number): void;
+	}
+	//# sourceMappingURL=NavigationBarConfig.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class ProjectLogo extends ConfigPage {
+	    protected uploader: JQuery;
+	    protected logo: IStringMap;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    protected addUploadArea(logoName: string, help: string, logoId: string, removeName: string, defaultPath: string, fileTypes: string[], containerDisplayClass: string): void;
+	    protected fileUploaded(uploaded: JQuery, logoId: string): void;
+	    protected logoDeleted(logoId: string): void;
+	}
+	//# sourceMappingURL=ProjectLogo.d.ts.map
+
+	/// <reference types="jquery" />
+	class ProjectSettingsFolder extends ConfigPage {
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        icon: string;
+	        title: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    protected createNewSetting(): void;
+	    protected deleteSettings(key: string): void;
+	    protected createEditSetting(key: string): void;
+	}
+	//# sourceMappingURL=ProjectSettingsFolder.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class QMS extends ConfigPage {
+	    static QMS_BASE_ID: string;
+	    private qmsConfigOriginal;
+	    private qmsConfigChanged;
+	    protected labelsConfigOriginal: ILabelsConfig;
+	    protected labelsConfigChanged: ILabelsConfig;
+	    protected affectedConfigOriginal: IDropDownConfig;
+	    protected affectedConfigChanged: IDropDownConfig;
+	    protected responsibleConfigOriginal: IDropDownConfig;
+	    protected responsibleConfigChanged: IDropDownConfig;
+	    protected grouped: IGenericMap;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    /************************** Roles rights *************************/
+	    protected showRoles(): void;
+	    protected showPushRoles(): void;
+	    protected showRolesFor(responsible: boolean): void;
+	    protected showRole(ul: JQuery, responsible: boolean, roleIdx: number, roleName: string, showUp: boolean, showDown: boolean): void;
+	    protected editRole(responsible: boolean, roleIdx: number): void;
+	    protected createRole(responsible: boolean): void;
+	    /************************** Publishing rights *************************/
+	    protected showPublishing(publication: IPublication): void;
+	    /************************** Viewing rights *************************/
+	    protected showViewingRights(): void;
+	    /************************** PROC and WI reviewer *************************/
+	    protected showReviewers(categoryRules: IPublicationCategory): void;
+	    protected showLabelReviewers(label: string, reviewType: string): void;
+	    /************************** Groups *************************/
+	    protected showGroupLabels(groupType: string, groupName: string, groupCategory: string): void;
+	    protected moveUp(el: JQuery): void;
+	    protected moveDown(el: JQuery): void;
+	    protected showGroupLabel(groupType: string, ul: JQuery, groupLabelId: string, showUp: boolean, showDown: boolean): void;
+	    protected editGroupLabel(groupLabelId: string): void;
+	    protected createGroupLabel(groupType: string, groupCategory: string): void;
+	    protected getLabelName(labelId: string): string;
+	    protected setLabelName(labelId: string, newName: string): void;
+	    protected deleteGroupLabel(groupLabelId: string): void;
+	    protected analyze(): void;
+	}
+	//# sourceMappingURL=QMS.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class Risks extends ConfigPage {
+	    static RISKS_BASE_ID: string;
+	    protected riskOriginal: IRiskConfig;
+	    protected riskChanged: IRiskConfig;
+	    protected riskFactorIds: string[];
+	    protected riskWeightIds: string[];
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected riskSave(event: IItemChangeEvent): void;
+	    protected paramChanged(): void;
+	    protected showAdvanced(): void;
+	    protected showError(area: string): void;
+	    protected showSimple(): void;
+	    protected analyze(): void;
+	    protected showTest(): void;
+	    protected showReductions(): void;
+	    protected showPerControlReductions(): void;
+	    protected editReduction(rr_idx: number): void;
+	    protected showMethod(): void;
+	    protected editRpnTable(): void;
+	    protected editRiskZones(): void;
+	    protected editRPNLooks(which: string): void;
+	    protected showRiskControls(): void;
+	    protected showFactors(): void;
+	    protected getNameOfType(type: string): "dropdown" | "multiline text field" | "rich text" | "line of text";
+	    protected showWeights(factorLi: JQuery, factorIdx: number, isPostReductionFactor?: boolean): void;
+	    protected createEditFactor(idx: number): void;
+	    protected createEditWeight(fidx: number, widx: number, isPostReductionFactor?: boolean): void;
+	    protected createEditFactorOptions(fidx: number): void;
+	    static hasCategory(projectId: string, category: string): boolean;
+	    static removeCategory(configApp: IConfigApp, projectId: string, category: string): JQueryDeferred<IRestResult>;
+	}
+	export class RiskSettings extends Risks {
+	    private fieldConfig;
+	    private onChangeFieldSetting;
+	    addFieldSettings(configApp: IConfigApp, project: string, pageId: string, fieldType: string, fieldParams: IRiskTableControlOptions, ui: JQuery, paramChanged: () => void): void;
+	    postSave(project: string, field: string): void;
+	    protected showPostDialogsForRisks(project: string, search: string): void;
+	    protected showPostSaveDialog(project: string): void;
+	    protected startReIndex(project: string, content: JQuery, dlg: JQuery): void;
+	    protected paramChanged(): void;
+	}
+	//# sourceMappingURL=Risks.d.ts.map
+
+	/// <reference types="jquery" />
+	class Search extends ConfigPage {
+	    protected mc: ISearchConfig;
+	    static SEARCH_BASE_ID: string;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    protected createEditSearch(idx: number): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=Search.d.ts.map
+
+	/// <reference types="jquery" />
+	interface ITestColumns {
+	    testCats: string[];
+	    shared: ITableParams;
+	    xtcOnly: ITableParams;
+	}
+	class Tests extends ConfigPage {
+	    static TESTS_BASE_ID: string;
+	    private testOriginal;
+	    private testChanged;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected fixTestChanged(): void;
+	    protected showError(area: string): void;
+	    protected showSimple(): void;
+	    protected analyze(): void;
+	    protected showTestCategories(): void;
+	    protected showTestColumns(): void;
+	    private getTestColumns;
+	    protected showPresetFields(): void;
+	    protected showDefaultTester(): void;
+	    protected showDefaultTestResultResult(): void;
+	    protected showSearchExpressions(): void;
+	    showTestStepResults(): void;
+	    editAutomatic(): void;
+	    editManual(): void;
+	    editSteps(): void;
+	    static hasCategory(projectId: string, category: string): boolean;
+	    static removeCategory(configApp: IConfigApp, projectId: string, category: string): JQueryDeferred<IRestResult>;
+	}
+	//# sourceMappingURL=Tests.d.ts.map
+
+	/// <reference types="jquery" />
+	class TextMacros extends TextMacroBase {
+	    static MACROS_BASE_ID: string;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    private saveProject;
+	    private saveServer;
+	    load(pageId: string): void;
+	}
+	//# sourceMappingURL=TextMacros.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class Traceability extends ConfigPage {
+	    static TRACE_BASE_ID: string;
+	    private traceOriginal;
+	    private traceChanged;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected categoriesWithLinks(): string[];
+	    protected showGraph(): void;
+	    protected analyze(): void;
+	    protected showConfig(): void;
+	    static getCatTypeOptions(): {
+	        id: string;
+	        label: string;
+	    }[];
+	    protected editCategory(cidx: number): void;
+	    protected showRules(sul: JQuery, tridx: number, down: boolean): void;
+	    protected editRule(tridx: number, idx: number, down: boolean): void;
+	    static hasCategory(projectId: string, category: string): boolean;
+	    static removeCategory(configApp: IConfigApp, projectId: string, category: string): JQueryDeferred<IRestResult>;
+	    static getCategoryOfType(type: string): string[];
+	    static getDocCats(): string[];
+	    static getCategoryTypeHuman(category: string): string;
+	    static addCategory(configApp: IConfigApp, catId: string, projectId: string, catType: string): JQueryDeferred<IRestResult>;
+	}
+	//# sourceMappingURL=Traceability.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class WordTemplate extends ConfigPage {
+	    protected uploader: JQuery;
+	    protected labelUI: LabelTemplateSettings;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    willUnload(): void;
+	    load(pageId: string): void;
+	    protected fileUploaded(): void;
+	    protected doDelete(): void;
+	}
+	class LabelTemplateSettings {
+	    DOCUMENT_STATUS_GROUP: string;
+	    DEFAULT_LABEL_NAME: string;
+	    LABEL_COLOR_ACTIVE: ICIColor;
+	    LABEL_COLOR_PASSIVE: ICIColor;
+	    LABEL_REGEX_STRING: string;
+	    LABEL_REGEX: RegExp;
+	    labels: ILabelsConfig;
+	    project: string;
+	    container: JQuery;
+	    fileEditors: {
+	        [key: string]: JQuery;
+	    };
+	    deleteEnabled?: string;
+	    newLabelText: string;
+	    configApp: IConfigApp;
+	    constructor(configApp: IConfigApp, container: JQuery, project: string);
+	    private documentClickHandler;
+	    removeDocumentClickHandler(): void;
+	    update(): void;
+	    private makeSureItHasDefaults;
+	    buildUITable(): void;
+	    private isTheLabalValueNew;
+	    private checkAddLabelButton;
+	    private addLabelSubmit;
+	    fileEditor(labelName: string): JQuery;
+	    addNewLabel(name: string): void;
+	    getSettings(): string;
+	    private deleteLabel;
+	    addLabelToLabelConfig(config: ILabelsConfig, label: ILabel, addToFront?: boolean): ILabelsConfig;
+	    updateStatusGroup(config: ILabelsConfig, newGroup: ILabelGroup): ILabelsConfig;
+	    findStatusGroup(config: ILabelsConfig): ILabelGroup;
+	    deleteLabelFromConfig(config: ILabelsConfig, labelID: string): ILabelsConfig;
+	    createLabel(name: string): ILabel;
+	    createDefaultLabel(): ILabel;
+	    styleSet(text: string): {
+	        on: {
+	            foreground: string;
+	            background: string;
+	            icon: string;
+	            displayName: string;
+	            tooltip: string;
+	        };
+	        off: {
+	            foreground: string;
+	            background: string;
+	            icon: string;
+	            displayName: string;
+	            tooltip: string;
+	        };
+	    };
+	    enabledLabel(text: string): {
+	        foreground: string;
+	        background: string;
+	        icon: string;
+	        displayName: string;
+	        tooltip: string;
+	    };
+	    disabledLabel(text: string): {
+	        foreground: string;
+	        background: string;
+	        icon: string;
+	        displayName: string;
+	        tooltip: string;
+	    };
+	    labelStyle(text: string, foreground: ICIColor, background: ICIColor): {
+	        foreground: string;
+	        background: string;
+	        icon: string;
+	        displayName: string;
+	        tooltip: string;
+	    };
+	    createGroup(): ILabelGroup;
+	}
+	//# sourceMappingURL=WordTemplates.d.ts.map
+
+	function InitializeProjectSettings(configApp: IConfigApp): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	interface IFileConfig {
+	    sharing: string;
+	}
+	class FileSettings extends ConfigPage {
+	    private fileConfig;
+	    private fileSetting;
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    paramChanged(): void;
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=Attachments.d.ts.map
+
+	/// <reference types="jquery" />
+	class DashboardSettings extends ConfigPage {
+	    protected dashboardsOriginal: IDashboardConfig;
+	    protected dashboardChanged: IDashboardConfig;
+	    protected useTiny: boolean;
+	    protected paramChanged(): void;
+	    protected init(): void;
+	    protected showSimple(): void;
+	    protected showDashboards(help: string): void;
+	    protected deleteDashboard(midx: string): void;
+	    protected editDashboard(tidx: string): void;
+	    protected updateDashboard(tidx: string, newDashboard: IDashboard): boolean;
+	    protected showAdvanced(): void;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<any>;
+	    load(pageId: string): void;
+	}
+	//# sourceMappingURL=DashboardSettings.d.ts.map
+
+	/// <reference types="jquery" />
+	class DateTimeSettings extends ConfigPage {
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	}
+	//# sourceMappingURL=DateAndTimeSettings.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IRestoreObject {
+	    project: string;
+	    newId: string;
+	}
+	class SettingDeletedProjects extends ConfigPage {
+	    private dpChanged;
+	    private dpOriginal;
+	    private backIdHint;
+	    static SERVER_SETTING_DELETED_PROJECTS: string;
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<any>;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected enableRestore(restoreBtn: JQuery, restore: IRestoreObject): void;
+	}
+	//# sourceMappingURL=DeletedProjects.d.ts.map
+
+	class DeveloperStagingConfig extends ConfigPage {
+	    private static SERVER_SETTING_PAGE_ID;
+	    private static THE_SETTING;
+	    private developerCode;
+	    constructor(configApp: IConfigApp);
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    private save;
+	}
+	//# sourceMappingURL=DeveloperStaging.d.ts.map
+
+	/// <reference types="jquery" />
+	class HTMLCLEANUPConfig extends ConfigPage {
+	    private dpChanged;
+	    private dpOriginal;
+	    private static SERVER_SETTING_PAGE_ID;
+	    private static THE_SETTING;
+	    private isServer;
+	    constructor(configApp: IConfigApp, isServer: boolean);
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    private paramChanged;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    private testSetting;
+	    private testSettingCategory;
+	}
+	//# sourceMappingURL=HTMLCleanup.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class JobList extends ConfigPage {
+	    interval: number;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    willUnload(): void;
+	    JobList: {
+	        [key: number]: JQuery;
+	    };
+	    protected showHide(name: string, checked: boolean): void;
+	    protected showSimple(): void;
+	    createNewJob(job: XRJobWithUrl): void;
+	}
+	//# sourceMappingURL=JobList.d.ts.map
+
+	/// <reference types="jquery" />
+	class PasswordSettings extends ConfigPage {
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    private changePasswordExpiry;
+	}
+	//# sourceMappingURL=PasswordSettings.d.ts.map
+
+	/// <reference types="jquery" />
+	class PrintConfig extends ConfigPage {
+	    private dpChanged;
+	    private dpOriginal;
+	    private resyncButton;
+	    static SERVER_SETTING_PRINTCONFIG_PAGE_ID: string;
+	    static SERVER_SETTING_PRINTCONFIG_SETTING: string;
+	    private static BUTTON_TEXT;
+	    private issuesUl;
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<any>;
+	    private paramChanged;
+	    load(pageId: string): void;
+	    private updateSettings;
+	    private validateSettings;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    resyncSettings(): void;
+	    /***
+	     * Wrapper around the matrix rest call, returning a regular Promise
+	     * @param url the URL to call, will be prefixed with the current PRINT project
+	     * @private
+	     */
+	    private callMatrix;
+	    /***
+	     * Get the all items in a category and their code
+	     * @param type The type to get all code fragments for
+	     * @private
+	     */
+	    private updateItemMap;
+	    /***
+	     * Get the field ID of the CODE field of the given category. This uses the current PRINT project
+	     * @param category The category ID
+	     * @private
+	     */
+	    private getCodeField;
+	}
+	//# sourceMappingURL=PrintConfig.d.ts.map
+
+	/// <reference types="jquery" />
+	class ServerSettingsEditor extends ConfigPage {
+	    static PROJECT_SETTING_FOLDER_BASE_ID: string;
+	    static PROJECT_SETTING_FOLDER_TYPE: string;
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        icon: string;
+	        title: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    protected createNewSetting(): void;
+	    protected deleteSettings(key: string): void;
+	    protected createEditSetting(key: string, val: any): void;
+	}
+	//# sourceMappingURL=ServerSettingsEditor.d.ts.map
+
+	/// <reference types="jquery" />
+	class ServerSettingsFolder extends ConfigPage {
+	    static SERVER_SETTING_FOLDER_ID: string;
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        icon: string;
+	        title: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showSimple(): void;
+	    protected showPlugins(): void;
+	}
+	//# sourceMappingURL=ServerSettingsFolder.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class SettingProjectGroups extends ConfigPage {
+	    groupsChanged: IProjectGroups;
+	    groupsOriginal: IProjectGroups;
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<any>;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	    protected showGroups(): void;
+	    protected editGroup(gidx: number): void;
+	    protected showProjectsInGroup(ul: JQuery, gidx: number): void;
+	    private paramChanged;
+	}
+	//# sourceMappingURL=SettingProjectGroups.d.ts.map
+
+	/// <reference types="jquery" />
+	class SettingTerms extends TextMacroBase {
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<any>;
+	    load(pageId: string): void;
+	}
+	//# sourceMappingURL=SettingTerms.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class TemplateProjects extends ConfigPage {
+	    private templates;
+	    private original;
+	    static SERVER_SETTING_TEMPLATE_PROJECTS: string;
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<any>;
+	    load(pageId: string): void;
+	    protected onChange(): void;
+	    protected showSimple(): void;
+	    protected verifySource(ul: JQuery, project: string): void;
+	    protected verifyMarkAsTemplate(ul: JQuery, project: string): void;
+	    protected showProjectsInGroup(help: string, master: boolean): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=TemplateProjects.d.ts.map
+
+	/// <reference types="jquery" />
+	class ToDoSettings extends ConfigPage {
+	    private todoConfig;
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    paramChanged(): void;
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=ToDoSettings.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class Tokens extends ConfigPage {
+	    private tokens;
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    paramChanged(): void;
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    protected showTokens(container: JQuery, allUsers: XRGetUser_AllUsers_GetUserListAck): void;
+	    protected showAdvanced(): void;
+	}
+	//# sourceMappingURL=Tokens.d.ts.map
+
+	/// <reference types="jquery" />
+	class UIConfig extends ConfigPage {
+	    private dpChanged;
+	    private dpOriginal;
+	    static SERVER_SETTING_UI_PAGE_ID: string;
+	    static SERVER_SETTING_UI_SETTING: string;
+	    getNode(): {
+	        id: string;
+	        type: string;
+	        title: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<any>;
+	    private paramChanged;
+	    load(pageId: string): void;
+	    protected showAdvanced(): void;
+	    protected showSimple(): void;
+	}
+	//# sourceMappingURL=UIConfig.d.ts.map
+
+	function InitializeServerSettings(configApp: IConfigApp): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface GroupAccessUser {
+	    overall: string;
+	    details: string[];
+	}
+	class ConfigPageUsersBase extends ConfigPage {
+	    private vscroll;
+	    private ivscroll;
+	    private hscroll;
+	    private ihscroll;
+	    private filterBox;
+	    private mainTable;
+	    private leftTable;
+	    private leftContainer;
+	    protected leftBody: JQuery;
+	    private topTable;
+	    private topContainer;
+	    protected headerRow: JQuery;
+	    protected accessTable: JQuery;
+	    private accessContainer;
+	    protected accessBody: JQuery;
+	    protected createMainContainer(): void;
+	    protected initTooltipBox(onShow: (cell: JQuery) => string): void;
+	    protected placeChangeMenu(uio: JQuery, cell: JQuery): void;
+	    protected doAllVerticalCells(accessTable: JQuery, row: number, col: number, change: (cell: JQuery, option: string) => JQueryDeferred<{}>, option: string): void;
+	    protected doAllHorizontalCells(accessTable: JQuery, row: number, col: number, change: (cell: JQuery, option: string) => JQueryDeferred<{}>, option: string): void;
+	    protected initCellMenu(menu: number, change: (cell: JQuery, option: string) => JQueryDeferred<{}>): void;
+	    protected hideMenu(): void;
+	    protected scrollTop(): void;
+	    protected scrollLeft(): void;
+	    protected initTableScrolling(paddingBottom?: number): void;
+	    protected addFilter(label: string, key: string, alt?: string, onAltClick?: () => void): any;
+	    protected addFilterUserGroup(label: string, classKey: string, dataKey: string, alt?: string, onAltClick?: () => void): any;
+	    protected addFilterProjectGroup(label: string, classKey: string, dataKey: string, alt?: string, onAltClick?: () => void): any;
+	    protected addFilterGroup(options: IDropdownOption[], resolve: (selected: string[]) => string[], label: string, classKey: string, dataKey: string, alt?: string, onAltClick?: () => void): any;
+	    protected isMember(groupId: number, login: string): boolean;
+	    protected updateMember(groupId: number, login: string, isMember: boolean): void;
+	    protected getAccessRights(groupId: number, project: string): "" | "W" | "Q" | "R";
+	    protected getAccessLetterFromNumber(projectRights: number): "" | "W" | "Q" | "R";
+	}
+	//# sourceMappingURL=ConfigPageUsersBase.d.ts.map
+
+	/// <reference types="jquery" />
+	class GroupsAccessOverview extends ConfigPageUsersBase {
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	    private setAccess;
+	}
+	//# sourceMappingURL=GroupAccessOverview.d.ts.map
+
+	/// <reference types="jquery" />
+	interface GroupAccessUser {
+	    overall: string;
+	    details: string[];
+	}
+	class UserAccessOverview extends ConfigPageUsersBase {
+	    private allAdmins;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    readonly AR_NoAccess = -1;
+	    readonly AR_WriteAccess = 1;
+	    readonly AR_ReadAccess = 0;
+	    readonly AR_QMSAccess = 2;
+	    showSimple(): void;
+	    private showSimpleInner;
+	    private setAccess;
+	    private computeOverallAccess;
+	    private updateMail;
+	    private getGroupAccess;
+	}
+	//# sourceMappingURL=UserAccesOverview.d.ts.map
+
+	/// <reference types="jquery" />
+	interface IUserFilter {
+	    filterText: string;
+	    deleted: boolean;
+	    filterGroup: string[];
+	}
+	class UserDetails extends ConfigPage {
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	    protected applyFilter(filter: IUserFilter): void;
+	    protected insertImage(imageID: string): string;
+	    protected formatPasswordAge(maxage: number, age: number): string | number;
+	}
+	//# sourceMappingURL=UserDetails.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class UserGroups extends ConfigPageUsersBase {
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	    protected showUserGroups(): void;
+	    protected getGroupLi(idx: number): JQuery;
+	    protected createUserGroup(ul: JQuery): void;
+	    protected editUserGroup(gidx: number, li: JQuery): void;
+	}
+	//# sourceMappingURL=UserGroups.d.ts.map
+
+	/// <reference types="jquery" />
+	class UserGroupsAccess extends ConfigPageUsersBase {
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	    private setAccess;
+	}
+	//# sourceMappingURL=UserGroupsUsers.d.ts.map
+
+	/// <reference types="jquery" />
+	class UsersFolder extends ConfigPage {
+	    static USERS_FOLDER_ID: string;
+	    getNode(): {
+	        type: string;
+	        id: string;
+	        icon: string;
+	        title: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<unknown>;
+	    load(pageId: string): void;
+	    showSimple(): void;
+	}
+	//# sourceMappingURL=UsersFolder.d.ts.map
+
+	function InitializeUserSettings(configApp: IConfigApp): void;
+	//# sourceMappingURL=initialize.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IWidgetDashboardSettings {
+	    enabled: boolean;
+	    displayedWidgets: IDisplayedWidget[];
+	}
+	interface IDisplayedWidget {
+	    id: string;
+	    pluginName: string;
+	    parameters: IWidgetParameters;
+	    createdBy?: string;
+	}
+	enum widgetRenderEvent {
+	    load = 0,
+	    scroll = 1,
+	    click = 2
+	}
+	enum renderMode {
+	    placeholder = 0,
+	    minimized = 1,
+	    maximized = 2
+	}
+	enum IWidgetScope {
+	    admin = 0,
+	    user = 1,
+	    superAdmin = 2
+	}
+	interface IWidgetPosition {
+	    dashboard: string;
+	    w: number;
+	    h: number;
+	    x?: number;
+	    y?: number;
+	}
+	interface IWidgetParameters {
+	    canBeAddedOrDeletedBy: IWidgetScope;
+	    position: IWidgetPosition;
+	    users?: string[];
+	    options: {
+	        title: string;
+	        canBeHidden: boolean;
+	        [key: string]: any;
+	    };
+	}
+	interface IWidgetPlugin {
+	    id: string;
+	    help: string;
+	    _root: JQuery;
+	    displayedWidget: IDisplayedWidget;
+	    pluginName(): string;
+	    defaultParameters(): IWidgetParameters;
+	    mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
+	    render(root: JQuery, displayedWidget: IDisplayedWidget): void;
+	    updatePosition(w: number, h: number, x: number, y: number): any;
+	    hide(showConfirm: boolean): any;
+	    unload?(): void;
+	    scrollIntoView?(): void;
+	    clicked?(): void;
+	    refresh?(): void;
+	}
+	class WidgetPluginManager {
+	    pluginList: {
+	        [key: string]: IWidgetPlugin;
+	    };
+	    loadedWidgets: {
+	        [key: string]: IWidgetPlugin;
+	    };
+	    constructor();
+	    registerPlugin(plugin: IWidgetPlugin): void;
+	    addLoadedWidget(key: string, widget: IWidgetPlugin): void;
+	    unLoadAllWidgets(): void;
+	    removeLoadedWidget(displayedWidget: IDisplayedWidget): void;
+	}
+	interface IGridStackWidget {
+	    /** widget position x (default?: 0) */
+	    x?: number;
+	    /** widget position y (default?: 0) */
+	    y?: number;
+	    /** widget dimension width (default?: 1) */
+	    w?: number;
+	    /** widget dimension height (default?: 1) */
+	    h?: number;
+	    /** if true then x, y parameters will be ignored and widget will be places on the first available position (default?: false) */
+	    autoPosition?: boolean;
+	    /** minimum width allowed during resize/creation (default?: undefined = un-constrained) */
+	    minW?: number;
+	    /** maximum width allowed during resize/creation (default?: undefined = un-constrained) */
+	    maxW?: number;
+	    /** minimum height allowed during resize/creation (default?: undefined = un-constrained) */
+	    minH?: number;
+	    /** maximum height allowed during resize/creation (default?: undefined = un-constrained) */
+	    maxH?: number;
+	    /** prevent resizing (default?: undefined = un-constrained) */
+	    noResize?: boolean;
+	    /** prevents moving (default?: undefined = un-constrained) */
+	    noMove?: boolean;
+	    /** prevents moving and resizing (default?: undefined = un-constrained) */
+	    locked?: boolean;
+	    /** widgets can have their own resize handles. For example 'e,w' will make the particular widget only resize east and west. */
+	    resizeHandles?: string;
+	    /** value for `gs-id` stored on the widget (default?: undefined) */
+	    id?: number | string;
+	    /** html to append inside as content */
+	    content?: string;
+	}
+	var widgetPluginManager: WidgetPluginManager;
+	//# sourceMappingURL=WidgetPluginManager.d.ts.map
+
+	interface IDashboard {
+	    displayString: string;
+	    icon?: string;
+	}
+	interface IDashboardConfig {
+	    dashboards: {
+	        [key: string]: IDashboard;
+	    };
+	}
+	class WidgetPluginsConstants {
+	    static defaultDashboardId: string;
+	    static defaultDashboard: IDashboard;
+	}
+	interface IWidgetPluginsContainer {
+	    visible: boolean;
+	    previousUrl: string;
+	    toggle(): any;
+	    addNewWidget(): any;
+	    render(dashboardId: string): any;
+	    loadServerSettingWidgets(loadAllUser: boolean): any;
+	    exit(destination: string): any;
+	    hideWidget(id: string): any;
+	    unhide(id: string): any;
+	    deleteWidget(displayedWidget: IDisplayedWidget): any;
+	    showUpdateShowHiddenButton(): any;
+	}
+	class WidgetPluginsContainer implements IWidgetPluginsContainer {
+	    visible: boolean;
+	    private currentDashboard;
+	    previousUrl: string;
+	    toggle(): void;
+	    private _root;
+	    constructor();
+	    addNewWidget(): void;
+	    private grid;
+	    render(dashboardId?: string): void;
+	    loadServerSettingWidgets(loadAllUser?: boolean): void;
+	    exit(destination: string): void;
+	    hideWidget(id: string): void;
+	    unhide(id: string): void;
+	    deleteWidget(displayedWidget: IDisplayedWidget): void;
+	    showUpdateShowHiddenButton(): void;
+	}
+	//# sourceMappingURL=WidgetPluginsContainer.d.ts.map
+
+	/// <reference types="jquery" />
+	class WidgetSettingsManager {
+	    static getHiddenWidgets(): string[];
+	    static hide(widget: IDisplayedWidget): JQueryDeferred<any>;
+	    static unhide(displayedWidget: IDisplayedWidget): JQueryDeferred<any>;
+	    static updatePosition(widget: IDisplayedWidget): JQueryDeferred<any>;
+	    static setSettings(widget: IDisplayedWidget): JQueryDeferred<any>;
+	    static deleteDeleteWidgetSettings(widget: IDisplayedWidget): JQueryDeferred<any>;
+	    static canBeEdited(displayedWidget: IDisplayedWidget, configurator: ILineEditorLine[]): boolean;
+	    static canBeDeleted(displayedWidget: IDisplayedWidget): boolean;
+	}
+	//# sourceMappingURL=WidgetSettingsManager.d.ts.map
+
+	class ProjectStorage implements IDataStorage {
+	    Project: string;
+	    constructor(project: string);
+	    setItem(itemKey: string, itemVal: string, dontSanitize?: boolean): void;
+	    getItem(itemKey: string, dontSanitize?: boolean): string;
+	    getItemDefault(itemKey: string, defaultValue: string): string;
+	}
+	//# sourceMappingURL=ProjectStorage.d.ts.map
+
+	class ServerStorage implements IDataStorage {
+	    private serverPrefix;
+	    setItem(itemKey: string, itemVal: string, dontSanitize?: boolean): void;
+	    getItem(itemKey: string, dontSanitize?: boolean): string;
+	    getItemDefault(itemKey: string, defaultValue: string): string;
+	}
+	//# sourceMappingURL=ServerStorage.d.ts.map
+
+	function initialize(): void;
+	//# sourceMappingURL=Export.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	/**this is the information about a branch (including the merge history) */
+	interface IBranchInfo {
+	    /** tag set in mainline and branch just after the creation of the branch */
+	    branchTag: string;
+	    /** UTC date / time when the branch was created */
+	    branchDate: string;
+	    /** if of the mainline project */
+	    sourceProject: string;
+	    /** mapping of fields between mainline and branch */
+	    fieldMapping: IFieldMergeMapping[];
+	    /** allows you to not merge some categories, if not set it defaults to ["REPORT", FOLDER"] */
+	    dontMerge?: string[];
+	    /** these labels are set in new /updated items in mainline (if they exist in the given category) */
+	    setLabels?: string[];
+	    /** these labels are reset in new /updated items in mainline (if they exist in the given category) */
+	    resetLabels?: string[];
+	    /**  these labels are not copied in case they changed in the branch */
+	    ignoreLabels?: string[];
+	    /**  these labels are set (next to set labels) if there was a conflict and the user decided to mark the conflicts */
+	    conflictLabels?: string[];
+	    /** user ids of user who can merge branch back into main */
+	    branchMasters?: string[];
+	}
+	enum EMergeChangeStatus {
+	    deleted = 0,
+	    created = 1,
+	    changed = 2,
+	    unchanged = 3,
+	    notExist = 4
+	}
+	interface IFieldMergeMapping {
+	    /** field id in mainline project */
+	    mainline: number;
+	    /** field id of same field in branch project */
+	    branch: number;
+	}
+	interface IMergeResults {
+	    utcDate: string;
+	    user: string;
+	    comment: string;
+	    tag: string;
+	    results: IMergeDetails[];
+	}
+	enum EItemChangeState {
+	    never = 0,
+	    notNow = 1,
+	    now = 2
+	}
+	enum EMergeActionChoice {
+	    noActionNeeded = -1,
+	    undecided = 0,
+	    ignore = 1,
+	    add_restore = 2,
+	    replace = 3,
+	    delete = 4
+	}
+	interface IMergeDetails {
+	    id: string;
+	    mV: number;
+	    bV: number;
+	    a: EMergeActionChoice;
+	    np: string;
+	    l: string[];
+	    u: string;
+	}
+	interface IMergeLookup {
+	    [key: string]: XRMergeItem;
+	}
+	interface ILastMerges {
+	    [key: string]: ILastMerge;
+	}
+	interface ILastMerge {
 	    [key: string]: number;
 	}
-	interface IRiskRender {
-	    text: string;
-	    foregroundColor: string;
-	    backgroundColor: string;
-	    css: string;
+	interface IMove {
+	    id: string;
+	    parent: string;
 	}
-	class RiskCalculator {
-	    private riskValue;
-	    private config;
-	    constructor(config: IRiskConfig);
-	    parse(fieldValue: string): void;
-	    updateMitigations(possibleRefs: IReference[]): boolean;
-	    updateMitigationTitles(possibleLinks: IReference[]): void;
-	    init(riskValue: IRiskValue): void;
-	    /** get the value */
-	    getValue(): IRiskValue;
-	    getAttributeHTML(attributeIn: string): string;
-	    getWeight(factorType: string, weightType: string): number;
-	    getRBM(): IRiskValueMap;
-	    getRAMByMath(rbm: IRiskValueMap): IRiskValueMap;
-	    getRAMByUser(rbm: IRiskValueMap): IRiskValueMap;
-	    getRAM(rbm: IRiskValueMap): IRiskValueMap;
-	    getRiskSumText(riskValues: IRiskValueMap): {
-	        text: string;
-	        foregroundColor: string;
-	        backgroundColor: string;
-	        css: string;
-	    };
-	    getRiskSumSpan(riskValues: IRiskValueMap): string;
-	    getColor(riskValues: IRiskValueMap, foreground: boolean): string;
-	    static labelDisplay(weightValue: IRiskConfigFactorWeightValue): string;
+	interface IMergeCommand {
+	    copy: string[];
+	    conflicted: string[];
+	    delete: string[];
+	    add_links: ILink[];
+	    remove_links: ILink[];
+	    move: IMove[];
+	    push?: number;
 	}
-	class RiskControlImpl extends BaseControl {
-	    private settings;
-	    private config;
-	    private risk;
-	    private mitbody;
-	    private isPrint;
-	    private riskCalculator;
-	    private mitigationsRemoved;
-	    constructor(control: JQuery);
-	    init(options: IRiskControlOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private syncTheLinks;
-	    private controlsFromTable;
-	    private controlsToTable;
-	    private renderFactorWithWeightsLine;
-	    private editRichText;
-	    private setFactorRichValue;
-	    private renderWeight;
-	    private setWeight;
-	    private setFactor;
-	    riskChange(): void;
-	    private mitigationChanged;
-	    private getLabelFactor;
-	    private getLabelWeight;
-	    private getLabelWeightFactor;
-	    private createMitigationSelect;
-	    private mitigationRenderer;
-	    private setSelectValues;
-	    private setSelectValue;
-	    private canBeMitigation;
-	    /********************************
-	     * render as table control
-	     ********************************/
-	    private renderTableBodyRow;
-	    /********************************
-	     * user inputs
-	     ********************************/
-	    private renderFactorInput;
-	    private renderWeightInput;
-	    highlightReferences(): void;
-	    private renderMitigationSelect;
+	interface IMergeCommandTarget {
+	    id: string;
+	    m: number;
 	}
-	//# sourceMappingURL=riskCtrl2.d.ts.map
+	interface IImportMergeItem {
+	    instance?: string;
+	    project?: string;
+	    id: string;
+	    revision: number;
+	    description: string;
+	}
+	enum EMergeType {
+	    undefined = 0,
+	    merge = 1,
+	    push = 2
+	}
+	class ImportMergeBase {
+	    protected fieldMapping: IStringNumberMap;
+	    protected compare3Way(item1: IImportMergeItem, item2: IImportMergeItem, commonBase: IImportMergeItem): void;
+	    protected showItem(show: IImportMergeItem): void;
+	    protected remapItem(itemFromOtherProject: IItem): IItem;
+	    protected getItem(item: IImportMergeItem): JQueryDeferred<unknown>;
+	    protected renderVersion(hi: JQuery, source: string, item: IItem, version: number, category: string, branch?: string): void;
+	}
+	//# sourceMappingURL=ImportMergeBase.d.ts.map
 
-	interface IRiskTableControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: IRiskTableParams;
-	    links?: IReference[];
+	interface IImportColumn {
+	    label: string;
+	    id: string;
+	    isLabel?: boolean;
+	    index?: number;
+	    fieldId?: number;
+	    fieldType?: string;
 	}
-	interface IRiskTableParams {
-	    tableOptions?: {
-	        showFullRisk?: boolean;
-	        hideReadonly?: boolean;
-	        cloneButtonName?: string;
-	    };
+	interface IImportRow {
+	    cells: string[];
 	}
 	function initialize(): void;
-	//# sourceMappingURL=RiskControlFolder.d.ts.map
+	//# sourceMappingURL=MassImport.d.ts.map
 
 	/// <reference types="jquery" />
-	interface IPushMessage {
-	    subject: string;
-	    project: string;
-	    item: string;
-	    version: string;
-	    users: string;
-	    parent: string;
-	    title: string;
-	    error?: string;
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class BranchBase extends ImportMergeBase implements IPlugin {
+	    protected pageRoot: string;
+	    protected pageID: string;
+	    protected pageTitle: string;
+	    static BRANCH_INFO_SETTING: string;
+	    protected mergeType: EMergeType;
+	    protected msg_na: string;
+	    protected msg_ignore: string;
+	    protected msg_add_restore: string;
+	    protected msg_add_restore_now: string;
+	    protected msg_replace: string;
+	    protected msg_restore_replace: string;
+	    protected msg_delete: string;
+	    protected msg_bothChanged: string;
+	    protected msg_changedInBranchOnly: string;
+	    protected msg_changedInMainlineOnly: string;
+	    protected msg_explain_merge_push: string;
+	    protected msg_explain_merge_push_help: string;
+	    protected msg_links_added: string;
+	    protected msg_links_removed: string;
+	    protected msg_links_not_in_other: string;
+	    isDefault: boolean;
+	    private branchProject;
+	    private branchInfo;
+	    private lastMerges;
+	    private mainlineBaseItemMap;
+	    private mainlineNowItemMap;
+	    private branchBaseItemMap;
+	    private branchNowItemMap;
+	    private branchBaseItems;
+	    private branchNowItems;
+	    private mainBaseItems;
+	    private mainNowItems;
+	    private mergeLineCount;
+	    private mergeLineNoAction;
+	    private mergeOptions;
+	    initItem(_item: IItem, _jui: JQuery): void;
+	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
+	    supportsControl(ctrlType: string): boolean;
+	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
+	    initProject(): void;
+	    isEnabled(): boolean;
+	    getProjectPages(): IProjectPageParam[];
+	    protected showPage(control: JQuery): void;
+	    protected showBranchHistory(container: JQuery): void;
+	    private showMergeDetails;
+	    private addMergeDetail;
+	    static renderItemLink(fullItem: string, otherProject?: string): string;
+	    static addMergeDetail(ul: JQuery, detail: XRMergeAction, targetProject: string, isFromBranch: boolean): void;
+	    protected wizardShowBranchSelect(container: JQuery): void;
+	    private isMerge;
+	    private isPush;
+	    private wizardContentChanges;
+	    private showChanges;
+	    private showMergeDecisionsToTake;
+	    private getPairs;
+	    private getItemsOnlyInBranch;
+	    private getItemsByChangeStatus;
+	    private getOptionButtons;
+	    private getOptionButton;
+	    private showPairs;
+	    private activateContentChangesNext;
+	    private isBranchMaster;
+	    private getUserContentChoices;
+	    private wizardLinkChanges;
+	    private addLinkList;
+	    private wizardStructuralChanges;
+	    private wizardExecuteMerge;
+	    private renderSingleItem;
+	    private compareMainVsBranch;
+	    private renderBranchId;
+	    private renderMainId;
+	    private renderBranchOrMainId;
+	    private createMap;
+	    private mergeSelect;
+	    private rememberMergeInfo;
+	    protected getToolTip(actionText: any): string;
 	}
-	interface IItemEditor {
-	    user: string;
-	    thisSocket: boolean;
+	function initialize(): void;
+	//# sourceMappingURL=Merge.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface INotificationTableOptions {
+	    allowDelete: boolean;
+	    selectable: boolean;
+	    forColumn: boolean;
+	    itemColumn: boolean;
+	    doneColumn: boolean;
+	    canCloseMine: boolean;
+	    canCloseAll: boolean;
+	    showAddButton: boolean;
+	    none: string;
+	    tableClass?: string;
+	    moveDoneTo?: string;
 	}
-	interface IItemWatched {
-	    item: string;
-	    users: string[];
-	    editor: IItemEditor;
-	    version: number;
-	}
-	interface IItemUpdated {
-	    item: string;
-	    version: number;
-	    title: string;
-	    thisSocket: boolean;
-	}
-	interface IItemCreated {
-	    item: string;
-	    parent: string;
-	    title: string;
-	}
-	interface IItemDeleted {
-	    item: string;
-	}
-	interface ITodoChanged {
-	}
-	class PushMessages {
-	    private webSocket;
-	    private itemWatched;
-	    private itemUpdated;
-	    private itemCreated;
-	    private itemDeleted;
-	    private todoChanged;
-	    static socketId: number;
+	class Notifications implements IPlugin {
+	    private notificationConfig;
+	    private lastCount;
+	    private newNotification;
+	    private _item;
+	    private lastMenu;
+	    private projectCount;
+	    isDefault: boolean;
+	    private notificationUpdateTimer;
+	    previousNotificationsIds: number[];
 	    constructor();
-	    newConnection(): JQueryDeferred<{}>;
-	    connect(): JQueryDeferred<number>;
-	    private preventConcurrentEdit;
-	    private reconnectAfterCloseMessage;
-	    trigger(message: any): void;
-	    private sendCurrentEditingStatus;
-	    private retryTimer;
-	    private send;
-	    watchItem(itemId: string): void;
-	    unWatchItem(): void;
-	    editItem(itemId: string): void;
-	    unEditItem(): void;
-	    onTodoChanged(fn: (args: ITodoChanged) => void): void;
-	    onItemUpdated(fn: (args: IItemUpdated) => void): void;
-	    onItemCreated(fn: (args: IItemCreated) => void): void;
-	    onItemDeleted(fn: (args: IItemDeleted) => void): void;
-	    onItemWatched(fn: (args: IItemWatched) => void): void;
+	    onUpdate(ui: JQuery, config: IContextPageConfigTab, context: IContextInformation): void;
+	    init(): void;
+	    setPreviousNotificationsIds(notifIds: number[]): void;
+	    getPreviousNotificationsIds(): number[];
+	    initItem(item: IItem, jui: JQuery): void;
+	    initServerSettings(): void;
+	    initProject(): void;
+	    isEnabled(): boolean;
+	    getProjectPages(): IProjectPageParam[];
+	    updateMenu(ul: JQuery): void;
+	    private userCanAcknowledgeNotification;
+	    supportsControl(): boolean;
+	    updateNotifications(): void;
+	    private watchActivity;
+	    private updateActivity;
+	    private getNotificationChanges;
+	    protected getTotalNotificationsProject(project: string): XRTodoCount;
+	    protected getTotalNotifications(): number;
+	    protected getProjectNotifications(project: string, item: string): XRTodo[];
+	    private renderNotificationProjectPage;
+	    protected renderNotificationRow(tr: JQuery, notification: XRTodo, tableOptions: INotificationTableOptions): void;
+	    protected renderNotificationTable(container: JQuery, tableOptions: INotificationTableOptions, notifications: XRTodo[]): void;
+	    protected indicateNotificationChange(): void;
+	    protected closeNotifications(notifications: JQuery, deleteThem: boolean): void;
+	    protected updateProjectMenu(): void;
+	    static getMessage(todo: XRTodo): any;
+	    static getField(todo: XRTodo): any;
+	    static getReply(todo: XRTodo): any;
+	    protected showCreateNotificationDialog(): JQueryDeferred<unknown>;
+	    protected showAllNotificationsDialog(): void;
+	    private showNotifications;
+	    protected filterNotifications(ui: JQuery, cbs: any): void;
+	    deleteNotificationDlg(notification: XRTodo): JQueryDeferred<unknown>;
+	    deleteNotification(notification: XRTodo): JQueryDeferred<unknown>;
+	    protected deleteNotificationIdRec(project: string, notifications: JQuery, deleteThem: boolean, idx: number): JQueryDeferred<unknown>;
+	    protected deleteNotificationId(project: string, todoId: number, deleteThem: boolean): JQueryDeferred<unknown>;
+	    createNotification(users: string[], project: string, item: string, text: string, type: string, atDate: Date): JQueryDeferred<unknown>;
+	    private countRec;
+	    protected updateCounters(): void;
+	    protected getNotificationCount(itemId: string): number;
+	    private addFancyTreeNotificationCounterPlugin;
+	    static anchorTimer: any;
+	    static anchorNotifications(): void;
 	}
-	//# sourceMappingURL=PushMessages.d.ts.map
+	var NotificationList: Notifications;
+	function initialize(): void;
+	//# sourceMappingURL=Notifications.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -9046,200 +11784,17 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface ICascadingSelectOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        cascadingOptions?: ICascadingSelect;
-	    };
+	interface IStringJQueryArrayMap {
+	    [key: string]: JQuery[];
 	}
-	interface ICascadingOptionSelector {
-	    groupId: string;
-	    groupValue: string;
-	}
-	class CascadingSelect extends BaseControl {
-	    private settings;
-	    private optionsChain;
-	    constructor(control: JQuery);
-	    init(options: ICascadingSelectOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	    getGuid(): string;
-	    private completeChain;
-	    private getGroup;
-	    private renderControls;
-	    private updateControls;
-	}
-	//# sourceMappingURL=cascadingSelect.d.ts.map
+	function initialize(): void;
+	//# sourceMappingURL=PubHistory.d.ts.map
 
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IItemSelectionFromToOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        /** Do not include these CATs in the FROM selection list */
-	        showNotFrom?: string[];
-	        /** Only include these CATs in the TO selection list */
-	        showOnlyTo?: string[];
-	        /** Initially select all possible items as to items */
-	        allTo?: boolean;
-	        buttonNameFrom?: string;
-	        buttonNameTo?: string;
-	        prefixFrom?: string;
-	        prefixTo?: string;
-	    };
+	interface IReindexCats {
+	    cats: string[];
 	}
-	interface IFromToSelection {
-	    from: IReference[];
-	    to: IReference[];
-	}
-	class ItemSelectionFromToImpl extends BaseControl {
-	    private settings;
-	    private selectedItems;
-	    private defaultSelection;
-	    constructor(control: JQuery);
-	    init(options: IItemSelectionFromToOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    setValue(newValue: string): void;
-	    setValueFrom(itemIds: string[]): void;
-	    setValueTo(itemIds: string[]): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private getSelectionString;
-	    private isDefaultSelection;
-	}
-	//# sourceMappingURL=itemSelectionFromTo.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ICustomSectionOptions extends IDHFSectionOptions {
-	    includeInToc: boolean;
-	    options: ICustomSection;
-	    landscape: boolean;
-	}
-	interface IDHFCustomSectionOptions {
-	    default: ICustomSectionOptions;
-	}
-	class CustomSection extends DoubleSelectBase {
-	    protected config: IDHFCustomSectionOptions;
-	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    updateXmlValue(ctrl: IDHFControlDefinition): void;
-	    getConfig(ctrl: IDHFControlDefinition): ICustomSectionOptions;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
-	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
-	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
-	}
-	//# sourceMappingURL=CustomSection.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ISingleSelectOptions extends IDHFSectionOptions {
-	    search?: string;
-	}
-	interface IDoubleSelectOptions extends IDHFSectionOptions {
-	    searchFrom?: string;
-	    searchTo?: string;
-	}
-	interface ISingleDefaultControllerConfig {
-	    default: ISingleSelectOptions;
-	}
-	interface IDoubleDefaultControllerConfig {
-	    default: ISingleSelectOptions;
-	}
-	abstract class SingleSelectBase implements IDHFSection {
-	    protected abstract config: ISingleDefaultControllerConfig;
-	    abstract renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    abstract updateXmlValue(ctrl: IDHFControlDefinition): void;
-	    getConfig(ctrl: IDHFControlDefinition): ISingleSelectOptions;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
-	    abstract showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
-	    protected addSpecificSettings(controllerConfig: ISingleSelectOptions, custom: JQuery): void;
-	    abstract saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
-	    protected setSpecificSettings(controllerConfig: ISingleSelectOptions, custom: JQuery): boolean;
-	    hasSearch(ctrl: IDHFControlDefinition): boolean;
-	    executeSearch(ctrl: IDHFControlDefinition): void;
-	    verifySearch(ctrl: IDHFControlDefinition): void;
-	    verifyContent(ctrl: IDHFControlDefinition): void;
-	    protected removeSpaces(str: string): string;
-	}
-	abstract class DoubleSelectBase implements IDHFSection {
-	    protected abstract config: IDoubleDefaultControllerConfig;
-	    abstract renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    abstract updateXmlValue(ctrl: IDHFControlDefinition): void;
-	    getConfig(ctrl: IDHFControlDefinition): IDoubleSelectOptions;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
-	    abstract showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
-	    protected addSpecificSettings(controllerConfig: IDoubleSelectOptions, custom: JQuery): void;
-	    abstract saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
-	    protected setSpecificSettings(controllerConfig: IDoubleSelectOptions, custom: JQuery): boolean;
-	    hasSearch(ctrl: IDHFControlDefinition): boolean;
-	    executeSearch(ctrl: IDHFControlDefinition): void;
-	    verifySearch(ctrl: IDHFControlDefinition): void;
-	    verifyContent(ctrl: IDHFControlDefinition): void;
-	    protected removeSpaces(str: string): string;
-	}
-	//# sourceMappingURL=SingleSelectBase.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class Layouter {
-	    private itemId;
-	    private mf;
-	    private sectionConfig;
-	    private fromSelection;
-	    private toSelection;
-	    private isLandScape;
-	    private displayStyle;
-	    constructor();
-	    show(itemId: string, fieldId: number, sectionConfig: ICustomSectionOptions, fromSelection: string, toSelection: string, labelFilter: string, onUpdate: (code: string) => void, previewOnly?: boolean, previewDiv?: JQuery): void;
-	    private initEditor;
-	    private formatterList;
-	    private displayPreview;
-	    private introOptions;
-	    private advancedOptions;
-	    private static sortItems;
-	    private static filterTopLevelFormatters;
-	    private waitForJob;
-	    static convert(customSectionConfig: ICustomSection, customSectionFroms: string, customSectionTo: string, paperWidth: string, mf: JQuery, container: JQuery): void;
-	}
-	//# sourceMappingURL=Layouter.d.ts.map
-
-	interface IValidationSpec {
-	    validationFunction?: JsonEditorValidation | null | any;
-	    schema?: string;
-	    apiHelp?: string;
-	}
-	class JsonEditor {
-	    constructor();
-	    showDialog(title: string, value: string, onOk: (update: string) => void, semanticValidate?: IValidationSpec): void;
-	}
-	//# sourceMappingURL=JsonEditor.d.ts.map
+	function initialize(): void;
+	//# sourceMappingURL=ReIndex.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -9302,854 +11857,44 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	class Hidden implements IDHFSection {
-	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    updateXmlValue(ctrl: IDHFControlDefinition): void;
-	    getConfig(ctrl: IDHFControlDefinition): IDHFSectionOptions;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
-	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
-	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
-	    verifyContent(ctrl: IDHFControlDefinition): void;
-	}
-	//# sourceMappingURL=Hidden.d.ts.map
-
-	interface ITableDataRow {
-	    [key: string]: number | string;
-	}
-	interface ITableFunction {
-	    (table: ITableDataRow[], parameterJson: ITableParams): string;
-	}
-	interface ITableFunctions {
-	    [key: string]: ITableFunction;
-	}
-	class TableMath {
-	    protected functions: ITableFunctions;
-	    /** allow to add new functions:  */
-	    registerFunction(functionId: string, execute: ITableFunction): void;
-	    /** executes function on a table */
-	    execute(functionId: string, table: ITableDataRow[], parameterJson: ITableParams): string;
-	}
-	var tableMath: TableMath;
-	function InitializePluginManagerFormulas(): void;
-	//# sourceMappingURL=PluginManagerFormulas.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IContextFramePlugin {
-	    id: string;
-	    title: string;
-	    adminOption: string;
-	    onUpdate: (ui: JQuery, config: IContextPageConfigTab, context: IContextInformation) => void;
-	}
-	class ContextFrameManagerImpl {
-	    private pages;
+	class ReviewContextFrame implements IPlugin {
+	    static reviewContextFrame: string;
+	    static lastDisplayedItemId: string;
 	    constructor();
-	    getPages(): IContextFramePlugin[];
-	    register(plugin: IContextFramePlugin): void;
-	    implements(id: string): boolean;
-	    renderTab(panel: JQuery, id: string, config: IContextPageConfigTab, context: IContextInformation): void;
-	    private getPlugin;
-	}
-	var ContextFrameManager: ContextFrameManagerImpl;
-	function InitializeTrainingManager(): void;
-	//# sourceMappingURL=TrainingManager.d.ts.map
-
-	/// <reference types="jquery" />
-	interface IGetProjectResult {
-	    settings: IGetProjectResultSetting[];
-	    currentUser: string;
-	    customerAdmin: number;
-	    superAdmin: number;
-	    dateInfo: IGetProjectResultDateInfo;
-	    customerSettings: IGetProjectResultSetting[];
-	    project: XRProjectType[];
-	}
-	interface IGetProjectResultSetting {
-	    key: string;
-	    value: string;
-	}
-	interface IGetProjectResultDateInfo {
-	    timeformat: string;
-	    dateformat: string;
-	    timeZone: string;
-	    customerDateformat: string;
-	    customerTimeformat: string;
-	    customerTimezone: string;
-	    dateIso8601: string;
-	    timeUserFormat: string;
-	}
-	interface IGetProjectResultDateInfos {
-	    key: string;
-	    value: string;
-	}
-	interface ICustomerSettingString {
-	    [key: string]: string;
-	}
-	interface ICustomerSettingJSON {
-	    [key: string]: {};
-	}
-	interface IPostLoginResult {
-	    actualLogin: string;
-	    userId: number;
-	    userDetails: IPostLoginResultUserDetail;
-	    maxAge: number;
-	}
-	interface IPostLoginResultUserDetail {
-	    id: number;
-	    login: string;
-	    email: string;
-	    firstName: string;
-	    lastName: string;
-	    signatureImage: number;
-	    customerAdmin: number;
-	    passwordAgeInDays: number;
-	    badLogins: number;
-	    badLoginsBefore: number;
-	    superAdmin: number;
-	    userSettingsList: IGetProjectResultSetting[];
-	}
-	interface ICompanyUISettings {
-	    /** allow to add links to locked items */
-	    allowAddLinkToLocked?: boolean;
-	    /** if true the save button is always on the left */
-	    saveLeft?: boolean;
-	    /** if set to true, auto clean the input of text fields */
-	    purify?: boolean;
-	    /** editor setting */
-	    tiny?: ICompanyTiny;
-	    /** always use new editor (also for old projects) */
-	    tinyAsDefault?: boolean;
-	    /** true if user should be able to switch from editor to tiny per field */
-	    tinyUpgradeOption?: boolean;
-	    /** how many items to show in list view (after running searches, default 200) */
-	    maxHits?: number;
-	    /** @experimental: Enable the widget dashboard on instance root */
-	    widgetDashboardOption?: boolean;
-	    /** internal: url of draw io editor */
-	    drawioURL?: string;
-	    /** @experimental: if set to anything > 0 the fields in a form are rendered in a non blocking way if there are more than largeFormRender fields */
-	    largeFormRender?: number;
-	    /** @internal beta - do not auto select parents if single item is selected for DOC */
-	    preciseDocSelect?: boolean;
-	    /** @internal obsolete */
-	    legacyPrint?: boolean;
-	    /** @internal obsolete */
-	    legacyUserDropdown?: number;
-	    /** @internal obsolete */
-	    legacyKeepFolder?: boolean;
-	}
-	interface ICompanyTiny {
-	    /** true if browser context menu should be used as default */
-	    tinyHideMenu?: boolean;
-	    /** enable or disable editor plugins */
-	    plugins?: string[];
-	    extraPlugins?: string[];
-	    /** toolbar definition */
-	    toolbar?: string;
-	    /** menubar definition  default: edit view insert format table matrix */
-	    menubar?: string;
-	    /** menu entries can be used to change default menus or add details of new menu bar */
-	    menu?: ICompanyTinyMenuMap;
-	    /** allows to overwrite any default setting (e.g. misc: { "table_toolbar": ""} )  to hide table toolbar */
-	    misc?: any;
-	    /** html entities to accept in text */
-	    extended_valid_elements?: string;
-	    /**  optional: formats in Paragraph menu (for docs) */
-	    block_formats_doc?: any;
-	    /** optional: rules for formats (for docs) */
-	    apply_formats_doc?: any;
-	    /** optional: formats in style menu (for docs) */
-	    style_formats_doc?: any;
-	    /** optional: formats in Paragraph menu (for items) */
-	    block_formats?: any;
-	    /** optional: rules for formats (for items)  */
-	    apply_formats?: any;
-	    /** optional: formats in style menu (for items) */
-	    style_formats?: any;
-	    /** elements which don't need content (e.g. a TD cell can be empty, needs to be the complete list) */
-	    short_ended_elements?: string;
-	    /** a custom css name/path */
-	    css?: string;
-	    /** if true it used dom purify to super clean the html */
-	    dompurify?: boolean;
-	    /** requires textpattern plugin! see https://www.tiny.cloud/docs/plugins/opensource/textpattern/ */
-	    textpattern_patterns?: any[];
-	}
-	interface ICompanyTinyMenuMap {
-	    [key: string]: ICompanyTinyMenu;
-	}
-	interface ICompanyTinyMenu {
-	    /** display name of menu */
-	    title: string;
-	    /** items to show */
-	    items: string;
-	}
-	class MatrixSession {
-	    private quiet;
-	    private CurrentUser;
-	    private CurrentProject;
-	    private CurrentComment;
-	    private customerAdmin;
-	    private superAdmin;
-	    private dateInfo;
-	    private customerSettingsString;
-	    private customerSettingsJSON;
-	    private ProjectList;
-	    private CommitTransaction;
-	    private CommitTransactionComment;
-	    private CommitTransactionCancelled;
-	    private postConnect;
-	    duringBrowserNavigation: boolean;
-	    private userPermissions;
-	    private licensedModules;
-	    lastManualComment: string;
-	    serverConfig: XRGetProject_StartupInfo_ListProjectAndSettings;
-	    private myTodoCount;
-	    private myTodos;
-	    pushMessages: PushMessages;
-	    private customParams;
-	    private branches;
-	    constructor();
-	    startCommitTransaction(): void;
-	    stopCommitTransaction(): void;
-	    getUser(): string;
-	    setUser(login: string): void;
-	    private setDateInfo;
-	    getDateInfo(): IGetProjectResultDateInfo;
-	    private setCustomerSettings;
-	    setCustomerSettingJSON(s: string, setting: {}): void;
-	    getCustomerSetting(s: string): string;
-	    getCustomerSettingJSON(s: string, defaultValue?: {}): any;
-	    getUISettings(defaultValues?: {}): ICompanyUISettings;
-	    setUISetting(setting: string, value: any): void;
-	    showUISettings(): void;
-	    isEditor(): boolean;
-	    isCustomerAdmin(): boolean;
-	    isSuperAdmin(): boolean;
-	    isAdmin(): boolean;
-	    getProject(): string;
-	    setProject(projectId: string): void;
-	    getCommentAsync(): JQueryDeferred<string>;
-	    getComment(): string;
-	    private makeTeaser;
-	    getCommentTeaser(): string;
-	    setComment(comment?: string, internal?: boolean): void;
-	    isGroup(): boolean;
-	    isQMS(): boolean;
-	    isMerge(): boolean;
-	    isReview(): boolean;
-	    isACL(): boolean;
-	    isQMSProject(project?: string): boolean;
-	    limitAdmin(): boolean;
-	    hasRisks(): boolean;
-	    hasVariants(): boolean;
-	    hasDocs(): boolean;
-	    hasAgileSync(): boolean;
-	    private setModules;
-	    private getLastComments;
-	    tryReconnect(): JQueryDeferred<{}>;
-	    signInAfterTimeout(): JQueryDeferred<{}>;
-	    triggerLoginWithDialog(): void;
-	    changePassword(): void;
-	    getProjectList(readOrWriteOnly: boolean): XRProjectType[];
-	    canSeeProject(project: string): boolean;
-	    private changeToken;
-	    setProjectColor(projectShort: string, color: string): void;
-	    getProjectColor(projectShort: string): string;
-	    getImgFromProject(pRef: string, offsetTop?: number): string;
-	    private createProjectSelectLink;
-	    updateUI(afterTimeout?: boolean): void;
-	    addLiveQMSProjects(): 0 | 1;
-	    updateCommentCheckboxBoxVisibility(): any;
-	    loadProject(projectId: string, projectURL?: string, setAsProjectUrl?: boolean): void;
-	    oAuthOnly(): boolean;
-	    private showProjectSelectMessage;
-	    private filterProjects;
-	    private getItemFromUrlOrStorage;
-	    private getProjectFromUrlOrStorage;
-	    browserNavigation(): void;
-	    signOut(requestAdminRights: boolean): void;
-	    editComment(): void;
-	    showLoginWindow(): void;
-	    hideLoginWindow(): void;
-	    private requestLogin;
-	    private receiveMessage;
-	    private addHelpButton;
-	    getHelpButton(): string;
-	    private showUserMenu;
-	    setNotificationCounts(todos: XRTodoCount[]): void;
-	    getNotificationCounts(): XRTodoCount[];
-	    getNotifications(): XRTodo[];
-	    setNotifications(todos: XRTodo[]): void;
-	    initPushMessaging(): JQueryDeferred<{}>;
-	    private lastWatchInfo;
-	    updateWatchItemVersion(itemId: string, newVersion: number): void;
-	    isConfigClient(): boolean;
-	    private updateSettings;
-	    getBranches(mainline: string, branch: string): XRMainAndBranch[];
-	    private signOutCleanUp;
-	    getCustomParams(): IStringMap;
-	    getDashboardConfig(): IDashboardConfig;
-	}
-	//# sourceMappingURL=MatrixSession.d.ts.map
-
-	class ProjectStorage implements IDataStorage {
-	    Project: string;
-	    constructor(project: string);
-	    setItem(itemKey: string, itemVal: string, dontSanitize?: boolean): void;
-	    getItem(itemKey: string, dontSanitize?: boolean): string;
-	    getItemDefault(itemKey: string, defaultValue: string): string;
-	}
-	//# sourceMappingURL=ProjectStorage.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class TokenControl {
-	    static showUserTokens(container: JQuery, login: string): void;
-	    static showTokenList(body: JQuery, createUser: string, displayUser: string, tokenList: XRTokenType[]): void;
-	    static showTokenAdd(body: JQuery, user: string, allUsers: XRUserType[], onAdded: Function): void;
-	    private static updateCreate;
-	    private static createToken;
-	}
-	//# sourceMappingURL=TokenControl.d.ts.map
-
-	class ProjectStorageMobile implements IDataStorage {
-	    private Project;
-	    constructor(project: string);
-	    setItem(itemKey: string, itemVal: string): void;
-	    getItem(itemKey: string): string;
-	    getItemDefault(itemKey: string, defaultValue: string): string;
-	}
-	//# sourceMappingURL=ProjectStorageMobile.d.ts.map
-
-	class ServerStorageAdmin implements IDataStorage {
-	    setItem(itemKey: string, itemVal: string): void;
-	    getItem(itemKey: string): string;
-	    getItemDefault(itemKey: string, defaultValue: string): string;
-	}
-	//# sourceMappingURL=ServerStorageAdmin.d.ts.map
-
-	class ProjectStorageAdmin implements IDataStorage {
-	    setItem(itemKey: string, itemVal: string): void;
-	    getItem(itemKey: string): string;
-	    getItemDefault(itemKey: string, defaultValue: string): string;
-	}
-	//# sourceMappingURL=ProjectStorageAdmin.d.ts.map
-
-	class ServerStorage implements IDataStorage {
-	    private serverPrefix;
-	    setItem(itemKey: string, itemVal: string, dontSanitize?: boolean): void;
-	    getItem(itemKey: string, dontSanitize?: boolean): string;
-	    getItemDefault(itemKey: string, defaultValue: string): string;
-	}
-	//# sourceMappingURL=ServerStorage.d.ts.map
-
-	class ServerStorageMobile {
-	    private Server;
-	    constructor();
-	    setItem(itemKey: string, itemVal: string): void;
-	    getItem(itemKey: string): string;
-	    getItemDefault(itemKey: string, defaultValue: string): string;
-	}
-	//# sourceMappingURL=ServerStorageMobile.d.ts.map
-
-	function InitializeUI(): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	function InitializeComponents(): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	function InitializeControls(): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ICheckBoxControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        inlineHelp?: string;
-	        initialContent?: boolean;
-	    };
-	}
-	class CheckBoxImpl extends BaseControl {
-	    private settings;
-	    constructor(control: JQuery);
-	    init(options: ICheckBoxControlOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): any;
-	    setValue(value: boolean): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	}
-	//# sourceMappingURL=checkBox.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IColorPickerParams {
-	    externalHelp?: string;
-	    readonly?: boolean;
-	    allowResize?: boolean;
-	    requiresContent?: boolean;
-	    inlineHelp?: string;
-	    initialContent?: string;
-	    hideFullscreen?: boolean;
-	}
-	interface IColorPickerControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    lostFocus?: Function;
-	    parameter?: IColorPickerParams;
-	}
-	class ColorPickerImpl extends BaseControl {
-	    private settings;
-	    private lastValueChanged;
-	    private _editor;
-	    private doesRequireContent;
-	    constructor(control: JQuery);
-	    init(options: IColorPickerControlOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    requiresContent(): boolean;
-	    refresh(): void;
-	    setValue(newValue: string, reset?: boolean): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private valueChanged;
-	}
-	//# sourceMappingURL=colorPicker.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IDocFilterOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {};
-	}
-	class DocFilterImpl extends BaseControl {
-	    private settings;
-	    constructor(control: JQuery);
-	    init(options: IDocFilterOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): any;
-	    setValue(): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	}
-	//# sourceMappingURL=docFilter.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IErrorControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {};
-	}
-	class ErrorControlImpl extends BaseControl {
-	    private settings;
-	    constructor(control: JQuery);
-	    init(options: IErrorControlOptions): void;
-	    getValue(): void;
-	    hasChanged(): boolean;
-	    destroy(): void;
-	    resizeItem(): void;
-	}
-	//# sourceMappingURL=errorControl.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IHiddenOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {};
-	}
-	class HiddenImpl extends BaseControl {
-	    private curValue;
-	    constructor(control: JQuery);
-	    init(options: IHiddenOptions): void;
-	    getValue(): any;
-	    setValue(newValue: any): void;
-	    hasChanged(): boolean;
-	    destroy(): void;
-	    resizeItem(): void;
-	}
-	//# sourceMappingURL=hidden.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IHyperlinkOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {};
-	    fieldValueLabel?: string;
-	    linkPrefix?: string;
-	}
-	class HyperlinkImpl extends BaseControl {
-	    private settings;
-	    private lastValueChanged;
-	    private _editor;
-	    constructor(control: JQuery);
-	    init(options: IHyperlinkOptions): void;
-	    protected showLink(container: JQuery): void;
-	    hasChanged(): boolean;
-	    getValue(): any;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private valueChanged;
-	}
-	//# sourceMappingURL=hyperlink.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ILabelsControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        titleBarControl?: JQuery;
-	        renderSliders?: boolean;
-	        hide_UI?: boolean;
-	    };
-	    type?: string;
-	    restrictEditTo?: string[];
-	}
-	class LabelsControlImpl extends BaseControl {
-	    private settings;
-	    private space;
-	    private mode;
-	    constructor(control: JQuery);
-	    init(options: ILabelsControlOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): any;
-	    setValue(labelStr: string): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private showLabels;
-	}
-	//# sourceMappingURL=labelsControl.d.ts.map
-
-	//# sourceMappingURL=oldTableCtrl.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IPlainTextParams extends IFieldParameter {
-	    externalHelp?: string;
-	    readonly?: boolean;
-	    allowResize?: boolean;
-	    rows?: number;
-	    code?: boolean | CodeLanguage;
-	    lineNumbers?: boolean;
-	    tabSize?: number;
-	    height?: number;
-	    password?: boolean;
-	    autoEdit?: boolean;
-	    autoFormat?: boolean;
-	    showJSONFormat?: boolean;
-	    requiresContent?: boolean;
-	    inlineHelp?: string;
-	    magic?: boolean;
-	    apiHelp?: string;
-	    initialContent?: string;
-	    hideFullscreen?: boolean;
-	    purify?: boolean;
-	}
-	interface IPlainTextControlOptions extends IBaseControlOptions {
-	    dummyData?: any;
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    lostFocus?: Function;
-	    parameter?: IPlainTextParams;
-	}
-	type CodeLanguage = "xml" | "json" | "css";
-	class PlainTextImpl extends BaseControl {
-	    private settings;
-	    private lastValueChanged;
-	    private isCode;
-	    private myCodeMirror;
-	    private changedBefore;
-	    private _editor;
-	    private doesRequireContent;
-	    constructor(control: JQuery);
-	    init(options: IPlainTextControlOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    requiresContent(): boolean;
-	    refresh(): void;
-	    setValue(newValueDirty: string, reset?: boolean): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private valueChanged;
-	    private compactizeJSON;
-	}
-	//# sourceMappingURL=plainText.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class PublishedContentImpl extends BaseControl {
-	    private settings;
-	    constructor(control: JQuery);
-	    init(options: ICheckBoxControlOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    setValue(value: boolean): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	}
-	//# sourceMappingURL=publishedContent.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ISectionOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    help?: string;
-	    parameter?: ISectionParams;
-	}
-	interface ISectionParams {
-	    lineBefore?: boolean;
-	    lineAfter?: boolean;
-	}
-	class SectionImpl extends BaseControl {
-	    private curValue;
-	    constructor(control: JQuery);
-	    init(options: ISectionOptions): void;
-	    getValue(): string;
-	    setValue(newValue: any): void;
-	    hasChanged(): boolean;
-	    destroy(): void;
-	    resizeItem(): void;
-	}
-	//# sourceMappingURL=section.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IDocSourceRefOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        readonly?: boolean;
-	    };
-	}
-	class SourceRefImpl extends DocBaseImpl {
-	    private settings;
-	    private originalValue;
-	    private newValue;
-	    private lastValueChanged;
-	    constructor(control: JQuery);
-	    init(options: IDocSourceRefOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    setValue(newInfo: string): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	}
-	//# sourceMappingURL=sourceRef.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ISyncSourceInfoOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        readonly?: boolean;
-	    };
-	}
-	interface ISyncSourceInfo {
-	    param: string;
-	    type: string;
-	    value: string;
-	}
-	class SyncSourceInfoImpl extends BaseControl {
-	    private settings;
-	    constructor(control: JQuery);
-	    init(options: IHtmlFormOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    setValue(syncStatusString: string): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private renderValue;
-	}
-	//# sourceMappingURL=syncSourceInfo.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IUpLinkInfoOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string | {};
-	    valueChanged?: Function;
-	    parameter?: IUpLinkDetails;
-	    validate?: boolean;
-	}
-	interface IUpLinkDetails {
-	    /** a comma separated list of categories */
-	    cats: string;
-	    /** it is possible to show a specific text with some icons if there are (set to true)/ are no links (set to false) */
-	    exists?: boolean;
-	    /** depends on exist:  shows an icon if there's at least one (or none)  */
-	    icon?: string;
-	    /** depends on exist:  color of icon  */
-	    iconfg?: string;
-	    /** depends on exist:  background color of icon  */
-	    iconbg?: string;
-	    /** depends on exist:  text behind icon  */
-	    text?: string;
-	    /** to show information about the actualy uplinks: false (don't show)|true (shows a simple list with all id's)|listref (shows a list with id's as links and titles)|ref (shows id's as links and titles inline behind text) */
-	    itemInfo?: string | boolean;
-	    /** show create button */
-	    showCreate?: boolean;
-	    /**  a comma separated list of categories for which to hide the create button (subset of cats) */
-	    hideCreate?: string;
-	    /**  a comma separated list of categories for which to hide in selection (subset of cats) */
-	    hideSelect?: string;
-	    reports?: boolean;
-	}
-	class UpLinkInfoImpl extends BaseControl {
-	    private settings;
-	    constructor(control: JQuery);
-	    init(options: IUpLinkInfoOptions): void;
-	    refreshLinks(): void;
-	    hasChanged(): boolean;
-	    getValue(): string;
-	    destroy(): void;
-	    resizeItem(): void;
-	    updateItem(newItem: IItemGet): void;
-	    private renderRefs;
-	    private renderCreateButtons;
-	    private addReference;
-	    private selectionChange;
-	}
-	//# sourceMappingURL=uplinkinfo.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IWorkflowControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: {
-	        titleBarControl?: JQuery;
-	        pollFrequencyMS?: number;
-	        pollCount?: number;
-	    };
-	}
-	class WorkflowControlImpl extends BaseControl {
-	    private settings;
-	    private btn;
-	    private issue;
-	    private waitForChange;
-	    private poll;
-	    constructor(control: JQuery);
-	    init(options: IWorkflowControlOptions): void;
-	    hasChanged(): boolean;
-	    getValue(): any;
-	    setValue(issueId: string): void;
-	    destroy(): void;
-	    resizeItem(): void;
-	    private updateButton;
-	    private setButtonSpinning;
+	    onUpdate(ui: JQuery, config: IContextPageConfigTab, context: IContextInformation): void;
+	    static lastRenderedItem: string;
+	    static lastRenderedVersion: number;
+	    static renderItem(itemId: string, version: number, showContextFrameIfNotVisible: boolean): void;
+	    private _item;
+	    isDefault: boolean;
+	    initItem(item: IItem, jui: JQuery): void;
+	    initServerSettings(): void;
+	    initProject(): void;
+	    getProjectPages(): IProjectPageParam[];
+	    updateMenu(ul: JQuery): void;
+	    supportsControl(): boolean;
 	}
 	function initialize(): void;
-	//# sourceMappingURL=workflowControl.d.ts.map
+	//# sourceMappingURL=ReviewContextFrame.d.ts.map
 
-	function InitializePanels(): void;
-	//# sourceMappingURL=initialize.d.ts.map
+	interface IRiskTableControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: IRiskTableParams;
+	    links?: IReference[];
+	}
+	interface IRiskTableParams {
+	    tableOptions?: {
+	        showFullRisk?: boolean;
+	        hideReadonly?: boolean;
+	        cloneButtonName?: string;
+	    };
+	}
+	function initialize(): void;
+	//# sourceMappingURL=RiskControlFolder.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -10157,106 +11902,251 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	class ITrainingFilter {
-	    userRaw: string[];
-	    user: string[];
-	    itemInfo: string;
-	    new: boolean;
-	    due: boolean;
-	    overdue: boolean;
-	    ok: boolean;
-	    none: boolean;
-	    overdueAfter: string;
-	    retrainingAfter: string;
+	interface IReviewConfig {
+	    tasks?: IReviewConfigTask;
+	    lockLabel?: ILockAction;
+	    doneLabel?: IReviewStatusUpdate;
+	    mailTo?: IMailAction;
+	    allowSelectUserGroups?: boolean;
+	    showVersions?: boolean;
+	    showAnnotations?: boolean;
+	    annotationMasters?: string[];
+	    showComments?: boolean;
+	    showInline?: boolean;
+	    showHistory?: boolean;
+	    /** like showHistoryOutOfDate but it only shows items as out of date if review is not yet completed */
+	    showHistoryOutOfDateBeforeDone?: boolean;
+	    /** shows items as out of date if current revision is newer than the one in the review */
+	    showHistoryOutOfDate?: boolean;
+	    readonly?: boolean;
+	    appendComments?: boolean;
+	    statusDropdown?: string;
+	    canBeModified?: boolean;
+	    canBeModifiedBy?: string[];
+	    cellAskEdit?: string;
+	    autoshowContext?: boolean;
+	    createDoc?: ICreateDoc;
+	    hide_UI?: boolean;
 	}
-	interface ITrainingAnalysis {
-	    title: string;
-	    hasTraining: boolean;
-	    users: {
-	        [key: string]: ITrainingAnalysisUsers;
-	    };
-	    labels: string[];
+	interface ICreateDoc {
+	    template: string;
+	    section: string;
+	    pasteTo: string;
+	    hide?: string[];
 	}
-	interface ITrainingAnalysisUsers {
-	    /** true if there is an open training notification */
-	    thereIsATraining: boolean;
-	    /** if thereIsATraining number of days since it was created */
-	    theTrainingExistsSinceDays: number;
-	    /** true thereIsATraining if the training notification is overdue */
-	    theTrainingIsOverdue: boolean;
-	    /** true if there should be a training (either because there never has been one or there was no retraining) */
-	    thereShouldBeATraining: boolean;
-	    /** info about each training done */
-	    trainingsDone: ITrainingDone[];
-	    /** if there was a completed training, how many days ago the last training was completed */
-	    lastTrainingAgeDays: number;
-	    /** if there was a completed training, when last training was completed */
-	    lastTrainingDate: Date;
+	interface IReviewAction {
+	    buttonName: string;
+	    users: string[];
 	}
-	interface ITrainingDone {
-	    trainingCreated: string;
-	    trainingDone: string;
-	    trainingDays: number;
-	    trainingOverdue: boolean;
+	interface IMailAction extends IReviewAction {
+	    mailSubject: string;
 	}
-	interface ITrainingCellStatus {
-	    classes: string;
-	    text: string;
-	    verbose: string;
+	interface ILockAction extends IReviewAction {
+	    label: string;
 	}
-	enum ETrainingStatus {
-	    notNeeded = 0,
-	    needed = 1,
-	    due = 2,
-	    overdue = 3,
-	    done = 4
+	interface IReviewStatusUpdate extends IReviewAction {
+	    passedLabel?: string;
+	    failedLabel?: string;
+	    todoLabel?: string;
 	}
-	class TrainingTable {
-	    private vscroll;
-	    protected ivscroll: JQuery;
-	    private hscroll;
-	    protected ihscroll: JQuery;
-	    protected filterBox: JQuery;
-	    private mainTable;
-	    private leftTable;
-	    private leftContainer;
-	    protected leftBody: JQuery;
-	    protected topTable: JQuery;
-	    private topContainer;
-	    protected headerRow: JQuery;
-	    protected accessTable: JQuery;
-	    private accessContainer;
-	    protected accessBody: JQuery;
-	    protected topLeft: JQuery;
-	    protected destroyTable(): void;
-	    protected intiTableTimer: number;
-	    protected createMainContainer(place: JQuery): void;
-	    protected initTooltipBox(onShow: (cell: JQuery) => string): void;
-	    protected placeChangeMenu(uio: JQuery, cell: JQuery): void;
-	    protected initCellMenu(change: (cell: JQuery, option: string) => void): void;
-	    protected hideMenu(): void;
-	    protected scrollTop(): void;
-	    protected scrollLeft(): void;
-	    protected initTableScrolling(where: JQuery, paddingBottom: number): void;
-	    private scrollFunction;
+	interface IReviewActionCategoryLabel {
+	    label: string;
+	    category: string;
+	}
+	interface IReviewConfigTask {
+	    buttonName: string;
+	    users: string[];
+	    taskPluginId: number;
+	    taskIssueType: string;
+	    taskProject: string;
+	    taskDescription?: string;
+	}
+	interface ITableReviewData {
+	    reviewtable: IStringMap[];
+	}
+	interface INeedleMap {
+	    [key: string]: XRTrimNeedleItem;
+	}
+	interface IItemReviews {
+	    [key: string]: IItemReview;
+	}
+	interface IItemReview {
+	    passed: string[];
+	    failed: string[];
+	    todo: string[];
+	    all: XRTrimNeedleItem[];
+	}
+	class ScheduleReview implements IPlugin {
+	    static fieldType: string;
+	    isDefault: boolean;
+	    initItem(item: IItem, jui: JQuery): void;
+	    initServerSettings(): void;
+	    initProject(): void;
+	    getProjectPages(): IProjectPageParam[];
+	    supportsControl(ctrlType: string): boolean;
+	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
+	    getFieldConfigOptions(): IFieldDescription[];
+	    addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IReviewConfig, ui: JQuery, paramChanged: () => void): void;
+	    updateMenu(ul: JQuery): void;
+	    private renderReviewProjectPage;
+	    private renderReviews;
+	    private getNeedleRef;
+	    private getItemRef;
+	    private renderItems;
+	    renderItemsCat(container: JQuery, cat: string, reviewAnalysis: IItemReviews): void;
+	    private showHide;
+	    private analyzeReview;
+	    private getReviewTable;
 	}
 	function initialize(): void;
-	//# sourceMappingURL=QMSTraining.d.ts.map
+	interface IReviewControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: any;
+	    valueChanged?: Function;
+	    parameter: IReviewConfig;
+	    readOnly?: boolean;
+	}
+	class ReviewControlImpl extends BaseControl {
+	    static reviewOptionsSetting: string;
+	    static COL_COMMENT_LOG: string;
+	    static COL_ITEM: string;
+	    static COL_VERSION: string;
+	    static COL_ANNOTATIONS: string;
+	    private settings;
+	    private reviewItems;
+	    private reviewUsers;
+	    private forceNewTable;
+	    private currentVersions;
+	    private outOfDateInfo;
+	    private reviewTable;
+	    private expanded;
+	    private expandDetails;
+	    private expandSaveTimeout;
+	    private readonly;
+	    private texts;
+	    private isCommenting;
+	    constructor(control: JQuery);
+	    init(options: IReviewControlOptions): void;
+	    updateControl(): void;
+	    highlightReferences(): void;
+	    init2(): void;
+	    private copyDetails;
+	    private fixInputs;
+	    private replaceSlickTables;
+	    private copyAnnotations;
+	    private createNewDoc;
+	    private copyDetail;
+	    private renderReviewInput;
+	    private isReviewDone;
+	    private editReview;
+	    private updateReview;
+	    hasChanged(): boolean;
+	    getValue(currentItem?: IItemGet): any;
+	    private mergeComments;
+	    private mergeAnnotations;
+	    private getItemRef;
+	    private getItemVersion;
+	    destroy(): void;
+	    resizeItem(newWidth?: number, force?: boolean): void;
+	    private createTasks;
+	    private createTask;
+	    private sendReminder;
+	    private lockItems;
+	    private setItemReviewStatusLabel;
+	    private setLabels;
+	    private setLabel;
+	    private getItems;
+	    getItemsToDoByUser(fieldId: number, tableData: IStringMap[]): IStringStringArrayMap;
+	    static analyzeReview(fieldId: number, tableData: IStringMap[], passedItems: string[], failedItems: string[], todoItems: string[]): void;
+	    static getReviewers(tableData: IStringMap[]): string[];
+	    static getItem(row: IStringMap): string;
+	    static getItemFromCell(value: string): string;
+	    static getReviewOptions(fieldId: number, passed: boolean, failed: boolean, todo: boolean): string[];
+	    private static getDropdownParams;
+	    private getMyReviewColumns;
+	    private showTable;
+	    private showTableDetails;
+	    private makeExpandable;
+	    private tablesReadyTimeout;
+	    private showAnnotations;
+	    private colorIcon;
+	    private repaintAfterColumnChange;
+	    private toggleItem;
+	    private retrieveItem;
+	    private showHistoryAgainstLastReviewed;
+	}
+	//# sourceMappingURL=ScheduleReview.d.ts.map
 
-	function InitializeParts(): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	function InitializeCodeMirrorPlugins(): void;
-	//# sourceMappingURL=CodeMirrorPlugins.d.ts.map
-
-	//# sourceMappingURL=jqueryFunctions.d.ts.map
-
-	//# sourceMappingURL=SummernotePlugins.d.ts.map
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IImportItemMap {
+	    source: string;
+	    sourceVersion: number;
+	    target: string;
+	    targetVersion: number;
+	}
+	interface IImportCategoryMap {
+	    source: string;
+	    target: string;
+	    fields: IImportFieldMap[];
+	}
+	interface IImportFieldMap {
+	    source: string;
+	    target: string;
+	}
+	interface IImportMapping {
+	    project: string;
+	    items: IImportItemMap[];
+	    mapping?: IImportCategoryMap[];
+	    importUser: string;
+	    importDate: string;
+	    syncDate: string;
+	    syncUser: string;
+	}
+	interface IImports {
+	    sources: IImportMapping[];
+	}
+	class SyncImport extends ImportMergeBase implements IPlugin {
+	    pageID: string;
+	    pageTitle: string;
+	    static IMPORT_INFO_SETTING: string;
+	    isDefault: boolean;
+	    private imports;
+	    private revisionsSource;
+	    private revisionsTarget;
+	    private titleSource;
+	    private titleTarget;
+	    initItem(_item: IItem, _jui: JQuery): void;
+	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
+	    updateMenu(ul: JQuery, hook: number): void;
+	    supportsControl(ctrlType: string): boolean;
+	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
+	    initProject(): void;
+	    isEnabled(): boolean;
+	    getProjectPages(): IProjectPageParam[];
+	    private showPage;
+	    private showProjects;
+	    private showAdd;
+	    private addProjectImport;
+	    private showImportWizard;
+	    private showOtherProjectAtDate;
+	    createFieldMapping(mapping: IImportCategoryMap[], sourceIC: ItemConfiguration): void;
+	    private indicateSelectionRootsTimer;
+	    private indicateSelectionRoots;
+	    private askUserWhatToUpdate;
+	    private showList;
+	    private createLookups;
+	    private executeImportUpdate;
+	}
+	//# sourceMappingURL=SyncImport.d.ts.map
 
 	function InitializePlugins(): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	function InitializeDocumentSections(): void;
 	//# sourceMappingURL=initialize.d.ts.map
 
 	/// <reference types="jquery" />
@@ -10288,6 +12178,67 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
+	interface ICustomSectionOptions extends IDHFSectionOptions {
+	    includeInToc: boolean;
+	    options: ICustomSection;
+	    landscape: boolean;
+	}
+	interface IDHFCustomSectionOptions {
+	    default: ICustomSectionOptions;
+	}
+	class CustomSection extends DoubleSelectBase {
+	    protected config: IDHFCustomSectionOptions;
+	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
+	    updateXmlValue(ctrl: IDHFControlDefinition): void;
+	    getConfig(ctrl: IDHFControlDefinition): ICustomSectionOptions;
+	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
+	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
+	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
+	}
+	//# sourceMappingURL=CustomSection.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ITableConfig {
+	    default: IDhfTableOptions;
+	}
+	interface IDhfTableOptions extends IDHFSectionOptions {
+	    columns: ITableConfigColumn[];
+	}
+	interface ITableConfigColumn extends IDHFSectionOptions {
+	    columnType: string;
+	    field: string;
+	    pos: number;
+	    editor: string;
+	    name: string;
+	    options: IDropdownOption[];
+	}
+	class DhfTable implements IDHFSection {
+	    private config;
+	    private dhfTypeXML;
+	    private columnTypes;
+	    constructor(defaultConfig: IDHFConfig, dhfTypeXML: string, dhfType: string, columnTypes: ColumnTypesInfo);
+	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
+	    updateXmlValue(ctrl: IDHFControlDefinition): void;
+	    getConfig(ctrl: IDHFControlDefinition): IDhfTableOptions;
+	    addSignatures(signatures: string[], ctrl: IDHFControlDefinition, includeAll: boolean): void;
+	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
+	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
+	    verifyContent(ctrl: IDHFControlDefinition): void;
+	    protected GetColumnCount(controllerConfig: IDhfTableOptions): number;
+	}
+	//# sourceMappingURL=DHFTable.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
 	interface IDerivedFromOptions extends IDHFSectionOptions {
 	    render: string;
 	    includeInToc: boolean;
@@ -10311,45 +12262,6 @@ declare module matrixApi
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	}
 	//# sourceMappingURL=DerivedFrom.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IItemsOptions extends IDHFSectionOptions {
-	    folderDetails: string;
-	    extracolumn: string;
-	    showlinks: boolean;
-	    showUpOnly: boolean;
-	    showDownOnly: boolean;
-	    showDeeplinks: boolean;
-	    breadcrumb: boolean;
-	    showExternal: number;
-	    dateoptions: string;
-	    refdocs: boolean;
-	    hideLinkErrors: boolean;
-	    hideLabels: boolean;
-	    hideEmptyFolders: boolean;
-	    showAllParentFolders: boolean;
-	    includeInToc: boolean;
-	    search?: string;
-	    breakAfterItems: boolean;
-	}
-	interface IItemsFromConfig {
-	    default: IItemsOptions;
-	}
-	class Items extends SingleSelectBase {
-	    protected config: IItemsFromConfig;
-	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    updateXmlValue(ctrl: IDHFControlDefinition): void;
-	    getConfig(ctrl: IDHFControlDefinition): IItemsOptions;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
-	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery, hideFolder?: boolean): void;
-	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
-	}
-	//# sourceMappingURL=Items.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -10436,6 +12348,23 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
+	class Hidden implements IDHFSection {
+	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
+	    updateXmlValue(ctrl: IDHFControlDefinition): void;
+	    getConfig(ctrl: IDHFControlDefinition): IDHFSectionOptions;
+	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
+	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
+	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
+	    verifyContent(ctrl: IDHFControlDefinition): void;
+	}
+	//# sourceMappingURL=Hidden.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
 	interface IItemIndexOptions extends IDHFSectionOptions {
 	    format: string;
 	}
@@ -10453,31 +12382,6 @@ declare module matrixApi
 	    verifyContent(ctrl: IDHFControlDefinition): void;
 	}
 	//# sourceMappingURL=ItemIndex.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ITableOfContentOptions extends IDHFSectionOptions {
-	    format: string;
-	    render_toc?: boolean;
-	}
-	interface IDHFTableOfContentConfig {
-	    default: ITableOfContentOptions;
-	}
-	class TableOfContent implements IDHFSection {
-	    private config;
-	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    updateXmlValue(ctrl: IDHFControlDefinition): void;
-	    getConfig(ctrl: IDHFControlDefinition): ITableOfContentOptions;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
-	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
-	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
-	    verifyContent(ctrl: IDHFControlDefinition): void;
-	}
-	//# sourceMappingURL=TableOfContent.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -10538,6 +12442,45 @@ declare module matrixApi
 	    private eitherCB;
 	}
 	//# sourceMappingURL=ItemTable.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IItemsOptions extends IDHFSectionOptions {
+	    folderDetails: string;
+	    extracolumn: string;
+	    showlinks: boolean;
+	    showUpOnly: boolean;
+	    showDownOnly: boolean;
+	    showDeeplinks: boolean;
+	    breadcrumb: boolean;
+	    showExternal: number;
+	    dateoptions: string;
+	    refdocs: boolean;
+	    hideLinkErrors: boolean;
+	    hideLabels: boolean;
+	    hideEmptyFolders: boolean;
+	    showAllParentFolders: boolean;
+	    includeInToc: boolean;
+	    search?: string;
+	    breakAfterItems: boolean;
+	}
+	interface IItemsFromConfig {
+	    default: IItemsOptions;
+	}
+	class Items extends SingleSelectBase {
+	    protected config: IItemsFromConfig;
+	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
+	    updateXmlValue(ctrl: IDHFControlDefinition): void;
+	    getConfig(ctrl: IDHFControlDefinition): IItemsOptions;
+	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
+	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery, hideFolder?: boolean): void;
+	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
+	}
+	//# sourceMappingURL=Items.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -10739,6 +12682,31 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
+	interface ITableOfContentOptions extends IDHFSectionOptions {
+	    format: string;
+	    render_toc?: boolean;
+	}
+	interface IDHFTableOfContentConfig {
+	    default: ITableOfContentOptions;
+	}
+	class TableOfContent implements IDHFSection {
+	    private config;
+	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
+	    updateXmlValue(ctrl: IDHFControlDefinition): void;
+	    getConfig(ctrl: IDHFControlDefinition): ITableOfContentOptions;
+	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
+	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
+	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
+	    verifyContent(ctrl: IDHFControlDefinition): void;
+	}
+	//# sourceMappingURL=TableOfContent.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
 	interface ITestResultsOptions extends IDHFSectionOptions {
 	    lastOnly: boolean;
 	    lastCreatedOnly: boolean;
@@ -10850,22 +12818,8 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=Traces.d.ts.map
 
-	function initialize(): void;
-	//# sourceMappingURL=Export.d.ts.map
-
-	interface IImportColumn {
-	    label: string;
-	    id: string;
-	    isLabel?: boolean;
-	    index?: number;
-	    fieldId?: number;
-	    fieldType?: string;
-	}
-	interface IImportRow {
-	    cells: string[];
-	}
-	function initialize(): void;
-	//# sourceMappingURL=MassImport.d.ts.map
+	function InitializeDocumentSections(): void;
+	//# sourceMappingURL=initialize.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -10873,203 +12827,57 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IReviewConfig {
-	    tasks?: IReviewConfigTask;
-	    lockLabel?: ILockAction;
-	    doneLabel?: IReviewStatusUpdate;
-	    mailTo?: IMailAction;
-	    allowSelectUserGroups?: boolean;
-	    showVersions?: boolean;
-	    showAnnotations?: boolean;
-	    annotationMasters?: string[];
-	    showComments?: boolean;
-	    showInline?: boolean;
-	    showHistory?: boolean;
-	    /** like showHistoryOutOfDate but it only shows items as out of date if review is not yet completed */
-	    showHistoryOutOfDateBeforeDone?: boolean;
-	    /** shows items as out of date if current revision is newer than the one in the review */
-	    showHistoryOutOfDate?: boolean;
-	    readonly?: boolean;
-	    appendComments?: boolean;
-	    statusDropdown?: string;
-	    canBeModified?: boolean;
-	    canBeModifiedBy?: string[];
-	    cellAskEdit?: string;
-	    autoshowContext?: boolean;
-	    createDoc?: ICreateDoc;
-	    hide_UI?: boolean;
+	interface IXmlCharIssues {
+	    itemId: string;
+	    details: string;
 	}
-	interface ICreateDoc {
-	    template: string;
-	    section: string;
-	    pasteTo: string;
-	    hide?: string[];
-	}
-	interface IReviewAction {
-	    buttonName: string;
-	    users: string[];
-	}
-	interface IMailAction extends IReviewAction {
-	    mailSubject: string;
-	}
-	interface ILockAction extends IReviewAction {
-	    label: string;
-	}
-	interface IReviewStatusUpdate extends IReviewAction {
-	    passedLabel?: string;
-	    failedLabel?: string;
-	    todoLabel?: string;
-	}
-	interface IReviewActionCategoryLabel {
-	    label: string;
-	    category: string;
-	}
-	interface IReviewConfigTask {
-	    buttonName: string;
-	    users: string[];
-	    taskPluginId: number;
-	    taskIssueType: string;
-	    taskProject: string;
-	    taskDescription?: string;
-	}
-	interface ITableReviewData {
-	    reviewtable: IStringMap[];
-	}
-	interface INeedleMap {
-	    [key: string]: XRTrimNeedleItem;
-	}
-	interface IItemReviews {
-	    [key: string]: IItemReview;
-	}
-	interface IItemReview {
-	    passed: string[];
-	    failed: string[];
-	    todo: string[];
-	    all: XRTrimNeedleItem[];
-	}
-	class ScheduleReview implements IPlugin {
-	    static fieldType: string;
+	class Cleanup implements IPlugin {
+	    private item;
+	    private jui;
+	    static FIX_THE_ZOMBIE: string;
+	    static FIX_THE_IMAGE: string;
+	    static FIX_INVALID_XML: string;
+	    static badEncodedChars: string[];
 	    isDefault: boolean;
-	    initItem(item: IItem, jui: JQuery): void;
-	    initServerSettings(): void;
-	    initProject(): void;
-	    getProjectPages(): IProjectPageParam[];
+	    constructor();
+	    initItem(_item: IItem, _jui: JQuery): void;
+	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
+	    updateMenu(ul: JQuery, hook: number): void;
 	    supportsControl(ctrlType: string): boolean;
 	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
-	    getFieldConfigOptions(): IFieldDescription[];
-	    addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IReviewConfig, ui: JQuery, paramChanged: () => void): void;
-	    updateMenu(ul: JQuery): void;
-	    private renderReviewProjectPage;
-	    private renderReviews;
-	    private getNeedleRef;
-	    private getItemRef;
-	    private renderItems;
-	    renderItemsCat(container: JQuery, cat: string, reviewAnalysis: IItemReviews): void;
-	    private showHide;
-	    private analyzeReview;
-	    private getReviewTable;
+	    initProject(): void;
+	    getProjectPages(): IProjectPageParam[];
+	    private renderProjectPage;
+	    private runCleanupSmartZombies;
+	    private createSmartZombieNotifications;
+	    private getZombieNotificationName;
+	    private getSmartLinks;
+	    private runCleanupImageZombies;
+	    private createImageZombieNotifications;
+	    private getZombieImageName;
+	    private removeNotifications;
+	    private getFolders;
+	    private getImages;
+	    /*****************************************
+	     *
+	     * invalid xml characters
+	     *
+	    */
+	    private runCleanupCharacters;
+	    static textOk(fieldVal: any): boolean;
+	    private testXML;
 	}
 	function initialize(): void;
-	interface IReviewControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: any;
-	    valueChanged?: Function;
-	    parameter: IReviewConfig;
-	    readOnly?: boolean;
-	}
-	class ReviewControlImpl extends BaseControl {
-	    static reviewOptionsSetting: string;
-	    static COL_COMMENT_LOG: string;
-	    static COL_ITEM: string;
-	    static COL_VERSION: string;
-	    static COL_ANNOTATIONS: string;
-	    private settings;
-	    private reviewItems;
-	    private reviewUsers;
-	    private forceNewTable;
-	    private currentVersions;
-	    private outOfDateInfo;
-	    private reviewTable;
-	    private expanded;
-	    private expandDetails;
-	    private expandSaveTimeout;
-	    private readonly;
-	    private texts;
-	    private isCommenting;
-	    constructor(control: JQuery);
-	    init(options: IReviewControlOptions): void;
-	    updateControl(): void;
-	    highlightReferences(): void;
-	    init2(): void;
-	    private copyDetails;
-	    private fixInputs;
-	    private replaceSlickTables;
-	    private copyAnnotations;
-	    private createNewDoc;
-	    private copyDetail;
-	    private renderReviewInput;
-	    private isReviewDone;
-	    private editReview;
-	    private updateReview;
-	    hasChanged(): boolean;
-	    getValue(currentItem?: IItemGet): any;
-	    private mergeComments;
-	    private mergeAnnotations;
-	    private getItemRef;
-	    private getItemVersion;
-	    destroy(): void;
-	    resizeItem(newWidth?: number, force?: boolean): void;
-	    private createTasks;
-	    private createTask;
-	    private sendReminder;
-	    private lockItems;
-	    private setItemReviewStatusLabel;
-	    private setLabels;
-	    private setLabel;
-	    private getItems;
-	    getItemsToDoByUser(fieldId: number, tableData: IStringMap[]): IStringStringArrayMap;
-	    static analyzeReview(fieldId: number, tableData: IStringMap[], passedItems: string[], failedItems: string[], todoItems: string[]): void;
-	    static getReviewers(tableData: IStringMap[]): string[];
-	    static getItem(row: IStringMap): string;
-	    static getItemFromCell(value: string): string;
-	    static getReviewOptions(fieldId: number, passed: boolean, failed: boolean, todo: boolean): string[];
-	    private static getDropdownParams;
-	    private getMyReviewColumns;
-	    private showTable;
-	    private showTableDetails;
-	    private makeExpandable;
-	    private tablesReadyTimeout;
-	    private showAnnotations;
-	    private colorIcon;
-	    private repaintAfterColumnChange;
-	    private toggleItem;
-	    private retrieveItem;
-	    private showHistoryAgainstLastReviewed;
-	}
-	//# sourceMappingURL=ScheduleReview.d.ts.map
-
-	interface IReindexCats {
-	    cats: string[];
-	}
-	function initialize(): void;
-	//# sourceMappingURL=ReIndex.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IStringJQueryArrayMap {
-	    [key: string]: JQuery[];
-	}
-	function initialize(): void;
-	//# sourceMappingURL=PubHistory.d.ts.map
+	//# sourceMappingURL=Cleanup.d.ts.map
 
 	function initialize(): void;
 	//# sourceMappingURL=Compare.d.ts.map
+
+	interface IItemCopyBuffer extends IItem {
+	    [key: string]: any;
+	}
+	function initialize(): void;
+	//# sourceMappingURL=CopyPaste.d.ts.map
 
 	/**
 	 * to use create a new category for the hazards: the category can have normal text / drop down and also a risk field
@@ -11121,11 +12929,165 @@ declare module matrixApi
 	function initialize(): void;
 	//# sourceMappingURL=Touchdown.d.ts.map
 
+	class ProjectStorageMobile implements IDataStorage {
+	    private Project;
+	    constructor(project: string);
+	    setItem(itemKey: string, itemVal: string): void;
+	    getItem(itemKey: string): string;
+	    getItemDefault(itemKey: string, defaultValue: string): string;
+	}
+	//# sourceMappingURL=ProjectStorageMobile.d.ts.map
+
+	class ServerStorageMobile {
+	    private Server;
+	    constructor();
+	    setItem(itemKey: string, itemVal: string): void;
+	    getItem(itemKey: string): string;
+	    getItemDefault(itemKey: string, defaultValue: string): string;
+	}
+	//# sourceMappingURL=ServerStorageMobile.d.ts.map
+
+	let ml: IMatrix;
+	//# sourceMappingURL=matrixlib.d.ts.map
+
+	/// <reference types="matrixrequirements-type-declarations" />
+	interface SchemaDef {
+	    module: string;
+	    type: string;
+	    serverUse: string;
+	    serverProp: string;
+	}
+	type JsonEditorValidation = (json: unknown) => Promise<string | null>;
+	/**
+	 * Globally available JSON Validator. It can validate against schemas stored in web/schemas/*.json
+	 * The schemas in this directory are generated by the `gulp schema` command and defined in schemagen/schemas.json
+	 * To add validation for a new type:
+	 * * Add to schemas.json
+	 * * Run gulp schema (or gulp build)
+	 * * Call jsonValidator.validateType( yourObject, "IYourInterface")
+	 *
+	 * There are some utility functions that can wrap a type in a validator closure or give you
+	 * access to the raw object.
+	 */
+	class JsonValidator {
+	    private schemas;
+	    private validators;
+	    private version;
+	    private ajv;
+	    /**
+	     * This is a global object, you should not have to create it. See `jsonValidator`
+	     */
+	    constructor(version: string);
+	    /**
+	     * Create a display string from an error list
+	     * @param errors
+	     */
+	    errorString(errors: Ajv.ErrorObject[]): string | null;
+	    /**
+	     * Create a validation function for the given type that is used in some of the Matrix editors
+	     * @param type
+	     */
+	    validationFunction(type: string): JsonEditorValidation;
+	    /**
+	     * Validate the given data against the given schema.
+	     * @param data
+	     * @param type
+	     * @return null if valid, or an array of errors if not
+	     */
+	    validateType(data: unknown, type: string): Promise<Ajv.ErrorObject[] | null>;
+	    /**
+	     * Get the validator function for the given type
+	     * @param type
+	     */
+	    validatorByType(type: string): Promise<Ajv.ValidateFunction | null>;
+	    urlRegex: RegExp;
+	    patchVersionIntoUrl(url: string): string;
+	    /**
+	     * Get the schema object for the given type
+	     * @param type
+	     * @throws Exception if the schema is not found
+	     */
+	    schemaByType(type: string): Promise<object | null>;
+	    /**
+	     * Get the schema UI element. This can be embedded in other DOM elements
+	     * @param type The name of the type - this should exist in the schemas dir
+	     * @throws Exception if the schema is not found
+	     */
+	    schemaView(type: string): Promise<MatrixSchemaView | null>;
+	}
+	interface ISchema extends ISchemaObject {
+	}
+	type ISchemaPropertyMap = {
+	    key: String;
+	    ISchemaProperty: any;
+	};
+	interface ISchemaItem {
+	    description?: string;
+	    type?: ESchemaType;
+	    anyOf?: ISchemaItem[];
+	}
+	interface ISchemaObject extends ISchemaItem {
+	    properties?: ISchemaPropertyMap;
+	    additionalProperties?: ISchemaItem;
+	    required?: string[];
+	}
+	interface ISchemaArray extends ISchemaItem {
+	    items?: ISchemaItem;
+	}
+	enum ESchemaType {
+	    string = "string",
+	    array = "array",
+	    object = "object",
+	    number = "number",
+	    boolean = "boolean"
+	}
+	interface ISchemaPrintTypeInfo {
+	    help?: string;
+	    type?: string;
+	    subItems?: string;
+	    subItemStart?: string;
+	    subItemEnd?: string;
+	}
+	class MatrixSchemaView {
+	    schema: ISchema;
+	    constructor(schema: ISchema);
+	    render(): HTMLDivElement;
+	    renderObject(object: ISchemaObject): string;
+	    renderArray(array: ISchemaArray): string;
+	    renderProperty(prop: ISchemaItem): ISchemaPrintTypeInfo;
+	}
+	//# sourceMappingURL=JsonValidator.d.ts.map
+
 	//# sourceMappingURL=init.d.ts.map
 
 	//# sourceMappingURL=print.d.ts.map
 
-	//# sourceMappingURL=index.d.ts.map
+	/**
+	// debugging functionality for old browsers
+	(function () {
+	    var method:string;
+	    var noop = function () {
+	    };
+	    var methods:string[] = [
+	        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+	        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+	        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+	        'timeStamp', 'trace', 'warn'
+	    ];
+	    var length = methods.length;
+	    var console = (window.console = window.console || {});
+	    while (length--) {
+	        method = methods[length];
+	        // Only stub undefined methods.
+	        if (!console[method]) {
+	            console[method] = noop;
+	        }
+	    }
+	}());
+	*/ 
+	//# sourceMappingURL=init.d.ts.map
+
+	//# sourceMappingURL=init.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -11133,41 +13095,95 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface ILabelDisplay {
-	    id: string;
-	    displayString: string;
+	interface IProjectDataMap {
+	    [key: string]: XRGetProject_ProjectInfo_ProjectInfo;
 	}
-	interface ILabelDashboardRule {
-	    type: string;
-	    labels: ILabelDisplay[];
-	    cat: string;
+	class ConfigApp implements IConfigApp {
+	    private dbConnection;
+	    private currentItem;
+	    private _user;
+	    private _status;
+	    private _control;
+	    private _needsSave;
+	    private triggerSelectionChangeMySelf;
+	    private configTree;
+	    private projectData;
+	    private lastProject;
+	    plugins: IServerPluginSettings[];
+	    private PROJECT_FOLDER_ID;
+	    private PROJECT_FOLDER_WAIT_ID;
+	    configPages: ConfigPageFactory;
+	    itemForm: JQuery;
+	    printForm: JQuery;
+	    dlgForm: JQuery;
+	    constructor(dataSource: RestDB);
+	    init(itemForm: JQuery, dlgForm: JQuery): void;
+	    getUser(): string;
+	    getVersion(): string;
+	    getVersionQualifier(): string;
+	    getNeedsSave(): boolean;
+	    getLastProject(): string;
+	    getType(): string;
+	    getParentId(itemId: string): string;
+	    saveAsync(): JQueryDeferred<any>;
+	    cancel(): void;
+	    resizeItem(): void;
+	    postLogin(user: string): void;
+	    treeSelectionChange(pageId: string): void;
+	    selectItem(itemId: string, itemLabel: string): void;
+	    getTree(subtreeFilter?: string[]): IDB[];
+	    getItem(itemId: string): IDB;
+	    isConfigApp(): boolean;
+	    getCurrentItemId(): string;
+	    pingCurrentItem(): void;
+	    registerPage(item: IItem, parent: string, updateUI?: boolean): void;
+	    insertItem(item: IItem, parent: string): void;
+	    itemChanged(needsSave: boolean): void;
+	    setLastConnection(): void;
+	    canNavigateAwayAsync(): JQueryDeferred<any>;
+	    canDragDrop(nodeType: string, pageId: string): boolean;
+	    dragEnter(dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode): string[] | boolean;
+	    getJSONProjectSettings(projectId: string, settingId?: string): IJsonSetting[];
+	    settingExists(projectId: string, settingId: string): boolean;
+	    setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<IRestResult>;
+	    setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<IRestResult>;
+	    setServerSettingAsync(settingId: string, settingValue: string): JQueryDeferred<any>;
+	    getServerSetting(settingId: string, defaultValue: any): any;
+	    setServerSetting(settingId: string, property: string, newValue: any): void;
+	    getCustomerSetting(setting: string): string;
+	    setCategorySettingAsync(projectId: string, category: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<any>;
+	    getProjectConfig(projectId: string): XRGetProject_ProjectInfo_ProjectInfo;
+	    getCatgegoryConfig(projectId: string, category: string): XRCategoryExtendedType;
+	    getCategories(projectId: string): string[];
+	    getUserPermission(projectId: string): XRUserPermissionType[];
+	    getGroupPermission(projectId: string): XRGroupPermissionType[];
+	    canUserWrite(projectId: string, login: string): boolean;
+	    canGroupWrite(projectId: string, groupId: number): boolean;
+	    getFieldConfig(projectId: string, category: string, field: string): XRFieldType;
+	    updateFieldConfig(projectId: string, category: string, field: string, newConfig: XRFieldType): void;
+	    removedFromTree(itemId: string, newId: string): void;
+	    renamePage(pageId: string, label: string, parent: string): void;
+	    updateProjectData(projectId: string): JQueryDeferred<IRestResult>;
+	    private removeACL;
+	    reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
+	    signOut(): void;
+	    private clear;
+	    private movePage;
+	    private prepareTree;
+	    private addProjectsToTree;
+	    private showUrl;
+	    private navigateToUrl;
+	    private expandProject;
+	    private renderPage;
+	    private loadProjectAsync;
+	    initConfigPages(): void;
+	    getConfigPages(): ConfigPageFactory;
 	}
-	interface ILabelDashboardRuleArray {
-	    [key: string]: ILabelDashboardRule;
-	}
-	interface ILabelDashboardGraphData {
-	    [key: string]: XRTrimNeedleItem[];
-	}
-	class LabelDashboardabilityOverview implements IPlugin {
-	    dlg: JQuery;
-	    popupModeOrControl: boolean;
-	    private currentFolder;
-	    static fieldType: string;
-	    isDefault: boolean;
-	    constructor();
-	    initItem(_item: IItem, _jui: JQuery): void;
-	    static canBeDisplayed(cat: string): boolean;
-	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
-	    updateMenu(ul: JQuery, hook: number): void;
-	    supportsControl(ctrlType: string): boolean;
-	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
-	    initProject(): void;
-	    isEnabled(): boolean;
-	    getProjectPages(): IProjectPageParam[];
-	}
-	export function initialize(): void;
-	//# sourceMappingURL=LAO.d.ts.map
+	//# sourceMappingURL=ConfigApp.d.ts.map
 
+	//# sourceMappingURL=index.d.ts.map
+
+	/// <reference types="jquery" />
 	interface ITitleAndId {
 	    title: string;
 	    id: string;
@@ -11300,6 +13316,19 @@ declare module matrixApi
 	    createFolder(parent: string, title: string, data?: ISetField[]): Promise<string>;
 	    getItemIdByTitle(category: string, title: string): Promise<string | null>;
 	    copyItem(fromProject: string, fromItem: string, toProject: string, toFolder: string, copyLabels: boolean): Promise<string>;
+	    getRestProject(restQuery: any): JQueryDeferred<IRestResult>;
+	    getRestServer(restQuery: any): JQueryDeferred<IRestResult>;
+	    isQMSProject(project: string): boolean;
+	    getUser(): string;
+	    getCustomerSettingJSON(s: string, defaultValue?: {}): any;
+	    serverConfig(): XRGetProject_StartupInfo_ListProjectAndSettings;
+	    getImgFromProject(pref: string, offsetTop?: number): string;
+	    getProjectList(readOrWriteOnly: boolean): XRProjectType[];
+	    getTestManager(): TestManager;
+	    getTeoHelpers(): TeoHelpers;
+	    createNewItemConfig(): ItemConfiguration;
+	    getItemConfig(): ItemConfiguration;
+	    setItemConfig(newItemConfig: ItemConfiguration): void;
 	}
 	var matrixapi: MatrixAPI;
 	function initializeAPI(): void;
@@ -20544,35 +22573,6 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=PrintProcessor.d.ts.map
 
-	/**
-	    Macro's are used in format strings to call/embed iterators, or primitive functions or other formatters in a formatting
-	*/
-	interface IPrintMacro {
-	}
-	interface IPrintMacroFunction extends IPrintMacro {
-	    renderFunction: string;
-	}
-	interface IPrintArrayMacro extends IPrintMacro {
-	    iterator?: string;
-	    maxDepth?: number;
-	}
-	interface IPrintTableMacro extends IPrintArrayMacro {
-	    renderItem: string;
-	}
-	interface IPrintMacroParams {
-	    itemIterator?: string;
-	    labelIterator?: string;
-	    fieldIterator?: string;
-	    maxDepth?: number;
-	    value?: string;
-	    values?: string[];
-	    render?: string;
-	    fieldDetails?: IPrintLabelInfo;
-	    formatter?: string;
-	    rowspan?: number;
-	}
-	//# sourceMappingURL=PrintMacros.d.ts.map
-
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
@@ -20866,746 +22866,12 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=PluginCore.d.ts.map
 
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IConfigPage {
-	    getNode(): IDB;
-	    saveAsync(): JQueryDeferred<{}>;
-	    load(pageId: string): void;
-	    getProject(): string;
-	    getCategory(): string;
-	    getField(): string;
-	    willUnload(): void;
-	}
-	interface IGroupsUsers {
-	    users: XRUserType[];
-	    groups: XRGroupType[];
-	}
-	class ConfigPage implements IConfigPage {
-	    static PROJECT_SETTING_FOLDER_BASE_ID: string;
-	    static PROJECT_SETTING_FOLDER_TYPE: string;
-	    protected pageId: string;
-	    protected simple: JQuery;
-	    protected allUsers: XRUserType[];
-	    protected allGroups: XRGroupType[];
-	    configApp: IConfigApp;
-	    getNode(): IDB;
-	    saveAsync(): JQueryDeferred<{}>;
-	    load(pageId: string): void;
-	    constructor(configApp: IConfigApp);
-	    getProject(): string;
-	    getCategory(): string;
-	    getField(): string;
-	    willUnload(): void;
-	    protected initPage(title: string, showAdvancedBtn: boolean, showDeleteText: string, help: string, externalHelp?: string, showCopy?: boolean): void;
-	    protected showAdvanced(): void;
-	    protected doCopy(): void;
-	    protected doDelete(): void;
-	    protected showSimple(): void;
-	    protected showWarning(text: string, id?: string): JQuery;
-	    protected showNote(text: string): void;
-	    protected showAdvancedCode(code: string, success: (code: string) => void, semanticValidate?: IValidationSpec): void;
-	    protected getProjectSettingLink(setting: string): string;
-	    protected getProjectSettingLinkA(setting: string, name: string): string;
-	    protected getCategorySettingLink(): string;
-	    protected getTraceSettingLink(): string;
-	    protected getPluginLink(): string;
-	    protected getGroupId(group: XRGroupType): any;
-	    protected getGroupDisplayNameFromId(groupOrUserId: string): string;
-	    protected combinedName(user: XRUserType): string;
-	    private resizeUserSelectDlg;
-	    showUserAndGroupsSelectWithDialog(container: JQuery, showUsers: boolean, showGroups: boolean, help: string, empty: string, selected: string[], dialogTitle: string, onSelect: (selection: string[]) => void): void;
-	    protected showSelectDialog(selectedIn: string[], showUsers: boolean, showGroups: boolean, dialogTitle: string, onSelect: (selection: string[]) => void): void;
-	    protected markUsersWithoutAccess(lis: JQuery): void;
-	    protected filterGroupsAndUsers(lis: JQuery, sex: string, writeOnly: boolean): void;
-	    protected updateUsersAndGroups(withDetails: boolean): JQueryDeferred<{}>;
-	    initMeta(users: XRUserType[], groups: XRGroupType[], pageId: string): void;
-	}
-	class GenericAdminPage extends ConfigPage {
-	    private page;
-	    project: string;
-	    category: string;
-	    constructor(configApp: IConfigApp, page: ISettingPage);
-	    getNode(): IDB;
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	    protected doDelete(): void;
-	}
-	//# sourceMappingURL=ConfigPage.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	export interface IConfigApp extends IBaseApp {
-	    configPages: ConfigPageFactory;
-	    plugins: IServerPluginSettings[];
-	    getConfigPages(): ConfigPageFactory;
-	    init(itemForm: JQuery, dlgForm: JQuery): void;
-	    getUser(): string;
-	    getVersion(): string;
-	    getVersionQualifier(): string;
-	    getNeedsSave(): boolean;
-	    getLastProject(): string;
-	    getType(): string;
-	    getParentId(itemId: string): string;
-	    saveAsync(): JQueryDeferred<any>;
-	    cancel(): void;
-	    resizeItem(): void;
-	    postLogin(user: string): void;
-	    treeSelectionChange(pageId: string): void;
-	    selectItem(itemId: string, itemLabel: string): void;
-	    getTree(): IDB[];
-	    getItem(itemId: string): IDB;
-	    getCurrentItemId(): string;
-	    pingCurrentItem(): void;
-	    registerPage(item: IItem, parent: string, updateUI: boolean): void;
-	    insertItem(item: IItem, parent: string): void;
-	    itemChanged(needsSave: boolean): void;
-	    setLastConnection(): void;
-	    canNavigateAwayAsync(): JQueryDeferred<any>;
-	    canDragDrop(nodeType: string, pageId: string): boolean;
-	    dragEnter(dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode): string[] | boolean;
-	    getJSONProjectSettings(projectId: string, settingId: string): IJsonSetting[];
-	    settingExists(projectId: string, settingId: string): boolean;
-	    setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<IRestResult>;
-	    setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<IRestResult>;
-	    setServerSettingAsync(settingId: string, settingValue: string): JQueryDeferred<any>;
-	    getServerSetting(settingId: string, defaultValue: any): any;
-	    setServerSetting(settingId: string, property: string, newValue: any): void;
-	    getCustomerSetting(setting: string): string;
-	    setCategorySettingAsync(projectId: string, category: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<any>;
-	    getProjectConfig(projectId: string): XRGetProject_ProjectInfo_ProjectInfo;
-	    getCatgegoryConfig(projectId: string, category: string): XRCategoryExtendedType;
-	    getCategories(projectId: string): string[];
-	    getUserPermission(projectId: string): XRUserPermissionType[];
-	    getGroupPermission(projectId: string): XRGroupPermissionType[];
-	    canUserWrite(projectId: string, login: string): boolean;
-	    canGroupWrite(projectId: string, groupId: number): boolean;
-	    getFieldConfig(projectId: string, category: string, field: string): XRFieldType;
-	    updateFieldConfig(projectId: string, category: string, field: string, newConfig: XRFieldType): void;
-	    removedFromTree(itemId: string, newId: string): void;
-	    renamePage(pageId: string, label: string, parent: string): void;
-	    updateProjectData(projectId: string): JQueryDeferred<IRestResult>;
-	    reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
-	    signOut(): void;
-	    initConfigPages(): void;
-	}
-	//# sourceMappingURL=IConfigApp.d.ts.map
-
-	interface IDynParent {
-	    parent: string;
-	    node: IConfigPage;
-	    superadminOnly: boolean;
-	}
-	class ConfigPageFactory extends Application {
-	    private registered_pages;
-	    private dynamicParents;
-	    private delayedRegister;
-	    configApp: IConfigApp;
-	    constructor(configApp: IConfigApp);
-	    updateMainUI(disabled?: boolean): void;
-	    createPage(pageId: string, type: string): IConfigPage;
-	    registerPage(ext: IConfigPage, parentId?: string, dynamicParentId?: string, superadminOnly?: boolean): void;
-	    delayedPageAdd(updateUI?: boolean): void;
-	    insertProjectCopy(projectId: string): void;
-	    insertProjectSettings(projectId: string): void;
-	    insertProjectExtensionFolder(projectId: string): void;
-	    insertProjectCategoryFolder(projectId: string, categoryExtended: XRCategoryExtendedType[]): void;
-	    insertProjectExtension(projectId: string, parentId: string, plugin: any): void;
-	    insertCategory(projectId: string, categories: XRCategoryExtendedType[]): void;
-	}
-	//# sourceMappingURL=ConfigPageFactory.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class CategoryFolder extends ConfigPage {
-	    static CATEGORY_FOLDER_ID: string;
-	    static CATEGORY_FOLDER_TYPE: string;
-	    private project;
-	    private help;
-	    private category;
-	    private newLabel;
-	    private newType;
-	    private hint;
-	    private create;
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        icon: string;
-	        title: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    protected enableCreateField(): void;
-	    protected doDoCopy(selectedProject: string, dialog: JQuery): void;
-	    protected doCopy(): void;
-	    protected doDelete(): void;
-	    protected changeCategoryLabels(newShort: string, newLong: string): void;
-	    protected changeCategoryLabels_doIt(newShort: string, newLong: string): void;
-	    protected dodoDelete(): void;
-	}
-	//# sourceMappingURL=CategoryFolder.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class Labels extends ConfigPage {
-	    static LABELS_BASE_ID: string;
-	    private labelsOriginal;
-	    private labelsChanged;
-	    private labelTools;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected analyze(): void;
-	    static getName(label: ILabel): string;
-	    protected showShared(): void;
-	    protected showOr(): void;
-	    protected showXor(): void;
-	    protected showReview(): void;
-	    protected showDesignReview(): void;
-	    protected showGroup(groupType: string): void;
-	    protected sortGroup(groupIdx: number): void;
-	    protected editGroup(groupType: string, groupIdx: number): void;
-	    protected editOrGroup(groupType: string, groupIdx: number): void;
-	    protected showDesignReviewLabels(ul: JQuery): void;
-	    protected showLabelsInGroup(ul: JQuery, groupType: string, gidx: number): void;
-	    protected editLabel(groupIdx: number, groupType: string, label: string): void;
-	    protected getLabelProp(ldef: ILabel, ps: string): any;
-	    protected groupsAreSame(g1: ILabelGroup, g2: ILabelGroup): boolean;
-	    static getLabelName(projectId: string, label: string): string;
-	    static getLabelOptions(includeDesignReviews?: boolean): IDropdownOption[];
-	    static hasCategory(projectId: string, category: string): boolean;
-	    static removeCategory(configApp: IConfigApp, projectId: string, category: string): JQueryDeferred<IRestResult>;
-	}
-	//# sourceMappingURL=Labels.d.ts.map
-
-	class LineEditor {
-	    editor: LineEditorExt;
-	    constructor();
-	    showDialog(configPage: ConfigPage, title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number): void;
-	    static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
-	}
-	//# sourceMappingURL=LinEditor.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class Risks extends ConfigPage {
-	    static RISKS_BASE_ID: string;
-	    protected riskOriginal: IRiskConfig;
-	    protected riskChanged: IRiskConfig;
-	    protected riskFactorIds: string[];
-	    protected riskWeightIds: string[];
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected riskSave(event: IItemChangeEvent): void;
-	    protected paramChanged(): void;
-	    protected showAdvanced(): void;
-	    protected showError(area: string): void;
-	    protected showSimple(): void;
-	    protected analyze(): void;
-	    protected showTest(): void;
-	    protected showReductions(): void;
-	    protected showPerControlReductions(): void;
-	    protected editReduction(rr_idx: number): void;
-	    protected showMethod(): void;
-	    protected editRpnTable(): void;
-	    protected editRiskZones(): void;
-	    protected editRPNLooks(which: string): void;
-	    protected showRiskControls(): void;
-	    protected showFactors(): void;
-	    protected getNameOfType(type: string): "dropdown" | "multiline text field" | "rich text" | "line of text";
-	    protected showWeights(factorLi: JQuery, factorIdx: number, isPostReductionFactor?: boolean): void;
-	    protected createEditFactor(idx: number): void;
-	    protected createEditWeight(fidx: number, widx: number, isPostReductionFactor?: boolean): void;
-	    protected createEditFactorOptions(fidx: number): void;
-	    static hasCategory(projectId: string, category: string): boolean;
-	    static removeCategory(configApp: IConfigApp, projectId: string, category: string): JQueryDeferred<IRestResult>;
-	}
-	export class RiskSettings extends Risks {
-	    private fieldConfig;
-	    private onChangeFieldSetting;
-	    addFieldSettings(configApp: IConfigApp, project: string, pageId: string, fieldType: string, fieldParams: IRiskTableControlOptions, ui: JQuery, paramChanged: () => void): void;
-	    postSave(project: string, field: string): void;
-	    protected showPostDialogsForRisks(project: string, search: string): void;
-	    protected showPostSaveDialog(project: string): void;
-	    protected startReIndex(project: string, content: JQuery, dlg: JQuery): void;
-	    protected paramChanged(): void;
-	}
-	//# sourceMappingURL=Risks.d.ts.map
-
-	/// <reference types="jquery" />
-	class ProjectSettingsFolder extends ConfigPage {
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        icon: string;
-	        title: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    protected createNewSetting(): void;
-	    protected deleteSettings(key: string): void;
-	    protected createEditSetting(key: string): void;
-	}
-	//# sourceMappingURL=ProjectSettingsFolder.d.ts.map
-
-	/// <reference types="jquery" />
-	interface ITestColumns {
-	    testCats: string[];
-	    shared: ITableParams;
-	    xtcOnly: ITableParams;
-	}
-	class Tests extends ConfigPage {
-	    static TESTS_BASE_ID: string;
-	    private testOriginal;
-	    private testChanged;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected fixTestChanged(): void;
-	    protected showError(area: string): void;
-	    protected showSimple(): void;
-	    protected analyze(): void;
-	    protected showTestCategories(): void;
-	    protected showTestColumns(): void;
-	    private getTestColumns;
-	    protected showPresetFields(): void;
-	    protected showDefaultTester(): void;
-	    protected showDefaultTestResultResult(): void;
-	    protected showSearchExpressions(): void;
-	    showTestStepResults(): void;
-	    editAutomatic(): void;
-	    editManual(): void;
-	    editSteps(): void;
-	    static hasCategory(projectId: string, category: string): boolean;
-	    static removeCategory(configApp: IConfigApp, projectId: string, category: string): JQueryDeferred<IRestResult>;
-	}
-	//# sourceMappingURL=Tests.d.ts.map
-
-	/// <reference types="jquery" />
-	class Field extends ConfigPage {
-	    static FIELD_TYPE: string;
-	    private help;
-	    private project;
-	    private category;
-	    private fieldId;
-	    private field;
-	    private fieldOriginal;
-	    private fieldOptions;
-	    constructor(configApp: IConfigApp);
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    static getFieldDescription(fieldType: string): IFieldDescription;
-	    static fieldHelp(fieldType: string): string;
-	    static fieldDescription: IFieldDescription[];
-	    static getDHFConfig(): IDHFConfig;
-	    static getPossibleFieldsForCategory(project: string, category: string): IFieldDescription[];
-	    static fieldGroupsBase: {
-	        value: string;
-	        label: string;
-	    }[];
-	    static fieldGroupsNormal: {
-	        value: string;
-	        label: string;
-	    }[];
-	    static fieldGroupsDocs: {
-	        value: string;
-	        label: string;
-	    }[];
-	    static getFieldGroups(category: string): {
-	        value: string;
-	        label: string;
-	    }[];
-	    protected isInternal(fieldType: string): boolean;
-	    protected showSimple(): void;
-	    protected showAdvanced(): void;
-	    protected addTabSelect(): void;
-	    protected doDelete(): void;
-	    private paramChanged;
-	    private addCommonFields;
-	    private canBePublished;
-	    private addRichtextFields;
-	    private addDateFields;
-	    private addSectionFields;
-	    private addPlainTextFields;
-	    private addFileManagerFields;
-	    private addDropdownFields;
-	    private showEditDropDown;
-	    private addUserFields;
-	    private addCascadingSelectFields;
-	    private addDownLinkFields;
-	    private addCheckboxFields;
-	    private addCrossLinkFields;
-	    private addGateFields;
-	    private editGateButtons;
-	    private editGateLine;
-	    private addUplinkInfo;
-	    private addRiskFields;
-	    private addTestFields;
-	    private addSyncFields;
-	    private addInternal;
-	    private addDocPropertySelector;
-	}
-	//# sourceMappingURL=Field.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class DropDowns extends ConfigPage {
-	    static DROPDOWN_BASE_ID: string;
-	    private project;
-	    private newId;
-	    private hint;
-	    private tests;
-	    private updates;
-	    private guiTools;
-	    create: JQuery;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    setProject(project: string): void;
-	    showDropDownAdd(ui: JQuery, text: string, pageId?: string, created?: (id: string) => void): void;
-	    editDropDownOptions(ddid: string, saveDirect: boolean): void;
-	    editDropDownGroups(ddid: string, saveDirect: boolean): void;
-	    editAdvanced(ddid: string): void;
-	    private paramChanged;
-	    private showDropDowns;
-	}
-	//# sourceMappingURL=DropDowns.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class TableConfigPlugin implements IPlugin {
-	    getFieldConfigOptions(): IFieldDescription[];
-	    private static columnTypes;
-	    addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished: boolean): void;
-	    addColumnEditor(ui: JQuery, options: ITableParams, isQMSProject: boolean, paramChanged: () => void): void;
-	    private askForColumnType;
-	    private editOptions;
-	    private static askForName;
-	    private static askForDropdownOptions;
-	    private static askForCategoryOptions;
-	    private static askForCategoryUpDownOptions;
-	    private static askForReferenceOptions;
-	}
-	//# sourceMappingURL=TableConfig.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class Traceability extends ConfigPage {
-	    static TRACE_BASE_ID: string;
-	    private traceOriginal;
-	    private traceChanged;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected categoriesWithLinks(): string[];
-	    protected showGraph(): void;
-	    protected analyze(): void;
-	    protected showConfig(): void;
-	    static getCatTypeOptions(): {
-	        id: string;
-	        label: string;
-	    }[];
-	    protected editCategory(cidx: number): void;
-	    protected showRules(sul: JQuery, tridx: number, down: boolean): void;
-	    protected editRule(tridx: number, idx: number, down: boolean): void;
-	    static hasCategory(projectId: string, category: string): boolean;
-	    static removeCategory(configApp: IConfigApp, projectId: string, category: string): JQueryDeferred<IRestResult>;
-	    static getCategoryOfType(type: string): string[];
-	    static getDocCats(): string[];
-	    static getCategoryTypeHuman(category: string): string;
-	    static addCategory(configApp: IConfigApp, catId: string, projectId: string, catType: string): JQueryDeferred<IRestResult>;
-	}
-	//# sourceMappingURL=Traceability.d.ts.map
-
-	/// <reference types="jquery" />
-	class CategoryFolders extends ConfigPage {
-	    static CATEGORY_FOLDERS_ID: string;
-	    private catId;
-	    private catName;
-	    private includeDefaultFields;
-	    private create;
-	    private ctype;
-	    private hint;
-	    getNode(): {
-	        id: string;
-	        title: string;
-	        type: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	    protected enableCreateField(): void;
-	}
-	//# sourceMappingURL=CategoryFolders.d.ts.map
-
-	/// <reference types="jquery" />
-	class CategorySetting extends ConfigPage {
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    private createEdit;
-	    private editConcurrentEdit;
-	    private editItemTabbing;
-	    private editCategoryIcon;
-	    private editSyncInfo;
-	    private createNew;
-	}
-	//# sourceMappingURL=CategorySetting.d.ts.map
-
-	/// <reference types="jquery" />
-	interface IActualSetting {
-	    projectId: number;
-	    projectName: string;
-	    settingName: string;
-	    settingValue: any;
-	}
-	interface ISetupSetting {
-	    key: string;
-	    type: string;
-	    userTitle: string;
-	}
-	interface IProjectPlugin {
-	    owner: string;
-	    projectId: number;
-	    projectName: string;
-	    pwd: string;
-	    repo: string;
-	    user: string;
-	}
-	interface IServerPluginSettings {
-	    pluginName: string;
-	    displayName: string;
-	    capabilities: IGenericMap;
-	    needed: boolean;
-	    pluginId: number;
-	    comments: string;
-	    actualSettings: IActualSetting[];
-	    projects: IProjectPlugin[];
-	    setupSettings: ISetupSetting[];
-	}
-	class ProjectPluginSetting extends ConfigPage {
-	    static PROJECT_EXTENSION_BASE_ID: string;
-	    static PROJECT_EXTENSION_TYPE: string;
-	    private plugin;
-	    private pluginOrginal;
-	    private pluginChanged;
-	    private projectId;
-	    private clientConfig;
-	    private wfgw;
-	    constructor(configApp: IConfigApp, projectId: string, plugin: IServerPluginSettings);
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        icon: string;
-	        title: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    protected saveAsyncRec(idx: number): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected getActualSetting(key: string): string;
-	    protected setActualSetting(key: string, newvalue: string): void;
-	    protected showServerSettings(): void;
-	    protected showTextInput(key: string, help: string, password: boolean): void;
-	    protected showclientConfigs(): void;
-	    protected showBool(field: string, text: string): void;
-	    protected showCreate(): void;
-	    protected editCreate(gidx: number): void;
-	    protected showSmartTasks(asSimpleId: boolean): void;
-	    protected editSmart(matchJustAnId: boolean, gidx: number): void;
-	    protected showSearches(): void;
-	    protected editSearch(gidx: number): void;
-	}
-	//# sourceMappingURL=ProjectPluginSetting.d.ts.map
-
-	/// <reference types="jquery" />
-	class ProjectPluginSettingFolder extends ConfigPage {
-	    static PROJECT_EXTENSION_FOLDER_BASE_ID: string;
-	    static PROJECT_EXTENSION_FOLDER_TYPE: string;
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        icon: string;
-	        title: string;
-	        children: any;
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	}
-	//# sourceMappingURL=ProjectPluginSettingFolder.d.ts.map
-
-	/// <reference types="jquery" />
-	class Branch extends ConfigPage {
-	    static BRANCH_BASE_ID: string;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        iconClass: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	    private showCreatePage;
-	    private validate;
-	    private startCopy;
-	    protected waitForProjectJob(jobId: number, projectId: string): void;
-	}
-	//# sourceMappingURL=Branch.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class Projects extends ConfigPage {
-	    static PROJECT_FOLDER_ID: string;
-	    static PROJECT_FOLDER_TYPE: string;
-	    protected copyName: JQuery;
-	    protected copyId: JQuery;
-	    protected copyIdHint: JQuery;
-	    protected copyTemplate: JQuery;
-	    protected copyRemoveContent: JQuery;
-	    protected copyRemoveAccess: JQuery;
-	    protected copyKeepHistory: JQuery;
-	    protected copyCreate: JQuery;
-	    private projectCreationProgress;
-	    protected backName: JQuery;
-	    protected backId: JQuery;
-	    protected backIdHint: JQuery;
-	    protected backTemplate: JQuery;
-	    protected backTag: JQuery;
-	    protected backTagHint: JQuery;
-	    protected backOver: JQuery;
-	    protected enableUserImportCheckbox: JQuery;
-	    protected backNewTag: JQuery;
-	    protected backNewTagDescription: JQuery;
-	    protected backCreate: JQuery;
-	    protected backLastFile: FileList;
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    protected showBackup(): void;
-	    protected waitForProjectJob(jobId: number, projectId: string): void;
-	    protected enableCreateBackup(): void;
-	    protected showCopy(): void;
-	    protected enableCreateCopy(): void;
-	    protected waitForProject(projectId: string): void;
-	    protected projectIdTest(projcectId: string, complainHere: JQuery, allowProjectOverwrite?: boolean): boolean;
-	    static checkProjectId(projcectId: string): "" | "the project id must be shorter than 20 characters" | "the project id must start with an uppercase letter" | "the project id can only consist of letters, digits and underscore";
-	}
-	//# sourceMappingURL=Projects.d.ts.map
-
-	export interface ITestResultDisplay {
+	interface ITestResultDisplay {
 	    displayString: string;
 	    mrqlPart: string;
 	    color: string;
 	}
-	export interface ITeoConfig {
+	interface ITeoConfig {
 	    testResultQueries?: ITestResultDisplay[];
 	    coverageGroundTruthMrqlPart?: string;
 	    executedStatusForRunDown?: string[];
@@ -21618,7 +22884,7 @@ declare module matrixApi
 	    XTCStatusSelectionDefault: ITestResultDisplay[];
 	    getTEOConfig(): ITeoConfig;
 	}
-	export let teoHelpers: TeoHelpers;
+	let teoHelpers: TeoHelpers;
 	//# sourceMappingURL=teoHelpers.d.ts.map
 
 	//# sourceMappingURL=ui.d.ts.map
@@ -21650,6 +22916,76 @@ declare module matrixApi
 	    unhide(showConfirm: boolean): void;
 	}
 	//# sourceMappingURL=BaseWidget.d.ts.map
+
+	/// <reference types="jquery" />
+	export function initialize(configApp: IConfigApp): void;
+	class TeoConfig extends ConfigPage {
+	    static BASE_ID: string;
+	    private teoConfigOriginal;
+	    private teoConfigChanged;
+	    getNode(): {
+	        type: string;
+	        title: string;
+	        id: string;
+	        icon: string;
+	        children: IDB[];
+	    };
+	    saveAsync(): JQueryDeferred<IRestResult>;
+	    load(pageId: string): void;
+	    private paramChanged;
+	    protected showAdvanced(): void;
+	    protected showError(area: string): void;
+	    protected showSimple(): void;
+	    showOtherFields(): void;
+	    protected showIncludeTaskInTestTable(): void;
+	    protected createEditQuery(idx: number): void;
+	    protected showQueries(): void;
+	    protected showSearchExpressions(): void;
+	}
+	//# sourceMappingURL=TeoConfig.d.ts.map
+
+	//# sourceMappingURL=index.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ILabelDisplay {
+	    id: string;
+	    displayString: string;
+	}
+	interface ILabelDashboardRule {
+	    type: string;
+	    labels: ILabelDisplay[];
+	    cat: string;
+	}
+	interface ILabelDashboardRuleArray {
+	    [key: string]: ILabelDashboardRule;
+	}
+	interface ILabelDashboardGraphData {
+	    [key: string]: XRTrimNeedleItem[];
+	}
+	class LabelDashboardabilityOverview implements IPlugin {
+	    dlg: JQuery;
+	    popupModeOrControl: boolean;
+	    private currentFolder;
+	    static fieldType: string;
+	    isDefault: boolean;
+	    constructor();
+	    initItem(_item: IItem, _jui: JQuery): void;
+	    static canBeDisplayed(cat: string): boolean;
+	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
+	    updateMenu(ul: JQuery, hook: number): void;
+	    supportsControl(ctrlType: string): boolean;
+	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
+	    initProject(): void;
+	    isEnabled(): boolean;
+	    getProjectPages(): IProjectPageParam[];
+	}
+	export function initialize(): void;
+	//# sourceMappingURL=LAO.d.ts.map
 
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="jquery" />
@@ -21919,1260 +23255,89 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=NOO.d.ts.map
 
-	//# sourceMappingURL=init.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IProjectDataMap {
-	    [key: string]: XRGetProject_ProjectInfo_ProjectInfo;
-	}
-	class ConfigApp implements IConfigApp {
-	    private dbConnection;
-	    private currentItem;
-	    private _user;
-	    private _status;
-	    private _control;
-	    private _needsSave;
-	    private triggerSelectionChangeMySelf;
-	    private configTree;
-	    private projectData;
-	    private lastProject;
-	    plugins: IServerPluginSettings[];
-	    private PROJECT_FOLDER_ID;
-	    private PROJECT_FOLDER_WAIT_ID;
-	    configPages: ConfigPageFactory;
-	    itemForm: JQuery;
-	    printForm: JQuery;
-	    dlgForm: JQuery;
-	    constructor(dataSource: RestDB);
-	    init(itemForm: JQuery, dlgForm: JQuery): void;
-	    getUser(): string;
-	    getVersion(): string;
-	    getVersionQualifier(): string;
-	    getNeedsSave(): boolean;
-	    getLastProject(): string;
-	    getType(): string;
-	    getParentId(itemId: string): string;
-	    saveAsync(): JQueryDeferred<any>;
-	    cancel(): void;
-	    resizeItem(): void;
-	    postLogin(user: string): void;
-	    treeSelectionChange(pageId: string): void;
-	    selectItem(itemId: string, itemLabel: string): void;
-	    getTree(subtreeFilter?: string[]): IDB[];
-	    getItem(itemId: string): IDB;
-	    isConfigApp(): boolean;
-	    getCurrentItemId(): string;
-	    pingCurrentItem(): void;
-	    registerPage(item: IItem, parent: string, updateUI?: boolean): void;
-	    insertItem(item: IItem, parent: string): void;
-	    itemChanged(needsSave: boolean): void;
-	    setLastConnection(): void;
-	    canNavigateAwayAsync(): JQueryDeferred<any>;
-	    canDragDrop(nodeType: string, pageId: string): boolean;
-	    dragEnter(dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode): string[] | boolean;
-	    getJSONProjectSettings(projectId: string, settingId?: string): IJsonSetting[];
-	    settingExists(projectId: string, settingId: string): boolean;
-	    setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<IRestResult>;
-	    setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<IRestResult>;
-	    setServerSettingAsync(settingId: string, settingValue: string): JQueryDeferred<any>;
-	    getServerSetting(settingId: string, defaultValue: any): any;
-	    setServerSetting(settingId: string, property: string, newValue: any): void;
-	    getCustomerSetting(setting: string): string;
-	    setCategorySettingAsync(projectId: string, category: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<any>;
-	    getProjectConfig(projectId: string): XRGetProject_ProjectInfo_ProjectInfo;
-	    getCatgegoryConfig(projectId: string, category: string): XRCategoryExtendedType;
-	    getCategories(projectId: string): string[];
-	    getUserPermission(projectId: string): XRUserPermissionType[];
-	    getGroupPermission(projectId: string): XRGroupPermissionType[];
-	    canUserWrite(projectId: string, login: string): boolean;
-	    canGroupWrite(projectId: string, groupId: number): boolean;
-	    getFieldConfig(projectId: string, category: string, field: string): XRFieldType;
-	    updateFieldConfig(projectId: string, category: string, field: string, newConfig: XRFieldType): void;
-	    removedFromTree(itemId: string, newId: string): void;
-	    renamePage(pageId: string, label: string, parent: string): void;
-	    updateProjectData(projectId: string): JQueryDeferred<IRestResult>;
-	    private removeACL;
-	    reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
-	    signOut(): void;
-	    private clear;
-	    private movePage;
-	    private prepareTree;
-	    private addProjectsToTree;
-	    private showUrl;
-	    private navigateToUrl;
-	    private expandProject;
-	    private renderPage;
-	    private loadProjectAsync;
-	    initConfigPages(): void;
-	    getConfigPages(): ConfigPageFactory;
-	}
-	//# sourceMappingURL=ConfigApp.d.ts.map
-
-	/// <reference types="jquery" />
-	class ExtensionFolder extends ConfigPage {
-	    static EXTENSION_FOLDER_ID: string;
-	    getNode(): {
-	        id: string;
-	        title: string;
-	        type: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): Promise<void>;
-	    showExtensions(users: IDropdownOption[]): void;
-	    setPluginSetting(wfgw: RestConnector, pluginId: string, key: string, value: string, encrypted: boolean, ok: Function, failure: Function): void;
-	}
-	//# sourceMappingURL=ExtensionFolder.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class Project extends ConfigPage {
-	    static PROJECT_FOLDER_TYPE: string;
-	    spinningWait: JQuery;
-	    exportBtn: JQuery;
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    private waitForJob;
-	    protected showSimple(): void;
-	    private showBranchInfoPage;
-	    protected deleteProject(): void;
-	    protected analyze(): void;
-	}
-	//# sourceMappingURL=Project.d.ts.map
-
-	/// <reference types="jquery" />
-	class ProjectLoad extends ConfigPage {
-	    static PROJECTLOAD_FOLDER_TYPE: string;
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        title: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	}
-	//# sourceMappingURL=ProjectLoad.d.ts.map
-
-	/// <reference types="jquery" />
-	class ServerSettingsFolder extends ConfigPage {
-	    static SERVER_SETTING_FOLDER_ID: string;
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        icon: string;
-	        title: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    protected showPlugins(): void;
-	}
-	//# sourceMappingURL=ServerSettingsFolder.d.ts.map
-
-	/// <reference types="jquery" />
-	class UsersFolder extends ConfigPage {
-	    static USERS_FOLDER_ID: string;
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        icon: string;
-	        title: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	}
-	//# sourceMappingURL=UsersFolder.d.ts.map
-
-	function InitializeSettingsLib(configApp: IConfigApp): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	function InitializeCategoriesSettings(configApp: IConfigApp): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	function InitializeExtensionSettings(configApp: IConfigApp): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	function InitializeProjectListSettings(configApp: IConfigApp): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	function InitializeProjectSettings(configApp: IConfigApp): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	/// <reference types="jquery" />
-	class HTMLCLEANUPConfig extends ConfigPage {
-	    private dpChanged;
-	    private dpOriginal;
-	    private static SERVER_SETTING_PAGE_ID;
-	    private static THE_SETTING;
-	    private isServer;
-	    constructor(configApp: IConfigApp, isServer: boolean);
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    private paramChanged;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    private testSetting;
-	    private testSettingCategory;
-	}
-	//# sourceMappingURL=HTMLCleanup.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class ACL extends ConfigPage {
-	    static ACL_BASE_ID: string;
-	    protected aclChanged: IACL;
-	    protected aclOriginal: IACL;
-	    protected grouped: IGenericMap;
-	    private readonly DOCSECTIONS;
-	    private readonly DOCSECTIONSTYPE;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected showRules(): void;
-	    protected editRule(gidx: number): void;
-	    protected showGroupsInRule(ul: JQuery, gidx: number): void;
-	    protected showAccessRightsDialog(gidx: number): void;
-	    private displayAccessRights;
-	    private yesNo;
-	    private na;
-	    private getCatAcl;
-	    private paramChanged;
-	    protected analyze(): void;
-	}
-	//# sourceMappingURL=ACL.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class BranchConfig extends ConfigPage {
-	    protected uploader: JQuery;
-	    private settingOriginal;
-	    private settingNow;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	}
-	//# sourceMappingURL=BranchConfig.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class CategoryGroups extends ConfigPage {
-	    static CATEGORYGROUPS_BASE_ID: string;
-	    protected groupsChanged: ICategoryGroups;
-	    protected groupsOriginal: ICategoryGroups;
-	    protected grouped: IGenericMap;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected showGroups(): void;
-	    protected editGroup(gidx: number): void;
-	    protected showCategoriesInGroup(ul: JQuery, gidx: number): void;
-	    protected getAvailableCategories(cats: string[]): IDropdownOption[];
-	    private paramChanged;
-	    protected analyze(): void;
-	}
-	//# sourceMappingURL=CategoryGroups.d.ts.map
-
-	/// <reference types="jquery" />
-	class ContextPages extends ConfigPage {
-	    static CONTEXTPAGE_BASE_ID: string;
-	    private settingOriginal;
-	    private settingNow;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showSimple(): void;
-	    protected showSimpleProp(key: string, title: string, label: string): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=ContextPages.d.ts.map
-
-	/// <reference types="jquery" />
-	interface ISectionDef {
-	    name: string;
-	    type: string;
-	}
-	class DhfConfig extends ConfigPage {
-	    static LOCK_BASE_ID: string;
-	    private settingOriginal;
-	    private settingNow;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected showDocumentStructures(): void;
-	    protected showSignatureMeanings(): void;
-	    protected editStructure(docId: string): void;
-	    protected editSignatureMeaning(sicId: string): void;
-	}
-	//# sourceMappingURL=DHF.d.ts.map
-
-	/// <reference types="jquery" />
-	class Extras extends ConfigPage {
-	    static EXTRAS_BASE_ID: string;
-	    private settingOriginal;
-	    private settingNow;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showSimple(): void;
-	    protected showSimpleProp(key: string, label: string, help: string): void;
-	    protected showSelect(key: string, label: string, help: string, options: IDropdownOption[]): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=Extras.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class ItemLock extends ConfigPage {
-	    static LOCK_BASE_ID: string;
-	    private settingOriginal;
-	    private settingNow;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showSimple(): void;
-	    protected showLocks(): void;
-	    protected editGroup(gidx: number): void;
-	    protected showLockMasters(ul: JQuery, gidx: number): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=ItemLock.d.ts.map
-
-	/// <reference types="jquery" />
-	class Mail extends ConfigPage {
-	    static MAIL_BASE_ID: string;
-	    private mailChanged;
-	    private mailOriginal;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    paramChanged(): void;
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=Mail.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class NavigationBarConfig extends ConfigPage {
-	    protected uploader: JQuery;
-	    private settingOriginal;
-	    private settingNow;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected editTab(idx: number): void;
-	}
-	//# sourceMappingURL=NavigationBarConfig.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class ProjectLogo extends ConfigPage {
-	    protected uploader: JQuery;
-	    protected logo: IStringMap;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    protected addUploadArea(logoName: string, help: string, logoId: string, removeName: string, defaultPath: string, fileTypes: string[], containerDisplayClass: string): void;
-	    protected fileUploaded(uploaded: JQuery, logoId: string): void;
-	    protected logoDeleted(logoId: string): void;
-	}
-	//# sourceMappingURL=ProjectLogo.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class QMS extends ConfigPage {
-	    static QMS_BASE_ID: string;
-	    private qmsConfigOriginal;
-	    private qmsConfigChanged;
-	    protected labelsConfigOriginal: ILabelsConfig;
-	    protected labelsConfigChanged: ILabelsConfig;
-	    protected affectedConfigOriginal: IDropDownConfig;
-	    protected affectedConfigChanged: IDropDownConfig;
-	    protected responsibleConfigOriginal: IDropDownConfig;
-	    protected responsibleConfigChanged: IDropDownConfig;
-	    protected grouped: IGenericMap;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    /************************** Roles rights *************************/
-	    protected showRoles(): void;
-	    protected showPushRoles(): void;
-	    protected showRolesFor(responsible: boolean): void;
-	    protected showRole(ul: JQuery, responsible: boolean, roleIdx: number, roleName: string, showUp: boolean, showDown: boolean): void;
-	    protected editRole(responsible: boolean, roleIdx: number): void;
-	    protected createRole(responsible: boolean): void;
-	    /************************** Publishing rights *************************/
-	    protected showPublishing(publication: IPublication): void;
-	    /************************** Viewing rights *************************/
-	    protected showViewingRights(): void;
-	    /************************** PROC and WI reviewer *************************/
-	    protected showReviewers(categoryRules: IPublicationCategory): void;
-	    protected showLabelReviewers(label: string, reviewType: string): void;
-	    /************************** Groups *************************/
-	    protected showGroupLabels(groupType: string, groupName: string, groupCategory: string): void;
-	    protected moveUp(el: JQuery): void;
-	    protected moveDown(el: JQuery): void;
-	    protected showGroupLabel(groupType: string, ul: JQuery, groupLabelId: string, showUp: boolean, showDown: boolean): void;
-	    protected editGroupLabel(groupLabelId: string): void;
-	    protected createGroupLabel(groupType: string, groupCategory: string): void;
-	    protected getLabelName(labelId: string): string;
-	    protected setLabelName(labelId: string, newName: string): void;
-	    protected deleteGroupLabel(groupLabelId: string): void;
-	    protected analyze(): void;
-	}
-	//# sourceMappingURL=QMS.d.ts.map
-
-	/// <reference types="jquery" />
-	class Search extends ConfigPage {
-	    protected mc: ISearchConfig;
-	    static SEARCH_BASE_ID: string;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    protected createEditSearch(idx: number): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=Search.d.ts.map
-
-	/// <reference types="jquery" />
-	class TextMacros extends TextMacroBase {
-	    static MACROS_BASE_ID: string;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    private saveProject;
-	    private saveServer;
-	    load(pageId: string): void;
-	}
-	//# sourceMappingURL=TextMacros.d.ts.map
-
-	class TextMacroBase extends ConfigPage {
-	    protected macrosOriginal: ISmartTextConfig;
-	    protected macrosChanged: ISmartTextConfig;
-	    protected isServerMacros: boolean;
-	    protected moveToServer: string[];
-	    protected useTiny: boolean;
-	    protected paramChanged(): void;
-	    protected init(): void;
-	    protected showSimple(): void;
-	    protected showMacroList(title: string, type: number, help: string, projectId: string): void;
-	    protected deleteMacro(midx: number, projectId?: string): void;
-	    protected editMacro(tidx: number, type: number): void;
-	    protected updateMacro(tidx: number, newMac: ISmartTextConfigReplacement): boolean;
-	    protected globalMacro(tidx: number, type: number): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=TextMacroBase.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class WordTemplate extends ConfigPage {
-	    protected uploader: JQuery;
-	    protected labelUI: LabelTemplateSettings;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    willUnload(): void;
-	    load(pageId: string): void;
-	    protected fileUploaded(): void;
-	    protected doDelete(): void;
-	}
-	class LabelTemplateSettings {
-	    DOCUMENT_STATUS_GROUP: string;
-	    DEFAULT_LABEL_NAME: string;
-	    LABEL_COLOR_ACTIVE: ICIColor;
-	    LABEL_COLOR_PASSIVE: ICIColor;
-	    LABEL_REGEX_STRING: string;
-	    LABEL_REGEX: RegExp;
-	    labels: ILabelsConfig;
-	    project: string;
-	    container: JQuery;
-	    fileEditors: {
-	        [key: string]: JQuery;
-	    };
-	    deleteEnabled?: string;
-	    newLabelText: string;
-	    configApp: IConfigApp;
-	    constructor(configApp: IConfigApp, container: JQuery, project: string);
-	    private documentClickHandler;
-	    removeDocumentClickHandler(): void;
-	    update(): void;
-	    private makeSureItHasDefaults;
-	    buildUITable(): void;
-	    private isTheLabalValueNew;
-	    private checkAddLabelButton;
-	    private addLabelSubmit;
-	    fileEditor(labelName: string): JQuery;
-	    addNewLabel(name: string): void;
-	    getSettings(): string;
-	    private deleteLabel;
-	    addLabelToLabelConfig(config: ILabelsConfig, label: ILabel, addToFront?: boolean): ILabelsConfig;
-	    updateStatusGroup(config: ILabelsConfig, newGroup: ILabelGroup): ILabelsConfig;
-	    findStatusGroup(config: ILabelsConfig): ILabelGroup;
-	    deleteLabelFromConfig(config: ILabelsConfig, labelID: string): ILabelsConfig;
-	    createLabel(name: string): ILabel;
-	    createDefaultLabel(): ILabel;
-	    styleSet(text: string): {
-	        on: {
-	            foreground: string;
-	            background: string;
-	            icon: string;
-	            displayName: string;
-	            tooltip: string;
-	        };
-	        off: {
-	            foreground: string;
-	            background: string;
-	            icon: string;
-	            displayName: string;
-	            tooltip: string;
-	        };
-	    };
-	    enabledLabel(text: string): {
-	        foreground: string;
-	        background: string;
-	        icon: string;
-	        displayName: string;
-	        tooltip: string;
-	    };
-	    disabledLabel(text: string): {
-	        foreground: string;
-	        background: string;
-	        icon: string;
-	        displayName: string;
-	        tooltip: string;
-	    };
-	    labelStyle(text: string, foreground: ICIColor, background: ICIColor): {
-	        foreground: string;
-	        background: string;
-	        icon: string;
-	        displayName: string;
-	        tooltip: string;
-	    };
-	    createGroup(): ILabelGroup;
-	}
-	//# sourceMappingURL=WordTemplates.d.ts.map
-
-	class TextEditor {
-	    constructor();
-	    showDialog(title: string, value: string, onOk: (update: string) => void): void;
-	}
-	//# sourceMappingURL=TextEditor.d.ts.map
-
-	function InitializeServerSettings(configApp: IConfigApp): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	/// <reference types="jquery" />
-	interface IFileConfig {
-	    sharing: string;
-	}
-	class FileSettings extends ConfigPage {
-	    private fileConfig;
-	    private fileSetting;
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    paramChanged(): void;
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=Attachments.d.ts.map
-
-	/// <reference types="jquery" />
-	class DashboardSettings extends ConfigPage {
-	    protected dashboardsOriginal: IDashboardConfig;
-	    protected dashboardChanged: IDashboardConfig;
-	    protected useTiny: boolean;
-	    protected paramChanged(): void;
-	    protected init(): void;
-	    protected showSimple(): void;
-	    protected showDashboards(help: string): void;
-	    protected deleteDashboard(midx: string): void;
-	    protected editDashboard(tidx: string): void;
-	    protected updateDashboard(tidx: string, newDashboard: IDashboard): boolean;
-	    protected showAdvanced(): void;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<any>;
-	    load(pageId: string): void;
-	}
-	//# sourceMappingURL=DashboardSettings.d.ts.map
-
-	/// <reference types="jquery" />
-	class DateTimeSettings extends ConfigPage {
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	}
-	//# sourceMappingURL=DateAndTimeSettings.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IRestoreObject {
-	    project: string;
-	    newId: string;
-	}
-	class SettingDeletedProjects extends ConfigPage {
-	    private dpChanged;
-	    private dpOriginal;
-	    private backIdHint;
-	    static SERVER_SETTING_DELETED_PROJECTS: string;
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<any>;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected enableRestore(restoreBtn: JQuery, restore: IRestoreObject): void;
-	}
-	//# sourceMappingURL=DeletedProjects.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class JobList extends ConfigPage {
-	    interval: number;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    willUnload(): void;
-	    JobList: {
-	        [key: number]: JQuery;
-	    };
-	    protected showHide(name: string, checked: boolean): void;
-	    protected showSimple(): void;
-	    createNewJob(job: XRJobWithUrl): void;
-	}
-	//# sourceMappingURL=JobList.d.ts.map
-
-	/// <reference types="jquery" />
-	class PasswordSettings extends ConfigPage {
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    private changePasswordExpiry;
-	}
-	//# sourceMappingURL=PasswordSettings.d.ts.map
-
-	/// <reference types="jquery" />
-	class PrintConfig extends ConfigPage {
-	    private dpChanged;
-	    private dpOriginal;
-	    private resyncButton;
-	    static SERVER_SETTING_PRINTCONFIG_PAGE_ID: string;
-	    static SERVER_SETTING_PRINTCONFIG_SETTING: string;
-	    private static BUTTON_TEXT;
-	    private issuesUl;
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<any>;
-	    private paramChanged;
-	    load(pageId: string): void;
-	    private updateSettings;
-	    private validateSettings;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    resyncSettings(): void;
-	    /***
-	     * Wrapper around the matrix rest call, returning a regular Promise
-	     * @param url the URL to call, will be prefixed with the current PRINT project
-	     * @private
-	     */
-	    private callMatrix;
-	    /***
-	     * Get the all items in a category and their code
-	     * @param type The type to get all code fragments for
-	     * @private
-	     */
-	    private updateItemMap;
-	    /***
-	     * Get the field ID of the CODE field of the given category. This uses the current PRINT project
-	     * @param category The category ID
-	     * @private
-	     */
-	    private getCodeField;
-	}
-	//# sourceMappingURL=PrintConfig.d.ts.map
-
-	/// <reference types="jquery" />
-	class ServerSettingsEditor extends ConfigPage {
-	    static PROJECT_SETTING_FOLDER_BASE_ID: string;
-	    static PROJECT_SETTING_FOLDER_TYPE: string;
-	    getNode(): {
-	        type: string;
-	        id: string;
-	        icon: string;
-	        title: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    protected createNewSetting(): void;
-	    protected deleteSettings(key: string): void;
-	    protected createEditSetting(key: string, val: any): void;
-	}
-	//# sourceMappingURL=ServerSettingsEditor.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class SettingProjectGroups extends ConfigPage {
-	    groupsChanged: IProjectGroups;
-	    groupsOriginal: IProjectGroups;
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<any>;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	    protected showGroups(): void;
-	    protected editGroup(gidx: number): void;
-	    protected showProjectsInGroup(ul: JQuery, gidx: number): void;
-	    private paramChanged;
-	}
-	//# sourceMappingURL=SettingProjectGroups.d.ts.map
-
-	/// <reference types="jquery" />
-	class SettingTerms extends TextMacroBase {
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<any>;
-	    load(pageId: string): void;
-	}
-	//# sourceMappingURL=SettingTerms.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class TemplateProjects extends ConfigPage {
-	    private templates;
-	    private original;
-	    static SERVER_SETTING_TEMPLATE_PROJECTS: string;
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<any>;
-	    load(pageId: string): void;
-	    protected onChange(): void;
-	    protected showSimple(): void;
-	    protected verifySource(ul: JQuery, project: string): void;
-	    protected verifyMarkAsTemplate(ul: JQuery, project: string): void;
-	    protected showProjectsInGroup(help: string, master: boolean): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=TemplateProjects.d.ts.map
-
-	/// <reference types="jquery" />
-	class ToDoSettings extends ConfigPage {
-	    private todoConfig;
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    paramChanged(): void;
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=ToDoSettings.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class Tokens extends ConfigPage {
-	    private tokens;
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    paramChanged(): void;
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    protected showTokens(container: JQuery, allUsers: XRGetUser_AllUsers_GetUserListAck): void;
-	    protected showAdvanced(): void;
-	}
-	//# sourceMappingURL=Tokens.d.ts.map
-
-	/// <reference types="jquery" />
-	class UIConfig extends ConfigPage {
-	    private dpChanged;
-	    private dpOriginal;
-	    static SERVER_SETTING_UI_PAGE_ID: string;
-	    static SERVER_SETTING_UI_SETTING: string;
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<any>;
-	    private paramChanged;
-	    load(pageId: string): void;
-	    protected showAdvanced(): void;
-	    protected showSimple(): void;
-	}
-	//# sourceMappingURL=UIConfig.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IEditedCodeObject {
-	    editCode: string;
-	}
-	class DeveloperStagingConfig extends ConfigPage {
-	    private static SERVER_SETTING_PAGE_ID;
-	    private static THE_SETTING;
-	    private developerCode;
-	    constructor(configApp: IConfigApp);
-	    getNode(): {
-	        id: string;
-	        type: string;
-	        title: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    load(pageId: string): void;
-	    protected showSimple(): void;
-	    private save;
-	    protected enableSave(saveBtn: JQuery, editedCode: IEditedCodeObject): void;
-	}
-	//# sourceMappingURL=DeveloperStaging.d.ts.map
-
-	function InitializeUserSettings(configApp: IConfigApp): void;
-	//# sourceMappingURL=initialize.d.ts.map
-
-	/// <reference types="jquery" />
-	class GroupsAccessOverview extends ConfigPageUsersBase {
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	    private setAccess;
-	}
-	//# sourceMappingURL=GroupAccessOverview.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface GroupAccessUser {
-	    overall: string;
-	    details: string[];
-	}
-	class ConfigPageUsersBase extends ConfigPage {
-	    private vscroll;
-	    private ivscroll;
-	    private hscroll;
-	    private ihscroll;
-	    private filterBox;
-	    private mainTable;
-	    private leftTable;
-	    private leftContainer;
-	    protected leftBody: JQuery;
-	    private topTable;
-	    private topContainer;
-	    protected headerRow: JQuery;
-	    protected accessTable: JQuery;
-	    private accessContainer;
-	    protected accessBody: JQuery;
-	    protected createMainContainer(): void;
-	    protected initTooltipBox(onShow: (cell: JQuery) => string): void;
-	    protected placeChangeMenu(uio: JQuery, cell: JQuery): void;
-	    protected doAllVerticalCells(accessTable: JQuery, row: number, col: number, change: (cell: JQuery, option: string) => JQueryDeferred<{}>, option: string): void;
-	    protected doAllHorizontalCells(accessTable: JQuery, row: number, col: number, change: (cell: JQuery, option: string) => JQueryDeferred<{}>, option: string): void;
-	    protected initCellMenu(menu: number, change: (cell: JQuery, option: string) => JQueryDeferred<{}>): void;
-	    protected hideMenu(): void;
-	    protected scrollTop(): void;
-	    protected scrollLeft(): void;
-	    protected initTableScrolling(paddingBottom?: number): void;
-	    protected addFilter(label: string, key: string, alt?: string, onAltClick?: () => void): any;
-	    protected addFilterUserGroup(label: string, classKey: string, dataKey: string, alt?: string, onAltClick?: () => void): any;
-	    protected addFilterProjectGroup(label: string, classKey: string, dataKey: string, alt?: string, onAltClick?: () => void): any;
-	    protected addFilterGroup(options: IDropdownOption[], resolve: (selected: string[]) => string[], label: string, classKey: string, dataKey: string, alt?: string, onAltClick?: () => void): any;
-	    protected isMember(groupId: number, login: string): boolean;
-	    protected updateMember(groupId: number, login: string, isMember: boolean): void;
-	    protected getAccessRights(groupId: number, project: string): "" | "W" | "Q" | "R";
-	    protected getAccessLetterFromNumber(projectRights: number): "" | "W" | "Q" | "R";
-	}
-	//# sourceMappingURL=ConfigPageUsersBase.d.ts.map
-
-	/// <reference types="jquery" />
-	interface GroupAccessUser {
-	    overall: string;
-	    details: string[];
-	}
-	class UserAccessOverview extends ConfigPageUsersBase {
-	    private allAdmins;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    readonly AR_NoAccess = -1;
-	    readonly AR_WriteAccess = 1;
-	    readonly AR_ReadAccess = 0;
-	    readonly AR_QMSAccess = 2;
-	    showSimple(): void;
-	    private showSimpleInner;
-	    private setAccess;
-	    private computeOverallAccess;
-	    private updateMail;
-	    private getGroupAccess;
-	}
-	//# sourceMappingURL=UserAccesOverview.d.ts.map
-
-	/// <reference types="jquery" />
-	interface IUserFilter {
-	    filterText: string;
-	    deleted: boolean;
-	    filterGroup: string[];
-	}
-	class UserDetails extends ConfigPage {
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	    protected applyFilter(filter: IUserFilter): void;
-	    protected insertImage(imageID: string): string;
-	    protected formatPasswordAge(maxage: number, age: number): string | number;
-	}
-	//# sourceMappingURL=UserDetails.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class UserGroups extends ConfigPageUsersBase {
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	    protected showUserGroups(): void;
-	    protected getGroupLi(idx: number): JQuery;
-	    protected createUserGroup(ul: JQuery): void;
-	    protected editUserGroup(gidx: number, li: JQuery): void;
-	}
-	//# sourceMappingURL=UserGroups.d.ts.map
-
-	/// <reference types="jquery" />
-	class UserGroupsAccess extends ConfigPageUsersBase {
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<unknown>;
-	    load(pageId: string): void;
-	    showSimple(): void;
-	    private setAccess;
-	}
-	//# sourceMappingURL=UserGroupsUsers.d.ts.map
-
-	//# sourceMappingURL=index.d.ts.map
-
-	/// <reference types="jquery" />
-	export function initialize(configApp: IConfigApp): void;
-	class TeoConfig extends ConfigPage {
-	    static BASE_ID: string;
-	    private teoConfigOriginal;
-	    private teoConfigChanged;
-	    getNode(): {
-	        type: string;
-	        title: string;
-	        id: string;
-	        icon: string;
-	        children: IDB[];
-	    };
-	    saveAsync(): JQueryDeferred<IRestResult>;
-	    load(pageId: string): void;
-	    private paramChanged;
-	    protected showAdvanced(): void;
-	    protected showError(area: string): void;
-	    protected showSimple(): void;
-	    showOtherFields(): void;
-	    protected showIncludeTaskInTestTable(): void;
-	    protected createEditQuery(idx: number): void;
-	    protected showQueries(): void;
-	    protected showSearchExpressions(): void;
-	}
-	//# sourceMappingURL=TeoConfig.d.ts.map
-
 	interface IPrintParamMacro extends IPrintMacro {
 	    param: string;
 	}
 	//# sourceMappingURL=PrintParam.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IFolderHasItemsConditionParams {
+	    iterator: string;
+	    negate: boolean;
+	}
+	class FolderHasItems implements IConditionFunction {
+	    itemOrFolder: boolean;
+	    static uid: string;
+	    getHelp(): string;
+	    getName(): string;
+	    evaluate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFolderHasItemsConditionParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
+	}
+	//# sourceMappingURL=FolderHasChildren.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IItemHasTraces {
+	    iterator: string;
+	    direction: "up" | "down";
+	    mustHave: boolean;
+	    canHave: boolean;
+	    negate: boolean;
+	}
+	class ItemHasTraces implements IConditionFunction {
+	    itemOrFolder: boolean;
+	    static uid: string;
+	    getHelp(): string;
+	    getName(): string;
+	    evaluate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IItemHasTraces, itemOrFolderRef: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
+	}
+	//# sourceMappingURL=ItemHasTraces.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ILinksIteratorParams extends IPrintItemIteratorParams {
+	    direction: "up" | "down";
+	    leafs?: string[];
+	    maxDepth?: number;
+	    xtc?: "highest" | "changed" | "";
+	    excludeRiskControlDown: boolean;
+	    onlyRiskControlDown: boolean;
+	    categories: null | [];
+	}
+	class LinksIterator implements IPrintItemIterator {
+	    worksOnItem: boolean;
+	    worksOnFolder: boolean;
+	    folderIterator: boolean;
+	    traceIterator: boolean;
+	    tableRowIterator: boolean;
+	    static uid: string;
+	    getHelp(): string;
+	    getName(): string;
+	    getValidation(): any;
+	    private paramsDefaults;
+	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: ILinksIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
+	    static deduplicate(ids: string[]): string[];
+	    private getHighestNumberedId;
+	    private getLastChangedId;
+	    private getParentTC;
+	    private getNextLinks;
+	    private getNextIncludedPaths;
+	    private getNextPaths;
+	    editParams(params: ILinksIteratorParams, onUpdate: (newParams: ILinksIteratorParams) => void): JQuery;
+	}
+	//# sourceMappingURL=LinksIterator.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23288,85 +23453,6 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IFolderHasItemsConditionParams {
-	    iterator: string;
-	    negate: boolean;
-	}
-	class FolderHasItems implements IConditionFunction {
-	    itemOrFolder: boolean;
-	    static uid: string;
-	    getHelp(): string;
-	    getName(): string;
-	    evaluate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFolderHasItemsConditionParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
-	}
-	//# sourceMappingURL=FolderHasChildren.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IItemHasTraces {
-	    iterator: string;
-	    direction: "up" | "down";
-	    mustHave: boolean;
-	    canHave: boolean;
-	    negate: boolean;
-	}
-	class ItemHasTraces implements IConditionFunction {
-	    itemOrFolder: boolean;
-	    static uid: string;
-	    getHelp(): string;
-	    getName(): string;
-	    evaluate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IItemHasTraces, itemOrFolderRef: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
-	}
-	//# sourceMappingURL=ItemHasTraces.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface ILinksIteratorParams extends IPrintItemIteratorParams {
-	    direction: "up" | "down";
-	    leafs?: string[];
-	    maxDepth?: number;
-	    xtc?: "highest" | "changed" | "";
-	    excludeRiskControlDown: boolean;
-	    onlyRiskControlDown: boolean;
-	    categories: null | [];
-	}
-	class LinksIterator implements IPrintItemIterator {
-	    worksOnItem: boolean;
-	    worksOnFolder: boolean;
-	    folderIterator: boolean;
-	    traceIterator: boolean;
-	    tableRowIterator: boolean;
-	    static uid: string;
-	    getHelp(): string;
-	    getName(): string;
-	    getValidation(): any;
-	    private paramsDefaults;
-	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: ILinksIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
-	    static deduplicate(ids: string[]): string[];
-	    private getHighestNumberedId;
-	    private getLastChangedId;
-	    private getParentTC;
-	    private getNextLinks;
-	    private getNextIncludedPaths;
-	    private getNextPaths;
-	    editParams(params: ILinksIteratorParams, onUpdate: (newParams: ILinksIteratorParams) => void): JQuery;
-	}
-	//# sourceMappingURL=LinksIterator.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
 	interface IFieldOfTypeParams extends IPrintMacroParams {
 	    fieldType: string;
 	    fieldTypes: string[];
@@ -23410,38 +23496,12 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	class PrintSortByItemId implements IPrintSorter {
-	    getHelp(): string;
-	    getName(): string;
-	    sort(ia: string, ib: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): 0 | 1 | -1;
-	}
-	//# sourceMappingURL=PrintSortByItemId.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
 	class PrintSortByRevisionDate implements IPrintSorter {
 	    getHelp(): string;
 	    getName(): string;
 	    sort(a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): number;
 	}
 	//# sourceMappingURL=PrintSortByDate.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	class PrintSortByTitle implements IPrintSorter {
-	    getHelp(): string;
-	    getName(): string;
-	    sort(a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): 0 | 1 | -1;
-	}
-	//# sourceMappingURL=PrintSortByTitle.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23478,28 +23538,12 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IChildrenIteratorParams extends IPrintItemIteratorParams {
-	    leafs?: boolean;
-	    maxDepth?: number;
-	    includeItems?: boolean;
-	    includeFolders?: boolean;
-	}
-	class ChildrenIterator implements IPrintItemIterator {
-	    worksOnItem: boolean;
-	    worksOnFolder: boolean;
-	    folderIterator: boolean;
-	    traceIterator: boolean;
-	    tableRowIterator: boolean;
-	    static uid: string;
-	    private paramsDefault;
+	class PrintSortByTitle implements IPrintSorter {
 	    getHelp(): string;
-	    getValidation(): any;
 	    getName(): string;
-	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IChildrenIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
-	    private getChildrenRec;
-	    editParams(params: IChildrenIteratorParams, onUpdate: (newParams: IChildrenIteratorParams) => void): JQuery;
+	    sort(a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): 0 | 1 | -1;
 	}
-	//# sourceMappingURL=ChildrenIterator.d.ts.map
+	//# sourceMappingURL=PrintSortByTitle.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23554,11 +23598,12 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	class FieldHelper {
-	    static fixTermsAndAbbreviation(text: string, mf: JQuery): string;
-	    static renderMacroIfNotRenderedBefore(text: string, macroText: string, replacement: string): string;
+	class PrintSortByItemId implements IPrintSorter {
+	    getHelp(): string;
+	    getName(): string;
+	    sort(ia: string, ib: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): 0 | 1 | -1;
 	}
-	//# sourceMappingURL=FieldHelper.d.ts.map
+	//# sourceMappingURL=PrintSortByItemId.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23566,18 +23611,40 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IFieldLabelParams extends IPrintFieldParams {
-	    checkboxLabel: number;
-	    class: string;
+	interface IChildrenIteratorParams extends IPrintItemIteratorParams {
+	    leafs?: boolean;
+	    maxDepth?: number;
+	    includeItems?: boolean;
+	    includeFolders?: boolean;
 	}
-	class FieldLabel implements IPrintFunction {
+	class ChildrenIterator implements IPrintItemIterator {
+	    worksOnItem: boolean;
+	    worksOnFolder: boolean;
+	    folderIterator: boolean;
+	    traceIterator: boolean;
+	    tableRowIterator: boolean;
 	    static uid: string;
-	    getGroup(): string;
+	    private paramsDefault;
 	    getHelp(): string;
+	    getValidation(): any;
 	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldLabelParams, itemOrFolderRef: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IChildrenIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
+	    private getChildrenRec;
+	    editParams(params: IChildrenIteratorParams, onUpdate: (newParams: IChildrenIteratorParams) => void): JQuery;
 	}
-	//# sourceMappingURL=FieldLabel.d.ts.map
+	//# sourceMappingURL=ChildrenIterator.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	class FieldHelper {
+	    static fixTermsAndAbbreviation(text: string, mf: JQuery): string;
+	    static renderMacroIfNotRenderedBefore(text: string, macroText: string, replacement: string): string;
+	}
+	//# sourceMappingURL=FieldHelper.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23599,6 +23666,24 @@ declare module matrixApi
 	    editParams(params: IItemDateParams, onUpdate: (newParams: IItemDateParams) => void): JQuery;
 	}
 	//# sourceMappingURL=FieldItemDate.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IFieldTextParams extends IPrintFieldParams {
+	    class: string;
+	}
+	class FieldText implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTextParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldText.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23712,6 +23797,61 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
+	interface IFieldCheckboxParams extends IPrintFieldParams {
+	    class: string;
+	    onlyIfSet: boolean;
+	}
+	class FieldCheckbox implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldCheckboxParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldCheckbox.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IFieldTableOptions extends IPrintFieldParams {
+	    showSteps: boolean;
+	    columnWidths: string[];
+	    login: boolean;
+	    first: boolean;
+	    last: boolean;
+	    email: boolean;
+	    cell?: IFieldTableOptionsCell;
+	    hideColumns?: number[];
+	    showRowsMatching?: IStringMap;
+	    classTable: string;
+	    class: string;
+	}
+	interface IFieldTableOptionsCell {
+	    row: number;
+	    col: number;
+	}
+	class FieldTable implements IPrintFunction {
+	    static MAX_WIDTH: number;
+	    private baseUID;
+	    constructor(classes: string);
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTableOptions, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    private getColumnWidth;
+	    private showTableRow;
+	}
+	//# sourceMappingURL=FieldTables.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
 	interface IFieldRichtextParams extends IPrintFieldParams {
 	    class: string;
 	}
@@ -23750,18 +23890,17 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IFieldCheckboxParams extends IPrintFieldParams {
+	interface IFieldtest_resultParams extends IPrintFieldParams {
 	    class: string;
-	    onlyIfSet: boolean;
 	}
-	class FieldCheckbox implements IPrintFunction {
+	class FieldTest_result implements IPrintFunction {
 	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldCheckboxParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldtest_resultParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=FieldCheckbox.d.ts.map
+	//# sourceMappingURL=FieldTestResult.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23789,6 +23928,25 @@ declare module matrixApi
 	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldReviewControlParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
 	//# sourceMappingURL=FieldReview.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IFieldDropdownParams extends IPrintFieldParams {
+	    formatDrop: "list" | "comma";
+	    class: string;
+	}
+	class FieldDropdown implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldDropdownParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldDropdown.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23830,42 +23988,6 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IFieldTextParams extends IPrintFieldParams {
-	    class: string;
-	}
-	class FieldText implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTextParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldText.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IFieldtest_resultParams extends IPrintFieldParams {
-	    class: string;
-	}
-	class FieldTest_result implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldtest_resultParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldTestResult.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
 	interface IFieldUserParams extends IPrintFieldParams {
 	    login: boolean;
 	    first: boolean;
@@ -23889,18 +24011,17 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IFieldDropdownParams extends IPrintFieldParams {
-	    formatDrop: "list" | "comma";
+	interface IFieldTextlineParams extends IPrintFieldParams {
 	    class: string;
 	}
-	class FieldDropdown implements IPrintFunction {
+	class FieldTextline implements IPrintFunction {
 	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldDropdownParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTextlineParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=FieldDropdown.d.ts.map
+	//# sourceMappingURL=FieldTextline.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -23929,43 +24050,6 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IFieldDateParams extends IPrintFieldParams {
-	    formatString: string;
-	    class: string;
-	}
-	class FieldDate implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldDateParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldDate.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
-	interface IFieldTextlineParams extends IPrintFieldParams {
-	    class: string;
-	}
-	class FieldTextline implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTextlineParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldTextline.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
 	interface IFieldCrossLinksParams extends IPrintFieldParams {
 	    formatCross: "list" | "comma";
 	    asLinkCross: boolean;
@@ -23987,23 +24071,18 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface ILabelPrimitiveParams {
-	    showIcon: boolean;
-	    showText: boolean;
+	interface IFieldDateParams extends IPrintFieldParams {
+	    formatString: string;
 	    class: string;
-	    classIcon: string;
-	    className: string;
 	}
-	class LabelIconAndName implements IPrintFunction {
+	class FieldDate implements IPrintFunction {
 	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
-	    private defaults;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IPrintLabelParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    editParams(params: ILabelPrimitiveParams, onUpdate: (newParams: ILabelPrimitiveParams) => void): JQuery;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldDateParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=LabelIconAndName.d.ts.map
+	//# sourceMappingURL=FieldDate.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24046,6 +24125,28 @@ declare module matrixApi
 	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IAuthorPrimitiveParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
 	//# sourceMappingURL=AuthorPrimitive.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface IDepthParams {
+	    recursionDepth: number;
+	    offset: number;
+	    style: string;
+	}
+	class DepthPrimitive implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    private defaults;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IDepthParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    editParams(params: IDepthParams, onUpdate: (newParams: IDepthParams) => void): JQuery;
+	}
+	//# sourceMappingURL=Depth.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24097,28 +24198,6 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IDepthParams {
-	    recursionDepth: number;
-	    offset: number;
-	    style: string;
-	}
-	class DepthPrimitive implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    private defaults;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IDepthParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    editParams(params: IDepthParams, onUpdate: (newParams: IDepthParams) => void): JQuery;
-	}
-	//# sourceMappingURL=Depth.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	/// <reference types="selectize" />
 	interface IRiskColorParams {
 	    background?: boolean;
 	    before?: boolean;
@@ -24141,35 +24220,18 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface IFieldTableOptions extends IPrintFieldParams {
-	    showSteps: boolean;
-	    columnWidths: string[];
-	    login: boolean;
-	    first: boolean;
-	    last: boolean;
-	    email: boolean;
-	    cell?: IFieldTableOptionsCell;
-	    hideColumns?: number[];
-	    showRowsMatching?: IStringMap;
-	    classTable: string;
+	interface IFieldLabelParams extends IPrintFieldParams {
+	    checkboxLabel: number;
 	    class: string;
 	}
-	interface IFieldTableOptionsCell {
-	    row: number;
-	    col: number;
-	}
-	class FieldTable implements IPrintFunction {
-	    static MAX_WIDTH: number;
-	    private baseUID;
-	    constructor(classes: string);
+	class FieldLabel implements IPrintFunction {
+	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTableOptions, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    private getColumnWidth;
-	    private showTableRow;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldLabelParams, itemOrFolderRef: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=FieldTables.d.ts.map
+	//# sourceMappingURL=FieldLabel.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24200,6 +24262,27 @@ declare module matrixApi
 	    editParams(params: IBreadcrumbsPrimitiveParams, onUpdate: (newParams: IBreadcrumbsPrimitiveParams) => void): JQuery;
 	}
 	//# sourceMappingURL=BreadcrumbsPrimitive.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	/// <reference types="selectize" />
+	interface ICustomCountTableRowsParams {
+	    fieldName: string;
+	    showRowsMatching: {
+	        [key: string]: string;
+	    };
+	}
+	class CustomCountTableRows implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, callerParams: ITableSummaryParams, itemOrFolder: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void, _printProcessor?: IPrintProcessor): string;
+	}
+	//# sourceMappingURL=CountTableFieldRows.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24287,19 +24370,22 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	/// <reference types="selectize" />
-	interface ICustomCountTableRowsParams {
-	    fieldName: string;
-	    showRowsMatching: {
-	        [key: string]: string;
-	    };
+	interface ILabelPrimitiveParams {
+	    showIcon: boolean;
+	    showText: boolean;
+	    class: string;
+	    classIcon: string;
+	    className: string;
 	}
-	class CustomCountTableRows implements IPrintFunction {
+	class LabelIconAndName implements IPrintFunction {
 	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, callerParams: ITableSummaryParams, itemOrFolder: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void, _printProcessor?: IPrintProcessor): string;
+	    private defaults;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IPrintLabelParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    editParams(params: ILabelPrimitiveParams, onUpdate: (newParams: ILabelPrimitiveParams) => void): JQuery;
 	}
-	//# sourceMappingURL=CountTableFieldRows.d.ts.map
+	//# sourceMappingURL=LabelIconAndName.d.ts.map
 
 }
