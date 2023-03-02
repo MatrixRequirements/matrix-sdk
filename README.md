@@ -14,5 +14,7 @@ Copy the declaration file produced by the Clouds client build from this
 location (`matrix-client-server/server/Clouds/client/build/js/types/matrixapi/index.d.ts`),
 and rename it to matrixApi.d.ts.
 
+Also, copy `matrix-client-server/server/Clouds/client/build/js/consoleapi.js` and rename it to `index.js`.
+
 If a new version is made, update the version number in the package.json file,
 and publish it with `npm publish`.

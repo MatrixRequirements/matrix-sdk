@@ -3254,21 +3254,20 @@ declare module matrixApi
 	    WEIRD_STATE = "WEIRD_STATE",
 	    BROKEN_STATE = "BROKEN_STATE"
 	}
+	type FunctionRenderHumanDate = (date: Date) => string;
 	class LoggerTools implements ILoggerTools {
 	    private verbose;
 	    private lastLogMsg;
 	    private logData;
 	    private logIdx;
 	    private logSize;
+	    private functionRenderHumanDate;
+	    constructor(functionRenderHumanDate: FunctionRenderHumanDate);
 	    log(id: string, msg: string): void;
-	    private getCaller;
-	    private logServer;
 	    debug(message: string): void;
 	    info(message: string): void;
 	    warning(message: string): void;
 	    error(message: string): void;
-	    weirdState(message: string): void;
-	    brokenState(message: string): void;
 	    getLog(): string;
 	}
 	//# sourceMappingURL=LoggerTools.d.ts.map
@@ -3460,8 +3459,6 @@ declare module matrixApi
 	    info(message: string): void;
 	    warning(message: string): void;
 	    error(message: string): void;
-	    weirdState(message: string): void;
-	    brokenState(message: string): void;
 	    getLog(): string;
 	}
 	interface IUserDropDown {
@@ -9559,7 +9556,7 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	interface IConfigPage {
 	    getNode(): IDB;
-	    saveAsync(): JQueryDeferred<unknown>;
+	    saveAsync(): JQueryDeferred<{}>;
 	    load(pageId: string): void;
 	    getProject(): string;
 	    getCategory(): string;
@@ -9579,7 +9576,7 @@ declare module matrixApi
 	    protected allGroups: XRGroupType[];
 	    configApp: IConfigApp;
 	    getNode(): IDB;
-	    saveAsync(): JQueryDeferred<unknown>;
+	    saveAsync(): JQueryDeferred<{}>;
 	    load(pageId: string): void;
 	    constructor(configApp: IConfigApp);
 	    getProject(): string;
@@ -9902,7 +9899,7 @@ declare module matrixApi
 	class TableConfigPlugin implements IPlugin {
 	    getFieldConfigOptions(): IFieldDescription[];
 	    private static columnTypes;
-	    addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean): void;
+	    addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished: boolean): void;
 	    addColumnEditor(ui: JQuery, options: ITableParams, isQMSProject: boolean, paramChanged: () => void): void;
 	    private askForColumnType;
 	    private editOptions;
@@ -12302,7 +12299,7 @@ declare module matrixApi
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
 	    updateXmlValue(ctrl: IDHFControlDefinition): void;
 	    getConfig(ctrl: IDHFControlDefinition): IDhfTableOptions;
-	    addSignatures(signatures: string[], ctrl: IDHFControlDefinition, includeAll?: boolean): void;
+	    addSignatures(signatures: string[], ctrl: IDHFControlDefinition, includeAll: boolean): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -13005,48 +13002,6 @@ declare module matrixApi
 	//# sourceMappingURL=matrixlib.d.ts.map
 
 	//# sourceMappingURL=init.d.ts.map
-
-	//# sourceMappingURL=index.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface ILabelDisplay {
-	    id: string;
-	    displayString: string;
-	}
-	interface ILabelDashboardRule {
-	    type: string;
-	    labels: ILabelDisplay[];
-	    cat: string;
-	}
-	interface ILabelDashboardRuleArray {
-	    [key: string]: ILabelDashboardRule;
-	}
-	interface ILabelDashboardGraphData {
-	    [key: string]: XRTrimNeedleItem[];
-	}
-	class LabelDashboardabilityOverview implements IPlugin {
-	    dlg: JQuery;
-	    popupModeOrControl: boolean;
-	    private currentFolder;
-	    static fieldType: string;
-	    isDefault: boolean;
-	    constructor();
-	    initItem(_item: IItem, _jui: JQuery): void;
-	    static canBeDisplayed(cat: string): boolean;
-	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
-	    updateMenu(ul: JQuery, hook: number): void;
-	    supportsControl(ctrlType: string): boolean;
-	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
-	    initProject(): void;
-	    isEnabled(): boolean;
-	    getProjectPages(): IProjectPageParam[];
-	}
-	export function initialize(): void;
-	//# sourceMappingURL=LAO.d.ts.map
 
 	/// <reference types="jquery" />
 	class MatrixAPI {
@@ -23314,6 +23269,10 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=BaseWidget.d.ts.map
 
+	interface ISetField {
+	    fieldName: string;
+	    value: string;
+	}
 	interface ISimpleSessionControl {
 	    getCsrfCookie(): string;
 	    setComment(comment: string): void;
@@ -23326,7 +23285,7 @@ declare module matrixApi
 	    id: string;
 	    isFolder: boolean;
 	}
-	function CreateConsoleAPI(config: Configuration, baseRestUrl: string, baseMatrixUrl: string): StandaloneMatrixAPI;
+	function CreateConsoleAPI(token: string, baseRestUrl: string, baseMatrixUrl: string): StandaloneMatrixAPI;
 	class StandaloneMatrixAPI {
 	    protected config: Configuration;
 	    protected session: ISimpleSessionControl;
@@ -23465,6 +23424,75 @@ declare module matrixApi
 	    copyItem(fromProject: string, fromItem: string, toProject: string, toFolder: string, copyLabels: boolean): Promise<CopyItemAck>;
 	}
 	//# sourceMappingURL=standalone.d.ts.map
+
+	//# sourceMappingURL=print.d.ts.map
+
+	/**
+	// debugging functionality for old browsers
+	(function () {
+	    var method:string;
+	    var noop = function () {
+	    };
+	    var methods:string[] = [
+	        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+	        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+	        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+	        'timeStamp', 'trace', 'warn'
+	    ];
+	    var length = methods.length;
+	    var console = (window.console = window.console || {});
+	    while (length--) {
+	        method = methods[length];
+	        // Only stub undefined methods.
+	        if (!console[method]) {
+	            console[method] = noop;
+	        }
+	    }
+	}());
+	*/ 
+	//# sourceMappingURL=init.d.ts.map
+
+	//# sourceMappingURL=index.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface ILabelDisplay {
+	    id: string;
+	    displayString: string;
+	}
+	interface ILabelDashboardRule {
+	    type: string;
+	    labels: ILabelDisplay[];
+	    cat: string;
+	}
+	interface ILabelDashboardRuleArray {
+	    [key: string]: ILabelDashboardRule;
+	}
+	interface ILabelDashboardGraphData {
+	    [key: string]: XRTrimNeedleItem[];
+	}
+	class LabelDashboardabilityOverview implements IPlugin {
+	    dlg: JQuery;
+	    popupModeOrControl: boolean;
+	    private currentFolder;
+	    static fieldType: string;
+	    isDefault: boolean;
+	    constructor();
+	    initItem(_item: IItem, _jui: JQuery): void;
+	    static canBeDisplayed(cat: string): boolean;
+	    initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
+	    updateMenu(ul: JQuery, hook: number): void;
+	    supportsControl(ctrlType: string): boolean;
+	    createControl(ctrl: JQuery, options: IBaseControlOptions): void;
+	    initProject(): void;
+	    isEnabled(): boolean;
+	    getProjectPages(): IProjectPageParam[];
+	}
+	export function initialize(): void;
+	//# sourceMappingURL=LAO.d.ts.map
 
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="jquery" />
@@ -23731,31 +23759,6 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=NOO.d.ts.map
 
-	/**
-	// debugging functionality for old browsers
-	(function () {
-	    var method:string;
-	    var noop = function () {
-	    };
-	    var methods:string[] = [
-	        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-	        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-	        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-	        'timeStamp', 'trace', 'warn'
-	    ];
-	    var length = methods.length;
-	    var console = (window.console = window.console || {});
-	    while (length--) {
-	        method = methods[length];
-	        // Only stub undefined methods.
-	        if (!console[method]) {
-	            console[method] = noop;
-	        }
-	    }
-	}());
-	*/ 
-	//# sourceMappingURL=init.d.ts.map
-
 	//# sourceMappingURL=index.d.ts.map
 
 	/// <reference types="jquery" />
@@ -23784,8 +23787,6 @@ declare module matrixApi
 	    protected showSearchExpressions(): void;
 	}
 	//# sourceMappingURL=TeoConfig.d.ts.map
-
-	//# sourceMappingURL=print.d.ts.map
 
 	//# sourceMappingURL=init.d.ts.map
 
@@ -24043,6 +24044,25 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
+	interface IFieldOfTypeParams extends IPrintMacroParams {
+	    fieldType: string;
+	    fieldTypes: string[];
+	    negate: boolean;
+	}
+	class FieldIsOfType implements IConditionFunction {
+	    itemOrFolder: boolean;
+	    static uid: string;
+	    getHelp(): string;
+	    getName(): string;
+	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IFieldOfTypeParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
+	}
+	//# sourceMappingURL=FieldOfType.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
 	interface IIsCategoryParams extends IPrintMacroParams {
 	    categories: string[];
 	    negate: boolean;
@@ -24094,6 +24114,18 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
+	class PrintSortByItemId implements IPrintSorter {
+	    getHelp(): string;
+	    getName(): string;
+	    sort(ia: string, ib: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): 0 | 1 | -1;
+	}
+	//# sourceMappingURL=PrintSortByItemId.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
 	interface IFieldHasContentParams extends IPrintMacroParams {
 	    fieldType?: string;
 	    fieldName?: string;
@@ -24110,37 +24142,6 @@ declare module matrixApi
 	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IFieldHasContentParams, itemOrFolderRef: string, ifo: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
 	}
 	//# sourceMappingURL=FieldHasContent.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IFieldOfTypeParams extends IPrintMacroParams {
-	    fieldType: string;
-	    fieldTypes: string[];
-	    negate: boolean;
-	}
-	class FieldIsOfType implements IConditionFunction {
-	    itemOrFolder: boolean;
-	    static uid: string;
-	    getHelp(): string;
-	    getName(): string;
-	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IFieldOfTypeParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
-	}
-	//# sourceMappingURL=FieldOfType.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	class PrintSortByItemId implements IPrintSorter {
-	    getHelp(): string;
-	    getName(): string;
-	    sort(ia: string, ib: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): 0 | 1 | -1;
-	}
-	//# sourceMappingURL=PrintSortByItemId.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24165,51 +24166,6 @@ declare module matrixApi
 	    sort(a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): number;
 	}
 	//# sourceMappingURL=PrintSortByDate.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IRowIteratorParams extends IPrintItemIteratorParams {
-	    fieldName: string;
-	    showRowsMatching?: IStringMap;
-	}
-	class TableRowIterator implements IPrintItemIterator {
-	    worksOnItem: boolean;
-	    worksOnFolder: boolean;
-	    folderIterator: boolean;
-	    traceIterator: boolean;
-	    tableRowIterator: boolean;
-	    static uid: string;
-	    getHelp(): string;
-	    getValidation(): any;
-	    getName(): string;
-	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IRowIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
-	}
-	//# sourceMappingURL=TableRowIterator.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IFieldContentParams {
-	    fieldName?: string;
-	    raw?: boolean;
-	    fieldInfo?: IPrintFieldInfo;
-	    function?: string;
-	    functionPrefix?: string;
-	}
-	class FieldContent implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(hideDetails?: boolean, showFieldName?: boolean): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldContentParams, itemOrFolderRef: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    protected formatXml(node: Element, level: number): Element;
-	}
-	//# sourceMappingURL=FieldContent.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24272,11 +24228,76 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
+	interface IRowIteratorParams extends IPrintItemIteratorParams {
+	    fieldName: string;
+	    showRowsMatching?: IStringMap;
+	}
+	class TableRowIterator implements IPrintItemIterator {
+	    worksOnItem: boolean;
+	    worksOnFolder: boolean;
+	    folderIterator: boolean;
+	    traceIterator: boolean;
+	    tableRowIterator: boolean;
+	    static uid: string;
+	    getHelp(): string;
+	    getValidation(): any;
+	    getName(): string;
+	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IRowIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
+	}
+	//# sourceMappingURL=TableRowIterator.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IFieldContentParams {
+	    fieldName?: string;
+	    raw?: boolean;
+	    fieldInfo?: IPrintFieldInfo;
+	    function?: string;
+	    functionPrefix?: string;
+	}
+	class FieldContent implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(hideDetails?: boolean, showFieldName?: boolean): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldContentParams, itemOrFolderRef: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    protected formatXml(node: Element, level: number): Element;
+	}
+	//# sourceMappingURL=FieldContent.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
 	class FieldHelper {
 	    static fixTermsAndAbbreviation(text: string, mf: JQuery): string;
 	    static renderMacroIfNotRenderedBefore(text: string, macroText: string, replacement: string): string;
 	}
 	//# sourceMappingURL=FieldHelper.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IItemDateParams {
+	    class: string;
+	    format: string;
+	}
+	class ItemDate implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    private defaults;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IItemDateParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    editParams(params: IItemDateParams, onUpdate: (newParams: IItemDateParams) => void): JQuery;
+	}
+	//# sourceMappingURL=FieldItemDate.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24301,53 +24322,39 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldCheckboxParams extends IPrintFieldParams {
+	interface IFieldRiskGenericParams extends IPrintFieldParams {
 	    class: string;
-	    onlyIfSet: boolean;
 	}
-	class FieldCheckbox implements IPrintFunction {
+	class FieldRiskGeneric implements IPrintFunction {
 	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
+	    attribute: string;
 	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldCheckboxParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    getGroup(): string;
+	    getSubGroup(): string;
+	    getHelp(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldRiskGenericParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=FieldCheckbox.d.ts.map
+	//# sourceMappingURL=FieldRiskGeneric.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldTableOptions extends IPrintFieldParams {
-	    showSteps: boolean;
-	    columnWidths: string[];
-	    login: boolean;
-	    first: boolean;
-	    last: boolean;
-	    email: boolean;
-	    cell?: IFieldTableOptionsCell;
-	    hideColumns?: number[];
-	    showRowsMatching?: IStringMap;
-	    classTable: string;
+	interface IFieldRiskParams extends IPrintFieldParams {
+	    attribute: string;
+	    forcePostWeights: boolean;
+	    classRiskTable: string;
 	    class: string;
 	}
-	interface IFieldTableOptionsCell {
-	    row: number;
-	    col: number;
-	}
-	class FieldTable implements IPrintFunction {
-	    static MAX_WIDTH: number;
-	    private baseUID;
-	    constructor(classes: string);
+	class FieldRisk implements IPrintFunction {
+	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTableOptions, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    private getColumnWidth;
-	    private showTableRow;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldRiskParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=FieldTables.d.ts.map
+	//# sourceMappingURL=FieldRisk.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24433,59 +24440,53 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldRiskGenericParams extends IPrintFieldParams {
+	interface IFieldTableOptions extends IPrintFieldParams {
+	    showSteps: boolean;
+	    columnWidths: string[];
+	    login: boolean;
+	    first: boolean;
+	    last: boolean;
+	    email: boolean;
+	    cell?: IFieldTableOptionsCell;
+	    hideColumns?: number[];
+	    showRowsMatching?: IStringMap;
+	    classTable: string;
 	    class: string;
 	}
-	class FieldRiskGeneric implements IPrintFunction {
-	    static uid: string;
-	    attribute: string;
-	    getName(): string;
-	    getGroup(): string;
-	    getSubGroup(): string;
-	    getHelp(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldRiskGenericParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	interface IFieldTableOptionsCell {
+	    row: number;
+	    col: number;
 	}
-	//# sourceMappingURL=FieldRiskGeneric.d.ts.map
+	class FieldTable implements IPrintFunction {
+	    static MAX_WIDTH: number;
+	    private baseUID;
+	    constructor(classes: string);
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTableOptions, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    private getColumnWidth;
+	    private showTableRow;
+	}
+	//# sourceMappingURL=FieldTables.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldRiskParams extends IPrintFieldParams {
-	    attribute: string;
-	    forcePostWeights: boolean;
-	    classRiskTable: string;
+	interface IFieldCheckboxParams extends IPrintFieldParams {
 	    class: string;
+	    onlyIfSet: boolean;
 	}
-	class FieldRisk implements IPrintFunction {
+	class FieldCheckbox implements IPrintFunction {
 	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldRiskParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldCheckboxParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=FieldRisk.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IItemDateParams {
-	    class: string;
-	    format: string;
-	}
-	class ItemDate implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    private defaults;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IItemDateParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    editParams(params: IItemDateParams, onUpdate: (newParams: IItemDateParams) => void): JQuery;
-	}
-	//# sourceMappingURL=FieldItemDate.d.ts.map
+	//# sourceMappingURL=FieldCheckbox.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24583,6 +24584,23 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
+	interface IFieldtest_resultParams extends IPrintFieldParams {
+	    class: string;
+	}
+	class FieldTest_result implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldtest_resultParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldTestResult.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
 	interface IFieldReviewControlParams extends IPrintFieldParams {
 	    headerItem: string;
 	    headerRevision: string;
@@ -24609,23 +24627,6 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldtest_resultParams extends IPrintFieldParams {
-	    class: string;
-	}
-	class FieldTest_result implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldtest_resultParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldTestResult.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
 	interface IFieldTextlineParams extends IPrintFieldParams {
 	    class: string;
 	}
@@ -24637,6 +24638,24 @@ declare module matrixApi
 	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldTextlineParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
 	//# sourceMappingURL=FieldTextline.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IFieldDropdownParams extends IPrintFieldParams {
+	    formatDrop: "list" | "comma";
+	    class: string;
+	}
+	class FieldDropdown implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldDropdownParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldDropdown.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24665,44 +24684,6 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldCrossLinksParams extends IPrintFieldParams {
-	    formatCross: "list" | "comma";
-	    asLinkCross: boolean;
-	    showTitle: boolean;
-	    class: string;
-	}
-	class FieldCrossLinks implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldCrossLinksParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldCrossLinks.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IFieldDropdownParams extends IPrintFieldParams {
-	    formatDrop: "list" | "comma";
-	    class: string;
-	}
-	class FieldDropdown implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldDropdownParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldDropdown.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
 	interface IFieldDateParams extends IPrintFieldParams {
 	    formatString: string;
 	    class: string;
@@ -24721,23 +24702,20 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface ILabelPrimitiveParams {
-	    showIcon: boolean;
-	    showText: boolean;
+	interface IFieldCrossLinksParams extends IPrintFieldParams {
+	    formatCross: "list" | "comma";
+	    asLinkCross: boolean;
+	    showTitle: boolean;
 	    class: string;
-	    classIcon: string;
-	    className: string;
 	}
-	class LabelIconAndName implements IPrintFunction {
+	class FieldCrossLinks implements IPrintFunction {
 	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
-	    private defaults;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IPrintLabelParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    editParams(params: ILabelPrimitiveParams, onUpdate: (newParams: ILabelPrimitiveParams) => void): JQuery;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFieldCrossLinksParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=LabelIconAndName.d.ts.map
+	//# sourceMappingURL=FieldCrossLinks.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24841,6 +24819,29 @@ declare module matrixApi
 	    editParams(params: IDepthParams, onUpdate: (newParams: IDepthParams) => void): JQuery;
 	}
 	//# sourceMappingURL=Depth.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface ILabelPrimitiveParams {
+	    showIcon: boolean;
+	    showText: boolean;
+	    class: string;
+	    classIcon: string;
+	    className: string;
+	}
+	class LabelIconAndName implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    private defaults;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsCaller: IPrintLabelParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    editParams(params: ILabelPrimitiveParams, onUpdate: (newParams: ILabelPrimitiveParams) => void): JQuery;
+	}
+	//# sourceMappingURL=LabelIconAndName.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -24990,6 +24991,114 @@ declare module matrixApi
 	    median(numbers: any): any;
 	}
 	//# sourceMappingURL=TableSummary.d.ts.map
+
+	/// <reference types="matrixrequirements-type-declarations" />
+	interface SchemaDef {
+	    module: string;
+	    type: string;
+	    serverUse: string;
+	    serverProp: string;
+	}
+	type JsonEditorValidation = (json: unknown) => Promise<string | null>;
+	/**
+	 * Globally available JSON Validator. It can validate against schemas stored in web/schemas/*.json
+	 * The schemas in this directory are generated by the `gulp schema` command and defined in schemagen/schemas.json
+	 * To add validation for a new type:
+	 * * Add to schemas.json
+	 * * Run gulp schema (or gulp build)
+	 * * Call jsonValidator.validateType( yourObject, "IYourInterface")
+	 *
+	 * There are some utility functions that can wrap a type in a validator closure or give you
+	 * access to the raw object.
+	 */
+	class JsonValidator {
+	    private schemas;
+	    private validators;
+	    private version;
+	    private ajv;
+	    /**
+	     * This is a global object, you should not have to create it. See `jsonValidator`
+	     */
+	    constructor(version: string);
+	    /**
+	     * Create a display string from an error list
+	     * @param errors
+	     */
+	    errorString(errors: Ajv.ErrorObject[]): string | null;
+	    /**
+	     * Create a validation function for the given type that is used in some of the Matrix editors
+	     * @param type
+	     */
+	    validationFunction(type: string): JsonEditorValidation;
+	    /**
+	     * Validate the given data against the given schema.
+	     * @param data
+	     * @param type
+	     * @return null if valid, or an array of errors if not
+	     */
+	    validateType(data: unknown, type: string): Promise<Ajv.ErrorObject[] | null>;
+	    /**
+	     * Get the validator function for the given type
+	     * @param type
+	     */
+	    validatorByType(type: string): Promise<Ajv.ValidateFunction | null>;
+	    urlRegex: RegExp;
+	    patchVersionIntoUrl(url: string): string;
+	    /**
+	     * Get the schema object for the given type
+	     * @param type
+	     * @throws Exception if the schema is not found
+	     */
+	    schemaByType(type: string): Promise<object | null>;
+	    /**
+	     * Get the schema UI element. This can be embedded in other DOM elements
+	     * @param type The name of the type - this should exist in the schemas dir
+	     * @throws Exception if the schema is not found
+	     */
+	    schemaView(type: string): Promise<MatrixSchemaView | null>;
+	}
+	interface ISchema extends ISchemaObject {
+	}
+	type ISchemaPropertyMap = {
+	    key: String;
+	    ISchemaProperty: any;
+	};
+	interface ISchemaItem {
+	    description?: string;
+	    type?: ESchemaType;
+	    anyOf?: ISchemaItem[];
+	}
+	interface ISchemaObject extends ISchemaItem {
+	    properties?: ISchemaPropertyMap;
+	    additionalProperties?: ISchemaItem;
+	    required?: string[];
+	}
+	interface ISchemaArray extends ISchemaItem {
+	    items?: ISchemaItem;
+	}
+	enum ESchemaType {
+	    string = "string",
+	    array = "array",
+	    object = "object",
+	    number = "number",
+	    boolean = "boolean"
+	}
+	interface ISchemaPrintTypeInfo {
+	    help?: string;
+	    type?: string;
+	    subItems?: string;
+	    subItemStart?: string;
+	    subItemEnd?: string;
+	}
+	class MatrixSchemaView {
+	    schema: ISchema;
+	    constructor(schema: ISchema);
+	    render(): HTMLDivElement;
+	    renderObject(object: ISchemaObject): string;
+	    renderArray(array: ISchemaArray): string;
+	    renderProperty(prop: ISchemaItem): ISchemaPrintTypeInfo;
+	}
+	//# sourceMappingURL=JsonValidator.d.ts.map
 
 	//# sourceMappingURL=index.d.ts.map
 
