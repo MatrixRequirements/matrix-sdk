@@ -13108,7 +13108,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             setProject(project) { this.project = project; }
             getProject() { return this.project; }
         };
-        const logger = new LoggerTools_1.LoggerTools((d) => d.toString());
+        const logger = new LoggerTools_1.LoggerTools((d) => d.toString(), (d) => d);
         const json = new JSONTools_1.JSONTools(logger);
         const itemTools = new SimpleItemTools_1.SimpleItemTools();
         const itemConfig = new ItemConfiguration_1.ItemConfiguration(logger, json);
@@ -13145,6 +13145,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
         // Called by setProject on project change.
         async initializeProject() {
             const p = await this.instance.projectGet(this.getProject(), 1);
+            this.setItemConfig(this.createNewItemConfig());
+            this.getItemConfig().init(p);
         }
         log(arg) {
             if (this.debug) {
@@ -14757,19 +14759,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     })(SERVER_LOG_LEVEL || (SERVER_LOG_LEVEL = {}));
     exports.SERVER_LOG_LEVEL = SERVER_LOG_LEVEL;
     class LoggerTools {
-        constructor(functionRenderHumanDate) {
+        constructor(functionRenderHumanDate, sanitize) {
             this.verbose = false;
             this.lastLogMsg = "none";
             this.logData = [];
             this.logIdx = 0;
             this.logSize = 50;
             this.functionRenderHumanDate = functionRenderHumanDate;
+            this.functionSanitize = (sanitize) ? sanitize : (d) => { return DOMPurify.sanitize(d); };
         }
         log(id, msg) {
             if (!this.verbose && id === "debug") {
                 return;
             }
-            msg = DOMPurify.sanitize(msg) + '';
+            msg = this.functionSanitize(msg) + '';
             if (!msg) {
                 return;
             }
