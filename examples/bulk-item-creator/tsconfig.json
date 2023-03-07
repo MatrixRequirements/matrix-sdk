@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "emitDeclarationOnly": false,
+    "declaration": true,
+    "declarationMap": true,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false,
+    "module": "amd",
+    "target": "es2017",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "outDir": "./build",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/matrix-type-declarations"
+    ],
+    "lib": [
+      "es2016",
+      "dom"
+  ]
+  },
+  "paths": {
+  },
+
+  "include": [
+    "src/*.ts", "src/**/*.ts",
+    
+  ]
+}
