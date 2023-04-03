@@ -223,7 +223,10 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
         let data: matrixApi.ISetField[] = [];
         // Copied from the main project. TODO: bring order to this somehow.
-        const dhf00String = JSON.stringify({ "type": "document_options", "name": "Document Options", "fieldValue": "", "ctrlConfig": { "auto_number": false, "omit_title": false } });
+        const dhf00String = JSON.stringify({
+            "type": "document_options", "name": "Document Options",
+            "fieldValue": "", "ctrlConfig": { "auto_number": false, "omit_title": false }
+        });
         data.push({ fieldName: "dhf00", value: dhf00String });
         const id: string = await matrixApi.matrixapi.createItem(folderId, title, data);
         let item: matrixApi.IItem = await matrixApi.matrixapi.getItem(id);
