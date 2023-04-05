@@ -11,7 +11,7 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 189:
+/***/ 214:
 /***/ ((module) => {
 
 (function () {
@@ -35,20 +35,20 @@ return /******/ (() => { // webpackBootstrap
 
 /***/ }),
 
-/***/ 185:
+/***/ 210:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
 // Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(186);
+__webpack_require__(211);
 module.exports = self.fetch.bind(self);
 
 
 /***/ }),
 
-/***/ 191:
+/***/ 216:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* module decorator */ module = __webpack_require__.nmd(module);
@@ -575,7 +575,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.3.2 by @mathia
 
 /***/ }),
 
-/***/ 194:
+/***/ 219:
 /***/ ((module) => {
 
 "use strict";
@@ -663,7 +663,7 @@ module.exports = function(qs, sep, eq, options) {
 
 /***/ }),
 
-/***/ 195:
+/***/ 220:
 /***/ ((module) => {
 
 "use strict";
@@ -735,19 +735,19 @@ module.exports = function(obj, sep, eq, name) {
 
 /***/ }),
 
-/***/ 193:
+/***/ 218:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(194);
-exports.encode = exports.stringify = __webpack_require__(195);
+exports.decode = exports.parse = __webpack_require__(219);
+exports.encode = exports.stringify = __webpack_require__(220);
 
 
 /***/ }),
 
-/***/ 187:
+/***/ 212:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disable
@@ -782,12 +782,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disabl
 
 /***/ }),
 
-/***/ 188:
+/***/ 213:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -800,20 +804,20 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(190), __webpack_require__(185)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(215), __webpack_require__(210)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DefaultApi = exports.DefaultApiFactory = exports.DefaultApiFp = exports.DefaultApiFetchParamCreator = exports.RequiredError = exports.BaseAPI = exports.COLLECTION_FORMATS = void 0;
     url = __importStar(url);
     isomorphic_fetch_1 = __importDefault(isomorphic_fetch_1);
-    const btoa = __webpack_require__(189);
+    const btoa = __webpack_require__(214);
     const BASE_PATH = "https://demo23.matrixreq.com/rest/1".replace(/\/+$/, "");
     /**
      *
@@ -859,7 +863,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
      * DefaultApi - fetch parameter creator
      * @export
      */
-    exports.DefaultApiFetchParamCreator = function (configuration) {
+    const DefaultApiFetchParamCreator = function (configuration) {
         return {
             /**
              * Permissions - No permissions needed. Valid from version 2.1
@@ -7221,11 +7225,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
         };
     };
+    exports.DefaultApiFetchParamCreator = DefaultApiFetchParamCreator;
     /**
      * DefaultApi - functional programming interface
      * @export
      */
-    exports.DefaultApiFp = function (configuration) {
+    const DefaultApiFp = function (configuration) {
         return {
             /**
              * Permissions - No permissions needed. Valid from version 2.1
@@ -7235,7 +7240,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allCompareHtmlPost(arg, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allCompareHtmlPost(arg, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allCompareHtmlPost(arg, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7257,7 +7262,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allDateGet(date, dateformat, timeformat, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allDateGet(date, dateformat, timeformat, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allDateGet(date, dateformat, timeformat, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7279,7 +7284,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allFileFilenoGet(fileno, key, disposition, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allFileFilenoGet(fileno, key, disposition, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allFileFilenoGet(fileno, key, disposition, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7298,7 +7303,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allFileGet(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allFileGet(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allFileGet(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7317,7 +7322,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allFilePost(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allFilePost(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allFilePost(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7336,7 +7341,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allLicenseGet(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allLicenseGet(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allLicenseGet(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7356,7 +7361,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allLogPost(message, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allLogPost(message, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allLogPost(message, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7375,7 +7380,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allMonitorGet(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allMonitorGet(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allMonitorGet(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7400,7 +7405,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allNeedleGet(search, id, filter, fieldsOut, labels, links, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7421,7 +7426,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allNeedleminimalGet(search, filter, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allNeedleminimalGet(search, filter, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allNeedleminimalGet(search, filter, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7440,7 +7445,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allOpenapiGet(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allOpenapiGet(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allOpenapiGet(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7459,7 +7464,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allReportsGet(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allReportsGet(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allReportsGet(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7481,7 +7486,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allSendmailPost(body, system, noreply, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allSendmailPost(body, system, noreply, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allSendmailPost(body, system, noreply, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7501,7 +7506,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allServicedeskPost(body, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allServicedeskPost(body, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allServicedeskPost(body, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7520,7 +7525,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allSettingGet(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allSettingGet(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allSettingGet(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7541,7 +7546,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allSettingPost(key, value, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allSettingPost(key, value, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allSettingPost(key, value, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7560,7 +7565,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allStatusGet(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allStatusGet(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allStatusGet(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7579,7 +7584,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allTimezoneGet(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allTimezoneGet(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allTimezoneGet(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7600,7 +7605,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allTodoGet(includeDone, includeFuture, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allTodoGet(includeDone, includeFuture, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allTodoGet(includeDone, includeFuture, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7619,7 +7624,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allWebhookPost(options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).allWebhookPost(options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allWebhookPost(options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7639,7 +7644,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGet(details, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGet(details, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGet(details, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7660,7 +7665,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdDelete(groupId, confirm, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGroupIdDelete(groupId, confirm, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupIdDelete(groupId, confirm, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7681,7 +7686,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdGet(groupId, details, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGroupIdGet(groupId, details, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupIdGet(groupId, details, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7703,7 +7708,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdProjectProjectPost(groupId, project, permission, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGroupIdProjectProjectPost(groupId, project, permission, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupIdProjectProjectPost(groupId, project, permission, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7724,7 +7729,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdRenamePut(groupId, newName, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGroupIdRenamePut(groupId, newName, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupIdRenamePut(groupId, newName, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7745,7 +7750,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdUserUserPut(groupId, user, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGroupIdUserUserPut(groupId, user, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupIdUserUserPut(groupId, user, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7766,7 +7771,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdUserlistPut(groupId, users, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGroupIdUserlistPut(groupId, users, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupIdUserlistPut(groupId, users, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7786,7 +7791,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupNamePost(groupName, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGroupNamePost(groupName, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupNamePost(groupName, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7807,7 +7812,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupNameUserUserDelete(groupName, user, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).groupGroupNameUserUserDelete(groupName, user, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupNameUserUserDelete(groupName, user, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7830,7 +7835,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7850,7 +7855,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectAccessGet(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectAccessGet(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectAccessGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7881,7 +7886,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7909,7 +7914,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7929,7 +7934,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCalendarGet(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCalendarGet(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCalendarGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7951,7 +7956,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategoryDelete(project, category, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCatCategoryDelete(project, category, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCatCategoryDelete(project, category, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7973,7 +7978,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategoryGet(project, category, filter, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCatCategoryGet(project, category, filter, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCatCategoryGet(project, category, filter, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -7998,7 +8003,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategoryPut(project, category, order, shortLabel, label, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCatCategoryPut(project, category, order, shortLabel, label, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCatCategoryPut(project, category, order, shortLabel, label, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8019,7 +8024,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategorySettingGet(project, category, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCatCategorySettingGet(project, category, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCatCategorySettingGet(project, category, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8042,7 +8047,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategorySettingPost(project, category, key, value, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCatCategorySettingPost(project, category, key, value, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCatCategorySettingPost(project, category, key, value, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8062,7 +8067,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatGet(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCatGet(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCatGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8087,7 +8092,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatPost(project, label, category, fieldType, fieldParam, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCatPost(project, label, category, fieldType, fieldParam, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCatPost(project, label, category, fieldType, fieldParam, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8112,7 +8117,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8134,7 +8139,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8154,7 +8159,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectConfigcheckGet(excludeCategories, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectConfigcheckGet(excludeCategories, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectConfigcheckGet(excludeCategories, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8181,7 +8186,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8202,7 +8207,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectDelete(project, confirm, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectDelete(project, confirm, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectDelete(project, confirm, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8222,7 +8227,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectExcelxmlPost(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectExcelxmlPost(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectExcelxmlPost(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8243,7 +8248,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectExecutePost(project, body, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectExecutePost(project, body, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectExecutePost(project, body, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8264,7 +8269,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectExportGet(project, itemList, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectExportGet(project, itemList, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectExportGet(project, itemList, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8287,7 +8292,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFieldCategoryDelete(project, category, field, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectFieldCategoryDelete(project, category, field, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectFieldCategoryDelete(project, category, field, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8311,7 +8316,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFieldItemGet(project, item, field, format, download, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectFieldItemGet(project, item, field, format, download, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectFieldItemGet(project, item, field, format, download, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8336,7 +8341,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFieldPut(project, field, label, fieldParam, order, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectFieldPut(project, field, label, fieldParam, order, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectFieldPut(project, field, label, fieldParam, order, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8359,7 +8364,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFileFilenoGet(project, fileno, key, disposition, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectFileFilenoGet(project, fileno, key, disposition, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectFileFilenoGet(project, fileno, key, disposition, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8379,7 +8384,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFileGet(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectFileGet(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectFileGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8400,7 +8405,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFilePost(project, url, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectFilePost(project, url, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectFilePost(project, url, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8424,7 +8429,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFolderPost(project, parent, label, reason, fxField, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectFolderPost(project, parent, label, reason, fxField, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectFolderPost(project, parent, label, reason, fxField, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8445,7 +8450,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectGet(project, adminUI, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectGet(project, adminUI, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectGet(project, adminUI, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8466,7 +8471,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectHidePut(project, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectHidePut(project, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectHidePut(project, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8489,7 +8494,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectHookItemPost(project, item, hook, body, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectHookItemPost(project, item, hook, body, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectHookItemPost(project, item, hook, body, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8510,7 +8515,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectHtmlCleanupBlobPost(project, body, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectHtmlCleanupBlobPost(project, body, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectHtmlCleanupBlobPost(project, body, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8532,7 +8537,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectHtmlCleanupTestPost(project, body, categories, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectHtmlCleanupTestPost(project, body, categories, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectHtmlCleanupTestPost(project, body, categories, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8553,7 +8558,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectImportPost(project, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectImportPost(project, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectImportPost(project, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8579,7 +8584,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8602,7 +8607,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemItemDelete(project, item, confirm, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemItemDelete(project, item, confirm, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemItemDelete(project, item, confirm, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8628,7 +8633,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8651,7 +8656,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemItemPost(project, item, reason, at, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemItemPost(project, item, reason, at, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemItemPost(project, item, reason, at, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8686,7 +8691,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8715,7 +8720,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8738,7 +8743,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8761,7 +8766,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8783,7 +8788,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemlistItemGet(project, item, detailed, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectItemlistItemGet(project, item, detailed, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemlistItemGet(project, item, detailed, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8803,7 +8808,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobGet(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectJobGet(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectJobGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8825,7 +8830,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobJobDelete(project, job, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectJobJobDelete(project, job, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectJobJobDelete(project, job, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8850,7 +8855,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8871,7 +8876,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobJobGet(project, job, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectJobJobGet(project, job, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectJobJobGet(project, job, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8894,7 +8899,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobJobPost(project, job, progress, status, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectJobJobPost(project, job, progress, status, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectJobJobPost(project, job, progress, status, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8917,7 +8922,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectLabelhistoryGet(project, itemRef, from, to, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectLabelhistoryGet(project, itemRef, from, to, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectLabelhistoryGet(project, itemRef, from, to, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8937,7 +8942,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectMergehistoryGet(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectMergehistoryGet(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectMergehistoryGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8960,7 +8965,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectMergeinfoGet(project, excludeCategories, fromDate, push, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8983,7 +8988,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectMoveinFolderPost(project, folder, reason, items, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectMoveinFolderPost(project, folder, reason, items, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectMoveinFolderPost(project, folder, reason, items, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9010,7 +9015,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9032,7 +9037,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectNeedleminimalGet(project, search, filter, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectNeedleminimalGet(project, search, filter, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectNeedleminimalGet(project, search, filter, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9055,7 +9060,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectPost(project, label, shortLabel, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectPost(project, label, shortLabel, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectPost(project, label, shortLabel, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9078,7 +9083,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectPublishItemPost(project, item, reason, trainingFor, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectPublishItemPost(project, item, reason, trainingFor, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectPublishItemPost(project, item, reason, trainingFor, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9100,7 +9105,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectQmsfindGet(project, search, pubItem, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectQmsfindGet(project, search, pubItem, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectQmsfindGet(project, search, pubItem, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9132,7 +9137,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9154,7 +9159,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSchemaGet(project, simple, excludeCategories, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectSchemaGet(project, simple, excludeCategories, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectSchemaGet(project, simple, excludeCategories, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9174,7 +9179,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSettingGet(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectSettingGet(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectSettingGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9196,7 +9201,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSettingPost(project, key, value, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectSettingPost(project, key, value, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectSettingPost(project, key, value, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9219,7 +9224,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSignItemPost(project, item, password, acceptComments, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectSignItemPost(project, item, password, acceptComments, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectSignItemPost(project, item, password, acceptComments, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9241,7 +9246,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSignItemPut(project, item, rejectSign, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectSignItemPut(project, item, rejectSign, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectSignItemPut(project, item, rejectSign, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9264,7 +9269,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSignedreportSIGNNPost(project, url, resturl, format, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectSignedreportSIGNNPost(project, url, resturl, format, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectSignedreportSIGNNPost(project, url, resturl, format, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9284,7 +9289,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTagGet(project, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectTagGet(project, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectTagGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9308,7 +9313,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTagPost(project, label, auditId, type, comments, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectTagPost(project, label, auditId, type, comments, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectTagPost(project, label, auditId, type, comments, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9332,7 +9337,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9359,7 +9364,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9381,7 +9386,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTodoTodoidDelete(project, todoid, hardDelete, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectTodoTodoidDelete(project, todoid, hardDelete, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectTodoTodoidDelete(project, todoid, hardDelete, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9404,7 +9409,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTouchItemPut(project, item, reason, nbLayers, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectTouchItemPut(project, item, reason, nbLayers, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectTouchItemPut(project, item, reason, nbLayers, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9427,7 +9432,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTreeGet(project, fancy, filter, atDate, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectTreeGet(project, fancy, filter, atDate, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectTreeGet(project, fancy, filter, atDate, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9449,7 +9454,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectUnhidePut(project, newShort, reason, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectUnhidePut(project, newShort, reason, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectUnhidePut(project, newShort, reason, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9473,7 +9478,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9494,7 +9499,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             rootGet(adminUI, output, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).rootGet(adminUI, output, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).rootGet(adminUI, output, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9521,7 +9526,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9541,7 +9546,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userGet(details, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userGet(details, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userGet(details, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9566,7 +9571,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userPost(login, email, password, json, first, last, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userPost(login, email, password, json, first, last, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userPost(login, email, password, json, first, last, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9588,7 +9593,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserAuditGet(user, startAt, maxResults, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserAuditGet(user, startAt, maxResults, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserAuditGet(user, startAt, maxResults, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9609,7 +9614,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserCheckGet(user, password, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserCheckGet(user, password, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserCheckGet(user, password, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9630,7 +9635,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserCheckPost(user, password, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserCheckPost(user, password, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserCheckPost(user, password, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9651,7 +9656,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserDelete(user, confirm, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserDelete(user, confirm, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserDelete(user, confirm, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9671,7 +9676,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserGet(user, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserGet(user, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserGet(user, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9692,7 +9697,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserLoginPost(user, password, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserLoginPost(user, password, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserLoginPost(user, password, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9712,7 +9717,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserLogoutPost(user, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserLogoutPost(user, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserLogoutPost(user, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9735,7 +9740,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserPasswordResetPost(user, token, password, signaturePassword, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserPasswordResetPost(user, token, password, signaturePassword, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserPasswordResetPost(user, token, password, signaturePassword, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9757,7 +9762,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserProjectPost(user, project, permission, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserProjectPost(user, project, permission, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserProjectPost(user, project, permission, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9779,7 +9784,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserProjectPut(user, project, permission, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserProjectPut(user, project, permission, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserProjectPut(user, project, permission, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9799,7 +9804,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserProjectsGet(user, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserProjectsGet(user, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserProjectsGet(user, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9824,7 +9829,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserPut(user, email, password, json, first, last, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserPut(user, email, password, json, first, last, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserPut(user, email, password, json, first, last, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9845,7 +9850,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserRenamePut(user, newLogin, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserRenamePut(user, newLogin, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserRenamePut(user, newLogin, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9867,7 +9872,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserSettingPost(user, key, value, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserSettingPost(user, key, value, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserSettingPost(user, key, value, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9888,7 +9893,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserStatusPut(user, status, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserStatusPut(user, status, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserStatusPut(user, status, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9909,7 +9914,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserTokenDelete(user, value, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserTokenDelete(user, value, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserTokenDelete(user, value, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9933,7 +9938,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserTokenPost(user, purpose, value, reason, validity, options) {
-                const localVarFetchArgs = exports.DefaultApiFetchParamCreator(configuration).userUserTokenPost(user, purpose, value, reason, validity, options);
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).userUserTokenPost(user, purpose, value, reason, validity, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -9947,11 +9952,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
         };
     };
+    exports.DefaultApiFp = DefaultApiFp;
     /**
      * DefaultApi - factory interface
      * @export
      */
-    exports.DefaultApiFactory = function (configuration, fetch, basePath) {
+    const DefaultApiFactory = function (configuration, fetch, basePath) {
         return {
             /**
              * Permissions - No permissions needed. Valid from version 2.1
@@ -9961,7 +9967,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allCompareHtmlPost(arg, options) {
-                return exports.DefaultApiFp(configuration).allCompareHtmlPost(arg, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allCompareHtmlPost(arg, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -9973,7 +9979,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allDateGet(date, dateformat, timeformat, options) {
-                return exports.DefaultApiFp(configuration).allDateGet(date, dateformat, timeformat, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allDateGet(date, dateformat, timeformat, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have the right key to download the file. Valid from version 2.1
@@ -9985,7 +9991,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allFileFilenoGet(fileno, key, disposition, options) {
-                return exports.DefaultApiFp(configuration).allFileFilenoGet(fileno, key, disposition, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allFileFilenoGet(fileno, key, disposition, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -9994,7 +10000,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allFileGet(options) {
-                return exports.DefaultApiFp(configuration).allFileGet(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allFileGet(options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -10003,7 +10009,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allFilePost(options) {
-                return exports.DefaultApiFp(configuration).allFilePost(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allFilePost(options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10012,7 +10018,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allLicenseGet(options) {
-                return exports.DefaultApiFp(configuration).allLicenseGet(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allLicenseGet(options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10022,7 +10028,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allLogPost(message, options) {
-                return exports.DefaultApiFp(configuration).allLogPost(message, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allLogPost(message, options)(fetch, basePath);
             },
             /**
              * Permissions - No permissions needed. Valid from version 2.1
@@ -10031,7 +10037,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allMonitorGet(options) {
-                return exports.DefaultApiFp(configuration).allMonitorGet(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allMonitorGet(options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10046,7 +10052,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allNeedleGet(search, id, filter, fieldsOut, labels, links, options) {
-                return exports.DefaultApiFp(configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10057,7 +10063,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allNeedleminimalGet(search, filter, options) {
-                return exports.DefaultApiFp(configuration).allNeedleminimalGet(search, filter, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allNeedleminimalGet(search, filter, options)(fetch, basePath);
             },
             /**
              * Permissions - No permissions needed. Valid from version 2.2
@@ -10066,7 +10072,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allOpenapiGet(options) {
-                return exports.DefaultApiFp(configuration).allOpenapiGet(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allOpenapiGet(options)(fetch, basePath);
             },
             /**
              * Permissions - No permissions needed. Valid from version 2.1
@@ -10075,7 +10081,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allReportsGet(options) {
-                return exports.DefaultApiFp(configuration).allReportsGet(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allReportsGet(options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -10087,7 +10093,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allSendmailPost(body, system, noreply, options) {
-                return exports.DefaultApiFp(configuration).allSendmailPost(body, system, noreply, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allSendmailPost(body, system, noreply, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -10097,7 +10103,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allServicedeskPost(body, options) {
-                return exports.DefaultApiFp(configuration).allServicedeskPost(body, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allServicedeskPost(body, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10106,7 +10112,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allSettingGet(options) {
-                return exports.DefaultApiFp(configuration).allSettingGet(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allSettingGet(options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10117,7 +10123,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allSettingPost(key, value, options) {
-                return exports.DefaultApiFp(configuration).allSettingPost(key, value, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allSettingPost(key, value, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10126,7 +10132,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allStatusGet(options) {
-                return exports.DefaultApiFp(configuration).allStatusGet(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allStatusGet(options)(fetch, basePath);
             },
             /**
              * Permissions - No permissions needed. Valid from version 2.1
@@ -10135,7 +10141,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allTimezoneGet(options) {
-                return exports.DefaultApiFp(configuration).allTimezoneGet(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allTimezoneGet(options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.2
@@ -10146,7 +10152,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allTodoGet(includeDone, includeFuture, options) {
-                return exports.DefaultApiFp(configuration).allTodoGet(includeDone, includeFuture, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allTodoGet(includeDone, includeFuture, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10155,7 +10161,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             allWebhookPost(options) {
-                return exports.DefaultApiFp(configuration).allWebhookPost(options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).allWebhookPost(options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.2
@@ -10165,7 +10171,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGet(details, options) {
-                return exports.DefaultApiFp(configuration).groupGet(details, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGet(details, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -10176,7 +10182,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdDelete(groupId, confirm, options) {
-                return exports.DefaultApiFp(configuration).groupGroupIdDelete(groupId, confirm, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGroupIdDelete(groupId, confirm, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.2
@@ -10187,7 +10193,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdGet(groupId, details, options) {
-                return exports.DefaultApiFp(configuration).groupGroupIdGet(groupId, details, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGroupIdGet(groupId, details, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -10199,7 +10205,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdProjectProjectPost(groupId, project, permission, options) {
-                return exports.DefaultApiFp(configuration).groupGroupIdProjectProjectPost(groupId, project, permission, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGroupIdProjectProjectPost(groupId, project, permission, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -10210,7 +10216,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdRenamePut(groupId, newName, options) {
-                return exports.DefaultApiFp(configuration).groupGroupIdRenamePut(groupId, newName, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGroupIdRenamePut(groupId, newName, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin or the user. Valid from version 2.2
@@ -10221,7 +10227,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdUserUserPut(groupId, user, options) {
-                return exports.DefaultApiFp(configuration).groupGroupIdUserUserPut(groupId, user, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGroupIdUserUserPut(groupId, user, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -10232,7 +10238,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupIdUserlistPut(groupId, users, options) {
-                return exports.DefaultApiFp(configuration).groupGroupIdUserlistPut(groupId, users, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGroupIdUserlistPut(groupId, users, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -10242,7 +10248,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupNamePost(groupName, options) {
-                return exports.DefaultApiFp(configuration).groupGroupNamePost(groupName, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGroupNamePost(groupName, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -10253,7 +10259,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             groupGroupNameUserUserDelete(groupName, user, options) {
-                return exports.DefaultApiFp(configuration).groupGroupNameUserUserDelete(groupName, user, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).groupGroupNameUserUserDelete(groupName, user, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.3
@@ -10266,7 +10272,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options) {
-                return exports.DefaultApiFp(configuration).mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have QMS viewer access (or higher) to the project. Valid from version 2.2
@@ -10276,7 +10282,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectAccessGet(project, options) {
-                return exports.DefaultApiFp(configuration).projectAccessGet(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectAccessGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10297,7 +10303,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options) {
-                return exports.DefaultApiFp(configuration).projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.3
@@ -10315,7 +10321,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options) {
-                return exports.DefaultApiFp(configuration).projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10325,7 +10331,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCalendarGet(project, options) {
-                return exports.DefaultApiFp(configuration).projectCalendarGet(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCalendarGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10337,7 +10343,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategoryDelete(project, category, reason, options) {
-                return exports.DefaultApiFp(configuration).projectCatCategoryDelete(project, category, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCatCategoryDelete(project, category, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10349,7 +10355,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategoryGet(project, category, filter, options) {
-                return exports.DefaultApiFp(configuration).projectCatCategoryGet(project, category, filter, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCatCategoryGet(project, category, filter, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10364,7 +10370,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategoryPut(project, category, order, shortLabel, label, reason, options) {
-                return exports.DefaultApiFp(configuration).projectCatCategoryPut(project, category, order, shortLabel, label, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCatCategoryPut(project, category, order, shortLabel, label, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10375,7 +10381,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategorySettingGet(project, category, options) {
-                return exports.DefaultApiFp(configuration).projectCatCategorySettingGet(project, category, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCatCategorySettingGet(project, category, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10388,7 +10394,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatCategorySettingPost(project, category, key, value, options) {
-                return exports.DefaultApiFp(configuration).projectCatCategorySettingPost(project, category, key, value, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCatCategorySettingPost(project, category, key, value, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10398,7 +10404,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatGet(project, options) {
-                return exports.DefaultApiFp(configuration).projectCatGet(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCatGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10413,7 +10419,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCatPost(project, label, category, fieldType, fieldParam, reason, options) {
-                return exports.DefaultApiFp(configuration).projectCatPost(project, label, category, fieldType, fieldParam, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCatPost(project, label, category, fieldType, fieldParam, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10428,7 +10434,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options) {
-                return exports.DefaultApiFp(configuration).projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10440,7 +10446,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options) {
-                return exports.DefaultApiFp(configuration).projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10450,7 +10456,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectConfigcheckGet(excludeCategories, options) {
-                return exports.DefaultApiFp(configuration).projectConfigcheckGet(excludeCategories, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectConfigcheckGet(excludeCategories, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.2
@@ -10467,7 +10473,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options) {
-                return exports.DefaultApiFp(configuration).projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options)(fetch, basePath);
             },
             /**
              * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
@@ -10478,7 +10484,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectDelete(project, confirm, options) {
-                return exports.DefaultApiFp(configuration).projectDelete(project, confirm, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectDelete(project, confirm, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10488,7 +10494,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectExcelxmlPost(project, options) {
-                return exports.DefaultApiFp(configuration).projectExcelxmlPost(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectExcelxmlPost(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10499,7 +10505,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectExecutePost(project, body, options) {
-                return exports.DefaultApiFp(configuration).projectExecutePost(project, body, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectExecutePost(project, body, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10510,7 +10516,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectExportGet(project, itemList, options) {
-                return exports.DefaultApiFp(configuration).projectExportGet(project, itemList, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectExportGet(project, itemList, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10523,7 +10529,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFieldCategoryDelete(project, category, field, reason, options) {
-                return exports.DefaultApiFp(configuration).projectFieldCategoryDelete(project, category, field, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectFieldCategoryDelete(project, category, field, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10537,7 +10543,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFieldItemGet(project, item, field, format, download, options) {
-                return exports.DefaultApiFp(configuration).projectFieldItemGet(project, item, field, format, download, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectFieldItemGet(project, item, field, format, download, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10552,7 +10558,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFieldPut(project, field, label, fieldParam, order, reason, options) {
-                return exports.DefaultApiFp(configuration).projectFieldPut(project, field, label, fieldParam, order, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectFieldPut(project, field, label, fieldParam, order, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have the right key to download the file. Valid from version 2.1
@@ -10565,7 +10571,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFileFilenoGet(project, fileno, key, disposition, options) {
-                return exports.DefaultApiFp(configuration).projectFileFilenoGet(project, fileno, key, disposition, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectFileFilenoGet(project, fileno, key, disposition, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -10575,7 +10581,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFileGet(project, options) {
-                return exports.DefaultApiFp(configuration).projectFileGet(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectFileGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10586,7 +10592,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFilePost(project, url, options) {
-                return exports.DefaultApiFp(configuration).projectFilePost(project, url, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectFilePost(project, url, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
@@ -10600,7 +10606,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectFolderPost(project, parent, label, reason, fxField, options) {
-                return exports.DefaultApiFp(configuration).projectFolderPost(project, parent, label, reason, fxField, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectFolderPost(project, parent, label, reason, fxField, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10611,7 +10617,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectGet(project, adminUI, options) {
-                return exports.DefaultApiFp(configuration).projectGet(project, adminUI, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectGet(project, adminUI, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -10622,7 +10628,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectHidePut(project, reason, options) {
-                return exports.DefaultApiFp(configuration).projectHidePut(project, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectHidePut(project, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.2
@@ -10635,7 +10641,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectHookItemPost(project, item, hook, body, options) {
-                return exports.DefaultApiFp(configuration).projectHookItemPost(project, item, hook, body, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectHookItemPost(project, item, hook, body, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -10646,7 +10652,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectHtmlCleanupBlobPost(project, body, options) {
-                return exports.DefaultApiFp(configuration).projectHtmlCleanupBlobPost(project, body, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectHtmlCleanupBlobPost(project, body, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -10658,7 +10664,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectHtmlCleanupTestPost(project, body, categories, options) {
-                return exports.DefaultApiFp(configuration).projectHtmlCleanupTestPost(project, body, categories, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectHtmlCleanupTestPost(project, body, categories, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10669,7 +10675,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectImportPost(project, reason, options) {
-                return exports.DefaultApiFp(configuration).projectImportPost(project, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectImportPost(project, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10685,7 +10691,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options) {
-                return exports.DefaultApiFp(configuration).projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10698,7 +10704,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemItemDelete(project, item, confirm, reason, options) {
-                return exports.DefaultApiFp(configuration).projectItemItemDelete(project, item, confirm, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemItemDelete(project, item, confirm, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10714,7 +10720,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options) {
-                return exports.DefaultApiFp(configuration).projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10727,7 +10733,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemItemPost(project, item, reason, at, options) {
-                return exports.DefaultApiFp(configuration).projectItemItemPost(project, item, reason, at, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemItemPost(project, item, reason, at, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10752,7 +10758,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options) {
-                return exports.DefaultApiFp(configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
@@ -10771,7 +10777,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options) {
-                return exports.DefaultApiFp(configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options)(fetch, basePath);
             },
             /**
              * Permissions - ?. Valid from version 2.1
@@ -10784,7 +10790,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options) {
-                return exports.DefaultApiFp(configuration).projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10797,7 +10803,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options) {
-                return exports.DefaultApiFp(configuration).projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10809,7 +10815,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectItemlistItemGet(project, item, detailed, options) {
-                return exports.DefaultApiFp(configuration).projectItemlistItemGet(project, item, detailed, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectItemlistItemGet(project, item, detailed, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -10819,7 +10825,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobGet(project, options) {
-                return exports.DefaultApiFp(configuration).projectJobGet(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectJobGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.3
@@ -10831,7 +10837,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobJobDelete(project, job, reason, options) {
-                return exports.DefaultApiFp(configuration).projectJobJobDelete(project, job, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectJobJobDelete(project, job, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10846,7 +10852,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options) {
-                return exports.DefaultApiFp(configuration).projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10857,7 +10863,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobJobGet(project, job, options) {
-                return exports.DefaultApiFp(configuration).projectJobJobGet(project, job, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectJobJobGet(project, job, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.2
@@ -10870,7 +10876,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectJobJobPost(project, job, progress, status, options) {
-                return exports.DefaultApiFp(configuration).projectJobJobPost(project, job, progress, status, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectJobJobPost(project, job, progress, status, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -10883,7 +10889,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectLabelhistoryGet(project, itemRef, from, to, options) {
-                return exports.DefaultApiFp(configuration).projectLabelhistoryGet(project, itemRef, from, to, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectLabelhistoryGet(project, itemRef, from, to, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -10893,7 +10899,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectMergehistoryGet(project, options) {
-                return exports.DefaultApiFp(configuration).projectMergehistoryGet(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectMergehistoryGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -10906,7 +10912,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectMergeinfoGet(project, excludeCategories, fromDate, push, options) {
-                return exports.DefaultApiFp(configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -10919,7 +10925,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectMoveinFolderPost(project, folder, reason, items, options) {
-                return exports.DefaultApiFp(configuration).projectMoveinFolderPost(project, folder, reason, items, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectMoveinFolderPost(project, folder, reason, items, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10936,7 +10942,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options) {
-                return exports.DefaultApiFp(configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10948,7 +10954,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectNeedleminimalGet(project, search, filter, options) {
-                return exports.DefaultApiFp(configuration).projectNeedleminimalGet(project, search, filter, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectNeedleminimalGet(project, search, filter, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -10961,7 +10967,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectPost(project, label, shortLabel, reason, options) {
-                return exports.DefaultApiFp(configuration).projectPost(project, label, shortLabel, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectPost(project, label, shortLabel, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10974,7 +10980,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectPublishItemPost(project, item, reason, trainingFor, options) {
-                return exports.DefaultApiFp(configuration).projectPublishItemPost(project, item, reason, trainingFor, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectPublishItemPost(project, item, reason, trainingFor, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have QMS viewer access (or higher) to the project. Valid from version 2.3
@@ -10986,7 +10992,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectQmsfindGet(project, search, pubItem, options) {
-                return exports.DefaultApiFp(configuration).projectQmsfindGet(project, search, pubItem, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectQmsfindGet(project, search, pubItem, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) for the reports, read/write for the signed reports. Valid from version 2.1
@@ -11008,7 +11014,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options) {
-                return exports.DefaultApiFp(configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11020,7 +11026,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSchemaGet(project, simple, excludeCategories, options) {
-                return exports.DefaultApiFp(configuration).projectSchemaGet(project, simple, excludeCategories, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectSchemaGet(project, simple, excludeCategories, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -11030,7 +11036,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSettingGet(project, options) {
-                return exports.DefaultApiFp(configuration).projectSettingGet(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectSettingGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -11042,7 +11048,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSettingPost(project, key, value, options) {
-                return exports.DefaultApiFp(configuration).projectSettingPost(project, key, value, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectSettingPost(project, key, value, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11055,7 +11061,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSignItemPost(project, item, password, acceptComments, options) {
-                return exports.DefaultApiFp(configuration).projectSignItemPost(project, item, password, acceptComments, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectSignItemPost(project, item, password, acceptComments, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11067,7 +11073,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSignItemPut(project, item, rejectSign, options) {
-                return exports.DefaultApiFp(configuration).projectSignItemPut(project, item, rejectSign, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectSignItemPut(project, item, rejectSign, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11080,7 +11086,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectSignedreportSIGNNPost(project, url, resturl, format, options) {
-                return exports.DefaultApiFp(configuration).projectSignedreportSIGNNPost(project, url, resturl, format, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectSignedreportSIGNNPost(project, url, resturl, format, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -11090,7 +11096,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTagGet(project, options) {
-                return exports.DefaultApiFp(configuration).projectTagGet(project, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectTagGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -11104,7 +11110,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTagPost(project, label, auditId, type, comments, options) {
-                return exports.DefaultApiFp(configuration).projectTagPost(project, label, auditId, type, comments, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectTagPost(project, label, auditId, type, comments, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.2
@@ -11118,7 +11124,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options) {
-                return exports.DefaultApiFp(configuration).projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.2
@@ -11135,7 +11141,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options) {
-                return exports.DefaultApiFp(configuration).projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.2
@@ -11147,7 +11153,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTodoTodoidDelete(project, todoid, hardDelete, options) {
-                return exports.DefaultApiFp(configuration).projectTodoTodoidDelete(project, todoid, hardDelete, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectTodoTodoidDelete(project, todoid, hardDelete, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -11160,7 +11166,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTouchItemPut(project, item, reason, nbLayers, options) {
-                return exports.DefaultApiFp(configuration).projectTouchItemPut(project, item, reason, nbLayers, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectTouchItemPut(project, item, reason, nbLayers, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11173,7 +11179,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectTreeGet(project, fancy, filter, atDate, options) {
-                return exports.DefaultApiFp(configuration).projectTreeGet(project, fancy, filter, atDate, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectTreeGet(project, fancy, filter, atDate, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -11185,7 +11191,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectUnhidePut(project, newShort, reason, options) {
-                return exports.DefaultApiFp(configuration).projectUnhidePut(project, newShort, reason, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectUnhidePut(project, newShort, reason, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -11199,7 +11205,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options) {
-                return exports.DefaultApiFp(configuration).projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -11210,7 +11216,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             rootGet(adminUI, output, options) {
-                return exports.DefaultApiFp(configuration).rootGet(adminUI, output, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).rootGet(adminUI, output, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -11227,7 +11233,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options) {
-                return exports.DefaultApiFp(configuration).rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin or the user. Valid from version 2.1
@@ -11237,7 +11243,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userGet(details, options) {
-                return exports.DefaultApiFp(configuration).userGet(details, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userGet(details, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -11252,7 +11258,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userPost(login, email, password, json, first, last, options) {
-                return exports.DefaultApiFp(configuration).userPost(login, email, password, json, first, last, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userPost(login, email, password, json, first, last, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -11264,7 +11270,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserAuditGet(user, startAt, maxResults, options) {
-                return exports.DefaultApiFp(configuration).userUserAuditGet(user, startAt, maxResults, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserAuditGet(user, startAt, maxResults, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -11275,7 +11281,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserCheckGet(user, password, options) {
-                return exports.DefaultApiFp(configuration).userUserCheckGet(user, password, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserCheckGet(user, password, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -11286,7 +11292,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserCheckPost(user, password, options) {
-                return exports.DefaultApiFp(configuration).userUserCheckPost(user, password, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserCheckPost(user, password, options)(fetch, basePath);
             },
             /**
              * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
@@ -11297,7 +11303,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserDelete(user, confirm, options) {
-                return exports.DefaultApiFp(configuration).userUserDelete(user, confirm, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserDelete(user, confirm, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -11307,7 +11313,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserGet(user, options) {
-                return exports.DefaultApiFp(configuration).userUserGet(user, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserGet(user, options)(fetch, basePath);
             },
             /**
              * Permissions - No permissions needed. Valid from version 2.1
@@ -11318,7 +11324,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserLoginPost(user, password, options) {
-                return exports.DefaultApiFp(configuration).userUserLoginPost(user, password, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserLoginPost(user, password, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -11328,7 +11334,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserLogoutPost(user, options) {
-                return exports.DefaultApiFp(configuration).userUserLogoutPost(user, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserLogoutPost(user, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin or the user. Valid from version 2.1
@@ -11341,7 +11347,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserPasswordResetPost(user, token, password, signaturePassword, options) {
-                return exports.DefaultApiFp(configuration).userUserPasswordResetPost(user, token, password, signaturePassword, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserPasswordResetPost(user, token, password, signaturePassword, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -11353,7 +11359,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserProjectPost(user, project, permission, options) {
-                return exports.DefaultApiFp(configuration).userUserProjectPost(user, project, permission, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserProjectPost(user, project, permission, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -11365,7 +11371,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserProjectPut(user, project, permission, options) {
-                return exports.DefaultApiFp(configuration).userUserProjectPut(user, project, permission, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserProjectPut(user, project, permission, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -11375,7 +11381,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserProjectsGet(user, options) {
-                return exports.DefaultApiFp(configuration).userUserProjectsGet(user, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserProjectsGet(user, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin or the user. Valid from version 2.1
@@ -11390,7 +11396,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserPut(user, email, password, json, first, last, options) {
-                return exports.DefaultApiFp(configuration).userUserPut(user, email, password, json, first, last, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserPut(user, email, password, json, first, last, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
@@ -11401,7 +11407,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserRenamePut(user, newLogin, options) {
-                return exports.DefaultApiFp(configuration).userUserRenamePut(user, newLogin, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserRenamePut(user, newLogin, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin or the user. Valid from version 2.1
@@ -11413,7 +11419,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserSettingPost(user, key, value, options) {
-                return exports.DefaultApiFp(configuration).userUserSettingPost(user, key, value, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserSettingPost(user, key, value, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -11424,7 +11430,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserStatusPut(user, status, options) {
-                return exports.DefaultApiFp(configuration).userUserStatusPut(user, status, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserStatusPut(user, status, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin or the user. Valid from version 2.1
@@ -11435,7 +11441,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserTokenDelete(user, value, options) {
-                return exports.DefaultApiFp(configuration).userUserTokenDelete(user, value, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserTokenDelete(user, value, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin or the user. Valid from version 2.1
@@ -11449,10 +11455,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @throws {RequiredError}
              */
             userUserTokenPost(user, purpose, value, reason, validity, options) {
-                return exports.DefaultApiFp(configuration).userUserTokenPost(user, purpose, value, reason, validity, options)(fetch, basePath);
+                return (0, exports.DefaultApiFp)(configuration).userUserTokenPost(user, purpose, value, reason, validity, options)(fetch, basePath);
             },
         };
     };
+    exports.DefaultApiFactory = DefaultApiFactory;
     /**
      * DefaultApi - object-oriented interface
      * @export
@@ -11469,7 +11476,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allCompareHtmlPost(arg, options) {
-            return exports.DefaultApiFp(this.configuration).allCompareHtmlPost(arg, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allCompareHtmlPost(arg, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -11482,7 +11489,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allDateGet(date, dateformat, timeformat, options) {
-            return exports.DefaultApiFp(this.configuration).allDateGet(date, dateformat, timeformat, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allDateGet(date, dateformat, timeformat, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have the right key to download the file. Valid from version 2.1
@@ -11495,7 +11502,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allFileFilenoGet(fileno, key, disposition, options) {
-            return exports.DefaultApiFp(this.configuration).allFileFilenoGet(fileno, key, disposition, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allFileFilenoGet(fileno, key, disposition, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11505,7 +11512,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allFileGet(options) {
-            return exports.DefaultApiFp(this.configuration).allFileGet(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allFileGet(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -11515,7 +11522,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allFilePost(options) {
-            return exports.DefaultApiFp(this.configuration).allFilePost(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allFilePost(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -11525,7 +11532,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allLicenseGet(options) {
-            return exports.DefaultApiFp(this.configuration).allLicenseGet(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allLicenseGet(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11536,7 +11543,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allLogPost(message, options) {
-            return exports.DefaultApiFp(this.configuration).allLogPost(message, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allLogPost(message, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - No permissions needed. Valid from version 2.1
@@ -11546,7 +11553,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allMonitorGet(options) {
-            return exports.DefaultApiFp(this.configuration).allMonitorGet(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allMonitorGet(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11562,7 +11569,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allNeedleGet(search, id, filter, fieldsOut, labels, links, options) {
-            return exports.DefaultApiFp(this.configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11574,7 +11581,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allNeedleminimalGet(search, filter, options) {
-            return exports.DefaultApiFp(this.configuration).allNeedleminimalGet(search, filter, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allNeedleminimalGet(search, filter, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - No permissions needed. Valid from version 2.2
@@ -11584,7 +11591,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allOpenapiGet(options) {
-            return exports.DefaultApiFp(this.configuration).allOpenapiGet(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allOpenapiGet(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - No permissions needed. Valid from version 2.1
@@ -11594,7 +11601,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allReportsGet(options) {
-            return exports.DefaultApiFp(this.configuration).allReportsGet(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allReportsGet(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -11607,7 +11614,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allSendmailPost(body, system, noreply, options) {
-            return exports.DefaultApiFp(this.configuration).allSendmailPost(body, system, noreply, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allSendmailPost(body, system, noreply, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -11618,7 +11625,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allServicedeskPost(body, options) {
-            return exports.DefaultApiFp(this.configuration).allServicedeskPost(body, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allServicedeskPost(body, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11628,7 +11635,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allSettingGet(options) {
-            return exports.DefaultApiFp(this.configuration).allSettingGet(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allSettingGet(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -11640,7 +11647,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allSettingPost(key, value, options) {
-            return exports.DefaultApiFp(this.configuration).allSettingPost(key, value, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allSettingPost(key, value, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11650,7 +11657,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allStatusGet(options) {
-            return exports.DefaultApiFp(this.configuration).allStatusGet(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allStatusGet(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - No permissions needed. Valid from version 2.1
@@ -11660,7 +11667,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allTimezoneGet(options) {
-            return exports.DefaultApiFp(this.configuration).allTimezoneGet(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allTimezoneGet(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.2
@@ -11672,7 +11679,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allTodoGet(includeDone, includeFuture, options) {
-            return exports.DefaultApiFp(this.configuration).allTodoGet(includeDone, includeFuture, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allTodoGet(includeDone, includeFuture, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -11682,7 +11689,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         allWebhookPost(options) {
-            return exports.DefaultApiFp(this.configuration).allWebhookPost(options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).allWebhookPost(options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.2
@@ -11693,7 +11700,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGet(details, options) {
-            return exports.DefaultApiFp(this.configuration).groupGet(details, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGet(details, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -11705,7 +11712,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGroupIdDelete(groupId, confirm, options) {
-            return exports.DefaultApiFp(this.configuration).groupGroupIdDelete(groupId, confirm, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGroupIdDelete(groupId, confirm, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.2
@@ -11717,7 +11724,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGroupIdGet(groupId, details, options) {
-            return exports.DefaultApiFp(this.configuration).groupGroupIdGet(groupId, details, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGroupIdGet(groupId, details, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -11730,7 +11737,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGroupIdProjectProjectPost(groupId, project, permission, options) {
-            return exports.DefaultApiFp(this.configuration).groupGroupIdProjectProjectPost(groupId, project, permission, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGroupIdProjectProjectPost(groupId, project, permission, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -11742,7 +11749,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGroupIdRenamePut(groupId, newName, options) {
-            return exports.DefaultApiFp(this.configuration).groupGroupIdRenamePut(groupId, newName, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGroupIdRenamePut(groupId, newName, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin or the user. Valid from version 2.2
@@ -11754,7 +11761,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGroupIdUserUserPut(groupId, user, options) {
-            return exports.DefaultApiFp(this.configuration).groupGroupIdUserUserPut(groupId, user, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGroupIdUserUserPut(groupId, user, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -11766,7 +11773,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGroupIdUserlistPut(groupId, users, options) {
-            return exports.DefaultApiFp(this.configuration).groupGroupIdUserlistPut(groupId, users, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGroupIdUserlistPut(groupId, users, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -11777,7 +11784,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGroupNamePost(groupName, options) {
-            return exports.DefaultApiFp(this.configuration).groupGroupNamePost(groupName, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGroupNamePost(groupName, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -11789,7 +11796,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         groupGroupNameUserUserDelete(groupName, user, options) {
-            return exports.DefaultApiFp(this.configuration).groupGroupNameUserUserDelete(groupName, user, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).groupGroupNameUserUserDelete(groupName, user, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.3
@@ -11803,7 +11810,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options) {
-            return exports.DefaultApiFp(this.configuration).mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).mainprojectMergeBranchprojectPost(mainproject, branchproject, reason, body, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have QMS viewer access (or higher) to the project. Valid from version 2.2
@@ -11814,7 +11821,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectAccessGet(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectAccessGet(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectAccessGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11836,7 +11843,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options) {
-            return exports.DefaultApiFp(this.configuration).projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectAuditGet(project, startAt, maxResults, deleteOnly, tech, auditIdMin, auditIdMax, noReport, noImport, include, resolveRef, itemRef, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.3
@@ -11855,7 +11862,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options) {
-            return exports.DefaultApiFp(this.configuration).projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectBranchPost(project, label, shortLabel, keepPermissions, keepContent, branch, history, tagToCreate, branchInThePastTag, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11866,7 +11873,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCalendarGet(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectCalendarGet(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCalendarGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -11879,7 +11886,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCatCategoryDelete(project, category, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectCatCategoryDelete(project, category, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCatCategoryDelete(project, category, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11892,7 +11899,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCatCategoryGet(project, category, filter, options) {
-            return exports.DefaultApiFp(this.configuration).projectCatCategoryGet(project, category, filter, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCatCategoryGet(project, category, filter, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -11908,7 +11915,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCatCategoryPut(project, category, order, shortLabel, label, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectCatCategoryPut(project, category, order, shortLabel, label, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCatCategoryPut(project, category, order, shortLabel, label, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11920,7 +11927,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCatCategorySettingGet(project, category, options) {
-            return exports.DefaultApiFp(this.configuration).projectCatCategorySettingGet(project, category, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCatCategorySettingGet(project, category, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -11934,7 +11941,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCatCategorySettingPost(project, category, key, value, options) {
-            return exports.DefaultApiFp(this.configuration).projectCatCategorySettingPost(project, category, key, value, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCatCategorySettingPost(project, category, key, value, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11945,7 +11952,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCatGet(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectCatGet(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCatGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -11961,7 +11968,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCatPost(project, label, category, fieldType, fieldParam, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectCatPost(project, label, category, fieldType, fieldParam, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCatPost(project, label, category, fieldType, fieldParam, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -11977,7 +11984,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options) {
-            return exports.DefaultApiFp(this.configuration).projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectClonePost(project, label, shortLabel, keepHistory, keepContent, keepPermissions, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -11990,7 +11997,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options) {
-            return exports.DefaultApiFp(this.configuration).projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCompareSignitem1Signitem2Post(project, signitem1, signitem2, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12001,7 +12008,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectConfigcheckGet(excludeCategories, options) {
-            return exports.DefaultApiFp(this.configuration).projectConfigcheckGet(excludeCategories, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectConfigcheckGet(excludeCategories, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.2
@@ -12019,7 +12026,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options) {
-            return exports.DefaultApiFp(this.configuration).projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
@@ -12031,7 +12038,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectDelete(project, confirm, options) {
-            return exports.DefaultApiFp(this.configuration).projectDelete(project, confirm, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectDelete(project, confirm, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12042,7 +12049,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectExcelxmlPost(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectExcelxmlPost(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectExcelxmlPost(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12054,7 +12061,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectExecutePost(project, body, options) {
-            return exports.DefaultApiFp(this.configuration).projectExecutePost(project, body, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectExecutePost(project, body, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12066,7 +12073,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectExportGet(project, itemList, options) {
-            return exports.DefaultApiFp(this.configuration).projectExportGet(project, itemList, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectExportGet(project, itemList, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -12080,7 +12087,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectFieldCategoryDelete(project, category, field, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectFieldCategoryDelete(project, category, field, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectFieldCategoryDelete(project, category, field, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12095,7 +12102,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectFieldItemGet(project, item, field, format, download, options) {
-            return exports.DefaultApiFp(this.configuration).projectFieldItemGet(project, item, field, format, download, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectFieldItemGet(project, item, field, format, download, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -12111,7 +12118,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectFieldPut(project, field, label, fieldParam, order, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectFieldPut(project, field, label, fieldParam, order, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectFieldPut(project, field, label, fieldParam, order, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have the right key to download the file. Valid from version 2.1
@@ -12125,7 +12132,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectFileFilenoGet(project, fileno, key, disposition, options) {
-            return exports.DefaultApiFp(this.configuration).projectFileFilenoGet(project, fileno, key, disposition, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectFileFilenoGet(project, fileno, key, disposition, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -12136,7 +12143,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectFileGet(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectFileGet(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectFileGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12148,7 +12155,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectFilePost(project, url, options) {
-            return exports.DefaultApiFp(this.configuration).projectFilePost(project, url, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectFilePost(project, url, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
@@ -12163,7 +12170,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectFolderPost(project, parent, label, reason, fxField, options) {
-            return exports.DefaultApiFp(this.configuration).projectFolderPost(project, parent, label, reason, fxField, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectFolderPost(project, parent, label, reason, fxField, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12175,7 +12182,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectGet(project, adminUI, options) {
-            return exports.DefaultApiFp(this.configuration).projectGet(project, adminUI, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectGet(project, adminUI, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -12187,7 +12194,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectHidePut(project, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectHidePut(project, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectHidePut(project, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.2
@@ -12201,7 +12208,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectHookItemPost(project, item, hook, body, options) {
-            return exports.DefaultApiFp(this.configuration).projectHookItemPost(project, item, hook, body, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectHookItemPost(project, item, hook, body, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -12213,7 +12220,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectHtmlCleanupBlobPost(project, body, options) {
-            return exports.DefaultApiFp(this.configuration).projectHtmlCleanupBlobPost(project, body, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectHtmlCleanupBlobPost(project, body, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -12226,7 +12233,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectHtmlCleanupTestPost(project, body, categories, options) {
-            return exports.DefaultApiFp(this.configuration).projectHtmlCleanupTestPost(project, body, categories, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectHtmlCleanupTestPost(project, body, categories, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12238,7 +12245,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectImportPost(project, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectImportPost(project, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectImportPost(project, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12255,7 +12262,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemFolderGet(project, folder, history, filter, children, atDate, fields, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12269,7 +12276,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemItemDelete(project, item, confirm, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemItemDelete(project, item, confirm, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemItemDelete(project, item, confirm, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12286,7 +12293,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemItemGet(project, item, history, fields, filter, atDate, withTree, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12300,7 +12307,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemItemPost(project, item, reason, at, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemItemPost(project, item, reason, at, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemItemPost(project, item, reason, at, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12326,7 +12333,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
@@ -12346,7 +12353,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - ?. Valid from version 2.1
@@ -12360,7 +12367,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemlinkUpitemDownitemDelete(project, upitem, downitem, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12374,7 +12381,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemlinkUpitemDownitemPost(project, upitem, downitem, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12387,7 +12394,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectItemlistItemGet(project, item, detailed, options) {
-            return exports.DefaultApiFp(this.configuration).projectItemlistItemGet(project, item, detailed, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemlistItemGet(project, item, detailed, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -12398,7 +12405,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectJobGet(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectJobGet(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectJobGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.3
@@ -12411,7 +12418,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectJobJobDelete(project, job, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectJobJobDelete(project, job, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectJobJobDelete(project, job, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12427,7 +12434,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options) {
-            return exports.DefaultApiFp(this.configuration).projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectJobJobFilenoGet(project, job, fileno, mode, format, disposition, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12439,7 +12446,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectJobJobGet(project, job, options) {
-            return exports.DefaultApiFp(this.configuration).projectJobJobGet(project, job, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectJobJobGet(project, job, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.2
@@ -12453,7 +12460,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectJobJobPost(project, job, progress, status, options) {
-            return exports.DefaultApiFp(this.configuration).projectJobJobPost(project, job, progress, status, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectJobJobPost(project, job, progress, status, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -12467,7 +12474,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectLabelhistoryGet(project, itemRef, from, to, options) {
-            return exports.DefaultApiFp(this.configuration).projectLabelhistoryGet(project, itemRef, from, to, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectLabelhistoryGet(project, itemRef, from, to, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -12478,7 +12485,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectMergehistoryGet(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectMergehistoryGet(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectMergehistoryGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.3
@@ -12492,7 +12499,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectMergeinfoGet(project, excludeCategories, fromDate, push, options) {
-            return exports.DefaultApiFp(this.configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12506,7 +12513,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectMoveinFolderPost(project, folder, reason, items, options) {
-            return exports.DefaultApiFp(this.configuration).projectMoveinFolderPost(project, folder, reason, items, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectMoveinFolderPost(project, folder, reason, items, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12524,7 +12531,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options) {
-            return exports.DefaultApiFp(this.configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12537,7 +12544,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectNeedleminimalGet(project, search, filter, options) {
-            return exports.DefaultApiFp(this.configuration).projectNeedleminimalGet(project, search, filter, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectNeedleminimalGet(project, search, filter, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -12551,7 +12558,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectPost(project, label, shortLabel, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectPost(project, label, shortLabel, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectPost(project, label, shortLabel, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12565,7 +12572,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectPublishItemPost(project, item, reason, trainingFor, options) {
-            return exports.DefaultApiFp(this.configuration).projectPublishItemPost(project, item, reason, trainingFor, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectPublishItemPost(project, item, reason, trainingFor, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have QMS viewer access (or higher) to the project. Valid from version 2.3
@@ -12578,7 +12585,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectQmsfindGet(project, search, pubItem, options) {
-            return exports.DefaultApiFp(this.configuration).projectQmsfindGet(project, search, pubItem, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectQmsfindGet(project, search, pubItem, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) for the reports, read/write for the signed reports. Valid from version 2.1
@@ -12601,7 +12608,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options) {
-            return exports.DefaultApiFp(this.configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12614,7 +12621,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectSchemaGet(project, simple, excludeCategories, options) {
-            return exports.DefaultApiFp(this.configuration).projectSchemaGet(project, simple, excludeCategories, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectSchemaGet(project, simple, excludeCategories, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -12625,7 +12632,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectSettingGet(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectSettingGet(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectSettingGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12638,7 +12645,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectSettingPost(project, key, value, options) {
-            return exports.DefaultApiFp(this.configuration).projectSettingPost(project, key, value, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectSettingPost(project, key, value, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12652,7 +12659,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectSignItemPost(project, item, password, acceptComments, options) {
-            return exports.DefaultApiFp(this.configuration).projectSignItemPost(project, item, password, acceptComments, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectSignItemPost(project, item, password, acceptComments, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12665,7 +12672,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectSignItemPut(project, item, rejectSign, options) {
-            return exports.DefaultApiFp(this.configuration).projectSignItemPut(project, item, rejectSign, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectSignItemPut(project, item, rejectSign, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12679,7 +12686,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectSignedreportSIGNNPost(project, url, resturl, format, options) {
-            return exports.DefaultApiFp(this.configuration).projectSignedreportSIGNNPost(project, url, resturl, format, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectSignedreportSIGNNPost(project, url, resturl, format, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -12690,7 +12697,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectTagGet(project, options) {
-            return exports.DefaultApiFp(this.configuration).projectTagGet(project, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectTagGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12705,7 +12712,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectTagPost(project, label, auditId, type, comments, options) {
-            return exports.DefaultApiFp(this.configuration).projectTagPost(project, label, auditId, type, comments, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectTagPost(project, label, auditId, type, comments, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.2
@@ -12720,7 +12727,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options) {
-            return exports.DefaultApiFp(this.configuration).projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectTodoGet(project, itemRef, includeDone, includeAllUsers, includeFuture, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.2
@@ -12738,7 +12745,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options) {
-            return exports.DefaultApiFp(this.configuration).projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectTodoItemPost(project, item, text, fieldId, logins, todoType, atDate, auto, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.2
@@ -12751,7 +12758,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectTodoTodoidDelete(project, todoid, hardDelete, options) {
-            return exports.DefaultApiFp(this.configuration).projectTodoTodoidDelete(project, todoid, hardDelete, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectTodoTodoidDelete(project, todoid, hardDelete, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12765,7 +12772,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectTouchItemPut(project, item, reason, nbLayers, options) {
-            return exports.DefaultApiFp(this.configuration).projectTouchItemPut(project, item, reason, nbLayers, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectTouchItemPut(project, item, reason, nbLayers, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12779,7 +12786,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectTreeGet(project, fancy, filter, atDate, options) {
-            return exports.DefaultApiFp(this.configuration).projectTreeGet(project, fancy, filter, atDate, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectTreeGet(project, fancy, filter, atDate, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -12792,7 +12799,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectUnhidePut(project, newShort, reason, options) {
-            return exports.DefaultApiFp(this.configuration).projectUnhidePut(project, newShort, reason, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectUnhidePut(project, newShort, reason, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -12807,7 +12814,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options) {
-            return exports.DefaultApiFp(this.configuration).projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).projectWordconvertPost(project, reason, fileNo, targetDocumentFolder, useAsField, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -12819,7 +12826,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         rootGet(adminUI, output, options) {
-            return exports.DefaultApiFp(this.configuration).rootGet(adminUI, output, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).rootGet(adminUI, output, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -12837,7 +12844,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options) {
-            return exports.DefaultApiFp(this.configuration).rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).rootPost(label, shortLabel, overwrite, importUsers, branchLabel, branchTag, branchComment, branchBaseProjectLabel, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin or the user. Valid from version 2.1
@@ -12848,7 +12855,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userGet(details, options) {
-            return exports.DefaultApiFp(this.configuration).userGet(details, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userGet(details, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -12864,7 +12871,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userPost(login, email, password, json, first, last, options) {
-            return exports.DefaultApiFp(this.configuration).userPost(login, email, password, json, first, last, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userPost(login, email, password, json, first, last, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -12877,7 +12884,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserAuditGet(user, startAt, maxResults, options) {
-            return exports.DefaultApiFp(this.configuration).userUserAuditGet(user, startAt, maxResults, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserAuditGet(user, startAt, maxResults, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -12889,7 +12896,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserCheckGet(user, password, options) {
-            return exports.DefaultApiFp(this.configuration).userUserCheckGet(user, password, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserCheckGet(user, password, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -12901,7 +12908,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserCheckPost(user, password, options) {
-            return exports.DefaultApiFp(this.configuration).userUserCheckPost(user, password, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserCheckPost(user, password, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
@@ -12913,7 +12920,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserDelete(user, confirm, options) {
-            return exports.DefaultApiFp(this.configuration).userUserDelete(user, confirm, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserDelete(user, confirm, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -12924,7 +12931,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserGet(user, options) {
-            return exports.DefaultApiFp(this.configuration).userUserGet(user, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserGet(user, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - No permissions needed. Valid from version 2.1
@@ -12936,7 +12943,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserLoginPost(user, password, options) {
-            return exports.DefaultApiFp(this.configuration).userUserLoginPost(user, password, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserLoginPost(user, password, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have a valid authentication. Valid from version 2.1
@@ -12947,7 +12954,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserLogoutPost(user, options) {
-            return exports.DefaultApiFp(this.configuration).userUserLogoutPost(user, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserLogoutPost(user, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin or the user. Valid from version 2.1
@@ -12961,7 +12968,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserPasswordResetPost(user, token, password, signaturePassword, options) {
-            return exports.DefaultApiFp(this.configuration).userUserPasswordResetPost(user, token, password, signaturePassword, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserPasswordResetPost(user, token, password, signaturePassword, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -12974,7 +12981,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserProjectPost(user, project, permission, options) {
-            return exports.DefaultApiFp(this.configuration).userUserProjectPost(user, project, permission, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserProjectPost(user, project, permission, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -12987,7 +12994,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserProjectPut(user, project, permission, options) {
-            return exports.DefaultApiFp(this.configuration).userUserProjectPut(user, project, permission, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserProjectPut(user, project, permission, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
@@ -12998,7 +13005,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserProjectsGet(user, options) {
-            return exports.DefaultApiFp(this.configuration).userUserProjectsGet(user, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserProjectsGet(user, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin or the user. Valid from version 2.1
@@ -13014,7 +13021,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserPut(user, email, password, json, first, last, options) {
-            return exports.DefaultApiFp(this.configuration).userUserPut(user, email, password, json, first, last, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserPut(user, email, password, json, first, last, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
@@ -13026,7 +13033,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserRenamePut(user, newLogin, options) {
-            return exports.DefaultApiFp(this.configuration).userUserRenamePut(user, newLogin, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserRenamePut(user, newLogin, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin or the user. Valid from version 2.1
@@ -13039,7 +13046,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserSettingPost(user, key, value, options) {
-            return exports.DefaultApiFp(this.configuration).userUserSettingPost(user, key, value, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserSettingPost(user, key, value, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -13051,7 +13058,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserStatusPut(user, status, options) {
-            return exports.DefaultApiFp(this.configuration).userUserStatusPut(user, status, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserStatusPut(user, status, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin or the user. Valid from version 2.1
@@ -13063,7 +13070,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserTokenDelete(user, value, options) {
-            return exports.DefaultApiFp(this.configuration).userUserTokenDelete(user, value, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserTokenDelete(user, value, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin or the user. Valid from version 2.1
@@ -13078,7 +13085,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @memberof DefaultApi
          */
         userUserTokenPost(user, purpose, value, reason, validity, options) {
-            return exports.DefaultApiFp(this.configuration).userUserTokenPost(user, purpose, value, reason, validity, options)(this.fetch, this.basePath);
+            return (0, exports.DefaultApiFp)(this.configuration).userUserTokenPost(user, purpose, value, reason, validity, options)(this.fetch, this.basePath);
         }
     }
     exports.DefaultApi = DefaultApi;
@@ -13088,13 +13095,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 
 /***/ }),
 
-/***/ 184:
+/***/ 209:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(185), __webpack_require__(58), __webpack_require__(187), __webpack_require__(188), __webpack_require__(70), __webpack_require__(68), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, isomorphic_fetch_1, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(210), __webpack_require__(79), __webpack_require__(212), __webpack_require__(213), __webpack_require__(94), __webpack_require__(92), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, isomorphic_fetch_1, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.CreateConsoleAPI = exports.StandaloneMatrixAPI = void 0;
@@ -13791,7 +13798,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
 
 /***/ }),
 
-/***/ 32:
+/***/ 30:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// example generation of json schema from typescript type
@@ -13901,10 +13908,205 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 58:
+/***/ 67:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ProjectSettings_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.BasicFunctions = void 0;
+    class BasicFunctions {
+        static isTrue(obj) {
+            if (obj && (obj.toString().toLowerCase() === "true" || obj.toString() === "1")) {
+                return true;
+            }
+            return false;
+        }
+        static isFalse(obj) {
+            if (typeof obj == "undefined") {
+                return false;
+            }
+            if (obj == false || obj == 0 || obj.toString().toLowerCase() === "false" || obj.toString() === "0") {
+                return true;
+            }
+            return false;
+        }
+    }
+    exports.BasicFunctions = BasicFunctions;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 33:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.FieldDescriptions = void 0;
+    class FieldDescriptions {
+        static findById(idToFind) {
+            const result = this.descriptions.filter((description) => description.id === idToFind);
+            return result.length === 1 ? result[0] : undefined;
+        }
+        static appendFieldDescriptions(newFields) {
+            for (let fco of newFields) {
+                if (!this.findById(fco.id)) {
+                    this.descriptions.push(fco);
+                }
+            }
+        }
+        static get() { return FieldDescriptions.descriptions; }
+        static setValidationFunction(fieldId, validator) {
+            let fieldDesc = FieldDescriptions.findById(fieldId);
+            if (!fieldDesc) {
+                throw new Error(`No such field type ${fieldId} registered`);
+            }
+            fieldDesc.capabilities.validationFunction = validator;
+        }
+    }
+    exports.FieldDescriptions = FieldDescriptions;
+    FieldDescriptions.Field_sourceref = "sourceref";
+    FieldDescriptions.Field_markAsTemplate = "markAsTemplate";
+    FieldDescriptions.Field_dhf = "dhf";
+    FieldDescriptions.Field_docFilter = "docFilter";
+    // normal fields
+    FieldDescriptions.Field_richtext = "richtext";
+    FieldDescriptions.Field_text = "text";
+    FieldDescriptions.Field_section = "section";
+    FieldDescriptions.Field_fileManager = "fileManager";
+    FieldDescriptions.Field_tasksControl = "tasksControl";
+    FieldDescriptions.Field_textline = "textline";
+    FieldDescriptions.Field_user = "user";
+    FieldDescriptions.Field_date = "date";
+    FieldDescriptions.Field_dropdown = "dropdown";
+    FieldDescriptions.Field_links = "links";
+    FieldDescriptions.Field_uplinkinfo = "uplinkinfo";
+    FieldDescriptions.Field_crosslinks = "crosslinks";
+    FieldDescriptions.Field_risk2 = "risk2";
+    FieldDescriptions.Field_checkbox = "checkbox";
+    FieldDescriptions.Field_gateControl = "gateControl";
+    FieldDescriptions.Field_colorPicker = "colorPicker";
+    FieldDescriptions.Field_steplist = "steplist";
+    // toolbar
+    FieldDescriptions.Field_labels = "labels";
+    FieldDescriptions.Field_workflow = "workflow";
+    // tests and xtcs
+    FieldDescriptions.Field_test_steps = "test_steps";
+    FieldDescriptions.Field_test_steps_result = "test_steps_result";
+    FieldDescriptions.Field_test_result = "test_result";
+    // agile sync
+    FieldDescriptions.Field_syncStatus = "syncStatus";
+    FieldDescriptions.Field_syncSourceInfo = "syncSourceInfo";
+    // beta should not be used really
+    FieldDescriptions.Field_report = "report";
+    FieldDescriptions.Field_cascadingSelect = "cascadingSelect";
+    FieldDescriptions.Field_hyperlink = "hyperlink";
+    // technical - these need to be added once when creating a new DOC category or something special like this
+    FieldDescriptions.Field_reportId = "reportId";
+    FieldDescriptions.Field_filter_file = "filter_file";
+    FieldDescriptions.Field_signature = "signature";
+    FieldDescriptions.Field_signatureControl = "signatureControl";
+    FieldDescriptions.Field_signCache = "signCache";
+    FieldDescriptions.Field_publishedItemList = "publishedItemList";
+    FieldDescriptions.Field_publishedFilesList = "publishedFilesList";
+    FieldDescriptions.Field_publishedContent = "publishedContent";
+    FieldDescriptions.Field_publishedTitle = "publishedTitle";
+    FieldDescriptions.Field_docTraining = "docTraining";
+    FieldDescriptions.Field_docReview = "docReview";
+    FieldDescriptions.Field_risk = "risk";
+    FieldDescriptions.Field_htmlForm = "htmlForm";
+    FieldDescriptions.Field_hidden = "hidden";
+    FieldDescriptions.Field_guid = "guid";
+    FieldDescriptions.Field_oid = "oid";
+    FieldDescriptions.Field_versionLive = "versionLive";
+    FieldDescriptions.Field_version = "version";
+    FieldDescriptions.Field_currentVersion = "currentVersion";
+    FieldDescriptions.Field_riskFolder = "riskFolder";
+    FieldDescriptions.Field_reviewControl = "reviewControl";
+    // A [fieldId]: JsonValidationFunction map built up at runtime.
+    // We can't build this at compile time because validation functions are high-level entities.
+    FieldDescriptions.validationFunctions = {};
+    FieldDescriptions.descriptions = [
+        // docs and sign
+        { id: FieldDescriptions.Field_sourceref, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Source (Original Document) [sourceref]", class: "docsign", help: "keeps a reference to original document when copying and pasting" },
+        { id: FieldDescriptions.Field_markAsTemplate, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Mark as template [markAsTemplate]", class: "docsign", help: "allows to define DOC templates which can be used in other projects" },
+        { id: FieldDescriptions.Field_dhf, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "DFH field  [dhf]", class: "docs", help: "for documents only: holds a section in a document" },
+        { id: FieldDescriptions.Field_docFilter, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Label Filter in DOCs [docFilter]", class: "docs", help: "a special field for Document categories to filter documents by label" },
+        // normal fields
+        { id: FieldDescriptions.Field_richtext, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Rich Text Control [richtext]", class: "all", help: "a rich text editor field (with formatting)" },
+        { id: FieldDescriptions.Field_text, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Plain Text Control [text]", class: "all", help: "a text editor field (no formatting)" },
+        { id: FieldDescriptions.Field_section, capabilities: { canBeUsedInDocs: false, canHideInDoc: false, canBeXtcPreset: false, canBePublished: true, canBeReadonly: false, canRequireContent: false }, label: "Section with explanation [section]", class: "all", help: "a title with some explanation to separate fields" },
+        { id: FieldDescriptions.Field_fileManager, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "File Manager Control [fileManager]", class: "all", help: "a control which allows to attach files by browsing or drag and drop" },
+        { id: FieldDescriptions.Field_tasksControl, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Tasks Control [tasksControl]", class: "all", help: "a field which shows links to external systems, like JIRA, github etc. (eg extensions folder)" },
+        { id: FieldDescriptions.Field_textline, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Text Line Control [textline]", class: "all", help: "a field for one line of text" },
+        { id: FieldDescriptions.Field_user, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "User Select Control [user]", class: "all", help: "a drop down to select a user in the project" },
+        { id: FieldDescriptions.Field_date, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Date Select Control [date]", class: "all", help: "a field to select a date" },
+        { id: FieldDescriptions.Field_dropdown, capabilities: { canBeUnsafe: true, needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Drop Down Control [dropdown]", class: "all", help: "a drop-down selection field" },
+        { id: FieldDescriptions.Field_links, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Down Traces Control [links]", class: "all", help: "a field to show and edit down traces as defined in the traceability configuration" },
+        { id: FieldDescriptions.Field_uplinkinfo, capabilities: { schema: "IUpLinkDetails", needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Uplink information [uplinkinfo]", class: "all", help: "a field to show information about up traces in the user interface" },
+        { id: FieldDescriptions.Field_crosslinks, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Cross Project Link Control [crosslinks]", class: "all", help: "a field to add links to other matrix projects" },
+        { id: FieldDescriptions.Field_risk2, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Risk Control [risk2]", class: "all", help: "a field rendering an FMEA-type risk field" },
+        { id: FieldDescriptions.Field_checkbox, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "Checkbox Control [checkbox]", class: "all", help: "a checkbox field" },
+        {
+            id: FieldDescriptions.Field_gateControl,
+            capabilities: {
+                canBeUnsafe: true, needsConfiguration: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: false,
+                canBeReadonly: true, schema: "IGate"
+            },
+            label: "Gate Control [gateControl]", class: "all", help: "a quality gate field"
+        },
+        {
+            id: FieldDescriptions.Field_colorPicker,
+            capabilities: {
+                canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true,
+                canBePublished: true, canBeReadonly: true, canRequireContent: true
+            },
+            label: "Color picker [colorPicker]", class: "super", help: "a color picker field"
+        },
+        {
+            id: "steplist",
+            capabilities: {
+                needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false,
+                canBePublished: true, canBeReadonly: true, canBeUnsafe: true,
+                schema: "IFieldParameter",
+            },
+            label: "Table Control [steplist]",
+            class: "all",
+            help: "a field rendered as a table",
+        },
+        // toolbar
+        { id: FieldDescriptions.Field_labels, capabilities: { onlyOne: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Labels [labels]", class: "toolbar", help: "shows defined labels in the item's tool bar" },
+        { id: FieldDescriptions.Field_workflow, capabilities: { onlyOne: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "One2One Issue Mapping [workflow]", class: "toolbar", help: "a field shown in the item's tool bar showing the status of an external ticket (i.e. jira)" },
+        // tests and xtcs
+        { id: FieldDescriptions.Field_test_steps, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Table [test_steps]", class: "tests", help: "a special table control to define tests (see test configuration)" },
+        { id: FieldDescriptions.Field_test_steps_result, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Result Table [test_steps_result]", class: "xtcs", help: "a special table control to define tests with results (see test configuration)" },
+        { id: FieldDescriptions.Field_test_result, capabilities: { onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Result Summary [test_result]", class: "xtcs", help: "a special field to compute or specify the overall test result" },
+        // agile sync
+        { id: FieldDescriptions.Field_syncStatus, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "SYNC Status [syncStatus]", class: "sync", help: "control to hold the information about synced external items " },
+        { id: FieldDescriptions.Field_syncSourceInfo, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "SYNC Source Info [syncSourceInfo]", class: "sync", help: "a control to show control syncing of external items" },
+        // beta should not be used really
+        { id: FieldDescriptions.Field_report, capabilities: { canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Embedded Report [report]", class: "beta", help: "allows to embed a standard report" },
+        { id: FieldDescriptions.Field_cascadingSelect, capabilities: { canHideInDoc: false, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "Cascading Select [cascadingSelect]", class: "beta", help: "a field to select values from hierachies of drop downs" },
+        { id: FieldDescriptions.Field_hyperlink, capabilities: { canHideInDoc: false, canBeXtcPreset: false, canBePublished: true, canBeReadonly: true }, label: "Hyperlink Control [hyperlink]", class: "beta", help: "a field holding a hyperlink (url)" },
+        // technical - these need to be added once when creating a new DOC category or something special like this
+        { id: FieldDescriptions.Field_reportId, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "report ID [reportId]", class: "super", help: "contains the id of the xslt template for reports" },
+        { id: FieldDescriptions.Field_filter_file, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "filter_file [filter_file]", class: "super", help: "internal field required for documents" },
+        { id: FieldDescriptions.Field_signature, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Signature Table [signature]", class: "super", help: "field showing signature in documents" },
+        { id: FieldDescriptions.Field_signatureControl, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Signature Password Field [signatureControl]", class: "super", help: "field with control for signatures" }
+    ];
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 79:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ProjectSettings_1, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemConfiguration = void 0;
@@ -13962,18 +14164,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return theUser;
         }
+        getCombinedName(user) {
+            let name = (user.firstName ? user.firstName : "") + " " + (user.lastName ? user.lastName : "");
+            return user.login + (name == " " ? "" : (" - ") + name);
+        }
         getFullName(login) {
             let user = this.getUserInfo(login);
             if (user === null) {
                 return login;
             }
-            else {
-                let name = (user.firstName ? user.firstName : "") + " " + (user.lastName ? user.lastName : "");
-                return user.login + (name == " " ? "" : (" - ") + name);
-            }
+            return this.getCombinedName(user);
         }
-        // TODO(modules): we need a single place in the code that does this, but ItemConfiguration doesn't
-        // seem like the best (it is a global aspect of the software, not project).
         groupIdToName(groupId) {
             return `g_${groupId}_g`;
         }
@@ -14062,6 +14263,92 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         getUserGroups() {
             return this.userGroups;
+        }
+        /**
+         * getValidUserOptions returns an array of option values that describe
+         * the users and groups available as values for a user field in the
+         * database (fields of type {@link FieldDescriptions.Field_user}).
+         *
+         * @param showUsers - pass true to include users
+         * @param showGroups - pass true to include groups
+         * @param preSelectedUsers - if present, the list of users will be limited
+         *     to this subset and the full user list will not be consulted to
+         *     construct the return value.
+         * @param possiblyDeletedUserGroupNames - if present, a comma-separated
+         *     list of user and group names. The returned options will include
+         *     these values, and mark deleted user and groups as disabled.
+         * @returns An array of {@link IDropdownOptions} configured according to
+         *     the input parameters and the users and groups of the current project.
+         */
+        getValidUserOptions(showUsers, showGroups, preSelectedUsers, possiblyDeletedUserGroupNames) {
+            let that = this;
+            let options = [];
+            let users = preSelectedUsers
+                ? preSelectedUsers
+                : this.getUserNames();
+            let groups = this.getUserGroups().sort((a, b) => {
+                return a.groupName < b.groupName ? -1 : 1;
+            });
+            // if {possiblyDeletedUsernames} are not found in {users}, we want to add them.
+            const isGroup = /g_([0-9])+_g/;
+            let names = possiblyDeletedUserGroupNames ? possiblyDeletedUserGroupNames.split(',') : [];
+            names.forEach(name => {
+                if (!this.hasUserInfo(name)) {
+                    if (!isGroup.test(name)) {
+                        users.push({
+                            id: 0,
+                            login: name,
+                            email: "unknown",
+                            permission: 0,
+                            firstName: "",
+                            lastName: "",
+                            deleted: true
+                        });
+                    }
+                    else if (!this.hasGroupInfo(name)) {
+                        // We know match found a group because isGroup.test(name) returned true.
+                        const groupId = parseInt(name.match(isGroup)[1]);
+                        groups.push({
+                            groupName: name,
+                            permission: 0,
+                            groupId: groupId,
+                            membership: [],
+                            deleted: true
+                        });
+                    }
+                }
+            });
+            if (showUsers) {
+                // sort users alphabetically
+                users = users.sort((a, b) => {
+                    return a.login < b.login ? -1 : 1;
+                });
+                // add to user select
+                users.forEach((user) => {
+                    // Deleted users have strikethrough text, and are disabled from selection.
+                    // We only display their login, not their full name.
+                    const deletedUser = user.deleted === true;
+                    const labelText = deletedUser ? user.login : this.getCombinedName(user);
+                    options.push({
+                        id: user.login, label: labelText, class: "users",
+                        disabled: deletedUser,
+                        strikethrough: deletedUser
+                    });
+                });
+            }
+            if (showGroups) {
+                groups.forEach((group) => {
+                    const deletedGroup = group.deleted === true;
+                    let groupName = group.groupName;
+                    let groupId = deletedGroup ? groupName : that.groupIdToName(group.groupId);
+                    options.push({
+                        id: groupId, label: groupName, class: "groups",
+                        disabled: deletedGroup,
+                        strikethrough: deletedGroup
+                    });
+                });
+            }
+            return options;
         }
         // TODO(modules): This is a performance hack. Better if private.
         addGroupMember(gid, user) {
@@ -14403,7 +14690,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
                 fieldList[idx].parameterJson = jconfig.value;
                 this.configuration[config.category.shortLabel].fieldList.push(fieldList[idx]);
-                if (fieldList[idx].fieldType === "links") {
+                if (fieldList[idx].fieldType === FieldDescriptions_1.FieldDescriptions.Field_links) {
                     if (fieldList[idx].parameterJson && fieldList[idx].parameterJson.linkTypes) {
                         for (var l = 0; l < fieldList[idx].parameterJson.linkTypes.length; l++) {
                             var dl = fieldList[idx].parameterJson.linkTypes[l];
@@ -14456,6 +14743,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return fields.length ? fields[0] : null;
         }
         getFieldConfig(fieldId) {
+            // The fieldId is unique across categories, therefore this code works properly.
             for (let category of this.getCategories()) {
                 let field = this.getFieldById(category, fieldId);
                 if (field) {
@@ -14628,10 +14916,122 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 68:
+/***/ 93:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.extend = void 0;
+    // This is ported from the JQuery 3.5.1 codebase. It is tough to get a recursive extend function
+    // exactly right. Safest option is to keep the implementation we've used for years, and eliminate
+    // the JQuery dependency.
+    function isFunction(obj) {
+        // Support: Chrome <=57, Firefox <=52
+        // In some browsers, typeof returns "function" for HTML <object> elements
+        // (i.e., `typeof document.createElement( "object" ) === "function"`).
+        // We don't want to classify *any* DOM node as a function.
+        return typeof obj === "function" && typeof obj.nodeType !== "number";
+    }
+    var class2type = {};
+    const hasOwn = class2type.hasOwnProperty;
+    const fnToString = hasOwn.toString;
+    const ObjectFunctionString = fnToString.call(Object);
+    function isPlainObject(obj) {
+        var proto, Ctor;
+        // Detect obvious negatives
+        // Use toString instead of jQuery.type to catch host objects
+        if (!obj || toString.call(obj) !== "[object Object]") {
+            return false;
+        }
+        proto = Object.getPrototypeOf(obj);
+        // Objects with no prototype (e.g., `Object.create( null )`) are plain
+        if (!proto) {
+            return true;
+        }
+        // Objects with prototype are plain iff they were constructed by a global Object function
+        Ctor = hasOwn.call(proto, "constructor") && proto.constructor;
+        return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
+    }
+    function extend(...args) {
+        var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {}, i = 1, length = arguments.length, deep = false;
+        // Handle a deep copy situation
+        if (typeof target === "boolean") {
+            deep = target;
+            // Skip the boolean and the target
+            target = arguments[i] || {};
+            i++;
+        }
+        // Handle case when target is a string or something (possible in deep copy)
+        if (typeof target !== "object" && !isFunction(target)) {
+            target = {};
+        }
+        // Extend jQuery itself if only one argument is passed
+        if (i === length) {
+            target = this;
+            i--;
+        }
+        for (; i < length; i++) {
+            // Only deal with non-null/undefined values
+            if ((options = arguments[i]) != null) {
+                // Extend the base object
+                for (name in options) {
+                    copy = options[name];
+                    // Prevent Object.prototype pollution
+                    // Prevent never-ending loop
+                    if (name === "__proto__" || target === copy) {
+                        continue;
+                    }
+                    // Recurse if we're merging plain objects or arrays
+                    if (deep && copy && (isPlainObject(copy) ||
+                        (copyIsArray = Array.isArray(copy)))) {
+                        src = target[name];
+                        // Ensure proper type for the source value
+                        if (copyIsArray && !Array.isArray(src)) {
+                            clone = [];
+                        }
+                        else if (!copyIsArray && !isPlainObject(src)) {
+                            clone = {};
+                        }
+                        else {
+                            clone = src;
+                        }
+                        copyIsArray = false;
+                        // Never move original objects, clone them
+                        target[name] = extend(deep, clone, copy);
+                        // Don't bring in undefined values
+                    }
+                    else if (copy !== undefined) {
+                        target[name] = copy;
+                    }
+                }
+            }
+        }
+        // Return the modified object
+        return target;
+    }
+    exports.extend = extend;
+    var initCalled = false;
+    function init() {
+        if (initCalled)
+            return;
+        initCalled = true;
+        const typeStrings = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
+        typeStrings.forEach((t) => {
+            class2type["[object " + t + "]"] = t.toLowerCase();
+        });
+    }
+    init();
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 92:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(67), __webpack_require__(93)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BasicFunctions_1, JQueryExtendReplacement_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.JSONTools = void 0;
@@ -14640,7 +15040,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.logger = logger;
         }
         cloner2(src) {
-            return $.extend(true, {}, { x: src }).x;
+            return (0, JQueryExtendReplacement_1.extend)(true, {}, { x: src }).x;
         }
         mergeOptions(defaultOptions, options) {
             let newOptions = this.clone(defaultOptions);
@@ -14695,19 +15095,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return newOptions;
         }
         isTrue(obj) {
-            if (obj && (obj.toString().toLowerCase() === "true" || obj.toString() === "1")) {
-                return true;
-            }
-            return false;
+            return BasicFunctions_1.BasicFunctions.isTrue(obj);
         }
         isFalse(obj) {
-            if (typeof obj == "undefined") {
-                return false;
-            }
-            if (obj == false || obj == 0 || obj.toString().toLowerCase() === "false" || obj.toString() === "0") {
-                return true;
-            }
-            return false;
+            return BasicFunctions_1.BasicFunctions.isFalse(obj);
         }
         fromString(str) {
             var result = { status: 'empty', value: {} };
@@ -14745,7 +15136,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 70:
+/***/ 94:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -14987,7 +15378,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 190:
+/***/ 215:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15014,8 +15405,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 
-var punycode = __webpack_require__(191);
-var util = __webpack_require__(192);
+var punycode = __webpack_require__(216);
+var util = __webpack_require__(217);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -15090,7 +15481,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
       'gopher:': true,
       'file:': true
     },
-    querystring = __webpack_require__(193);
+    querystring = __webpack_require__(218);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && util.isObject(url) && url instanceof Url) return url;
@@ -15727,7 +16118,7 @@ Url.prototype.parseHost = function() {
 
 /***/ }),
 
-/***/ 192:
+/***/ 217:
 /***/ ((module) => {
 
 "use strict";
@@ -15751,7 +16142,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 186:
+/***/ 211:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -16456,7 +16847,7 @@ if (!global.fetch) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(184);
+/******/ 	var __webpack_exports__ = __webpack_require__(209);
 /******/ 	
 /******/ 	return __webpack_exports__;
 /******/ })()
