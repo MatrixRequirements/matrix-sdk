@@ -11,7 +11,7 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 214:
+/***/ 219:
 /***/ ((module) => {
 
 (function () {
@@ -35,20 +35,20 @@ return /******/ (() => { // webpackBootstrap
 
 /***/ }),
 
-/***/ 210:
+/***/ 215:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
 // Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(211);
+__webpack_require__(216);
 module.exports = self.fetch.bind(self);
 
 
 /***/ }),
 
-/***/ 216:
+/***/ 221:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* module decorator */ module = __webpack_require__.nmd(module);
@@ -575,7 +575,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.3.2 by @mathia
 
 /***/ }),
 
-/***/ 219:
+/***/ 224:
 /***/ ((module) => {
 
 "use strict";
@@ -663,7 +663,7 @@ module.exports = function(qs, sep, eq, options) {
 
 /***/ }),
 
-/***/ 220:
+/***/ 225:
 /***/ ((module) => {
 
 "use strict";
@@ -735,19 +735,19 @@ module.exports = function(obj, sep, eq, name) {
 
 /***/ }),
 
-/***/ 218:
+/***/ 223:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(219);
-exports.encode = exports.stringify = __webpack_require__(220);
+exports.decode = exports.parse = __webpack_require__(224);
+exports.encode = exports.stringify = __webpack_require__(225);
 
 
 /***/ }),
 
-/***/ 212:
+/***/ 217:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disable
@@ -782,7 +782,570 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disabl
 
 /***/ }),
 
-/***/ 213:
+/***/ 227:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.Category = void 0;
+    class Category {
+        constructor(category, project) {
+            this.category = category;
+            this.project = project;
+        }
+        getProject() { return this.project; }
+        getItemConfig() { return this.project.getItemConfig(); }
+        getTestConfig() { return this.project.getTestConfig(); }
+        getId() {
+            return this.category;
+        }
+        getConfig() {
+            return this.project.getItemConfig().getItemConfiguration(this.category);
+        }
+        getFields() {
+            return this.project.getItemConfig().getFields(this.category);
+        }
+        isFolderCategory() { return this.getId() == "FOLDER"; }
+    }
+    exports.Category = Category;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 229:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.Field = void 0;
+    class Field {
+        constructor(config, handler) {
+            this.config = config;
+            this.handler = handler;
+            if (this.config.fieldType != this.handler.getFieldType()) {
+                throw new Error(`Field type ${this.config.fieldType} doesn't match handler field type ${this.handler.getFieldType()}`);
+            }
+            this.oldData = handler.getData();
+        }
+        getHandlerRaw() { return this.handler; }
+        getHandler() {
+            // return the handler cast appropriately given the type of the field.
+            // TODO: check this somehow.
+            return this.handler;
+        }
+        getFieldType() { return this.config.fieldType; }
+        getFieldId() { return this.config.id; }
+        getFieldName() { return this.config.label; }
+        getFieldConfigParameter(name) {
+            return this.config.parameterJson[name];
+        }
+        needsSave() {
+            return this.handler.getData() !== this.oldData;
+        }
+    }
+    exports.Field = Field;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 228:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(229), __webpack_require__(55)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Field_1, index_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.Item = void 0;
+    function assert(result, msg) {
+        if (!result) {
+            throw new Error("assertion failed: " + msg ? msg : 0);
+        }
+    }
+    /**
+     * An Item represents a database item. Every Item must have at least a category.
+     * If it has an id, then it was retrieved from the database and may be altered and later
+     * saved (use needsSave() to determine if the Item needs saving). If it doesn't have
+     * an id, it needs to be saved. When an item is saved, it's data is re-initialized from
+     * the database.
+     */
+    class Item {
+        constructor(category, item) {
+            this.category = category;
+            this.dirty = false;
+            this.fieldMap = new Map();
+            this.isFolder = category.isFolderCategory();
+            if (this.isFolder) {
+                if (!item) {
+                    throw new Error(`A folder requires an item`);
+                }
+                if (!item.type) {
+                    throw new Error(`A folder requires item.type`);
+                }
+            }
+            this.setData(item);
+        }
+        // TODO: also, what about labels? Are these in toBeIntegrated right now?
+        setDirty() { this.dirty = true; }
+        setData(item) {
+            this.dirty = false;
+            // toBeIntegrated contains standard item fields I just haven't gotten around to
+            // exposing and validating yet.
+            if (item) {
+                this.toBeIntegrated = item;
+                this.id = item.id;
+                this.type = item.type;
+                this.title = item.title;
+                this.labels = item.labels;
+                this.isFolder = item.isFolder;
+                assert((this.type == this.category.getId()) ||
+                    (this.isFolder && this.category.isFolderCategory()), `the item type ${this.type} does not match category type ${this.category.getId()}`);
+            }
+            else {
+                // We can assert that we don't have a folder, because the constructor, which
+                // calls this method doesn't allow an undefined item parameter for folders.
+                assert(!this.category.isFolderCategory(), "A folder requires a valid item parameter");
+                this.toBeIntegrated = {};
+                // This is a new item.
+                this.id = undefined;
+                // Category
+                this.type = this.category.getId();
+                this.title = undefined;
+                this.isFolder = false;
+            }
+            // Now deal with the category fields.
+            for (let field of this.category.getFields()) {
+                let value = undefined;
+                if (item && item[field.id]) {
+                    value = item[field.id];
+                }
+                index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
+                let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
+                handler.initData(value);
+                this.fieldMap.set(field.id, new Field_1.Field(field, handler));
+            }
+            // TODO: deal with labels. They show up as a pseudo field, but are really not.
+        }
+        extractData() {
+            let item = {
+                upLinks: this.toBeIntegrated.upLinks,
+                upLinkList: this.toBeIntegrated.upLinkList,
+                downLinks: this.toBeIntegrated.downLinks,
+                children: this.toBeIntegrated.children,
+                history: this.toBeIntegrated.history,
+                modDate: this.toBeIntegrated.modDate,
+                isUnselected: this.toBeIntegrated.isUnselected,
+                availableFormats: this.toBeIntegrated.availableFormats,
+                selectSubTree: this.toBeIntegrated.selectSubTree,
+                requireSubTree: this.toBeIntegrated.requireSubTree,
+                icon: this.toBeIntegrated.icon,
+                type: this.type,
+                id: this.toBeIntegrated.id,
+                title: this.title,
+                linksUp: this.toBeIntegrated.linksUp,
+                linksDown: this.toBeIntegrated.linksDown,
+                isFolder: this.isFolder,
+                isDeleted: this.toBeIntegrated.isDeleted,
+                maxVersion: this.toBeIntegrated.maxVersion,
+                docHasPackage: this.toBeIntegrated.docHasPackage,
+                // TODO: where is parent in IItemGet? Doesn't every item have a parent?
+                labels: this.labels ? this.labels.join(",") : ""
+                // TODO: where is crossLinks in IItemPut?
+            };
+            // Now deal with the category fields.
+            for (let field of this.category.getFields()) {
+                const myField = this.fieldMap.get(field.id);
+                item[field.id] = myField.getHandlerRaw().getData();
+                // TODO: do we need to do this?
+                item[`x${field.id.toString()}`] = myField.getHandlerRaw().getData();
+            }
+            return item;
+        }
+        getId() {
+            return this.id;
+        }
+        getIsFolder() {
+            return this.isFolder;
+        }
+        getType() {
+            assert((this.type == this.category.getId()) ||
+                (this.isFolder && this.category.isFolderCategory()), `Item type ${this.type} does not match category type ${this.category.getId()}`);
+            return this.type;
+        }
+        getTitle() {
+            return this.title;
+        }
+        setTitle(title) {
+            if (title !== this.title) {
+                this.title = title;
+                this.setDirty();
+            }
+            return this;
+        }
+        /**
+         * Returns an array of labels set for the Item.
+         * @returns array of strings
+         */
+        getLabels() {
+            return this.labels ? this.labels : [];
+        }
+        labelsToString() {
+            if (this.labels) {
+                return this.labels.join(",");
+            }
+            return "";
+        }
+        stringToLabels(input) { return input.split(","); }
+        verifyLabelsAllowed(labels) {
+            // Are labels allowed for our category?
+            const labelDefs = this.category.getProject().getLabelManager().getLabelDefinitions([this.type]);
+            if (labelDefs.length == 0 && labels.length > 0) {
+                // Forgive empty strings.
+                const foundNonEmpty = labels.some((l) => l != undefined && l != "");
+                if (foundNonEmpty) {
+                    throw new Error(`Category ${this.type} doesn't allow labels`);
+                }
+            }
+        }
+        /**
+         * Sets the labels for an Item, overwriting any previous labels
+         * @param newLabels
+         * @returns Item
+         * @throws throws error if the Item category doesn't allow labels
+         */
+        setLabels(newLabels) {
+            this.verifyLabelsAllowed(newLabels);
+            this.labels = this.stringToLabels(this.category.getProject().getLabelManager().setLabels("", newLabels));
+            return this;
+        }
+        /**
+         * Adds one label to the item if it isn't already set. Note that if the
+         * label is in an XOR group with another set label, that label will be
+         * removed.
+         * @param labelToSet
+         * @returns Item
+         * @throws throws error if the Item category doesn't allow labels
+         */
+        setLabel(labelToSet) {
+            this.verifyLabelsAllowed([labelToSet]);
+            const labelsAsString = this.labelsToString();
+            this.labels = this.stringToLabels(this.category.getProject().getLabelManager().setLabels(labelsAsString, [labelToSet]));
+            return this;
+        }
+        /**
+         * Unsets one label if it exists.
+         * @param labelToUnset
+         * @returns Item
+         * @throws throws error if the Item category doesn't allow labels
+         */
+        unsetLabel(labelToUnset) {
+            this.verifyLabelsAllowed([labelToUnset]);
+            this.labels = this.category.getProject().getLabelManager().unsetLabel(this.getLabels(), labelToUnset);
+            return this;
+        }
+        getCategory() { return this.category; }
+        needsSave() {
+            // Are any fields dirty?
+            for (let field of this.fieldMap.values()) {
+                if (field.needsSave()) {
+                    this.dirty = true;
+                    break;
+                }
+            }
+            return this.dirty;
+        }
+        getFieldById(fieldId) {
+            if (!this.fieldMap.has(fieldId)) {
+                throw new Error(`Field id ${fieldId.toString()} not found.`);
+            }
+            return this.fieldMap.get(fieldId);
+        }
+        getFieldByName(fieldName) {
+            let results = [];
+            for (let field of this.fieldMap.values()) {
+                if (field.getFieldName() == fieldName) {
+                    results.push(field);
+                }
+            }
+            return results;
+        }
+        getSingleFieldByName(fieldName) {
+            const fields = this.getFieldByName(fieldName);
+            assert(fields.length == 1, `There are ${fields.length} fields with name ${fieldName}`);
+            return fields[0];
+        }
+    }
+    exports.Item = Item;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 226:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(49), __webpack_require__(88), __webpack_require__(227), __webpack_require__(228), __webpack_require__(230)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, TestManagerConfiguration_1, LabelManager_1, Category_1, Item_1, TreeFolder_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.Project = void 0;
+    class Project {
+        constructor(server, name, itemConfig, jsonTools, logger) {
+            this.server = server;
+            this.name = name;
+            this.itemConfig = itemConfig;
+            this.labelManager = new LabelManager_1.LabelManager(logger, jsonTools, () => this.itemConfig);
+            this.testManagerConfig = new TestManagerConfiguration_1.TestManagerConfiguration();
+            this.testManagerConfig.initialize(itemConfig);
+            // Create category objects.
+            this.categories = new Map();
+            for (let c of itemConfig.getCategories(false)) {
+                this.categories.set(c, new Category_1.Category(c, this));
+            }
+            this.root = null;
+        }
+        async getProjectTree() {
+            const that = this;
+            if (this.root == null) {
+                // Create the interface object:
+                const childInterface = {
+                    loadFolder: (folderId) => {
+                        if (folderId) {
+                            return that.server.getFolderChildrenFromProject(that.name, folderId);
+                        }
+                        return that.server.getTreeFromProject(that.name);
+                    },
+                    putItem: that.putItem.bind(that),
+                    getItem: that.getItem.bind(that)
+                };
+                this.root = new TreeFolder_1.TreeFolder(childInterface);
+                await this.root.refresh();
+            }
+            return this.root;
+        }
+        async search(term) {
+            return this.server.searchInProject(this.name, term);
+        }
+        createItem(category) {
+            if (category == "FOLDER") {
+                throw new Error(`Folders should be created with method createFolder`);
+            }
+            return new Item_1.Item(this.getCategory(category));
+        }
+        /**
+         * Create a folder. Every folder must contain only items of a particular type.
+         * @param type
+         * @returns a new Folder item of the given type.
+         */
+        createFolder(type) {
+            let item = { isFolder: true, type: type, children: [] };
+            return new Item_1.Item(this.getCategory("FOLDER"), item);
+        }
+        async getItem(id) {
+            const iitem = await this.server.getItemFromProject(this.name, id);
+            const category = iitem.isFolder ? this.getCategory("FOLDER") : this.getCategory(iitem.type);
+            return new Item_1.Item(category, iitem);
+        }
+        async putItem(parentFolderId, item) {
+            let iitem = item.extractData();
+            let newId;
+            if (iitem.id) {
+                // this is an update.
+                newId = await this.server.updateItemInProject(this.name, iitem);
+            }
+            else {
+                // this is creation.
+                newId = await this.server.createItemInProject(this.name, parentFolderId, iitem);
+            }
+            // For now, go back to the server and get a fresh item.
+            return await this.getItem(newId);
+        }
+        getCategory(category) {
+            if (!this.categories.has(category)) {
+                throw new Error(`Cannot find category ${category} in project ${this.name}`);
+            }
+            return this.categories.get(category);
+        }
+        getName() { return this.name; }
+        getItemConfig() { return this.itemConfig; }
+        getLabelManager() { return this.labelManager; }
+        getTestConfig() { return this.testManagerConfig; }
+    }
+    exports.Project = Project;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TreeFolder = void 0;
+    class TreeFolder {
+        constructor(needs, parent, id, title) {
+            this.needs = needs;
+            this.parent = parent;
+            this.id = id;
+            this.title = title;
+            this.childrenLoaded = false;
+            this.itemChildren = [];
+            this.folderChildren = [];
+        }
+        isRoot() { return this.id == undefined && this.parent == undefined; }
+        getId() {
+            if (this.isRoot())
+                return "ROOT";
+            return this.id;
+        }
+        getTitle() {
+            if (this.isRoot())
+                return "ROOT";
+            return this.title;
+        }
+        getParent() {
+            if (this.isRoot())
+                return null;
+            return this.parent;
+        }
+        /**
+         * Creates a path string including all ancestor folder titles, separated by "/".
+         * @returns the folder path
+         */
+        getPath() {
+            if (this.isRoot())
+                return "";
+            const result = this.getParent().getPath() + "/" + this.getTitle();
+            return result;
+        }
+        /**
+         * Return a TreeFolder if the folderId is valid in the project.
+         * @param folderId
+         * @returns null if folderId cannot be found.
+         */
+        async findFolder(folderId) {
+            if (!this.childrenLoaded) {
+                await this.refresh();
+            }
+            // Is it one of the children?
+            for (let child of this.folderChildren) {
+                if (child.getId() == folderId) {
+                    return child;
+                }
+                const folder = await child.findFolder(folderId);
+                if (folder != null) {
+                    return folder;
+                }
+            }
+            return null;
+        }
+        /**
+         * Find a TreeFolder with the given name in this folder.
+         * @param folderTitle
+         * @returns A valid TreeFolder object or null if not found.
+         */
+        async findDirectFolderByTitle(folderTitle) {
+            if (!this.childrenLoaded) {
+                await this.refresh();
+            }
+            for (let child of this.folderChildren) {
+                if (child.getTitle() == folderTitle) {
+                    return child;
+                }
+            }
+            return null;
+        }
+        /**
+         * Save an item with this folder as the parent folder.
+         * @param item An item that hasn't yet been saved on the server
+         * @returns An Item object which corresponds to the newly created Item on the server.
+         * @throws throws Error if your item already has an id (was already created on the server).
+         */
+        async saveInFolder(item) {
+            if (item.getId() !== undefined) {
+                throw new Error(`item already exists (id = ${item.getId()})`);
+            }
+            let createdItem = await this.needs.putItem(this.id, item);
+            // Update the folder structure just for this folder.
+            await this.refresh(false);
+            return createdItem;
+        }
+        /**
+         * TreeFolder is nice/simple to work with, but sometimes you need the
+         * underlying Item. For example, you might want to set a label on the folder.
+         * Item is the necessary type to do that.
+         * @returns An Item which matches this folder
+         */
+        async getItem() {
+            return this.needs.getItem(this.id);
+        }
+        /**
+         * Update the list of items and folders that belong to the current folder.
+         * @param recursive true by default. If false, only request server information for this folder.
+         * @returns This TreeFolder.
+         */
+        async refresh(recursive = true) {
+            let children = await this.needs.loadFolder(this.id);
+            // Divide up into folders and items.
+            this.folderChildren = [];
+            this.itemChildren = [];
+            for (let child of children) {
+                if (child.isFolder) {
+                    const subfolder = new TreeFolder(this.needs, this, child.id, child.title);
+                    if (recursive) {
+                        await subfolder.refresh(recursive);
+                    }
+                    this.folderChildren.push(subfolder);
+                }
+                else {
+                    this.itemChildren.push(child);
+                }
+            }
+            this.childrenLoaded = true;
+            return this;
+        }
+        /**
+         * Returns information on the folders in the folder. May make a request to
+         * the server if children haven't been loaded yet, otherwise, acts on
+         * cached information (which may be out of date. Call refresh() to update
+         * the folder in that case).
+         * @returns an array of TreeFolder objects.
+         */
+        async getFolderChildren() {
+            if (!this.childrenLoaded) {
+                await this.refresh();
+            }
+            return this.folderChildren;
+        }
+        /**
+         * Returns information on the items in the folder. May make a request to
+         * the server if children haven't been loaded yet, otherwise, acts on
+         * cached information (which may be out of date. Call refresh() to update
+         * the folder in that case).
+         * @returns an array of ITitleAndId objects
+         */
+        async getItemChildren() {
+            if (!this.childrenLoaded) {
+                await this.refresh();
+            }
+            return this.itemChildren;
+        }
+    }
+    exports.TreeFolder = TreeFolder;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 218:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -811,13 +1374,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(215), __webpack_require__(210)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(220), __webpack_require__(215)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DefaultApi = exports.DefaultApiFactory = exports.DefaultApiFp = exports.DefaultApiFetchParamCreator = exports.RequiredError = exports.BaseAPI = exports.COLLECTION_FORMATS = void 0;
     url = __importStar(url);
     isomorphic_fetch_1 = __importDefault(isomorphic_fetch_1);
-    const btoa = __webpack_require__(214);
+    const btoa = __webpack_require__(219);
     const BASE_PATH = "https://demo23.matrixreq.com/rest/1".replace(/\/+$/, "");
     /**
      *
@@ -1133,6 +1696,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
                 delete localVarUrlObj.search;
                 localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                return {
+                    url: url.format(localVarUrlObj),
+                    options: localVarRequestOptions,
+                };
+            },
+            /**
+             * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.4
+             * @summary Update matrix instance log level.
+             * @param {LogLevel} [body] Payload containing the log level
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            allLoglevelPut(body, options = {}) {
+                const localVarPath = `/all/loglevel`;
+                const localVarUrlObj = url.parse(localVarPath, true);
+                const localVarRequestOptions = Object.assign({ method: 'PUT' }, options);
+                const localVarHeaderParameter = {};
+                const localVarQueryParameter = {};
+                // authentication ApiKeyAuth required
+                if (configuration && configuration.apiKey) {
+                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                        ? configuration.apiKey("Authorization")
+                        : configuration.apiKey;
+                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                }
+                // authentication BasicAuth required
+                // http basic authentication required
+                if (configuration && (configuration.username || configuration.password)) {
+                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
+                }
+                localVarHeaderParameter['Content-Type'] = 'application/json';
+                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+                delete localVarUrlObj.search;
+                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                const needsSerialization = ( true) || 0;
+                localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
                 return {
                     url: url.format(localVarUrlObj),
                     options: localVarRequestOptions,
@@ -3003,6 +3603,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 };
             },
             /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
+             * @summary Get cross project links
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectCrossprojectlinkGet(project, options = {}) {
+                // verify required parameter 'project' is not null or undefined
+                if (project === null || project === undefined) {
+                    throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectCrossprojectlinkGet.');
+                }
+                const localVarPath = `/{project}/crossprojectlink`
+                    .replace(`{${"project"}}`, encodeURIComponent(String(project)));
+                const localVarUrlObj = url.parse(localVarPath, true);
+                const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
+                const localVarHeaderParameter = {};
+                const localVarQueryParameter = {};
+                // authentication ApiKeyAuth required
+                if (configuration && configuration.apiKey) {
+                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                        ? configuration.apiKey("Authorization")
+                        : configuration.apiKey;
+                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                }
+                // authentication BasicAuth required
+                // http basic authentication required
+                if (configuration && (configuration.username || configuration.password)) {
+                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
+                }
+                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+                delete localVarUrlObj.search;
+                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                return {
+                    url: url.format(localVarUrlObj),
+                    options: localVarRequestOptions,
+                };
+            },
+            /**
              * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
              * @summary Removes completely a project (only used for unit testing). This is an actual DELETE in the database.
              * @param {string} project Project short label
@@ -3823,6 +4462,59 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 };
             },
             /**
+             * Permissions - ?. Valid from version 2.1
+             * @summary Removes an import
+             * @param {string} project Project short label
+             * @param {string} id id
+             * @param {string} reason The reason why the user is doing this
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectImportIdDelete(project, id, reason, options = {}) {
+                // verify required parameter 'project' is not null or undefined
+                if (project === null || project === undefined) {
+                    throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectImportIdDelete.');
+                }
+                // verify required parameter 'id' is not null or undefined
+                if (id === null || id === undefined) {
+                    throw new RequiredError('id', 'Required parameter id was null or undefined when calling projectImportIdDelete.');
+                }
+                // verify required parameter 'reason' is not null or undefined
+                if (reason === null || reason === undefined) {
+                    throw new RequiredError('reason', 'Required parameter reason was null or undefined when calling projectImportIdDelete.');
+                }
+                const localVarPath = `/{project}/import/{id}`
+                    .replace(`{${"project"}}`, encodeURIComponent(String(project)))
+                    .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                const localVarUrlObj = url.parse(localVarPath, true);
+                const localVarRequestOptions = Object.assign({ method: 'DELETE' }, options);
+                const localVarHeaderParameter = {};
+                const localVarQueryParameter = {};
+                // authentication ApiKeyAuth required
+                if (configuration && configuration.apiKey) {
+                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                        ? configuration.apiKey("Authorization")
+                        : configuration.apiKey;
+                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                }
+                // authentication BasicAuth required
+                // http basic authentication required
+                if (configuration && (configuration.username || configuration.password)) {
+                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
+                }
+                if (reason !== undefined) {
+                    localVarQueryParameter['reason'] = reason;
+                }
+                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+                delete localVarUrlObj.search;
+                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                return {
+                    url: url.format(localVarUrlObj),
+                    options: localVarRequestOptions,
+                };
+            },
+            /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Imports some items into a project
              * @param {string} project Project short label
@@ -3859,6 +4551,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 }
                 if (reason !== undefined) {
                     localVarQueryParameter['reason'] = reason;
+                }
+                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+                delete localVarUrlObj.search;
+                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                return {
+                    url: url.format(localVarUrlObj),
+                    options: localVarRequestOptions,
+                };
+            },
+            /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Get the history of a import in a project
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectImportinfoGet(project, options = {}) {
+                // verify required parameter 'project' is not null or undefined
+                if (project === null || project === undefined) {
+                    throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectImportinfoGet.');
+                }
+                const localVarPath = `/{project}/importinfo`
+                    .replace(`{${"project"}}`, encodeURIComponent(String(project)));
+                const localVarUrlObj = url.parse(localVarPath, true);
+                const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
+                const localVarHeaderParameter = {};
+                const localVarQueryParameter = {};
+                // authentication ApiKeyAuth required
+                if (configuration && configuration.apiKey) {
+                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                        ? configuration.apiKey("Authorization")
+                        : configuration.apiKey;
+                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                }
+                // authentication BasicAuth required
+                // http basic authentication required
+                if (configuration && (configuration.username || configuration.password)) {
+                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
                 }
                 localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
@@ -4884,6 +5615,89 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
+             * @summary Imports some folders from a project to another as a module
+             * @param {string} project Project short label
+             * @param {string} mode Import mode -  can be include or copy
+             * @param {string} sourceProject Source project
+             * @param {string} sourceSelection A selection of folders and items to import
+             * @param {string} reason The reason why the user is doing this
+             * @param {string} [update] Update mode -  can be simple, update or rebase. If not defined, simple assumed
+             * @param {string} [oldSourceProject] Old source project (if update&#x3D;rebase
+             * @param {string} [lockLabel] An optional label that this operation will set on all items
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectModuleimportPost(project, mode, sourceProject, sourceSelection, reason, update, oldSourceProject, lockLabel, options = {}) {
+                // verify required parameter 'project' is not null or undefined
+                if (project === null || project === undefined) {
+                    throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectModuleimportPost.');
+                }
+                // verify required parameter 'mode' is not null or undefined
+                if (mode === null || mode === undefined) {
+                    throw new RequiredError('mode', 'Required parameter mode was null or undefined when calling projectModuleimportPost.');
+                }
+                // verify required parameter 'sourceProject' is not null or undefined
+                if (sourceProject === null || sourceProject === undefined) {
+                    throw new RequiredError('sourceProject', 'Required parameter sourceProject was null or undefined when calling projectModuleimportPost.');
+                }
+                // verify required parameter 'sourceSelection' is not null or undefined
+                if (sourceSelection === null || sourceSelection === undefined) {
+                    throw new RequiredError('sourceSelection', 'Required parameter sourceSelection was null or undefined when calling projectModuleimportPost.');
+                }
+                // verify required parameter 'reason' is not null or undefined
+                if (reason === null || reason === undefined) {
+                    throw new RequiredError('reason', 'Required parameter reason was null or undefined when calling projectModuleimportPost.');
+                }
+                const localVarPath = `/{project}/moduleimport`
+                    .replace(`{${"project"}}`, encodeURIComponent(String(project)));
+                const localVarUrlObj = url.parse(localVarPath, true);
+                const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
+                const localVarHeaderParameter = {};
+                const localVarQueryParameter = {};
+                // authentication ApiKeyAuth required
+                if (configuration && configuration.apiKey) {
+                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                        ? configuration.apiKey("Authorization")
+                        : configuration.apiKey;
+                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                }
+                // authentication BasicAuth required
+                // http basic authentication required
+                if (configuration && (configuration.username || configuration.password)) {
+                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
+                }
+                if (mode !== undefined) {
+                    localVarQueryParameter['mode'] = mode;
+                }
+                if (update !== undefined) {
+                    localVarQueryParameter['update'] = update;
+                }
+                if (sourceProject !== undefined) {
+                    localVarQueryParameter['sourceProject'] = sourceProject;
+                }
+                if (oldSourceProject !== undefined) {
+                    localVarQueryParameter['oldSourceProject'] = oldSourceProject;
+                }
+                if (sourceSelection !== undefined) {
+                    localVarQueryParameter['sourceSelection'] = sourceSelection;
+                }
+                if (lockLabel !== undefined) {
+                    localVarQueryParameter['lockLabel'] = lockLabel;
+                }
+                if (reason !== undefined) {
+                    localVarQueryParameter['reason'] = reason;
+                }
+                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+                delete localVarUrlObj.search;
+                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                return {
+                    url: url.format(localVarUrlObj),
+                    options: localVarRequestOptions,
+                };
+            },
+            /**
+             * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Move items into this folder
              * @param {string} project Project short label
              * @param {string} folder Folder reference (F-XXX-nn)
@@ -5592,7 +6406,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
              * @summary Asks for a new report. The job ID is returned as answer
              * @param {string} project Project short label
-             * @param {string} [input_url] (optional) url to generate in the filter
+             * @param {string} [url] (optional) url to generate in the filter
              * @param {string} [resturl] (optional) REST url to generate in the filter
              * @param {string} [format] (optional) format -  html (default), pdf, docx, odt, xml, zipdocx or zippdf
              * @param {*} [options] Override http request option.
@@ -7374,6 +8188,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 };
             },
             /**
+             * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.4
+             * @summary Update matrix instance log level.
+             * @param {LogLevel} [body] Payload containing the log level
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            allLoglevelPut(body, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allLoglevelPut(body, options);
+                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
+                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            return response.json();
+                        }
+                        else {
+                            throw response;
+                        }
+                    });
+                };
+            },
+            /**
              * Permissions - No permissions needed. Valid from version 2.1
              * @summary Monitoring object
              * @param {*} [options] Override http request option.
@@ -8199,6 +9033,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 };
             },
             /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
+             * @summary Get cross project links
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectCrossprojectlinkGet(project, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectCrossprojectlinkGet(project, options);
+                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
+                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            return response.json();
+                        }
+                        else {
+                            throw response;
+                        }
+                    });
+                };
+            },
+            /**
              * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
              * @summary Removes completely a project (only used for unit testing). This is an actual DELETE in the database.
              * @param {string} project Project short label
@@ -8550,6 +9404,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 };
             },
             /**
+             * Permissions - ?. Valid from version 2.1
+             * @summary Removes an import
+             * @param {string} project Project short label
+             * @param {string} id id
+             * @param {string} reason The reason why the user is doing this
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectImportIdDelete(project, id, reason, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectImportIdDelete(project, id, reason, options);
+                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
+                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            return response.json();
+                        }
+                        else {
+                            throw response;
+                        }
+                    });
+                };
+            },
+            /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Imports some items into a project
              * @param {string} project Project short label
@@ -8559,6 +9435,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              */
             projectImportPost(project, reason, options) {
                 const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectImportPost(project, reason, options);
+                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
+                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            return response.json();
+                        }
+                        else {
+                            throw response;
+                        }
+                    });
+                };
+            },
+            /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Get the history of a import in a project
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectImportinfoGet(project, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectImportinfoGet(project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -8966,6 +9862,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              */
             projectMergeinfoGet(project, excludeCategories, fromDate, push, options) {
                 const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options);
+                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
+                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            return response.json();
+                        }
+                        else {
+                            throw response;
+                        }
+                    });
+                };
+            },
+            /**
+             * Permissions - Must have read/write access to the project. Valid from version 2.1
+             * @summary Imports some folders from a project to another as a module
+             * @param {string} project Project short label
+             * @param {string} mode Import mode -  can be include or copy
+             * @param {string} sourceProject Source project
+             * @param {string} sourceSelection A selection of folders and items to import
+             * @param {string} reason The reason why the user is doing this
+             * @param {string} [update] Update mode -  can be simple, update or rebase. If not defined, simple assumed
+             * @param {string} [oldSourceProject] Old source project (if update&#x3D;rebase
+             * @param {string} [lockLabel] An optional label that this operation will set on all items
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectModuleimportPost(project, mode, sourceProject, sourceSelection, reason, update, oldSourceProject, lockLabel, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectModuleimportPost(project, mode, sourceProject, sourceSelection, reason, update, oldSourceProject, lockLabel, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -10031,6 +10954,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 return (0, exports.DefaultApiFp)(configuration).allLogPost(message, options)(fetch, basePath);
             },
             /**
+             * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.4
+             * @summary Update matrix instance log level.
+             * @param {LogLevel} [body] Payload containing the log level
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            allLoglevelPut(body, options) {
+                return (0, exports.DefaultApiFp)(configuration).allLoglevelPut(body, options)(fetch, basePath);
+            },
+            /**
              * Permissions - No permissions needed. Valid from version 2.1
              * @summary Monitoring object
              * @param {*} [options] Override http request option.
@@ -10476,6 +11409,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 return (0, exports.DefaultApiFp)(configuration).projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options)(fetch, basePath);
             },
             /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
+             * @summary Get cross project links
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectCrossprojectlinkGet(project, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectCrossprojectlinkGet(project, options)(fetch, basePath);
+            },
+            /**
              * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
              * @summary Removes completely a project (only used for unit testing). This is an actual DELETE in the database.
              * @param {string} project Project short label
@@ -10667,6 +11610,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 return (0, exports.DefaultApiFp)(configuration).projectHtmlCleanupTestPost(project, body, categories, options)(fetch, basePath);
             },
             /**
+             * Permissions - ?. Valid from version 2.1
+             * @summary Removes an import
+             * @param {string} project Project short label
+             * @param {string} id id
+             * @param {string} reason The reason why the user is doing this
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectImportIdDelete(project, id, reason, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectImportIdDelete(project, id, reason, options)(fetch, basePath);
+            },
+            /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Imports some items into a project
              * @param {string} project Project short label
@@ -10676,6 +11631,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              */
             projectImportPost(project, reason, options) {
                 return (0, exports.DefaultApiFp)(configuration).projectImportPost(project, reason, options)(fetch, basePath);
+            },
+            /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Get the history of a import in a project
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectImportinfoGet(project, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectImportinfoGet(project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -10913,6 +11878,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              */
             projectMergeinfoGet(project, excludeCategories, fromDate, push, options) {
                 return (0, exports.DefaultApiFp)(configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options)(fetch, basePath);
+            },
+            /**
+             * Permissions - Must have read/write access to the project. Valid from version 2.1
+             * @summary Imports some folders from a project to another as a module
+             * @param {string} project Project short label
+             * @param {string} mode Import mode -  can be include or copy
+             * @param {string} sourceProject Source project
+             * @param {string} sourceSelection A selection of folders and items to import
+             * @param {string} reason The reason why the user is doing this
+             * @param {string} [update] Update mode -  can be simple, update or rebase. If not defined, simple assumed
+             * @param {string} [oldSourceProject] Old source project (if update&#x3D;rebase
+             * @param {string} [lockLabel] An optional label that this operation will set on all items
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectModuleimportPost(project, mode, sourceProject, sourceSelection, reason, update, oldSourceProject, lockLabel, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectModuleimportPost(project, mode, sourceProject, sourceSelection, reason, update, oldSourceProject, lockLabel, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -11546,6 +12528,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             return (0, exports.DefaultApiFp)(this.configuration).allLogPost(message, options)(this.fetch, this.basePath);
         }
         /**
+         * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.4
+         * @summary Update matrix instance log level.
+         * @param {LogLevel} [body] Payload containing the log level
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         * @memberof DefaultApi
+         */
+        allLoglevelPut(body, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).allLoglevelPut(body, options)(this.fetch, this.basePath);
+        }
+        /**
          * Permissions - No permissions needed. Valid from version 2.1
          * @summary Monitoring object
          * @param {*} [options] Override http request option.
@@ -12029,6 +13022,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             return (0, exports.DefaultApiFp)(this.configuration).projectCopyItemOrFolderPost(project, itemOrFolder, targetFolder, reason, targetProject, copyLabels, map, ignoreLabels, options)(this.fetch, this.basePath);
         }
         /**
+         * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
+         * @summary Get cross project links
+         * @param {string} project Project short label
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         * @memberof DefaultApi
+         */
+        projectCrossprojectlinkGet(project, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectCrossprojectlinkGet(project, options)(this.fetch, this.basePath);
+        }
+        /**
          * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
          * @summary Removes completely a project (only used for unit testing). This is an actual DELETE in the database.
          * @param {string} project Project short label
@@ -12236,6 +13240,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             return (0, exports.DefaultApiFp)(this.configuration).projectHtmlCleanupTestPost(project, body, categories, options)(this.fetch, this.basePath);
         }
         /**
+         * Permissions - ?. Valid from version 2.1
+         * @summary Removes an import
+         * @param {string} project Project short label
+         * @param {string} id id
+         * @param {string} reason The reason why the user is doing this
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         * @memberof DefaultApi
+         */
+        projectImportIdDelete(project, id, reason, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectImportIdDelete(project, id, reason, options)(this.fetch, this.basePath);
+        }
+        /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
          * @summary Imports some items into a project
          * @param {string} project Project short label
@@ -12246,6 +13263,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          */
         projectImportPost(project, reason, options) {
             return (0, exports.DefaultApiFp)(this.configuration).projectImportPost(project, reason, options)(this.fetch, this.basePath);
+        }
+        /**
+         * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+         * @summary Get the history of a import in a project
+         * @param {string} project Project short label
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         * @memberof DefaultApi
+         */
+        projectImportinfoGet(project, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectImportinfoGet(project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -12500,6 +13528,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          */
         projectMergeinfoGet(project, excludeCategories, fromDate, push, options) {
             return (0, exports.DefaultApiFp)(this.configuration).projectMergeinfoGet(project, excludeCategories, fromDate, push, options)(this.fetch, this.basePath);
+        }
+        /**
+         * Permissions - Must have read/write access to the project. Valid from version 2.1
+         * @summary Imports some folders from a project to another as a module
+         * @param {string} project Project short label
+         * @param {string} mode Import mode -  can be include or copy
+         * @param {string} sourceProject Source project
+         * @param {string} sourceSelection A selection of folders and items to import
+         * @param {string} reason The reason why the user is doing this
+         * @param {string} [update] Update mode -  can be simple, update or rebase. If not defined, simple assumed
+         * @param {string} [oldSourceProject] Old source project (if update&#x3D;rebase
+         * @param {string} [lockLabel] An optional label that this operation will set on all items
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         * @memberof DefaultApi
+         */
+        projectModuleimportPost(project, mode, sourceProject, sourceSelection, reason, update, oldSourceProject, lockLabel, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectModuleimportPost(project, mode, sourceProject, sourceSelection, reason, update, oldSourceProject, lockLabel, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
@@ -13095,17 +14141,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 
 /***/ }),
 
-/***/ 209:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 214:
+/***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(210), __webpack_require__(79), __webpack_require__(212), __webpack_require__(213), __webpack_require__(94), __webpack_require__(92), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, isomorphic_fetch_1, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(84), __webpack_require__(217), __webpack_require__(218), __webpack_require__(99), __webpack_require__(97), __webpack_require__(9), __webpack_require__(88), __webpack_require__(226)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1, LabelManager_1, Project_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.CreateConsoleAPI = exports.StandaloneMatrixAPI = void 0;
-    isomorphic_fetch_1 = __importDefault(isomorphic_fetch_1);
+    // import { isomorphicFetch } from "isomorphic-fetch";
+    let isomorphicFetch = __webpack_require__(215);
     function CreateConsoleAPI(token, baseRestUrl, baseMatrixUrl) {
         let config = new configuration_1.Configuration({ apiKey: token });
         let session = new class {
@@ -13132,11 +14176,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             this.json = json;
             this.simpleItemTools = simpleItemTools;
             this.debug = false;
-            this.instance = new rest_api_1.DefaultApi(this.config, this.baseRestUrl, isomorphic_fetch_1.default);
+            this.projectMap = new Map();
+            this.instance = new rest_api_1.DefaultApi(this.config, this.baseRestUrl, isomorphicFetch);
             this.setItemConfig(initialItemConfig);
+            this.labelManager = new LabelManager_1.LabelManager(logger, json, () => {
+                return this.getItemConfig();
+            });
         }
         createNewItemConfig() {
             return new ItemConfiguration_1.ItemConfiguration(this.logger, this.json);
+        }
+        getLabelManager() {
+            return this.labelManager;
         }
         getItemConfig() {
             return this.ItemConfig;
@@ -13211,13 +14262,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 this.logger.error(msg);
                 throw new Error(msg);
             }
-            return this.appGetItemAsync(itemId);
+            return this.appGetItemAsync(this.getProject(), itemId);
+        }
+        getItemFromProject(project, id) {
+            return this.appGetItemAsync(project, id);
         }
         /**
          * get the initial tree structure from a project. Project must be set first.
          */
         async getTree() {
-            let p = this.instance.projectTreeGet(this.getProject(), "yes");
+            return this.getTreeFromProject(this.getProject());
+        }
+        async getTreeFromProject(projectName) {
+            let p = this.instance.projectTreeGet(projectName, "yes");
             return p.then((folders) => {
                 let result = [];
                 folders.forEach((v) => {
@@ -13231,7 +14288,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
          * get a folder from the database, filling in it's children.
          * @param folderId  the id of the folder like "F-<type>-<id>"
          * @throws error if folderId is invalid
-         * @returns Prommise to json object
+         * @returns Promise to ITitleAndId array
          */
         async getFolderChildren(folderId) {
             this.log(`get folder "${folderId}`);
@@ -13247,7 +14304,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 this.logger.error(msg);
                 throw new Error(msg);
             }
-            const p = this.instance.projectItemFolderGet(this.getProject(), folderId, 0, "", "yes");
+            return this.getFolderChildrenFromProject(this.getProject(), folderId);
+        }
+        async getFolderChildrenFromProject(projectName, folderId) {
+            this.log(`get folder ${folderId} from project ${projectName}`);
+            const ref = this.parseRef(folderId);
+            if (!ref.isFolder) {
+                const msg = `This is not a folder: "${folderId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            const p = this.instance.projectItemFolderGet(projectName, folderId, 0, "", "yes");
             return p.then((value) => {
                 let result = [];
                 // Harvest the children's IDs.
@@ -13335,8 +14402,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             item['history'] = hoi;
             return item;
         }
-        async appGetItemAsync(itemId) {
-            const p = this.instance.projectItemItemGet(this.getProject(), itemId, 1);
+        async appGetItemAsync(project, itemId) {
+            const p = this.instance.projectItemItemGet(project, itemId, 1);
             return p.then((value) => {
                 if (value.isFolder) {
                     value["children"] = [];
@@ -13384,7 +14451,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
          */
         async search(term, includeFields, includeLinks, includeLabels, filter) {
             this.log(`Search for "${term}"`);
-            return this.appSearchAsync(term, filter !== null && filter !== void 0 ? filter : null, true, includeFields ? "*" : null, null, includeLabels !== null && includeLabels !== void 0 ? includeLabels : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false);
+            return this.appSearchAsync(this.getProject(), term, filter !== null && filter !== void 0 ? filter : null, true, includeFields ? "*" : null, null, includeLabels !== null && includeLabels !== void 0 ? includeLabels : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false);
+        }
+        async searchInProject(project, term) {
+            this.log(`Search for "${term}"`);
+            const results = await this.instance.projectNeedleminimalGet(project, term);
+            return results;
         }
         async uploadProjectFile(url) {
             const options = { headers: this.getHeadersForPost() };
@@ -13395,6 +14467,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             const options = { headers: this.getHeadersForPost() };
             let items = await this.instance.projectExecutePost(this.getProject(), payload, options);
             return items;
+        }
+        async openProject(project) {
+            if (this.projectMap.has(project)) {
+                return this.projectMap.get(project);
+            }
+            const p = await this.instance.projectGet(project, 1);
+            let config = this.createNewItemConfig();
+            config.init(p);
+            const proj = new Project_1.Project(this, project, config, this.json, this.logger);
+            this.projectMap.set(project, proj);
+            return proj;
         }
         parseSearchResult(needle, fieldList) {
             let fullitem = this.parseRef(needle.itemOrFolderRef);
@@ -13424,7 +14507,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             return sr;
         }
         // TODO: crossProject is not handled (it is a server query, not a project query).
-        async appSearchAsync(term, filter, ignoreFilters, fieldList, crossProject, labels, down, up, treeOrder) {
+        async appSearchAsync(project, term, filter, ignoreFilters, fieldList, crossProject, labels, down, up, treeOrder) {
             let linksReq = "";
             if (down && up) {
                 linksReq = "up,down";
@@ -13435,7 +14518,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             else if (up) {
                 linksReq = "up";
             }
-            const p = this.instance.projectNeedleGet(this.getProject(), term, "", filter, fieldList, labels ? 1 : 0, treeOrder ? 1 : 0, linksReq);
+            const p = this.instance.projectNeedleGet(project, term, "", filter, fieldList, labels ? 1 : 0, treeOrder ? 1 : 0, linksReq);
             return p.then((result) => {
                 var hoi = [];
                 for (var idx = 0; idx < result.needles.length; idx++) {
@@ -13473,7 +14556,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 this.logger.error(msg);
                 throw new Error(msg);
             }
-            let itemPromise = this.appGetItemAsync(itemId);
+            let itemPromise = this.appGetItemAsync(this.getProject(), itemId);
             return itemPromise.then((value) => {
                 return value[fieldId];
             });
@@ -13507,9 +14590,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 this.logger.error(msg);
                 throw new Error(msg);
             }
-            return this.appUpdateItemInDBAsync(update, "edit");
+            return this.appUpdateItemInDBAsync(this.getProject(), update, "edit");
         }
-        appUpdateItemInDBAsync(itemJson, auditAction) {
+        appUpdateItemInDBAsync(project, itemJson, auditAction) {
             const comment = this.getComment();
             let putIt = { reason: comment };
             if (typeof itemJson.title !== "undefined") {
@@ -13549,11 +14632,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 }
             }
             const options = { query: fxFields, headers: this.getHeadersForPost() };
-            const p = this.instance.projectItemItemPut(this.getProject(), itemJson.id, putIt.reason, putIt.title, undefined, undefined, putIt["auditAction"], undefined, undefined, undefined, undefined, undefined, undefined, itemJson.onlyThoseFields, itemJson.onlyThoseLabels, undefined, options);
+            const p = this.instance.projectItemItemPut(project, itemJson.id, putIt.reason, putIt.title, undefined, undefined, putIt["auditAction"], undefined, undefined, undefined, undefined, undefined, undefined, itemJson.onlyThoseFields, itemJson.onlyThoseLabels, undefined, options);
             return p.then((result) => {
                 var item = this.parseItemJSON(itemJson.id, result);
                 return item;
             });
+        }
+        async updateItemInProject(project, item) {
+            return (await this.appUpdateItemInDBAsync(project, item, "edit")).id;
+        }
+        async createItemInProject(project, parentFolderId, item) {
+            const newId = await this.createItemFromIItemPut(project, parentFolderId, item);
+            return newId;
         }
         /**
          * sets multiple fields in the database
@@ -13587,7 +14677,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 }
                 update["fx" + fieldId] = s.value;
             }
-            return this.appUpdateItemInDBAsync(update, "edit");
+            return this.appUpdateItemInDBAsync(this.getProject(), update, "edit");
         }
         async addDownLink(fromId, toId) {
             this.log(`Add downlink from "${fromId} to "${toId}"`);
@@ -13602,7 +14692,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             return this.appDeleteItem(itemId, force);
         }
         async appDeleteItem(itemId, force) {
-            return this.appGetItemAsync(itemId).then((itemJson) => {
+            return this.appGetItemAsync(this.getProject(), itemId).then((itemJson) => {
                 const comment = this.getComment();
                 let confirm = "no";
                 if (itemJson.isFolder && itemJson.children && force) {
@@ -13649,9 +14739,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
          * @param uplinks list of uplinks to create
          * @returns the created item id
          */
-        async createItem(folder, title, data, labels, downlinks, uplinks) {
-            this.log(`Create item "${title} in folder "${folder}" with labels:"
-            ${labels ? labels.join(",") : ""}" downlinks:"${downlinks ? downlinks.join(",") : ""}" and uplinks:"${uplinks ? uplinks.join(",") : ""}" `);
+        createItem(folder, title, data, labels, downlinks, uplinks) {
+            this.log(`Create item ${title} in folder ${folder} with labels: ${labels ? labels.join(",") : ""} downlinks: ${downlinks ? downlinks.join(",") : ""} and uplinks:${uplinks ? uplinks.join(",") : ""} `);
             let that = this;
             let category = this.parseRef(folder).type;
             let update = { title: title, type: category };
@@ -13668,7 +14757,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             }
             if (labels && labels.length)
                 update.labels = labels.join(",");
-            const result = this.appCreateItemOfTypeAsync(category, update, "add", folder);
+            const result = that.appCreateItemOfTypeAsync(this.getProject(), category, update, "add", folder);
             return result.then(async (newItemId) => {
                 let itemId = that.parseRef(newItemId).id;
                 if (downlinks) {
@@ -13684,8 +14773,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 return newItemId;
             });
         }
+        async createItemFromIItemPut(project, folder, item) {
+            let that = this;
+            let category = this.parseRef(folder).type;
+            if (category != item.type) {
+                const msg = `Folder category of ${category} does not match item category of ${item.type}`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            const result = this.appCreateItemOfTypeAsync(project, category, item, "add", folder);
+            return result.then(async (newItemId) => {
+                let itemId = that.parseRef(newItemId).id;
+                // TODO: why can't this be done in the initial call? Seems like more trips to server than
+                // required.
+                if (item.downlinks) {
+                    for (let link of item.downlinks) {
+                        await that.addDownLink(itemId, link);
+                    }
+                }
+                if (item.uplinks) {
+                    for (let link of item.uplinks) {
+                        await that.addDownLink(link, itemId);
+                    }
+                }
+                return newItemId;
+            });
+        }
         // Returns a promise with the id of the created item.
-        async appCreateItemOfTypeAsync(category, itemJson, actions, parentId) {
+        async appCreateItemOfTypeAsync(project, category, itemJson, actions, parentId) {
             var _a, _b;
             const comment = this.getComment();
             if (itemJson.children) {
@@ -13710,7 +14825,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                     }
                 }
                 const options = { query: fxFields, headers: this.getHeadersForPost() };
-                let ack = this.instance.projectFolderPost(this.getProject(), parentId, itemJson.title, comment, undefined, options);
+                let ack = this.instance.projectFolderPost(project, parentId, itemJson.title, comment, undefined, options);
                 return ack.then((result) => {
                     itemJson.id = "F-" + itemJson.type + "-" + result.serial;
                     return itemJson.id;
@@ -13732,7 +14847,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             let linksUp = (_a = itemJson.linksUp) !== null && _a !== void 0 ? _a : [];
             let linksDown = (_b = itemJson.linksDown) !== null && _b !== void 0 ? _b : [];
             const options = { query: fxFields, headers: this.getHeadersForPost() };
-            let ack = this.instance.projectItemPost(this.getProject(), itemJson.title, parentId, comment, linksUp, linksDown, undefined, itemJson.labels, undefined, 1, options);
+            let ack = this.instance.projectItemPost(project, itemJson.title, parentId, comment, linksUp, linksDown, undefined, itemJson.labels, undefined, 1, options);
             return ack.then((result) => {
                 itemJson.id = itemJson.type + "-" + result.serial;
                 return itemJson.id;
@@ -13763,7 +14878,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
                 }
             }
             // TODO: is XTC really correct here?
-            return this.appCreateItemOfTypeAsync("XTC", update, "add", parent);
+            return this.appCreateItemOfTypeAsync(this.getProject(), "XTC", update, "add", parent);
         }
         async getItemIdByTitle(category, title) {
             this.log(`get item by title "${title}" in category "${category}"`);
@@ -13908,7 +15023,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 67:
+/***/ 69:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -14103,7 +15218,1210 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 79:
+/***/ 62:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
+// by the table control.
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.BaseTableFieldHandler = exports.ColumnEditor = void 0;
+    // A steplist has a table with different column types. They are defined here and interpreted in the table
+    // control and field configuration options.
+    var ColumnEditor;
+    (function (ColumnEditor) {
+        ColumnEditor["none"] = "none";
+        ColumnEditor["number"] = "number";
+        ColumnEditor["textline"] = "textline";
+        ColumnEditor["select"] = "select";
+        ColumnEditor["commentlog"] = "commentlog";
+        ColumnEditor["colorPicker"] = "colorPicker";
+        ColumnEditor["category"] = "category";
+        ColumnEditor["readonly"] = "readonly";
+        ColumnEditor["selectIcon"] = "selectIcon";
+        ColumnEditor["text"] = "text";
+        ColumnEditor["date_today"] = "date_today";
+        ColumnEditor["date"] = "date";
+        ColumnEditor["today"] = "today";
+        ColumnEditor["current_version"] = "current_version";
+        ColumnEditor["versionletter"] = "versionletter";
+        ColumnEditor["signaturemeaning"] = "signaturemeaning";
+        ColumnEditor["user"] = "user";
+        ColumnEditor["user_self"] = "user_self";
+        ColumnEditor["self"] = "self";
+        ColumnEditor["group"] = "group";
+        ColumnEditor["revision"] = "revision";
+        ColumnEditor["result"] = "result";
+        ColumnEditor["design"] = "design";
+        ColumnEditor["uprules"] = "uprules";
+        ColumnEditor["downrules"] = "downrules";
+        ColumnEditor["ecocapa"] = "ecocapa";
+        ColumnEditor["eco"] = "eco";
+        ColumnEditor["uid"] = "uid";
+        ColumnEditor["rules"] = "rules";
+    })(ColumnEditor || (ColumnEditor = {}));
+    exports.ColumnEditor = ColumnEditor;
+    class BaseTableFieldHandler {
+        constructor(configIn) {
+            this.data = [];
+            this.config = configIn;
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_steplist;
+        }
+        getColumnByField(fieldId) {
+            if (this.config.columns) {
+                const cols = this.config.columns.filter((col) => col.field == fieldId);
+                if (cols.length >= 1) {
+                    return cols[0];
+                }
+            }
+            return undefined;
+        }
+        columnNumberToFieldId(columnNumber) {
+            if (columnNumber >= this.config.columns.length) {
+                throw new Error(`${columnNumber} is outside the range [0..${this.config.columns.length}]`);
+            }
+            return this.config.columns[columnNumber].field;
+        }
+        validate() {
+            // No validation by default
+        }
+        initData(serializedFieldData) {
+            if (!serializedFieldData) {
+                this.data = [];
+            }
+            else {
+                // This requirement to remove <div> tags comes from the table control implementation.
+                this.data = JSON.parse(serializedFieldData.replace("<div/>", ""));
+            }
+        }
+        getData() {
+            return JSON.stringify(this.data);
+        }
+        getDataRaw() { return this.data; }
+        setData(dataIn, fixData = false) {
+            this.data = dataIn;
+        }
+        getRowCount() {
+            return this.data.length;
+        }
+        deleteRow(rowNumber) {
+            if (rowNumber >= this.data.length) {
+                throw new Error(`Row ${rowNumber} not found`);
+            }
+            this.data.splice(rowNumber, 1);
+            this.validate();
+        }
+        insertRow(rowNumber, columnData) {
+            // Construct a row object from the column data
+            let o = {};
+            columnData.forEach((v, i) => {
+                o[this.columnNumberToFieldId(i)] = v;
+            });
+            this.data.splice(rowNumber, 0, o);
+            this.validate();
+        }
+        clear() {
+            this.data = [];
+        }
+        getColumnCount() {
+            let columnCount = 0;
+            if (this.config.columns) {
+                columnCount = this.config.columns.length;
+            }
+            return columnCount;
+        }
+        getCellData(row, col) {
+            const fieldId = this.columnNumberToFieldId(col);
+            // TODO: there should be a switch statement here on type. Complex types may
+            // be JSON objects and should be parsed.
+            return this.data[row][fieldId];
+        }
+        getRowData(row) {
+            let result = [];
+            for (let i = 0; i < this.getColumnCount(); i++) {
+                result[i] = this.getCellData(row, i);
+            }
+            return result;
+        }
+    }
+    exports.BaseTableFieldHandler = BaseTableFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 61:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
+// by the table control.
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BaseTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.BaseValidatedTableFieldHandler = void 0;
+    class BaseValidatedTableFieldHandler extends BaseTableFieldHandler_1.BaseTableFieldHandler {
+        constructor(configIn) {
+            super(configIn);
+        }
+        validate() {
+            // Data should be an array.
+            if (typeof this.data.length == 'undefined') {
+                throw new Error("data is not an array of rows");
+            }
+            for (let row of this.data) {
+                // Each row has a property name for each column.
+                for (const fieldId in row) {
+                    let colDetails = this.getColumnByField(fieldId);
+                    if (!colDetails) {
+                        throw new Error(`Unable to find definition for column with field id ${fieldId}`);
+                    }
+                    // TODO: validate the type of the field data.
+                }
+            }
+        }
+        setData(dataIn, fixData = false) {
+            const oldData = this.data;
+            if (fixData) {
+                for (let row of this.data) {
+                    // Each row has a property name for each column.
+                    for (const colId in row) {
+                        let colDetails = this.getColumnByField(colId);
+                        if (!colDetails) {
+                            delete row[colId];
+                        }
+                    }
+                }
+            }
+            this.data = dataIn;
+            this.validate();
+        }
+    }
+    exports.BaseValidatedTableFieldHandler = BaseValidatedTableFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 59:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.CheckboxFieldHandler = void 0;
+    class CheckboxFieldHandler {
+        constructor(configIn) {
+            this.config = configIn;
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_checkbox; }
+        initData(serializedFieldData) {
+            this.data = serializedFieldData;
+        }
+        getData() {
+            return this.data;
+        }
+        getValue() {
+            if (this.data) {
+                if (this.data == "1" || this.data == "true") {
+                    return true;
+                }
+                else if (this.data == "0" || this.data == "false") {
+                    return false;
+                }
+            }
+            return undefined;
+        }
+        setValue(value) {
+            if (value !== undefined) {
+                this.data = value ? "true" : "false";
+            }
+            else {
+                this.data = undefined;
+            }
+        }
+    }
+    exports.CheckboxFieldHandler = CheckboxFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 73:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, ItemSelectionFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.CrosslinksFieldHandler = void 0;
+    class CrosslinksFieldHandler extends ItemSelectionFieldHandler_1.ItemSelectionFieldHandler {
+        static UpdateFieldConfig(params) {
+            params.crossProject = true;
+            if (params.linkTypes == undefined) {
+                params.linkTypes = [];
+            }
+            if (params.prefix == undefined) {
+                params.prefix = "Links";
+            }
+        }
+        constructor(configIn) {
+            super(configIn, FieldDescriptions_1.FieldDescriptions.Field_crosslinks);
+        }
+        /**
+         * Add an item to the list at the given position
+         * @param position
+         * @param item
+         * @returns the field handler
+         * @throws Error in case a projectShortLabel doesn't exist in the item.
+         */
+        insertItem(position, item) {
+            if (!item.projectShortLabel) {
+                throw new Error("item must be a cross project link");
+            }
+            return super.insertItem(position, item);
+        }
+        /**
+         * Append the given item to the end of the list of items.
+         * @param item
+         * @returns the field handler.
+         * @throws Error in case a projectShort label doesn't exist in the item.
+         */
+        appendItem(item) {
+            if (!item.projectShortLabel) {
+                throw new Error("item must be a cross project link");
+            }
+            return super.appendItem(item);
+        }
+    }
+    exports.CrosslinksFieldHandler = CrosslinksFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 70:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DateFieldHandler = void 0;
+    class DateFieldHandler {
+        constructor(config) {
+            this.date = undefined;
+        }
+        getData() {
+            if (!this.date)
+                return "";
+            return this.date.getFullYear() + "/" + (this.date.getMonth() + 1) + "/" + this.date.getDate();
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_date;
+        }
+        initData(serializedFieldData) {
+            if (!serializedFieldData)
+                return;
+            let date = DateFieldHandler.getDateFromString(serializedFieldData);
+            if (date) {
+                this.date = date;
+            }
+            else {
+                this.date = undefined;
+            }
+        }
+        static getDateFromString(dateStr) {
+            if (dateStr) {
+                let split = (dateStr).split("/");
+                if (split.length === 3 && split[0] !== "NaN") {
+                    let date = new Date(parseInt(split[0]), parseInt(split[1]) - 1, parseInt(split[2]));
+                    return date;
+                }
+            }
+            return null;
+        }
+        setDate(date) {
+            this.date = date;
+        }
+        getDate() {
+            return this.date;
+        }
+    }
+    exports.DateFieldHandler = DateFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 64:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DropdownFieldHandler = void 0;
+    class DropdownFieldHandler {
+        getData() {
+            return this.rawData;
+        }
+        constructor(params, initialValue) {
+            this.rawData = "";
+            this.human = "";
+            this.params = params;
+            this.initData(initialValue);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_dropdown;
+        }
+        initData(serializedFieldData) {
+            this.rawData = serializedFieldData;
+            let that = this;
+            if (typeof serializedFieldData === 'undefined') {
+                serializedFieldData = "";
+            }
+            if (this.params && this.params.splitHuman) {
+                let split = serializedFieldData.split("|");
+                this.rawData = split[0];
+                this.human = split[split.length - 1];
+            }
+            else {
+                this.rawData = serializedFieldData;
+                if (this.params && this.params.options) {
+                    for (let value of this.params.options) {
+                        if (value.id === that.getData()) {
+                            that.human = value.label;
+                        }
+                    }
+                }
+            }
+        }
+        /**
+         * Retrieve the current value of the field, formatted as an array.
+         * If there are N current values, the array will have N items.
+         * @param filterOnOptions true if you only want to get back values that show up
+         *     in the options list.
+         * @returns an array. Empty if there is no current value.
+         */
+        getValues(filterOnOptions = true) {
+            if (this.rawData != undefined || this.rawData != null) {
+                let values = this.rawData.split(",");
+                if (filterOnOptions && !this.params.create) {
+                    return values.filter((value) => {
+                        return this.params.options.some((option) => {
+                            return option.id === value;
+                        });
+                    });
+                }
+                else {
+                    // When creating new values, we don't want to return empty value like this : [""] but []
+                    if (this.params && this.params.create && this.rawData === "")
+                        return [];
+                    else
+                        return values;
+                }
+            }
+            return [];
+        }
+        getHuman() {
+            return this.human;
+        }
+    }
+    exports.DropdownFieldHandler = DropdownFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 56:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.EmptyFieldHandler = void 0;
+    class EmptyFieldHandler {
+        constructor(fieldTypeIn, configIn) {
+            this.fieldType = fieldTypeIn;
+            this.config = configIn;
+        }
+        getFieldType() { return this.fieldType; }
+        initData(serializedFieldData) { }
+        getData() { return ""; }
+    }
+    exports.EmptyFieldHandler = EmptyFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 71:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.GateFieldHandler = void 0;
+    class GateFieldHandler {
+        constructor(config) {
+            this.defautValue = {
+                passed: false,
+                failed: false,
+                lines: [],
+                search: "",
+            };
+            // TODO: implement
+            this.config = config;
+        }
+        getData() {
+            return JSON.stringify(this.currentValue);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_gateControl;
+        }
+        initData(serializedFieldData) {
+            this.currentValue = this.parseFieldValue(serializedFieldData);
+        }
+        // the field value is saved as json object
+        parseFieldValue(stored) {
+            // default
+            let state = Object.assign({}, this.defautValue);
+            // if something was saved before, use it
+            if (stored) {
+                state = JSON.parse(stored);
+            }
+            // remove lines which do not exist anymore (might happen if config changes)
+            let lineIds = this.config.lines.map((lineDef) => { return lineDef.id; });
+            state.lines = state.lines.filter((line) => { return lineIds.indexOf(line.id) != -1; });
+            // add missing lines
+            let existsIds = state.lines.map((lineValue) => { return lineValue.id; });
+            let newLines = this.config.lines.map((lineDef) => {
+                return {
+                    id: lineDef.id,
+                    passed: false,
+                    failed: false,
+                    user: "",
+                    comment: "",
+                    date: "",
+                    dateUser: ""
+                };
+            }).filter((defaultLine) => {
+                return existsIds.indexOf(defaultLine.id) == -1;
+            });
+            state.lines = state.lines.concat(newLines);
+            // update overall status and text
+            this.updateOverallStatusInternal(state);
+            return state;
+        }
+        updateOverallStatus() {
+            this.updateOverallStatusInternal(this.currentValue);
+        }
+        updateOverallStatusInternal(status) {
+            let that = this;
+            this.allPassed = false;
+            status.passed = false;
+            // if one line is failed, the whole status is failed
+            status.failed = status.lines.filter((line) => { return line.failed; }).length > 0;
+            if (!status.failed) {
+                // if all lines passed, the status is passed
+                status.passed = status.lines.filter((line) => { return line.passed; }).length == status.lines.length;
+            }
+            // build searchable string
+            /*
+                _passed_ (all lines passed)
+                _failed_ (one line failed)
+                _todo_ (needs some action)
+                _pass_userId_ (a user passed it)
+                _fail_userId_ (a user failed it)
+                _todo_userId_ (a user needs to do something)
+            */
+            status.search = "";
+            if (status.passed) {
+                status.search += "_passed_";
+                this.allPassed = true;
+            }
+            else if (status.failed) {
+                status.search += "_failed_";
+            }
+            else {
+                status.search += "_todo_";
+            }
+            for (let state of status.lines) {
+                if (state.passed) {
+                    status.search += "_pass_" + state.user + "_";
+                }
+                else if (state.failed) {
+                    status.search += "_fail_" + state.user + "_";
+                }
+                else {
+                    for (let lineDef of that.config.lines) {
+                        if (lineDef.id == state.id) {
+                            for (let user of lineDef.users) {
+                                status.search += "_todo_" + user + "_";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        getGateValue() {
+            return this.currentValue;
+        }
+        setGateValue(gateValue) {
+            if (!gateValue)
+                gateValue = Object.assign({}, this.defautValue);
+            this.currentValue = gateValue;
+        }
+    }
+    exports.GateFieldHandler = GateFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 63:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.GenericFieldHandler = void 0;
+    class GenericFieldHandler {
+        constructor(fieldTypeIn, configIn) {
+            this.fieldType = fieldTypeIn;
+            this.config = configIn;
+        }
+        getFieldType() { return this.fieldType; }
+        initData(serializedFieldData) { this.data = serializedFieldData; }
+        getData() { return this.data; }
+    }
+    exports.GenericFieldHandler = GenericFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 72:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.HyperlinkFieldHandler = void 0;
+    class HyperlinkFieldHandler {
+        constructor(configIn) {
+            this.config = configIn;
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_hyperlink; }
+        initData(serializedFieldData) {
+            this.data = serializedFieldData;
+        }
+        getData() {
+            return this.data;
+        }
+        getValue() {
+            if (this.data) {
+                if (this.data == "1" || this.data == "true") {
+                    return true;
+                }
+                else if (this.data == "0" || this.data == "false") {
+                    return false;
+                }
+            }
+            return undefined;
+        }
+        setValue(value) {
+            if (value !== undefined) {
+                this.data = value ? "true" : "false";
+            }
+            else {
+                this.data = undefined;
+            }
+        }
+    }
+    exports.HyperlinkFieldHandler = HyperlinkFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 74:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
+// by the item selection control
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemSelectionFieldHandler = void 0;
+    class ItemSelectionFieldHandler {
+        constructor(configIn, fieldTypeIn) {
+            this.config = configIn;
+            if (fieldTypeIn) {
+                this.fieldType = fieldTypeIn;
+            }
+            else {
+                // Field_links is a kind of default. This field handler is often used
+                // in cases that don't map to an item field, just to a control used
+                // to display a UI. In those cases, no one cares about the field type.
+                this.fieldType = FieldDescriptions_1.FieldDescriptions.Field_links;
+            }
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_crosslinks; }
+        initData(serializedFieldData) {
+            this.data = serializedFieldData;
+        }
+        getData() {
+            return this.data;
+        }
+        getItems() {
+            if (this.getData()) {
+                let items = JSON.parse(this.getData());
+                return items;
+            }
+            return [];
+        }
+        getItemCount() {
+            return this.getItems().length;
+        }
+        hasItems() {
+            return this.getItemCount() > 0;
+        }
+        hasItem(itemId, projectShortLabel) {
+            for (let item of this.getItems()) {
+                if (item.to == itemId && item.projectShortLabel == projectShortLabel) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        insertItem(position, item) {
+            if (this.hasItem(item.to, item.projectShortLabel)) {
+                const label = item.projectShortLabel ? (item.projectShortLabel + "/") : "";
+                throw new Error(`Item ${label}${item.to} is already included`);
+            }
+            let items = this.getItems();
+            items.splice(position, 0, item);
+            this.data = JSON.stringify(items);
+            return this;
+        }
+        appendItem(item) {
+            const position = this.getItemCount();
+            return this.insertItem(position, item);
+        }
+        removeItem(position) {
+            let items = this.getItems();
+            items.splice(position, 1);
+            this.data = JSON.stringify(items);
+            return this;
+        }
+        clear() {
+            let items = [];
+            this.data = JSON.stringify(items);
+            return this;
+        }
+    }
+    exports.ItemSelectionFieldHandler = ItemSelectionFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 57:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.RichtextFieldHandler = void 0;
+    class RichtextFieldHandler {
+        constructor(configIn) {
+            this.data = "";
+            this.config = configIn;
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_richtext; }
+        // TODO: is there more to richtext than just an html string?
+        initData(serializedFieldData) { this.data = serializedFieldData; }
+        getData() { return this.data; }
+        getHtml() { return this.data; }
+        setHtml(str) {
+            this.data = str;
+            return this;
+        }
+    }
+    exports.RichtextFieldHandler = RichtextFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 60:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33), __webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.SteplistFieldHandler = exports.initialize = void 0;
+    class SteplistFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
+        constructor(configIn) {
+            super(configIn);
+        }
+    }
+    exports.SteplistFieldHandler = SteplistFieldHandler;
+    function validateTableControlParams(json) {
+        return new Promise((resolve) => {
+            if (!json.columns || json.columns.length == 0) {
+                resolve("There are no columns defined. You need at least one column!");
+            }
+            const validXmlRegex = /^([_a-z][\w]?|[a-w_yz][\w]{2,}|[_a-z][a-l_n-z\d][\w]+|[_a-z][\w][a-k_m-z\d][\w]*)$/i;
+            // check for bad column field properties
+            let badFields = [];
+            json.columns.forEach(function (column, idx) {
+                if (!column.field) {
+                    badFields.push("Column " + (idx + 1) + " needs a field property");
+                }
+                else if (!column.field.match(validXmlRegex)) {
+                    badFields.push("The field of column " + (idx + 1) + ": ' " + column.field + "' needs to be a valid XML element name.");
+                }
+                if (column.options) {
+                    for (let option in column.options) {
+                        if (!option.match(validXmlRegex)) {
+                            badFields.push("The option '" + option + "' of field of column " + (idx + 1) + ": ' " + column.field + "' needs to be a valid XML element name.");
+                        }
+                    }
+                }
+            });
+            if (badFields.length) {
+                resolve(badFields.join("<br>"));
+            }
+            resolve(null);
+        });
+    }
+    function initialize() {
+        FieldDescriptions_1.FieldDescriptions.setValidationFunction(FieldDescriptions_1.FieldDescriptions.Field_steplist, validateTableControlParams);
+    }
+    exports.initialize = initialize;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 67:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestResultFieldHandler = void 0;
+    // TODO: This is configuring a dropdown control. It should be possible to combine this code
+    // with the DropdownFieldHandler code.
+    class TestResultFieldHandler {
+        static UpdateFieldConfig(params, testConfig) {
+            // There are default params for dropdown for test results
+            params.maxItems = 1; // maxItems which can be selected
+            params.options = [], // options in dropdown  [{id:..., label: ...}]
+                params.create = false, // true if values can be added
+                params.splitHuman = true; // if human values differ from real values (e.g. for XTCs which are passed|ok|p (only the fist part is interesting).
+            // This field handler gets its configuration options from the test manager.
+            params.options = testConfig.getTestRunResultOptions();
+        }
+        constructor(params, initialValue) {
+            this.rawData = "";
+            this.human = "";
+            this.params = params;
+            this.initData(initialValue);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_test_result;
+        }
+        getData() {
+            return this.rawData;
+        }
+        initData(serializedFieldData) {
+            this.rawData = serializedFieldData;
+            let that = this;
+            if (typeof serializedFieldData === 'undefined') {
+                serializedFieldData = "";
+            }
+            if (this.params.splitHuman) {
+                let split = serializedFieldData.split("|");
+                this.rawData = split[0];
+                this.human = split[split.length - 1];
+            }
+            else {
+                this.rawData = serializedFieldData;
+                for (let value of this.params.options) {
+                    if (value.id === that.getData()) {
+                        that.human = value.label;
+                    }
+                }
+            }
+        }
+        getValues(filterOnOptions = true) {
+            if (this.rawData) {
+                let values = this.rawData.split(",");
+                if (filterOnOptions && !this.params.create) {
+                    return values.filter((value) => {
+                        return this.params.options.some((option) => {
+                            return option.id === value;
+                        });
+                    });
+                }
+                else {
+                    return values;
+                }
+            }
+            return [];
+        }
+        getHuman() {
+            return this.human;
+        }
+    }
+    exports.TestResultFieldHandler = TestResultFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 65:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33), __webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestStepsFieldHandler = void 0;
+    class TestStepsFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
+        static UpdateFieldConfig(options, itemType, testConfig) {
+            // This field handler gets it's configuration options from the test manager.
+            // Ignore input options completely.
+            const rconfig = testConfig.getTestStepsConfig(itemType);
+            for (let name in rconfig) {
+                options[name] = rconfig[name];
+            }
+        }
+        constructor(options) {
+            super(options);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_test_steps;
+        }
+    }
+    exports.TestStepsFieldHandler = TestStepsFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 66:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33), __webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestStepsResultFieldHandler = void 0;
+    class TestStepsResultFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
+        static UpdateFieldConfig(options, testConfig) {
+            // This field handler gets it's configuration options from the test manager.
+            const rconfig = testConfig.getTestStepsResultsConfig();
+            for (let name in rconfig) {
+                options[name] = rconfig[name];
+            }
+        }
+        constructor(options) {
+            super(options);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_test_steps_result;
+        }
+        validate() {
+            // TODO: validation for this kind of table is more difficult.
+            // There is a property "passFailEditorConfig" on the options that needs to
+            // be looked at.
+        }
+    }
+    exports.TestStepsResultFieldHandler = TestStepsResultFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 58:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TextlineFieldHandler = void 0;
+    class TextlineFieldHandler {
+        constructor(configIn) {
+            this.data = "";
+            this.config = configIn;
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_textline; }
+        initData(serializedFieldData) { this.data = serializedFieldData; }
+        getData() { return this.data; }
+        getText() { return this.data; }
+        setText(str) {
+            // make sure there are no newlines.
+            this.data = str.replace("\n", "");
+        }
+    }
+    exports.TextlineFieldHandler = TextlineFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 68:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33), __webpack_require__(69)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BasicFunctions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.UserFieldHandler = void 0;
+    // TODO: UserFieldHandler is a lot like DropdownFieldHandler. Combine them somehow.
+    class UserFieldHandler {
+        // TODO: IDropdownParams is too broad. Use a narrower type
+        static UpdateFieldConfig(params, fieldValue, itemConfig) {
+            let userDropdown = itemConfig.getValidUserOptions(!BasicFunctions_1.BasicFunctions.isFalse(params.showUsers), // by default show users, if not specified
+            BasicFunctions_1.BasicFunctions.isTrue(params.showGroups), // by default do not show groups
+            undefined, fieldValue); // special treatment for deleted users
+            params.create = false;
+            // TODO: WARNING ! ERROR ! BUG ! This is altering the params object stored in the item configuration
+            // where it was originally retrieved from. We need a clone operation by the caller to stop doing this, however,
+            // I'm wondering if we have code that relies on these things being updated.
+            params.options = userDropdown;
+            params.maxItems = params.maxItems ? params.maxItems : 1;
+        }
+        getData() {
+            return this.rawData;
+        }
+        constructor(params, initialValue) {
+            this.rawData = "";
+            this.human = "";
+            this.params = params;
+            this.initData(initialValue);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_user;
+        }
+        initData(serializedFieldData) {
+            if (typeof serializedFieldData === 'undefined') {
+                serializedFieldData = "";
+            }
+            if (this.params.splitHuman) {
+                let split = serializedFieldData.split("|");
+                this.rawData = split[0];
+                this.human = split[split.length - 1];
+            }
+            else {
+                this.rawData = serializedFieldData;
+                for (let value of this.params.options) {
+                    if (value.id === this.getData()) {
+                        // TODO: what to do about "human" when there are multiple values?
+                        this.human = value.label;
+                    }
+                }
+            }
+        }
+        getValues(filterOnOptions = true) {
+            if (this.rawData) {
+                let values = this.rawData.split(",");
+                if (filterOnOptions && !this.params.create) {
+                    return values.filter((value) => {
+                        return this.params.options.some((option) => {
+                            return option.id === value;
+                        });
+                    });
+                }
+                else {
+                    return values;
+                }
+            }
+            return [];
+        }
+        getMaxItems() {
+            if (this.params.maxItems) {
+                return Number(this.params.maxItems);
+            }
+            return undefined;
+        }
+        setValues(values) {
+            const maxItems = this.getMaxItems();
+            if (maxItems && maxItems < values.length) {
+                throw new Error(`The field may only store ${maxItems} items`);
+            }
+            if (!this.params.create) {
+                // Validate against the existing options.
+                // TODO: validation should probably be in a central method checked by
+                // setData().
+                for (let value of values) {
+                    if (!this.params.options.some(o => o.id === value)) {
+                        throw new Error(`Value ${value} not found in accepted options`);
+                    }
+                }
+            }
+            this.initData(values.join());
+        }
+        getHuman() {
+            return this.human;
+        }
+    }
+    exports.UserFieldHandler = UserFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 55:
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(33), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(63), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(70), __webpack_require__(71), __webpack_require__(72), __webpack_require__(73), __webpack_require__(62), __webpack_require__(60), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(70), __webpack_require__(74), __webpack_require__(73), __webpack_require__(72)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, EmptyFieldHandler_1, RichtextFieldHandler_1, TextlineFieldHandler_1, CheckboxFieldHandler_1, SteplistFieldHandler_1, GenericFieldHandler_1, DropdownFieldHandler_1, TestStepsFieldHandler_1, TestStepsResultFieldHandler_1, TestResultFieldHandler_1, UserFieldHandler_1, DateFieldHandler_1, GateFieldHandler_1, HyperlinkFieldHandler_1, CrosslinksFieldHandler_1, BaseTableFieldHandler_1, SteplistFieldHandler_2, TestStepsFieldHandler_2, TestStepsResultFieldHandler_2, TestResultFieldHandler_2, UserFieldHandler_2, DateFieldHandler_2, ItemSelectionFieldHandler_1, CrosslinksFieldHandler_2, HyperlinkFieldHandler_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.FieldHandlerFactory = exports.InitializeFieldHandlers = void 0;
+    __exportStar(BaseTableFieldHandler_1, exports);
+    __exportStar(SteplistFieldHandler_2, exports);
+    __exportStar(TestStepsFieldHandler_2, exports);
+    __exportStar(TestStepsResultFieldHandler_2, exports);
+    __exportStar(TestResultFieldHandler_2, exports);
+    __exportStar(UserFieldHandler_2, exports);
+    __exportStar(DateFieldHandler_2, exports);
+    __exportStar(ItemSelectionFieldHandler_1, exports);
+    __exportStar(CrosslinksFieldHandler_2, exports);
+    __exportStar(HyperlinkFieldHandler_2, exports);
+    function InitializeFieldHandlers() {
+        (0, SteplistFieldHandler_1.initialize)();
+    }
+    exports.InitializeFieldHandlers = InitializeFieldHandlers;
+    // TODO(modules): At the moment, handling of structured data is spread all over the client
+    // code base. We'd like to get all the data manipulation into these classes, separating
+    // that code from say, UI code.
+    class FieldHandlerFactory {
+        static UpdateFieldConfig(itemConfig, testConfig, fieldType, itemType, fieldValue, config) {
+            switch (fieldType) {
+                case FieldDescriptions_1.FieldDescriptions.Field_test_steps:
+                    TestStepsFieldHandler_1.TestStepsFieldHandler.UpdateFieldConfig(config, itemType, testConfig);
+                    break;
+                case FieldDescriptions_1.FieldDescriptions.Field_test_steps_result:
+                    TestStepsResultFieldHandler_1.TestStepsResultFieldHandler.UpdateFieldConfig(config, testConfig);
+                    break;
+                case FieldDescriptions_1.FieldDescriptions.Field_test_result:
+                    TestResultFieldHandler_1.TestResultFieldHandler.UpdateFieldConfig(config, testConfig);
+                    break;
+                case FieldDescriptions_1.FieldDescriptions.Field_user:
+                    UserFieldHandler_1.UserFieldHandler.UpdateFieldConfig(config, fieldValue, itemConfig);
+                    break;
+                case FieldDescriptions_1.FieldDescriptions.Field_crosslinks:
+                    CrosslinksFieldHandler_1.CrosslinksFieldHandler.UpdateFieldConfig(config);
+                    break;
+                default:
+                    break;
+            }
+        }
+        static CreateHandler(fieldType, config) {
+            const description = FieldDescriptions_1.FieldDescriptions.findById(fieldType);
+            if (!description) {
+                //Do not throw an error here, because this is called for every field on every item...
+                console.warn(`Unable to find handler for fieldType ${fieldType}`);
+                return new EmptyFieldHandler_1.EmptyFieldHandler("notFound", config);
+            }
+            switch (description.id) {
+                case FieldDescriptions_1.FieldDescriptions.Field_tasksControl:
+                case FieldDescriptions_1.FieldDescriptions.Field_section:
+                case FieldDescriptions_1.FieldDescriptions.Field_links:
+                case FieldDescriptions_1.FieldDescriptions.Field_uplinkinfo:
+                case FieldDescriptions_1.FieldDescriptions.Field_labels:
+                case FieldDescriptions_1.FieldDescriptions.Field_workflow:
+                case FieldDescriptions_1.FieldDescriptions.Field_syncStatus:
+                case FieldDescriptions_1.FieldDescriptions.Field_syncSourceInfo:
+                    return new EmptyFieldHandler_1.EmptyFieldHandler(description.id, config);
+                case FieldDescriptions_1.FieldDescriptions.Field_textline:
+                    return new TextlineFieldHandler_1.TextlineFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_richtext:
+                    return new RichtextFieldHandler_1.RichtextFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_checkbox:
+                    return new CheckboxFieldHandler_1.CheckboxFieldHandler(config);
+                // Table-like handlers
+                case FieldDescriptions_1.FieldDescriptions.Field_steplist:
+                    return new SteplistFieldHandler_1.SteplistFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_test_steps:
+                    return new TestStepsFieldHandler_1.TestStepsFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_test_steps_result:
+                    return new TestStepsResultFieldHandler_1.TestStepsResultFieldHandler(config);
+                // Dropdown-like field handlers
+                case FieldDescriptions_1.FieldDescriptions.Field_dropdown:
+                    return new DropdownFieldHandler_1.DropdownFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_user:
+                    return new UserFieldHandler_1.UserFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_test_result:
+                    return new TestResultFieldHandler_1.TestResultFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_date:
+                    return new DateFieldHandler_1.DateFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_gateControl:
+                    return new GateFieldHandler_1.GateFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_crosslinks:
+                    return new CrosslinksFieldHandler_1.CrosslinksFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_hyperlink:
+                    return new HyperlinkFieldHandler_1.HyperlinkFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_colorPicker:
+                case FieldDescriptions_1.FieldDescriptions.Field_sourceref:
+                case FieldDescriptions_1.FieldDescriptions.Field_markAsTemplate:
+                case FieldDescriptions_1.FieldDescriptions.Field_docFilter:
+                case FieldDescriptions_1.FieldDescriptions.Field_text:
+                case FieldDescriptions_1.FieldDescriptions.Field_fileManager:
+                case FieldDescriptions_1.FieldDescriptions.Field_risk2:
+                case FieldDescriptions_1.FieldDescriptions.Field_report:
+                case FieldDescriptions_1.FieldDescriptions.Field_cascadingSelect:
+                case FieldDescriptions_1.FieldDescriptions.Field_reportId:
+                case FieldDescriptions_1.FieldDescriptions.Field_filter_file:
+                case FieldDescriptions_1.FieldDescriptions.Field_signature:
+                case FieldDescriptions_1.FieldDescriptions.Field_signatureControl:
+                default:
+                    return new GenericFieldHandler_1.GenericFieldHandler(fieldType, config);
+            }
+        }
+    }
+    exports.FieldHandlerFactory = FieldHandlerFactory;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 84:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(33)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ProjectSettings_1, FieldDescriptions_1) {
@@ -14112,6 +16430,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     exports.ItemConfiguration = void 0;
     class ItemConfiguration {
         constructor(logger, json) {
+            // TODO: it seems that we have category information in configuration and also in variable
+            // settings, with SLIGHTLY DIFFERENT FIELDS, WHAT THE HECK?
+            // (one has shortLabel, the other doesnt).
             this.configuration = {};
             this.settingsString = {};
             this.settingsJSON = {};
@@ -14916,7 +17237,123 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 93:
+/***/ 49:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestManagerConfiguration = void 0;
+    class TestManagerConfiguration {
+        constructor() {
+            this.XTCconfig = {};
+        }
+        initialize(itemConfig) {
+            this.XTCconfig = itemConfig.getTestConfig();
+            if (!this.XTCconfig) {
+                // default until 1.3
+                this.XTCconfig = {
+                    "xtcType": "XTC",
+                    "cloneSources": ["TC", "UC"],
+                    "columnsSteps": [{ "name": "Action", "field": "action", "editor": "text" },
+                        { "name": "Expected Result", "field": "expected", "editor": "text" }],
+                    "columnsStepsResult": [{ "name": "Action", "field": "action", "editor": "none" },
+                        { "name": "Expected Result", "field": "expected", "editor": "none" },
+                        { "name": "Passed/Failed", "field": "result", "editor": "result" },
+                        { "name": "Comment", "field": "comment", "editor": "text" }],
+                    "automatic": [],
+                    "manual": [
+                        { "human": "passed", "command": "passed", "render": "ok", "code": "p" },
+                        { "human": "failed", "command": "failed", "render": "error", "code": "f" },
+                        { "human": "", "command": "not executed", "render": "warning", "code": "" }
+                    ],
+                    "perStep": [
+                        { "human": "passed", "command": "passed", "render": "ok", "code": "p", "key": "p", "image": "success.png" },
+                        { "human": "failed", "command": "failed", "render": "error", "code": "f", "key": "f", "image": "fail.png" },
+                        { "human": "", "command": "not executed", "render": "warning", "code": "", "key": "r", "image": "" }
+                    ]
+                };
+            }
+        }
+        // returns possible values for the drop down of the completed test case
+        getTestRunResultOptions() {
+            var opts = [];
+            if (this.XTCconfig.automatic && this.XTCconfig.automatic.length > 0) {
+                opts.push({ id: "a", label: "automatic" });
+            }
+            for (var idx = 0; idx < this.XTCconfig.manual.length; idx++) {
+                opts.push({ id: this.XTCconfig.manual[idx].code, label: this.XTCconfig.manual[idx].command });
+            }
+            return opts;
+        }
+        // get the configuration for a test definition table (e.g. test actions and expected results)
+        getTestStepsConfig(category) {
+            if (this.XTCconfig.render && this.XTCconfig.render[category]) {
+                return this.XTCconfig.render[category];
+            }
+            // this is actually a fallback for project created with version 1.5 or before
+            // these project can be upgraded by just replacing the xtc_config with the latest version
+            // UNLESS column names have been changed (which never happend)....
+            return {
+                columns: (category === this.XTCconfig.xtcType) ? this.XTCconfig.columnsStepsResult : this.XTCconfig.columnsSteps
+            };
+        }
+        // get definition for a test execution table (e.g. including columns with results/comments)
+        getTestStepsResultsConfig() {
+            return {
+                canBeModified: false,
+                columns: this.getTestStepsConfig(this.XTCconfig.xtcType).columns,
+                passFailEditorConfig: this.XTCconfig.perStep
+            };
+        }
+        // check if the category is an executed test case (usually this will mean category type XTC)
+        isXTC(type) {
+            return this.XTCconfig.xtcType && this.XTCconfig.xtcType.toLowerCase() === type.toLowerCase();
+        }
+        // check if this is a test case, use case, or something else which can be converted to a TC
+        isTC(type) {
+            return this.isCloneSource(type);
+        }
+        // return the executed test case category type, (usually this will mean type XTC)
+        getXTCType() {
+            return this.XTCconfig.xtcType;
+        }
+        // return a simple array of all categories which can be converted to XTC
+        getCloneSources() {
+            return this.XTCconfig.cloneSources;
+        }
+        // returns place holder text if no value is selected
+        getTestRunResultPlaceholder(value) {
+            var code = value ? (value.split("|")[0]) : "";
+            if (this.XTCconfig.automatic && this.XTCconfig.automatic.length > 0) {
+                for (var idx = 0; idx < this.XTCconfig.automatic.length; idx++) {
+                    if (this.XTCconfig.automatic[idx].code === code) {
+                        return "automatic - was '" + this.XTCconfig.automatic[idx].human + "' when last saved";
+                    }
+                }
+            }
+            return "select test result";
+        }
+        isCloneSource(category) {
+            if (!this.XTCconfig.cloneSources) {
+                return false;
+            }
+            for (var csi = 0; csi < this.XTCconfig.cloneSources.length; csi++) {
+                if (this.XTCconfig.cloneSources[csi] === category) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    exports.TestManagerConfiguration = TestManagerConfiguration;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 98:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -15028,10 +17465,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 92:
+/***/ 97:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(67), __webpack_require__(93)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BasicFunctions_1, JQueryExtendReplacement_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(69), __webpack_require__(98)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BasicFunctions_1, JQueryExtendReplacement_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.JSONTools = void 0;
@@ -15136,7 +17573,445 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 94:
+/***/ 88:
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.LabelManager = void 0;
+    class LabelManager {
+        constructor(logger, json, getConfig) {
+            this.logger = logger;
+            this.json = json;
+            this.getConfig = getConfig;
+            this.ignoreProjectFilter = false;
+            this.activeFilter = "";
+        }
+        getFilterColor() {
+            var labels = this.getConfig().getLabelsConfig();
+            if (!labels || !labels.filterBackgroundColor) {
+                return null;
+            }
+            return labels.filterBackgroundColor;
+        }
+        ;
+        // return list of selected filters as , separated list
+        getFilter() {
+            if (this.ignoreProjectFilter) {
+                return "";
+            }
+            var filters = [];
+            var labelsAll = this.getLabelNames();
+            if (labelsAll.length === 0) {
+                return "";
+            }
+            var stored = this.activeFilter;
+            if (!stored || stored === "") {
+                return "";
+            }
+            // only return filters which (still) exist 
+            var cs = stored.split(",");
+            for (let sf of cs) {
+                if (labelsAll.indexOf(sf.replace("!", "")) > -1) {
+                    filters.push(sf);
+                }
+            }
+            return filters.length > 0 ? filters.join(",") : "";
+        }
+        ;
+        getDisplayName(labelId) {
+            let labels = this.getLabelList();
+            let displayName = "";
+            for (let label of labels) {
+                if (label.label == labelId) {
+                    displayName = label.displayName;
+                    if (label.style.label.on.displayName) {
+                        displayName = label.style.label.on.displayName;
+                    }
+                }
+            }
+            return displayName;
+        }
+        getFilterName(labelId) {
+            let labels = this.getLabelList();
+            let displayName = "";
+            for (let label of labels) {
+                if (label.label == labelId) {
+                    displayName = label.displayName;
+                    if (label.style && label.style.filter && label.style && label.style.filter.on && label.style.filter.on.displayName) {
+                        displayName = label.style.filter.on.displayName;
+                    }
+                }
+            }
+            return displayName;
+        }
+        // return the existing labels for the passed types (or all labels if no type is passed)
+        getLabelDefinitions(categories) {
+            var all = this.getLabelList();
+            if (!categories || categories.length === 0) {
+                return all;
+            }
+            let relevant = [];
+            let relevantLabel = [];
+            for (let label of all) {
+                for (let category of label.categories) {
+                    if (categories.indexOf(category) > -1 && relevant.indexOf(label.label) === -1) {
+                        relevant.push(label.label);
+                        relevantLabel.push(label);
+                    }
+                }
+            }
+            return relevantLabel;
+        }
+        ;
+        setFilter(filter) {
+            this.activeFilter = filter.join(",");
+        }
+        ;
+        /* clean up the set labels: in case a set label is in review or design review group,
+            it is possible that the label is removed from the list of set labels / replaced by another label in the group.
+    
+            This depends on the groups's setting.
+    
+            @param addXor If no label is set in a xor group, the default can be automatically set.
+        
+            @return the list of labels after the review groups have been reset
+        
+         */
+        resetReviewLabels(labelIds, category, addXor) {
+            let that = this;
+            let cleaned = [];
+            // get label groups
+            let groups = this.getLabelGroups();
+            let labelList = this.getLabelList();
+            // copy all lables besides the review labels
+            for (let label of labelIds) {
+                let isReviewLabel = false;
+                for (var gid = 0; gid < groups.length; gid++) {
+                    if (((groups[gid].selection === "review" && this.json.isTrue(groups[gid].reset)) ||
+                        (groups[gid].selection === "design_review" && !this.json.isFalse(groups[gid].reset))) &&
+                        groups[gid].labels.indexOf(label) !== -1) {
+                        isReviewLabel = true;
+                    }
+                }
+                if (!isReviewLabel) {
+                    cleaned.push(label);
+                }
+            }
+            // add all default review states - if no other label is set in the review group
+            for (var gid = 0; gid < groups.length; gid++) {
+                if ((groups[gid].selection === "review" ||
+                    (addXor && groups[gid].selection === "xor")) &&
+                    groups[gid].default) {
+                    var groupIsSet = false;
+                    for (let cleanLabel of cleaned) {
+                        if (groups[gid].labels.indexOf(cleanLabel) !== -1) {
+                            groupIsSet = true;
+                        }
+                    }
+                    if (!groupIsSet) {
+                        // verify if label actually is defined for group...
+                        var defaultIsForType = false;
+                        for (let label of labelList) {
+                            if (groups[gid].default === label.label && label.categories.indexOf(category) !== -1) {
+                                defaultIsForType = true;
+                            }
+                        }
+                        if (defaultIsForType) {
+                            cleaned.push(groups[gid].default);
+                        }
+                    }
+                }
+            }
+            return cleaned;
+        }
+        ;
+        /* return the list of default labels for a category */
+        getDefaultLabels(category) {
+            let that = this;
+            // get current positive filters
+            let currentFilter = this.getFilter();
+            let posFilter = [];
+            const filterItems = currentFilter.split(",");
+            for (let f of filterItems) {
+                if (f.indexOf("!") !== 0) {
+                    posFilter.push(f);
+                }
+            }
+            // each label which is not in a xor/review group can be default
+            let defaultLabels = [];
+            let labelList = this.getLabelList();
+            for (let label of labelList) {
+                let group = that.getGroupOfLabel(label.label);
+                if (group && label.categories.indexOf(category) !== -1 && // label must exist for cateogry type
+                    (group.selection !== 'xor' && group.selection !== 'review') && // it must not be in a xor or review group
+                    (this.json.isTrue(label.default) || // the default value must be set to on OR 
+                        (label.default === "filter" && posFilter.indexOf(label.label) !== -1))) { // the default must be filter and it must be set in the current filter
+                    defaultLabels.push(label.label);
+                }
+            }
+            return this.resetReviewLabels(defaultLabels, category, true);
+        }
+        ;
+        hasLabels() {
+            return (this.getLabelList().length > 0);
+        }
+        ;
+        // implement logic to set labels. 
+        setLabels(oldLabelIds, labels) {
+            let that = this;
+            let old = oldLabelIds ? oldLabelIds.split(",") : [];
+            for (let label of labels) {
+                old = that.setLabel(old, label);
+            }
+            return old.join(",");
+        }
+        // implement logic to set a label. 
+        // This depends on the type of group: for xor / review labels other group members must be reset
+        setLabel(oldLabelIds, label) {
+            let labelIds = this.json.clone(oldLabelIds);
+            if (labelIds.indexOf(label) !== -1) {
+                // label already set - ignore
+                return labelIds;
+            }
+            let group = this.getGroupOfLabel(label);
+            if (!group || group.selection == "or") {
+                // simple label without group / or group: just set it
+                labelIds.push(label);
+            }
+            else if (group.selection == "xor" || group.selection == "review") {
+                // remove all labels from group
+                for (let otherLabel of group.labels) {
+                    labelIds = labelIds.filter(function (existingLabel) {
+                        return existingLabel != otherLabel;
+                    });
+                }
+                // set the label
+                labelIds.push(label);
+            }
+            else {
+                this.logger.log("warn", "setLabel: unkown group type of label: '" + label + "'");
+            }
+            return labelIds;
+        }
+        ;
+        // return the last time a label was set on a given item before a revision (=0 if any)
+        decipherLastTimeLabelWasSet(labelHistory, itemId, label, beforeRevision) {
+            let itemHistory = labelHistory.entries.filter(entry => entry.itemRef == itemId);
+            if (itemHistory.length > 0) {
+                let history = itemHistory[0].labels.filter(l => l.label == label);
+                if (history.length > 0 && history[0].set.length > 0) {
+                    // ignore all sets after the beforeRevision  (unless 0 is passed)
+                    let sets = history[0].set.filter(set => !beforeRevision || set.version < beforeRevision);
+                    return sets[sets.length - 1].version;
+                }
+            }
+            // label was never set all good
+            return 0;
+        }
+        // implement logic to reset a label. 
+        // This depends on the type of group: for xor / review labels a default label might need to be set
+        unsetLabel(oldLabelIds, label) {
+            let labelIds = this.json.clone(oldLabelIds);
+            if (labelIds.indexOf(label) === -1) {
+                // label is not actually set - ignore
+                return labelIds;
+            }
+            let group = this.getGroupOfLabel(label);
+            // remove the label
+            labelIds = labelIds.filter(function (existingLabel) {
+                return existingLabel != label;
+            });
+            if (!group || group.selection == "or") {
+                // simple label without group / or group - nothing else to do
+            }
+            else if (group.selection == "xor" || group.selection == "review") {
+                if (group.default) {
+                    labelIds.push(group.default);
+                }
+            }
+            else {
+                this.logger.log("warn", "unsetLabel: unkown group type of label: '" + label + "'");
+            }
+            return labelIds;
+        }
+        ;
+        compareLabels(before, after) {
+            let result = {
+                changed: false,
+                added: [],
+                removed: [],
+                delta: ""
+            };
+            before = before || [];
+            after = after || [];
+            let delta = [];
+            for (var idx = 0; idx < after.length; idx++) {
+                if (before.indexOf(after[idx]) === -1) {
+                    result.added.push(after[idx]);
+                    delta.push(after[idx]);
+                }
+            }
+            for (var idx = 0; idx < before.length; idx++) {
+                if (after.indexOf(before[idx]) === -1) {
+                    result.removed.push(before[idx]);
+                    delta.push("-" + before[idx]);
+                }
+            }
+            result.delta = delta.join(",");
+            result.changed = result.added.length + result.removed.length > 0;
+            return result;
+        }
+        getLabelList() {
+            let labelsAll = this.getConfig().getSetting("labels");
+            if (!labelsAll) {
+                return [];
+            }
+            let labelsJson = this.json.fromString(labelsAll);
+            if (labelsJson.status !== "ok" || !labelsJson.value.labels) {
+                return [];
+            }
+            return labelsJson.value.labels;
+        }
+        getLabelNames() {
+            let labelList = this.getLabelList();
+            let allLabels = [];
+            for (let label of labelList) {
+                allLabels.push(label.label);
+            }
+            return allLabels;
+        }
+        getDesignReviews() {
+            let labelsAll = this.getConfig().getSetting("labels");
+            if (!labelsAll) {
+                return [];
+            }
+            var labelsJson = this.json.fromString(labelsAll);
+            if (labelsJson.status !== "ok") {
+                return [];
+            }
+            return labelsJson.value.design_reviews ? labelsJson.value.design_reviews : [];
+        }
+        getDesignReview(labelId) {
+            var dr = this.getDesignReviews();
+            for (var idx = 0; idx < dr.length; idx++) {
+                if (dr[idx].label === labelId) {
+                    return dr[idx];
+                }
+            }
+            return null;
+        }
+        isFiltered(category, labels) {
+            let filters = this.getFilter();
+            if (!filters)
+                return false; // no filters -> not filtered out 
+            let isFilteredOut = false;
+            // there are some filters so lets check
+            let labelsSet = labels ? labels.split(",") : [];
+            let labelsForItem = this.getLabelDefinitions([category]).map(function (labelDef) { return labelDef.label; });
+            const filtersArray = filters.split(",");
+            filtersArray.forEach((filter) => {
+                let label = filter.replace("!", ""); // to get rid of negation of filters
+                if (labelsForItem.indexOf(label) == -1)
+                    return; // irrelevant, try next filter
+                if (label != filter) { // negative filter
+                    isFilteredOut = isFilteredOut || labelsSet.indexOf(label) != -1;
+                }
+                else {
+                    isFilteredOut = isFilteredOut || labelsSet.indexOf(label) == -1;
+                }
+            });
+            return isFilteredOut;
+        }
+        getLabelsOfLabelGroupsType(labelGroupType) {
+            if (!labelGroupType) {
+                return [];
+            }
+            let labels = [];
+            for (let lg of this.getLabelGroups()) {
+                if (lg.groupType == labelGroupType) {
+                    labels = labels.concat(lg.labels);
+                }
+            }
+            for (let lg of this.getDesignReviews()) {
+                if (lg.groupType == labelGroupType) {
+                    labels.push(lg.label);
+                }
+            }
+            return labels;
+        }
+        getLabelGroups(category) {
+            let labelsAll = this.getConfig().getSetting("labels");
+            if (!labelsAll) {
+                return [];
+            }
+            let labelsJson = this.json.fromString(labelsAll);
+            if (labelsJson.status !== "ok") {
+                return [];
+            }
+            let labelList = this.getLabelList();
+            let groups = labelsJson.value.groups ? labelsJson.value.groups : [];
+            let design_reviews = this.getDesignReviews();
+            // by default all labels end up in the last group
+            for (var gid = 0; gid < groups.length; gid++) {
+                // prepare to add label definitions of actual labels to display
+                groups[gid].labelDef = [];
+                // by default all filters are in "or" mode
+                if (!groups[gid].filterSelection) {
+                    groups[gid].filterSelection = "or";
+                }
+            }
+            // now add actual labels to display to each group, any label should be displayed at most once
+            labelList.forEach((label) => {
+                if (category && label.categories.indexOf(category) === -1) {
+                    // this is an item, and label does not exist for item
+                    return;
+                }
+                // check if label is in group
+                for (var gid = 0; gid < groups.length; gid++) {
+                    for (var lid = 0; lid < groups[gid].labels.length; lid++) {
+                        if (groups[gid].labels[lid] === label.label) {
+                            groups[gid].labelDef.push(label);
+                            return;
+                        }
+                    }
+                }
+                // check if label is in review
+                for (var gid = 0; gid < design_reviews.length; gid++) {
+                    if (design_reviews[gid].label === label.label) {
+                        groups.push({
+                            selection: "design_review", labels: [label.label], filterSelection: "or", labelDef: [label], reset: design_reviews[gid].reset,
+                            filterMenu: design_reviews[gid].filterMenu
+                        });
+                        return;
+                    }
+                }
+                // create a new group
+                groups.push({ virtualGroup: true, selection: "or", labels: [label.label], filterSelection: "or", labelDef: [label] });
+            });
+            return groups;
+        }
+        // returns the group of a label
+        getGroupOfLabel(labelID) {
+            let groups = this.getLabelGroups();
+            for (var gid = 0; gid < groups.length; gid++) {
+                if (groups[gid].labels.indexOf(labelID) !== -1) {
+                    return groups[gid];
+                }
+            }
+            return null;
+        }
+    }
+    exports.LabelManager = LabelManager;
+    LabelManager.timeWarpLabel = "_timewarp_";
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+
+/***/ 99:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -15378,7 +18253,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 215:
+/***/ 220:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15405,8 +18280,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 
-var punycode = __webpack_require__(216);
-var util = __webpack_require__(217);
+var punycode = __webpack_require__(221);
+var util = __webpack_require__(222);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -15481,7 +18356,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
       'gopher:': true,
       'file:': true
     },
-    querystring = __webpack_require__(218);
+    querystring = __webpack_require__(223);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && util.isObject(url) && url instanceof Url) return url;
@@ -16118,7 +18993,7 @@ Url.prototype.parseHost = function() {
 
 /***/ }),
 
-/***/ 217:
+/***/ 222:
 /***/ ((module) => {
 
 "use strict";
@@ -16142,7 +19017,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 211:
+/***/ 216:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -16846,8 +19721,8 @@ if (!global.fetch) {
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(209);
+/******/ 	// This entry module used 'module' so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(214);
 /******/ 	
 /******/ 	return __webpack_exports__;
 /******/ })()
