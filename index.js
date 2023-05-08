@@ -788,7 +788,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disabl
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.Category = void 0;
+    exports.ItemFieldMask = exports.Category = void 0;
+    /**
+     * An ItemFieldMask contains a list of field ids valid within a particular
+     * category. It should be created via the Category method createFieldMask().
+     */
+    class ItemFieldMask {
+        constructor(fieldIds) {
+            this.fieldIds = fieldIds;
+        }
+        hasFieldId(fieldId) {
+            return this.fieldIds.filter((id) => id == fieldId).length > 0;
+        }
+        getFieldIds() { return this.fieldIds; }
+    }
+    exports.ItemFieldMask = ItemFieldMask;
+    /**
+     * A Category represents a category within a project. It has various configuration
+     * settings. It also has a list of fields for that category.
+     */
     class Category {
         constructor(category, project) {
             this.category = category;
@@ -807,6 +825,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.project.getItemConfig().getFields(this.category);
         }
         isFolderCategory() { return this.getId() == "FOLDER"; }
+        /**
+         * An ItemFieldMask allows you to specify which fields out of the Category
+         * fields of an Item should be considered valid.
+         * @param fieldIds If specified, a valid set of field ids for this Category. Otherwise,
+         *        the returned ItemFieldMask expresses that all fields in the Item are to be
+         *        considered valid.
+         * @throws throws an Error if any of the field ids specified in fieldIds do not exist in the Category.
+         * @returns an ItemFieldMask.
+         */
+        createFieldMask(fieldIds) {
+            const fields = this.getFields();
+            if (fieldIds) {
+                // Validate that we have these fields.
+                for (let f of fieldIds) {
+                    if (fields.filter(c => c.id == f).length == 0) {
+                        throw new Error(`Field id ${f} not found in category ${this.category}`);
+                    }
+                }
+                return new ItemFieldMask(fieldIds);
+            }
+            return new ItemFieldMask(fields.map((c) => c.id));
+        }
     }
     exports.Category = Category;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -874,7 +914,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
      * the database.
      */
     class Item {
-        constructor(category, item) {
+        constructor(category, item, fieldMask) {
             this.category = category;
             this.dirty = false;
             this.fieldMap = new Map();
@@ -887,10 +927,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     throw new Error(`A folder requires item.type`);
                 }
             }
+            if (fieldMask) {
+                this.fieldMask = fieldMask;
+            }
+            else {
+                // Create a field mask that includes all fields.
+                this.fieldMask = this.category.createFieldMask();
+            }
             this.setData(item);
         }
         // TODO: also, what about labels? Are these in toBeIntegrated right now?
         setDirty() { this.dirty = true; }
+        getFieldMask() { return this.fieldMask; }
+        /**
+         * Helper method to test if a field id is valid within the Item Category, irrespective of
+         * whether or not it is specified in the mask.
+         * @param fieldId
+         * @returns true if fieldId is valid within the Category.
+         */
+        isValidFieldId(fieldId) {
+            return this.getCategory().getFields().filter(c => c.id == fieldId).length > 0;
+        }
         setData(item) {
             this.dirty = false;
             // toBeIntegrated contains standard item fields I just haven't gotten around to
@@ -919,16 +976,56 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             // Now deal with the category fields.
             for (let field of this.category.getFields()) {
-                let value = undefined;
-                if (item && item[field.id]) {
-                    value = item[field.id];
+                // The mask influences whether we actually have this field data or not.
+                if (this.fieldMask.hasFieldId(field.id)) {
+                    let value = undefined;
+                    if (item && item[field.id]) {
+                        value = item[field.id];
+                    }
+                    index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
+                    let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
+                    handler.initData(value);
+                    this.fieldMap.set(field.id, new Field_1.Field(field, handler));
                 }
-                index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
-                let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
-                handler.initData(value);
-                this.fieldMap.set(field.id, new Field_1.Field(field, handler));
             }
             // TODO: deal with labels. They show up as a pseudo field, but are really not.
+        }
+        /**
+         * Sometimes you've been given an Item with a restrictive ItemFieldMask, however, you'd
+         * like to set a value for a field that was not in the mask. With this method, you can
+         * expand the field mask to include the field given by the fieldId (easily obtained
+         * from the Category object).
+         *
+         * This field will be added to the mask, and the associated Field object will be returned
+         * with an empty value, which you could set. The object will be marked as "dirty" at this point,
+         * because we don't know if the server has an empty value for this field or not, so we assume
+         * the pessimistic case.
+         * @param fieldId a valid fieldId from the Category of the item.
+         * @throws if the fieldId is already in the ItemFieldMask, or if the fieldId is not valid for the Category.
+         * @returns the Field object
+         */
+        expandFieldMaskWithEmptyField(fieldId) {
+            if (this.fieldMask.hasFieldId(fieldId)) {
+                throw new Error(`Field ${fieldId} is already specified in the field mask`);
+            }
+            const foundFields = this.getCategory().getFields().filter(c => c.id == fieldId);
+            if (foundFields.length == 0) {
+                throw new Error(`Field ${fieldId} does not exist in category ${this.getCategory().getId()}`);
+            }
+            // Update the mask.
+            let fieldIds = this.fieldMask.getFieldIds();
+            fieldIds.push(fieldId);
+            this.fieldMask = this.category.createFieldMask(fieldIds);
+            // Create the Field.
+            const field = foundFields[0];
+            const value = undefined; // empty field.
+            index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
+            let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
+            handler.initData(value);
+            this.fieldMap.set(field.id, new Field_1.Field(field, handler));
+            assert(field.id == fieldId);
+            this.setDirty();
+            return this.getFieldById(field.id);
         }
         extractData() {
             let item = {
@@ -958,10 +1055,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             };
             // Now deal with the category fields.
             for (let field of this.category.getFields()) {
-                const myField = this.fieldMap.get(field.id);
-                item[field.id] = myField.getHandlerRaw().getData();
-                // TODO: do we need to do this?
-                item[`x${field.id.toString()}`] = myField.getHandlerRaw().getData();
+                // The mask influences what we send out.
+                if (this.fieldMask.hasFieldId(field.id)) {
+                    const myField = this.fieldMap.get(field.id);
+                    item[field.id] = myField.getHandlerRaw().getData();
+                    // TODO: do we need to do this?
+                    item[`x${field.id.toString()}`] = myField.getHandlerRaw().getData();
+                }
             }
             return item;
         }
@@ -1058,12 +1158,43 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return this.dirty;
         }
-        getFieldById(fieldId) {
-            if (!this.fieldMap.has(fieldId)) {
-                throw new Error(`Field id ${fieldId.toString()} not found.`);
+        /**
+         * An Item can be complete or partial, based on the ItemFieldMask passed in
+         * at construction.
+         * @returns true if the item has all of its Category fields.
+         */
+        hasAllFields() {
+            return this.fieldMask.getFieldIds().length == this.getCategory().getFields().length;
+        }
+        /**
+         * In case the Item is masked (hasAllFields() returns false), one or more Fields may
+         * not be tracked. hasFieldId() allows you to check if the field is present.
+         * @param fieldId a valid field id within the Category
+         * @throws Error if fieldId is not valid within the Category
+         * @returns true if the Item's mask allows for this field.
+         */
+        hasFieldId(fieldId) {
+            if (!this.isValidFieldId(fieldId)) {
+                throw new Error(`Field id ${fieldId} is not valid within Category ${this.getCategory().getId()}`);
             }
+            return this.fieldMask.hasFieldId(fieldId);
+        }
+        getFieldById(fieldId) {
+            // Is it in our mask?
+            if (!this.hasFieldId(fieldId)) {
+                throw new Error(`Field id ${fieldId} is not in the ItemFieldMask for this Item.`);
+            }
+            // We should definitely have the field at this point.
+            assert(this.fieldMap.has(fieldId));
             return this.fieldMap.get(fieldId);
         }
+        /**
+         * Returns all fields within the mask which match the fieldName.
+         * @param fieldName
+         * @returns an array of Fields. Note that if the mask has limited the set of fields from
+         *     the Category which are tracked for this particular item, the number of returned Field
+         *     objects may be less than you expect.
+         */
         getFieldByName(fieldName) {
             let results = [];
             for (let field of this.fieldMap.values()) {
@@ -1073,6 +1204,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return results;
         }
+        /**
+         * Returns a Field matching the field name. The field should exist and be within the mask.
+         * @param fieldName
+         * @throws Error if there is no such field, either because the name is invalid or it is not within
+         *     the mask for the Item.
+         * @returns a valid Field.
+         */
         getSingleFieldByName(fieldName) {
             const fields = this.getFieldByName(fieldName);
             assert(fields.length == 1, `There are ${fields.length} fields with name ${fieldName}`);
@@ -1106,29 +1244,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             for (let c of itemConfig.getCategories(false)) {
                 this.categories.set(c, new Category_1.Category(c, this));
             }
-            this.root = null;
         }
         async getProjectTree() {
             const that = this;
-            if (this.root == null) {
-                // Create the interface object:
-                const childInterface = {
-                    loadFolder: (folderId) => {
-                        if (folderId) {
-                            return that.server.getFolderChildrenFromProject(that.name, folderId);
-                        }
-                        return that.server.getTreeFromProject(that.name);
-                    },
-                    putItem: that.putItem.bind(that),
-                    getItem: that.getItem.bind(that)
-                };
-                this.root = new TreeFolder_1.TreeFolder(childInterface);
-                await this.root.refresh();
-            }
-            return this.root;
+            const folders = await that.server.getFullTreeFromProject(that.name);
+            // The top level folder has to be created here synthetically.
+            const f = {
+                id: undefined,
+                title: undefined,
+                children: folders
+            };
+            return new TreeFolder_1.TreeFolder(that, f);
         }
         async search(term) {
             return this.server.searchInProject(this.name, term);
+        }
+        /**
+         * Returns information about an item from an id in a given project.
+         * @param itemId A valid item id in the project
+         * @returns The itemId decomposed into parts
+         */
+        parseRef(itemId) {
+            return this.server.parseRefForProject(this.name, itemId);
         }
         createItem(category) {
             if (category == "FOLDER") {
@@ -1190,14 +1327,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TreeFolder = void 0;
     class TreeFolder {
-        constructor(needs, parent, id, title) {
+        constructor(needs, folder, parent) {
             this.needs = needs;
             this.parent = parent;
-            this.id = id;
-            this.title = title;
-            this.childrenLoaded = false;
+            // Decompose folder.
+            this.id = folder.id;
+            this.title = folder.title;
+            this.type = folder.type;
             this.itemChildren = [];
             this.folderChildren = [];
+            if (folder.children) {
+                // Some of the children are folders, others items.
+                for (let child of folder.children) {
+                    if (needs.parseRef(child.id).isFolder) {
+                        // Recurse and create TreeFolders.
+                        this.folderChildren.push(new TreeFolder(needs, child, this));
+                    }
+                    else {
+                        this.itemChildren.push({ id: child.id, title: child.title, isFolder: false });
+                    }
+                }
+            }
         }
         isRoot() { return this.id == undefined && this.parent == undefined; }
         getId() {
@@ -1230,16 +1380,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param folderId
          * @returns null if folderId cannot be found.
          */
-        async findFolder(folderId) {
-            if (!this.childrenLoaded) {
-                await this.refresh();
-            }
+        findFolder(folderId) {
             // Is it one of the children?
             for (let child of this.folderChildren) {
                 if (child.getId() == folderId) {
                     return child;
                 }
-                const folder = await child.findFolder(folderId);
+                const folder = child.findFolder(folderId);
                 if (folder != null) {
                     return folder;
                 }
@@ -1251,10 +1398,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param folderTitle
          * @returns A valid TreeFolder object or null if not found.
          */
-        async findDirectFolderByTitle(folderTitle) {
-            if (!this.childrenLoaded) {
-                await this.refresh();
-            }
+        findDirectFolderByTitle(folderTitle) {
             for (let child of this.folderChildren) {
                 if (child.getTitle() == folderTitle) {
                     return child;
@@ -1274,7 +1418,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             let createdItem = await this.needs.putItem(this.id, item);
             // Update the folder structure just for this folder.
-            await this.refresh(false);
+            if (!item.getIsFolder()) {
+                this.itemChildren.push({ isFolder: false, id: item.getId(), title: item.getTitle() });
+                // TODO: if Item is a folder, we need to update the folder list. Only problem is we
+                // may not have the children in item and a server call is required, but I'm not sure
+                // if I want to make a call to keep this snapshot up to date.
+            }
             return createdItem;
         }
         /**
@@ -1287,41 +1436,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.needs.getItem(this.id);
         }
         /**
-         * Update the list of items and folders that belong to the current folder.
-         * @param recursive true by default. If false, only request server information for this folder.
-         * @returns This TreeFolder.
-         */
-        async refresh(recursive = true) {
-            let children = await this.needs.loadFolder(this.id);
-            // Divide up into folders and items.
-            this.folderChildren = [];
-            this.itemChildren = [];
-            for (let child of children) {
-                if (child.isFolder) {
-                    const subfolder = new TreeFolder(this.needs, this, child.id, child.title);
-                    if (recursive) {
-                        await subfolder.refresh(recursive);
-                    }
-                    this.folderChildren.push(subfolder);
-                }
-                else {
-                    this.itemChildren.push(child);
-                }
-            }
-            this.childrenLoaded = true;
-            return this;
-        }
-        /**
          * Returns information on the folders in the folder. May make a request to
          * the server if children haven't been loaded yet, otherwise, acts on
          * cached information (which may be out of date. Call refresh() to update
          * the folder in that case).
          * @returns an array of TreeFolder objects.
          */
-        async getFolderChildren() {
-            if (!this.childrenLoaded) {
-                await this.refresh();
-            }
+        getFolderChildren() {
             return this.folderChildren;
         }
         /**
@@ -1331,11 +1452,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * the folder in that case).
          * @returns an array of ITitleAndId objects
          */
-        async getItemChildren() {
-            if (!this.childrenLoaded) {
-                await this.refresh();
-            }
+        getItemChildren() {
             return this.itemChildren;
+        }
+        /**
+         * Returns both folders and items at this level.
+         * @returns an array of ITitleAndId objects for the folders and items
+         */
+        getAllChildren() {
+            let children = [];
+            children = children.concat(this.getItemChildren());
+            children = children.concat(this.getFolderChildren().map((tf) => {
+                return { isFolder: true, id: tf.id, title: tf.title };
+            }));
+            return children;
         }
     }
     exports.TreeFolder = TreeFolder;
@@ -14235,7 +14365,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
         }
         parseRef(itemId) {
-            return this.simpleItemTools.parseRef(itemId, this.getProject(), this.matrixBaseUrl);
+            return this.parseRefForProject(this.getProject(), itemId);
         }
         getType(itemId) {
             var ir = this.parseRef(itemId);
@@ -14264,6 +14394,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return this.appGetItemAsync(this.getProject(), itemId);
         }
+        parseRefForProject(project, itemRef) {
+            return this.simpleItemTools.parseRef(itemRef, project, this.matrixBaseUrl);
+        }
         getItemFromProject(project, id) {
             return this.appGetItemAsync(project, id);
         }
@@ -14272,6 +14405,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          */
         async getTree() {
             return this.getTreeFromProject(this.getProject());
+        }
+        async getFullTreeFromProject(projectName) {
+            const p = await this.instance.projectTreeGet(projectName, "yes");
+            return p;
         }
         async getTreeFromProject(projectName) {
             let p = this.instance.projectTreeGet(projectName, "yes");
