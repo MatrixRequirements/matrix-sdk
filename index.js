@@ -788,7 +788,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disabl
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.ItemFieldMask = exports.Category = void 0;
+    exports.ItemsFieldMask = exports.ItemFieldMask = exports.Category = void 0;
     /**
      * An ItemFieldMask contains a list of field ids valid within a particular
      * category. It should be created via the Category method createFieldMask().
@@ -801,8 +801,128 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.fieldIds.filter((id) => id == fieldId).length > 0;
         }
         getFieldIds() { return this.fieldIds; }
+        /**
+         * Combine the other ItemFieldMask with this one.
+         * @param other an ItemFieldMask
+         */
+        union(other) {
+            for (let i of other.getFieldIds()) {
+                if (!this.hasFieldId(i)) {
+                    this.fieldIds.push(i);
+                }
+            }
+        }
+        toString() {
+            return this.fieldIds.join(",");
+        }
     }
     exports.ItemFieldMask = ItemFieldMask;
+    /**
+     * An ItemsFieldMask keeps track of fields masked by category, as well as some globally
+     * masked Item fields (currently labels, uplinks and downlinks). This class is used
+     * by the user of the SDK to narrow the set of fields brought down in a search query,
+     * and then to allow the SDK to safely construct partial items from those results.
+     */
+    class ItemsFieldMask {
+        constructor(includeFields = true, includeLabels = true, includeDownlinks = false, includeUplinks = false) {
+            this.includeFields = includeFields;
+            this.includeLabels = includeLabels;
+            this.includeDownlinks = includeDownlinks;
+            this.includeUplinks = includeUplinks;
+            this.masks = new Map();
+        }
+        getIncludeFields() { return this.includeFields; }
+        getIncludeLabels() { return this.includeLabels; }
+        getIncludeDownlinks() { return this.includeDownlinks; }
+        getIncludeUplinks() { return this.includeUplinks; }
+        /**
+         * Add fields to the mask for the given Category. If there is already a field mask for the
+         * Category, its values will be combined with the new information via set union.
+         * @param category
+         * @param fieldIdsOrItemFieldMask either an ItemFieldMask object or an array of Category field ids
+         * @throws Error if getIncludeFields() is false.
+         * @returns this
+         */
+        addMask(category, fieldIdsOrItemFieldMask) {
+            if (!this.includeFields) {
+                throw new Error(`This ItemsFieldMask is not configured to care about fields.`);
+            }
+            let newMask;
+            if (fieldIdsOrItemFieldMask instanceof ItemFieldMask) {
+                newMask = fieldIdsOrItemFieldMask;
+            }
+            else {
+                newMask = category.createFieldMask(fieldIdsOrItemFieldMask);
+            }
+            if (this.masks.has(category.getId())) {
+                let cat = this.masks.get(category.getId());
+                cat.union(newMask);
+            }
+            else {
+                this.masks.set(category.getId(), newMask);
+            }
+            return this;
+        }
+        /**
+         * Adds fields to the Category mask by name. If the name doesn't exist or if there are more
+         * than one fields with the name, an Error is thrown.
+         * @param category
+         * @param fieldNames
+         * @throws Error if a field name exists more than once in the given Category or not at all.
+         *         Also throws Error if getIncludeFields() is false.
+         * @returns this
+         */
+        addMaskByNames(category, fieldNames) {
+            if (!this.includeFields) {
+                throw new Error(`This ItemsFieldMask is not configured to care about fields.`);
+            }
+            let fieldIds = [];
+            const fields = category.getFields();
+            for (let name of fieldNames) {
+                const catFieldIds = category.getFieldIdFromLabel(name);
+                if (catFieldIds.length == 0) {
+                    throw new Error(`Unable to find field name ${name} in category ${category.getId()}`);
+                }
+                if (catFieldIds.length > 1) {
+                    throw new Error(`Multiple fields with name ${name} in category ${category.getId()}`);
+                }
+                fieldIds.push(catFieldIds[0]);
+            }
+            return this.addMask(category, fieldIds);
+        }
+        /**
+         * Returns an ItemFieldMask for the given Category if it exists
+         * @param categoryId
+         * @returns null if there is no mask for the given Category.
+         */
+        getCategoryMask(categoryId) {
+            if (!this.masks.has(categoryId))
+                return null;
+            return this.masks.get(categoryId);
+        }
+        /**
+         * Suitable to send to the server for a search query.
+         * @returns A comma-seperated string of ids or "*" (which means all fields accepted)
+         */
+        getFieldMaskString() {
+            if (this.masks.size == 0) {
+                // If we have no masks, but fields are included, then return all fields.
+                // Otherwise, no fields (empty string).
+                return this.includeFields ? "*" : "";
+            }
+            let result = "";
+            let firstKey = true;
+            for (let key of this.masks.keys()) {
+                if (!firstKey) {
+                    result += ",";
+                }
+                result += this.masks.get(key).toString();
+                firstKey = false;
+            }
+            return result;
+        }
+    }
+    exports.ItemsFieldMask = ItemsFieldMask;
     /**
      * A Category represents a category within a project. It has various configuration
      * settings. It also has a list of fields for that category.
@@ -811,6 +931,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         constructor(category, project) {
             this.category = category;
             this.project = project;
+            // Cache a mask for all fields since it may be created often.
+            this.allFieldsFieldMask = new ItemFieldMask(this.getFields().map((c) => c.id));
         }
         getProject() { return this.project; }
         getItemConfig() { return this.project.getItemConfig(); }
@@ -823,6 +945,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         getFields() {
             return this.project.getItemConfig().getFields(this.category);
+        }
+        /**
+         * Return field ids from the Category which match the given label.
+         * @param label
+         * @returns a non-empty array of field ids if the label is present in the Category.
+         */
+        getFieldIdFromLabel(label) {
+            let results = [];
+            for (let field of this.getFields()) {
+                if (field.label == label) {
+                    results.push(field.id);
+                }
+            }
+            return results;
         }
         isFolderCategory() { return this.getId() == "FOLDER"; }
         /**
@@ -845,7 +981,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
                 return new ItemFieldMask(fieldIds);
             }
-            return new ItemFieldMask(fields.map((c) => c.id));
+            return this.allFieldsFieldMask;
         }
     }
     exports.Category = Category;
@@ -1260,6 +1396,107 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.server.searchInProject(this.name, term);
         }
         /**
+         * Execute a more complex search, where the fields in the results can be limited.
+         * @param project
+         * @param term
+         * @param filter default empty string
+         * @param fieldList empty string to mean no fields, * to mean all, or comma-seperated list of
+         *   field ids from the various categories from which items will be returned. The default
+         *   value is *.
+         * @param includeLabels default true
+         * @param includeDownlinks default false
+         * @param includeUplinks default false
+         * @param treeOrder default false
+         */
+        async complexSearchInProject(term, filter = "", fieldList = "*", includeLabels = true, includeDownlinks = false, includeUplinks = false, treeOrder = false) {
+            return this.server.complexSearchInProject(this.name, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder);
+        }
+        async complexSearch(term, filter = "", treeOrder = false, mask) {
+            let includeLabels = true;
+            let includeDownlinks = false;
+            let includeUplinks = false;
+            let fieldList = "*";
+            if (mask) {
+                includeLabels = mask.getIncludeLabels();
+                includeDownlinks = mask.getIncludeDownlinks();
+                includeUplinks = mask.getIncludeUplinks();
+                fieldList = mask.getFieldMaskString();
+            }
+            const results = await this.complexSearchInProject(term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder);
+            let items = [];
+            // Turn the results into Items.
+            // ItemFieldMasks are unique per category. This cache allows us to avoid creating
+            // a new mask for each item, a waste of memory.
+            let maskCache = new Map();
+            for (let oneResult of results) {
+                const catName = this.parseRef(oneResult.itemId).type;
+                const cat = this.getCategory(catName);
+                let catMask = maskCache.get(catName);
+                if (!catMask) {
+                    if (mask) {
+                        if (mask.getCategoryMask(catName) != null) {
+                            catMask = mask.getCategoryMask(catName);
+                        }
+                        else {
+                            // Create a field mask that allows all or no fields, depending on
+                            // whether fields are included.
+                            catMask = mask.getIncludeFields() ? cat.createFieldMask() : cat.createFieldMask([]);
+                        }
+                    }
+                    else {
+                        // If no mask was specified for the search, then we get all category fields in the
+                        // item mask.
+                        catMask = cat.createFieldMask();
+                    }
+                    maskCache.set(catName, catMask);
+                }
+                let iitemGet = {
+                    id: oneResult.itemId,
+                    type: catName,
+                    title: oneResult.title,
+                    labels: includeLabels ? oneResult.labels : undefined,
+                    version: oneResult.version
+                };
+                // Deal with labels.
+                if (includeLabels) {
+                    iitemGet.labels = oneResult.labels;
+                }
+                // Deal with the links.
+                if (includeDownlinks) {
+                    iitemGet.downLinks = [];
+                    if (oneResult.downlinks) {
+                        // TODO: We don't have link titles.
+                        iitemGet.downLinks = oneResult.downlinks.map((linkId) => { return { to: linkId, title: "" }; });
+                    }
+                }
+                if (includeUplinks) {
+                    iitemGet.upLinks = [];
+                    if (oneResult.uplinks) {
+                        // TODO: We don't have link titles.
+                        iitemGet.upLinks = oneResult.uplinks.map((linkId) => { return { to: linkId, title: "" }; });
+                    }
+                }
+                // Deal with fields.
+                for (let fieldId of catMask.getFieldIds()) {
+                    let value = undefined;
+                    if (oneResult.fieldVal) {
+                        const values = oneResult.fieldVal.filter((r) => r.id == fieldId);
+                        if (values.length > 0) {
+                            value = values[0].value;
+                        }
+                    }
+                    iitemGet[fieldId] = value;
+                }
+                // Finally, we have a filled-in iitemGet.
+                // TODO: the item should probably take the master mask, so it knows if labels and up/downlinks are included.
+                items.push(new Item_1.Item(cat, iitemGet, catMask));
+            }
+            return items;
+        }
+        constructSearchFieldMask(includeFields = true, includeLabels = true, includeDownlinks = false, includeUplinks = false) {
+            return new Category_1.ItemsFieldMask(includeFields, includeLabels, includeDownlinks, includeUplinks);
+        }
+        /**
          * Returns information about an item from an id in a given project.
          * @param itemId A valid item id in the project
          * @returns The itemId decomposed into parts
@@ -1300,6 +1537,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             // For now, go back to the server and get a fresh item.
             return await this.getItem(newId);
+        }
+        /**
+         * Delete an Item from the project. If the Item is a folder with children, then parameter
+         * {force} must be true.
+         * @param itemId A valid item
+         * @param force
+         * @throws Error if the item is a non-empty folder and force was not specified as true.
+         * @returns A promise with the string "Ok" on success.
+         */
+        async deleteItem(itemId, force) {
+            return this.server.deleteItemInProject(this.name, itemId, force);
+        }
+        /**
+         * Move items in the project to a particular folder.
+         * @param folderId a valid folder id within the project
+         * @param itemIds an array of itemIds
+         * @returns the string "Ok" on success
+         */
+        async moveItems(folderId, itemIds) {
+            return this.server.moveItemsInProject(this.name, folderId, itemIds);
         }
         getCategory(category) {
             if (!this.categories.has(category)) {
@@ -1418,13 +1675,56 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             let createdItem = await this.needs.putItem(this.id, item);
             // Update the folder structure just for this folder.
-            if (!item.getIsFolder()) {
-                this.itemChildren.push({ isFolder: false, id: item.getId(), title: item.getTitle() });
-                // TODO: if Item is a folder, we need to update the folder list. Only problem is we
-                // may not have the children in item and a server call is required, but I'm not sure
-                // if I want to make a call to keep this snapshot up to date.
+            if (!createdItem.getIsFolder()) {
+                this.itemChildren.push({ isFolder: false, id: createdItem.getId(), title: createdItem.getTitle() });
+            }
+            else {
+                // New folders don't have children, so we can get away with adding this folder without a
+                // server call.
+                const folderInfo = {
+                    id: createdItem.getId(),
+                    title: createdItem.getTitle(),
+                    type: createdItem.getType()
+                };
+                this.folderChildren.push(new TreeFolder(this.needs, folderInfo, this));
             }
             return createdItem;
+        }
+        /**
+         * Move the given items into this folder. This method does NOT update the list of folder children,
+         * since server-side information is necessary.
+         * @param itemIds an array of itemIds
+         * @returns the string "Ok" on success
+         */
+        async moveItemsToThisFolder(itemIds) {
+            const result = await this.needs.moveItems(this.getId(), itemIds);
+            return result;
+        }
+        /**
+         * Delete a child of this folder.
+         * @param id A valid child id of this folder
+         * @param force If the id points to a non-empty folder, then this must be true to carry out the deletion
+         * @throws Error if the child wasn't found, or if it points to a non-empty folder and {force} is not true
+         * @returns The string "Ok" if successful.
+         */
+        async deleteChildItemOrFolder(id, force) {
+            // The id must be one of our children.
+            for (let i = 0; i < this.itemChildren.length; i++) {
+                if (this.itemChildren[i].id == id) {
+                    let result = await this.needs.deleteItem(id, force);
+                    this.itemChildren.splice(i, 1);
+                    return result;
+                }
+            }
+            for (let i = 0; i < this.folderChildren.length; i++) {
+                if (this.folderChildren[i].getId() == id) {
+                    let result = await this.needs.deleteItem(id, force);
+                    this.folderChildren.splice(i, 1);
+                    return result;
+                }
+            }
+            // Item isn't a child if we reached this point.
+            throw new Error(`Item with id ${id} not found in item or folder children`);
         }
         /**
          * TreeFolder is nice/simple to work with, but sometimes you need the
@@ -14296,6 +14596,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         return new StandaloneMatrixAPI(config, session, itemConfig, baseRestUrl, baseMatrixUrl, logger, json, itemTools);
     }
     exports.CreateConsoleAPI = CreateConsoleAPI;
+    class IsomorphicFetchWrapper {
+        constructor(oldFetch) {
+            this.oldFetch = oldFetch;
+            this.log = [];
+            let log = this.log;
+            this.myFetch = async (...args) => {
+                let [resource, config] = args;
+                log.push(resource);
+                const response = oldFetch(resource, config);
+                return response;
+            };
+        }
+        getLog() { return this.log; }
+        getFetch() {
+            return this.myFetch;
+        }
+    }
     class StandaloneMatrixAPI {
         constructor(config, session, initialItemConfig, baseRestUrl, matrixBaseUrl, logger, json, simpleItemTools) {
             this.config = config;
@@ -14307,11 +14624,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.simpleItemTools = simpleItemTools;
             this.debug = false;
             this.projectMap = new Map();
-            this.instance = new rest_api_1.DefaultApi(this.config, this.baseRestUrl, isomorphicFetch);
+            this.fetchWrapper = new IsomorphicFetchWrapper(isomorphicFetch);
+            this.instance = new rest_api_1.DefaultApi(this.config, this.baseRestUrl, this.fetchWrapper.getFetch());
             this.setItemConfig(initialItemConfig);
             this.labelManager = new LabelManager_1.LabelManager(logger, json, () => {
                 return this.getItemConfig();
             });
+        }
+        getFetchLog() {
+            return this.fetchWrapper.getLog();
         }
         createNewItemConfig() {
             return new ItemConfiguration_1.ItemConfiguration(this.logger, this.json);
@@ -14584,16 +14905,39 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param includeFields true to include fields
          * @param includeLinks true to include links
          * @param includeLabels true to include labels
-         * @returns
+         * @returns search results
          */
         async search(term, includeFields, includeLinks, includeLabels, filter) {
             this.log(`Search for "${term}"`);
             return this.appSearchAsync(this.getProject(), term, filter !== null && filter !== void 0 ? filter : null, true, includeFields ? "*" : null, null, includeLabels !== null && includeLabels !== void 0 ? includeLabels : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false);
         }
+        /**
+         * Move items to a particular folder.
+         * @param project a valid project on the instance
+         * @param folderId a valid folder id within the project
+         * @param itemIds an array of itemIds
+         * @returns the string "Ok" on success
+         */
+        async moveItemsInProject(project, folderId, itemIds) {
+            this.log(`Move items in ${project} to folder ${folderId}"`);
+            const comment = this.getComment();
+            const itemsString = itemIds.join(",");
+            return this.instance.projectMoveinFolderPost(project, folderId, comment, itemsString);
+        }
+        /**
+         * Execute a search in the given project, returning matching item ids.
+         * @param project
+         * @param term
+         * @returns an array of item ids.
+         */
         async searchInProject(project, term) {
-            this.log(`Search for "${term}"`);
+            this.log(`Search in ${project} for "${term}"`);
             const results = await this.instance.projectNeedleminimalGet(project, term);
             return results;
+        }
+        async complexSearchInProject(project, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder) {
+            return this.appSearchAsync(project, term, filter, true, fieldList, // "*" for all fields
+            null, includeLabels, includeDownlinks, includeUplinks);
         }
         async uploadProjectFile(url) {
             const options = { headers: this.getHeadersForPost() };
@@ -14826,10 +15170,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (force == undefined) {
                 force = false;
             }
-            return this.appDeleteItem(itemId, force);
+            return this.appDeleteItem(this.getProject(), itemId, force);
         }
-        async appDeleteItem(itemId, force) {
-            return this.appGetItemAsync(this.getProject(), itemId).then((itemJson) => {
+        async deleteItemInProject(project, itemId, force) {
+            this.log(`Delete Item "${itemId}" in project "${project}"`);
+            if (force == undefined) {
+                force = false;
+            }
+            return this.appDeleteItem(project, itemId, force);
+        }
+        async appDeleteItem(project, itemId, force) {
+            return this.appGetItemAsync(project, itemId).then((itemJson) => {
                 const comment = this.getComment();
                 let confirm = "no";
                 if (itemJson.isFolder && itemJson.children && force) {
@@ -14838,7 +15189,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 if (!force && itemJson.children.length > 0) {
                     throw new Error(`Item "${itemId}" not deleted because it has children`);
                 }
-                return this.instance.projectItemItemDelete(this.getProject(), itemId, confirm, comment);
+                return this.instance.projectItemItemDelete(project, itemId, confirm, comment);
             });
         }
         async deleteDownLink(fromId, toId) {
