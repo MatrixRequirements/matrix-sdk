@@ -158,6 +158,21 @@ async function handleLs(args: string) {
         });
     }
 }
+
+function catProject(project: matrixApi.Project) {
+    const config = project.getItemConfig();
+    const cats = config.getCategories();
+    print(`Project ${project.getName()} contains ${cats.length} categories:`);
+    for (let cat of cats) {
+        const fields = config.getFields(cat);
+        const fieldStrings = fields.map(f => `${f.label}(${f.fieldType})`);
+        print(`${cat} with fields:`);
+        for (let field of fieldStrings) {
+            print(`    ${field}`);
+        }
+    }
+}
+
 async function handleCat(args: string) {
     // cat <Item Name>
     if (args.trim() == "") return;
@@ -169,7 +184,7 @@ async function handleCat(args: string) {
         if (filteredProjects.length < 1) {
             print(`Sorry project ${args} not found`);
         } else {
-            print("Sorry, no special info");
+            catProject(await mmapi.openProject(args));
         }
     } else {
         const children: matrixApi.ITitleAndId[] = await currentDir.currentFolder.getAllChildren();
