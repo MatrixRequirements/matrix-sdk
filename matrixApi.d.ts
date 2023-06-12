@@ -1,29 +1,310 @@
 declare module matrixApi
 {
-	/**
-	// debugging functionality for old browsers
-	(function () {
-	    var method:string;
-	    var noop = function () {
-	    };
-	    var methods:string[] = [
-	        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-	        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-	        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-	        'timeStamp', 'trace', 'warn'
-	    ];
-	    var length = methods.length;
-	    var console = (window.console = window.console || {});
-	    while (length--) {
-	        method = methods[length];
-	        // Only stub undefined methods.
-	        if (!console[method]) {
-	            console[method] = noop;
-	        }
-	    }
-	}());
-	*/ 
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IProjectDataMap {
+	    [key: string]: XRGetProject_ProjectInfo_ProjectInfo;
+	}
+	class ConfigApp implements IConfigApp {
+	    private dbConnection;
+	    private currentItem;
+	    private _user;
+	    private _status;
+	    private _control;
+	    private _needsSave;
+	    private triggerSelectionChangeMySelf;
+	    private configTree;
+	    private projectData;
+	    private lastProject;
+	    plugins: IServerPluginSettings[];
+	    private PROJECT_FOLDER_ID;
+	    private PROJECT_FOLDER_WAIT_ID;
+	    configPages: ConfigPageFactory;
+	    itemForm: JQuery;
+	    printForm: JQuery;
+	    dlgForm: JQuery;
+	    constructor(dataSource: RestDB);
+	    init(itemForm: JQuery, dlgForm: JQuery): void;
+	    getUser(): string;
+	    getVersion(): string;
+	    getVersionQualifier(): string;
+	    getNeedsSave(): boolean;
+	    getLastProject(): string;
+	    getType(): string;
+	    getParentId(itemId: string): string;
+	    saveAsync(): JQueryDeferred<any>;
+	    cancel(): void;
+	    resizeItem(): void;
+	    postLogin(user: string): void;
+	    treeSelectionChange(pageId: string): void;
+	    selectItem(itemId: string, itemLabel: string): void;
+	    getTree(subtreeFilter?: string[]): IDB[];
+	    getItem(itemId: string): IDB;
+	    isConfigApp(): boolean;
+	    getCurrentItemId(): string;
+	    pingCurrentItem(): void;
+	    registerPage(item: IItem, parent: string, updateUI?: boolean): void;
+	    insertItem(item: IItem, parent: string): void;
+	    itemChanged(needsSave: boolean): void;
+	    setLastConnection(): void;
+	    canNavigateAwayAsync(): JQueryDeferred<any>;
+	    canDragDrop(nodeType: string, pageId: string): boolean;
+	    dragEnter(dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode): string[] | boolean;
+	    getJSONProjectSettings(projectId: string, settingId?: string): IJsonSetting[];
+	    settingExists(projectId: string, settingId: string): boolean;
+	    setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<IRestResult>;
+	    setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<IRestResult>;
+	    setServerSettingAsync(settingId: string, settingValue: string): JQueryDeferred<any>;
+	    getServerSetting(settingId: string, defaultValue: any): any;
+	    setServerSetting(settingId: string, property: string, newValue: any): void;
+	    getCustomerSetting(setting: string): string;
+	    setCategorySettingAsync(projectId: string, category: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<any>;
+	    getProjectConfig(projectId: string): XRGetProject_ProjectInfo_ProjectInfo;
+	    getCatgegoryConfig(projectId: string, category: string): XRCategoryExtendedType;
+	    getCategories(projectId: string): string[];
+	    getUserPermission(projectId: string): XRUserPermissionType[];
+	    getGroupPermission(projectId: string): XRGroupPermissionType[];
+	    canUserWrite(projectId: string, login: string): boolean;
+	    canGroupWrite(projectId: string, groupId: number): boolean;
+	    getFieldConfig(projectId: string, category: string, field: string): XRFieldType;
+	    updateFieldConfig(projectId: string, category: string, field: string, newConfig: XRFieldType): void;
+	    removedFromTree(itemId: string, newId: string): void;
+	    renamePage(pageId: string, label: string, parent: string): void;
+	    updateProjectData(projectId: string): JQueryDeferred<IRestResult>;
+	    private removeACL;
+	    reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
+	    signOut(): void;
+	    private clear;
+	    private movePage;
+	    private prepareTree;
+	    private addProjectsToTree;
+	    private showUrl;
+	    private navigateToUrl;
+	    private expandProject;
+	    private renderPage;
+	    private loadProjectAsync;
+	    initConfigPages(): void;
+	    getConfigPages(): ConfigPageFactory;
+	}
+	//# sourceMappingURL=ConfigApp.d.ts.map
+
 	//# sourceMappingURL=init.d.ts.map
+
+	interface ISetField {
+	    fieldName: string;
+	    value: string;
+	}
+	interface ISimpleSessionControl {
+	    getCsrfCookie(): string;
+	    setComment(comment: string): void;
+	    getComment(): string;
+	    setProject(project: string): void;
+	    getProject(): string;
+	    /**
+	     * In the web app environment, where this api is used in a context with
+	     * existing global variables, the default project context should be
+	     * provided. It provides "live" access to globals of the current project.
+	     * @returns A valid IProjectContext or null if none is available.
+	     */
+	    getDefaultProjectContext(): IProjectContext;
+	}
+	function CreateConsoleAPI(token: string, baseRestUrl: string, baseMatrixUrl: string): StandaloneMatrixAPI;
+	class StandaloneMatrixAPI implements IProjectNeeds {
+	    protected config: Configuration;
+	    protected session: ISimpleSessionControl;
+	    protected baseRestUrl: string;
+	    protected matrixBaseUrl: string;
+	    protected logger: ILoggerTools;
+	    protected json: IJSONTools;
+	    protected simpleItemTools: ISimpleItemTools;
+	    protected instance: DefaultApi;
+	    private ItemConfig;
+	    protected labelManager: ILabelManager;
+	    debug: boolean;
+	    private projectMap;
+	    private fetchWrapper;
+	    constructor(config: Configuration, session: ISimpleSessionControl, initialItemConfig: ItemConfiguration, baseRestUrl: string, matrixBaseUrl: string, logger: ILoggerTools, json: IJSONTools, simpleItemTools: ISimpleItemTools);
+	    getFetchLog(): string[];
+	    createNewItemConfig(): ItemConfiguration;
+	    getLabelManager(): ILabelManager;
+	    getItemConfig(): ItemConfiguration;
+	    setItemConfig(newItemConfig: ItemConfiguration): void;
+	    private getHeadersForPost;
+	    private initializeProject;
+	    private log;
+	    setComment(comment: string): void;
+	    getComment(): string;
+	    setProject(project: string): Promise<void>;
+	    getProject(): string;
+	    getProjects(): Promise<string[]>;
+	    protected parseRef(itemId: string): IItemIdParts;
+	    private getType;
+	    /**
+	     * get an item from the database as json object.
+	     *
+	     * Use: await api.getItem("F-DOC-1")
+	     *
+	     * @param itemId the id of the item like "REQ-1" or a specific version like "REQ-1-v1"
+	     * @throws error in case the itemId is bad.
+	     * @returns Promise to json object with all fields, links and labels
+	     */
+	    getItem(itemId: string): Promise<IItem>;
+	    parseRefForProject(project: string, itemRef: string): IItemIdParts;
+	    getItemFromProject(project: string, id: string): Promise<IItemGet>;
+	    /**
+	     * get the initial tree structure from a project. Project must be set first.
+	     */
+	    getTree(): Promise<ITitleAndId[]>;
+	    getFullTreeFromProject(projectName: string): Promise<FancyFolder[]>;
+	    getTreeFromProject(projectName: string): Promise<ITitleAndId[]>;
+	    /**
+	     * get a folder from the database, filling in it's children.
+	     * @param folderId  the id of the folder like "F-<type>-<id>"
+	     * @throws error if folderId is invalid
+	     * @returns Promise to ITitleAndId array
+	     */
+	    getFolderChildren(folderId: string): Promise<ITitleAndId[]>;
+	    getFolderChildrenFromProject(projectName: string, folderId: string): Promise<ITitleAndId[]>;
+	    private parseItemJSON;
+	    private appGetItemAsync;
+	    getDownlinks(itemId: string): Promise<IReference[]>;
+	    getDownlinkIds(itemId: string): Promise<string[]>;
+	    getUplinks(itemId: string): Promise<IReference[]>;
+	    getUplinkIds(itemId: string): Promise<string[]>;
+	    /**
+	     * search items
+	     *
+	     * @param term search expression, e.g. mrql:category=REQ
+	     * @param includeFields true to include fields
+	     * @param includeLinks true to include links
+	     * @param includeLabels true to include labels
+	     * @returns search results
+	     */
+	    search(term: string, includeFields?: boolean, includeLinks?: boolean, includeLabels?: boolean, filter?: string): Promise<ISearchResult[]>;
+	    /**
+	     * Move items to a particular folder.
+	     * @param project a valid project on the instance
+	     * @param folderId a valid folder id within the project
+	     * @param itemIds an array of itemIds
+	     * @returns the string "Ok" on success
+	     */
+	    moveItemsInProject(project: string, folderId: string, itemIds: string[]): Promise<string>;
+	    /**
+	     * Execute a search in the given project, returning matching item ids.
+	     * @param project
+	     * @param term
+	     * @returns an array of item ids.
+	     */
+	    searchInProject(project: string, term: string): Promise<string[]>;
+	    complexSearchInProject(project: string, term: string, filter: string, fieldList: string, includeLabels: boolean, includeDownlinks: boolean, includeUplinks: boolean, treeOrder: boolean): Promise<ISearchResult[]>;
+	    uploadProjectFile(url: string): Promise<AddFileAck>;
+	    execute(payload: any): Promise<FolderAnswer>;
+	    /**
+	     * The session object contains a string that represents the "current project."
+	     * This convenience method calls openProject() with that string.
+	     * @returns A valid Project object.
+	     */
+	    openCurrentProjectFromSession(): Promise<Project>;
+	    /**
+	     * Retrieve or create a Project object for the given project name.  The method is
+	     * asynchronous because it may require a trip to the server to retrieve project
+	     * configuration.
+	     * @param project
+	     * @returns A valid Project object
+	     */
+	    openProject(project: string): Promise<Project>;
+	    private parseSearchResult;
+	    private appSearchAsync;
+	    getItemIdsInCategory(category: string): Promise<string[]>;
+	    /**
+	     * gets the value of a field of an item from the database
+	     *
+	     * Use: await getField( "REQ-1", "description")
+	     *
+	     * @param itemId the id of the item like "REQ-1" or a specific version like "REQ-1-v1"
+	     * @param fieldName name of the field
+	     * @throws Error in case of invalid item or field
+	     * @returns Promise to the value of the field
+	     */
+	    getField(itemId: string, fieldName: string): Promise<any>;
+	    /**
+	     * set a field of an item in the database
+	     *
+	     * Use: await api.setField("PROC-83", "plain english", "x");
+	     *
+	     * @param itemId itemId the id of the item like "REQ-1"
+	     * @param fieldName name of the field
+	     * @param value value of the field
+	     * @throws Error in case of invalid itemId or fieldName
+	     * @returns Promise to the updated item
+	     */
+	    setField(itemId: string, fieldName: string, value: string): Promise<IItemGet>;
+	    setTitle(itemId: string, value: string): Promise<IItemGet>;
+	    private appUpdateItemInDBAsync;
+	    updateItemInProject(project: string, item: IItemPut, currentVersion?: number): Promise<string>;
+	    createItemInProject(project: string, parentFolderId: string, item: IItemPut): Promise<string>;
+	    /**
+	     * sets multiple fields in the database
+	     *
+	     * Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
+	     *
+	     * @param itemId itemId itemId the id of the item like "REQ-1"
+	     * @param data array of fieldName and value tupels
+	     * @throws Error in case of invalid id or fields
+	     * @returns the updated item
+	     */
+	    setFields(itemId: string, data: ISetField[]): Promise<IItemGet>;
+	    setFieldsInProject(project: string, projectItemConfig: ItemConfiguration, itemId: string, data: ISetField[]): Promise<IItemGet>;
+	    addDownLink(fromId: string, toId: string): Promise<string>;
+	    deleteItem(itemId: string, force?: boolean): Promise<string>;
+	    deleteItemInProject(project: string, itemId: string, force?: boolean): Promise<string>;
+	    private appDeleteItem;
+	    deleteDownLink(fromId: string, toId: string): Promise<string>;
+	    deleteDownLinks(fromId: string): Promise<string[]>;
+	    deleteUpLinks(fromId: string): Promise<string[]>;
+	    /**
+	     * create a new item in the database
+	     *
+	     * Use: createItem( "F-REQ-1", "my item", [{fieldName:"description",value:"x"}], ["labelx"], downlinks:["SPEC-1"], uplinks:[] )
+	     *
+	     * @param folder where to store the item
+	     * @param title name of the item
+	     * @param data array with fieldNames and values
+	     * @param labels list of labels to set
+	     * @param downlinks list of downlinks to create
+	     * @param uplinks list of uplinks to create
+	     * @returns the created item id
+	     */
+	    createItem(folder: string, title: string, data?: ISetField[], labels?: [], downlinks?: [], uplinks?: []): Promise<string>;
+	    createItemFromIItemPut(project: string, folder: string, item: IItemPut): Promise<string>;
+	    private appCreateItemOfTypeAsync;
+	    /**
+	     * Creates a folder
+	     *
+	     * @param parent where to store the folder
+	     * @param title name of the folder
+	     * @param data array with fieldNames and values
+	     * @throws error in case of input error (bad fields, etc)
+	     * @returns Promise to the item id of folder
+	     */
+	    createFolder(parent: string, title: string, data?: ISetField[]): Promise<string>;
+	    getItemIdByTitle(category: string, title: string): Promise<string | null>;
+	    copyItem(fromProject: string, fromItem: string, toProject: string, toFolder: string, copyLabels: boolean): Promise<CopyItemAck>;
+	    /**
+	     * Get the TODOs for a project.
+	     * @param project project name
+	     * @param itemRef if specified, returns all todos linked to an item, regardless of user
+	     * @param includeDone - if true, includes done todos
+	     * @param includeAllUsers - if true, includes all todos for all users.
+	     * @param includeFuture - false by default. If true, includes future todos.
+	     * @returns Information on the todos.
+	     */
+	    getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
+	}
+	//# sourceMappingURL=standalone.d.ts.map
 
 	/// <reference types="jquery" />
 	class MatrixAPI {
@@ -1792,6 +2073,105 @@ declare module matrixApi
 	/**
 	 *
 	 * @export
+	 * @interface ItemItemBody
+	 */
+	export interface ItemItemBody {
+	    /**
+	     * Specify new title for the item -- if not there, keep the old title
+	     * @type {string}
+	     * @memberof ItemItemBody
+	     */
+	    title?: string;
+	    /**
+	     *
+	     * @type {{ [key: string]: string; }}
+	     * @memberof ItemItemBody
+	     */
+	    itemProperties?: {
+	        [key: string]: string;
+	    };
+	    /**
+	     * (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
+	     * @type {string}
+	     * @memberof ItemItemBody
+	     */
+	    labels?: string;
+	    /**
+	     * (optional) Specify a new verb for the audit action. Defaults to edit
+	     * @type {string}
+	     * @memberof ItemItemBody
+	     */
+	    auditAction?: string;
+	    /**
+	     * (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
+	     * @type {string}
+	     * @memberof ItemItemBody
+	     */
+	    newFolder?: string;
+	    /**
+	     * (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
+	     * @type {number}
+	     * @memberof ItemItemBody
+	     */
+	    newPosition?: number;
+	    /**
+	     * The reason why the user is doing this
+	     * @type {string}
+	     * @memberof ItemItemBody
+	     */
+	    reason: string;
+	    /**
+	     * (optional) A filter
+	     * @type {string}
+	     * @memberof ItemItemBody
+	     */
+	    filter?: string;
+	    /**
+	     * (optional) Comma-delimited (%2C)list of references to up items
+	     * @type {string}
+	     * @memberof ItemItemBody
+	     */
+	    linksUp?: string;
+	    /**
+	     * (optional) Comma-delimited (%2C)list of references to down items
+	     * @type {string}
+	     * @memberof ItemItemBody
+	     */
+	    linksDown?: string;
+	    /**
+	     * (optional) will not make the change if the current version is not that one
+	     * @type {number}
+	     * @memberof ItemItemBody
+	     */
+	    currentVersion?: number;
+	    /**
+	     * (optional) when set to 1 says that the only fields to change are those passed
+	     * @type {number}
+	     * @memberof ItemItemBody
+	     */
+	    onlyThoseFields?: number;
+	    /**
+	     * (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
+	     * @type {number}
+	     * @memberof ItemItemBody
+	     */
+	    onlyThoseLabels?: number;
+	    /**
+	     * (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
+	     * @type {number}
+	     * @memberof ItemItemBody
+	     */
+	    failOnCleanup?: number;
+	    /**
+	     * (optional) when set to 0 (default) says that linksUp and linksDown only append new links to the existing links in the database
+	     * @type {number}
+	     * @memberof ItemItemBody
+	     */
+	    linksAreComplete?: number;
+	}
+	/**
+	 *
+	 * @export
 	 * @interface ItemSimpleType
 	 */
 	export interface ItemSimpleType {
@@ -3054,6 +3434,69 @@ declare module matrixApi
 	     * @memberof ProjectInfo
 	     */
 	    todos?: Array<Todo>;
+	}
+	/**
+	 *
+	 * @export
+	 * @interface ProjectItemBody
+	 */
+	export interface ProjectItemBody {
+	    /**
+	     * Item title
+	     * @type {string}
+	     * @memberof ProjectItemBody
+	     */
+	    title: string;
+	    /**
+	     * Reference of the folder (F-categ-serial)
+	     * @type {string}
+	     * @memberof ProjectItemBody
+	     */
+	    folder: string;
+	    /**
+	     *
+	     * @type {{ [key: string]: string; }}
+	     * @memberof ProjectItemBody
+	     */
+	    itemProperties?: {
+	        [key: string]: string;
+	    };
+	    /**
+	     * (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
+	     * @type {string}
+	     * @memberof ProjectItemBody
+	     */
+	    labels?: string;
+	    /**
+	     * The author (login name) - only works when superadmin is issuing this
+	     * @type {string}
+	     * @memberof ProjectItemBody
+	     */
+	    author?: string;
+	    /**
+	     * The reason why the user is doing this
+	     * @type {string}
+	     * @memberof ProjectItemBody
+	     */
+	    reason: string;
+	    /**
+	     * Comma-delimited (%2C)list of references to up items
+	     * @type {string}
+	     * @memberof ProjectItemBody
+	     */
+	    linksUp: string;
+	    /**
+	     * Comma-delimited (%2C)list of references to down items
+	     * @type {string}
+	     * @memberof ProjectItemBody
+	     */
+	    linksDown: string;
+	    /**
+	     * (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
+	     * @type {number}
+	     * @memberof ProjectItemBody
+	     */
+	    failOnCleanup?: number;
 	}
 	/**
 	 *
@@ -5287,11 +5730,11 @@ declare module matrixApi
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
 	     * @summary Creates a new file - the file should be uploaded as payload (or through the url argument as an alternative). It's mime type should be sent through the HTTP protocol.
 	     * @param {string} project Project short label
-	     * @param {string} [input_url] Optional argument -  the file could also come from an external URL. In this case there will be an error if we can&#x27;t retrieve it on the server
+	     * @param {string} [url] Optional argument -  the file could also come from an external URL. In this case there will be an error if we can&#x27;t retrieve it on the server
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectFilePost(project: string, input_url?: string, options?: any): FetchArgs;
+	    projectFilePost(project: string, urlIn?: string, options?: any): FetchArgs;
 	    /**
 	     * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
 	     * @summary Creates a new folder
@@ -5431,43 +5874,22 @@ declare module matrixApi
 	    /**
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
 	     * @summary Modifies an item or a folder. Item has the form CATEG-number, folders -  F-CATEG-number
+	     * @param {ItemItemBody} body
 	     * @param {string} project Project short label
 	     * @param {string} item Item reference (XXX-nn)
-	     * @param {string} reason The reason why the user is doing this
-	     * @param {string} [title] Specify new title for the item -- if not there, keep the old title
-	     * @param {string} [fxid_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-	     * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-	     * @param {string} [auditAction] (optional) Specify a new verb for the audit action. Defaults to edit
-	     * @param {string} [newFolder] (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
-	     * @param {number} [newPosition] (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
-	     * @param {string} [filter] (optional) A filter
-	     * @param {string} [linksUp] (optional) Comma-delimited (%2C)list of references to up items
-	     * @param {string} [linksDown] (optional) Comma-delimited (%2C)list of references to down items
-	     * @param {number} [currentVersion] (optional) will not make the change if the current version is not that one
-	     * @param {number} [onlyThoseFields] (optional) when set to 1 says that the only fields to change are those passed
-	     * @param {number} [onlyThoseLabels] (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
-	     * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectItemItemPut(project: string, item: string, reason: string, title?: string, fxid_?: string, labels?: string, auditAction?: string, newFolder?: string, newPosition?: number, filter?: string, linksUp?: string, linksDown?: string, currentVersion?: number, onlyThoseFields?: number, onlyThoseLabels?: number, failOnCleanup?: number, options?: any): FetchArgs;
+	    projectItemItemPut(body: ItemItemBody, project: string, item: string, options?: any): FetchArgs;
 	    /**
 	     * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
 	     * @summary Adds an item in a folder
+	     * @param {ProjectItemBody} body
 	     * @param {string} project Project short label
-	     * @param {string} title Item title
-	     * @param {string} folder Reference of the folder (F-categ-serial)
-	     * @param {string} reason The reason why the user is doing this
-	     * @param {string} linksUp Comma-delimited (%2C)list of references to up items
-	     * @param {string} linksDown Comma-delimited (%2C)list of references to down items
-	     * @param {string} [fxID_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-	     * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-	     * @param {string} [author] The author (login name) - only works when superadmin is issuing this
-	     * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectItemPost(project: string, title: string, folder: string, reason: string, linksUp: string, linksDown: string, fxID_?: string, labels?: string, author?: string, failOnCleanup?: number, options?: any): FetchArgs;
+	    projectItemPost(body: ProjectItemBody, project: string, options?: any): FetchArgs;
 	    /**
 	     * Permissions - ?. Valid from version 2.1
 	     * @summary Removes (inactivate) a link between 2 items. Items are in the form CATEG-number
@@ -5583,7 +6005,7 @@ declare module matrixApi
 	    projectMergeinfoGet(project: string, excludeCategories?: string, fromDate?: string, push?: number, options?: any): FetchArgs;
 	    /**
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
-	     * @summary Imports some folders from a project to another as a module
+	     * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
 	     * @param {string} project Project short label
 	     * @param {string} mode Import mode -  can be include or copy
 	     * @param {string} sourceProject Source project
@@ -5674,7 +6096,7 @@ declare module matrixApi
 	     * @param {string} newTitle New title for the SIGN- item that is generated (only valid for isSignedReport)
 	     * @param {string} copyFields List of from-to fields (123,456),(124,457) that we can use to generate the fields in the SIGN record (only valid for isSignedReport)
 	     * @param {string} [itemList] (optional) list of items to use in the report. By default all categories are used
-	     * @param {string} [input_url] (optional) url to generate in the filter
+	     * @param {string} [url] (optional) url to generate in the filter
 	     * @param {string} [resturl] (optional) REST url to generate in the filter
 	     * @param {string} [format] (optional) format -  html (default), pdf, docx, odt, xml, zipdocx, zippdf or package (from 2.2), or mf (since 2.3)
 	     * @param {string} [filter] (optional) specify a comma-delimited filter list. Can be negative filters (with minus before)
@@ -5683,7 +6105,7 @@ declare module matrixApi
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectReportReportPost(project: string, report: string, isSignedReport: string, includeSignatures: string, newTitle: string, copyFields: string, itemList?: string, input_url?: string, resturl?: string, format?: string, filter?: string, useOld?: number, atDate?: string, options?: any): FetchArgs;
+	    projectReportReportPost(project: string, report: string, isSignedReport: string, includeSignatures: string, newTitle: string, copyFields: string, itemList?: string, urlIn?: string, resturl?: string, format?: string, filter?: string, useOld?: number, atDate?: string, options?: any): FetchArgs;
 	    /**
 	     * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
 	     * @summary Get a project's schema
@@ -5743,7 +6165,7 @@ declare module matrixApi
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectSignedreportSIGNNPost(project: string, input_url?: string, resturl?: string, format?: string, options?: any): FetchArgs;
+	    projectSignedreportSIGNNPost(project: string, urlIn?: string, resturl?: string, format?: string, options?: any): FetchArgs;
 	    /**
 	     * Permissions - Must have a valid authentication. Valid from version 2.1
 	     * @summary Get all tags of a project. Works on any project if user is admin
@@ -6738,43 +7160,22 @@ declare module matrixApi
 	    /**
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
 	     * @summary Modifies an item or a folder. Item has the form CATEG-number, folders -  F-CATEG-number
+	     * @param {ItemItemBody} body
 	     * @param {string} project Project short label
 	     * @param {string} item Item reference (XXX-nn)
-	     * @param {string} reason The reason why the user is doing this
-	     * @param {string} [title] Specify new title for the item -- if not there, keep the old title
-	     * @param {string} [fxid_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-	     * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-	     * @param {string} [auditAction] (optional) Specify a new verb for the audit action. Defaults to edit
-	     * @param {string} [newFolder] (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
-	     * @param {number} [newPosition] (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
-	     * @param {string} [filter] (optional) A filter
-	     * @param {string} [linksUp] (optional) Comma-delimited (%2C)list of references to up items
-	     * @param {string} [linksDown] (optional) Comma-delimited (%2C)list of references to down items
-	     * @param {number} [currentVersion] (optional) will not make the change if the current version is not that one
-	     * @param {number} [onlyThoseFields] (optional) when set to 1 says that the only fields to change are those passed
-	     * @param {number} [onlyThoseLabels] (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
-	     * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectItemItemPut(project: string, item: string, reason: string, title?: string, fxid_?: string, labels?: string, auditAction?: string, newFolder?: string, newPosition?: number, filter?: string, linksUp?: string, linksDown?: string, currentVersion?: number, onlyThoseFields?: number, onlyThoseLabels?: number, failOnCleanup?: number, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<TrimItem>;
+	    projectItemItemPut(body: ItemItemBody, project: string, item: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<TrimItem>;
 	    /**
 	     * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
 	     * @summary Adds an item in a folder
+	     * @param {ProjectItemBody} body
 	     * @param {string} project Project short label
-	     * @param {string} title Item title
-	     * @param {string} folder Reference of the folder (F-categ-serial)
-	     * @param {string} reason The reason why the user is doing this
-	     * @param {string} linksUp Comma-delimited (%2C)list of references to up items
-	     * @param {string} linksDown Comma-delimited (%2C)list of references to down items
-	     * @param {string} [fxID_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-	     * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-	     * @param {string} [author] The author (login name) - only works when superadmin is issuing this
-	     * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectItemPost(project: string, title: string, folder: string, reason: string, linksUp: string, linksDown: string, fxID_?: string, labels?: string, author?: string, failOnCleanup?: number, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<AddItemAck>;
+	    projectItemPost(body: ProjectItemBody, project: string, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<AddItemAck>;
 	    /**
 	     * Permissions - ?. Valid from version 2.1
 	     * @summary Removes (inactivate) a link between 2 items. Items are in the form CATEG-number
@@ -6890,7 +7291,7 @@ declare module matrixApi
 	    projectMergeinfoGet(project: string, excludeCategories?: string, fromDate?: string, push?: number, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<Array<MergeInfo>>;
 	    /**
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
-	     * @summary Imports some folders from a project to another as a module
+	     * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
 	     * @param {string} project Project short label
 	     * @param {string} mode Import mode -  can be include or copy
 	     * @param {string} sourceProject Source project
@@ -8045,43 +8446,22 @@ declare module matrixApi
 	    /**
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
 	     * @summary Modifies an item or a folder. Item has the form CATEG-number, folders -  F-CATEG-number
+	     * @param {ItemItemBody} body
 	     * @param {string} project Project short label
 	     * @param {string} item Item reference (XXX-nn)
-	     * @param {string} reason The reason why the user is doing this
-	     * @param {string} [title] Specify new title for the item -- if not there, keep the old title
-	     * @param {string} [fxid_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-	     * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-	     * @param {string} [auditAction] (optional) Specify a new verb for the audit action. Defaults to edit
-	     * @param {string} [newFolder] (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
-	     * @param {number} [newPosition] (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
-	     * @param {string} [filter] (optional) A filter
-	     * @param {string} [linksUp] (optional) Comma-delimited (%2C)list of references to up items
-	     * @param {string} [linksDown] (optional) Comma-delimited (%2C)list of references to down items
-	     * @param {number} [currentVersion] (optional) will not make the change if the current version is not that one
-	     * @param {number} [onlyThoseFields] (optional) when set to 1 says that the only fields to change are those passed
-	     * @param {number} [onlyThoseLabels] (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
-	     * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectItemItemPut(project: string, item: string, reason: string, title?: string, fxid_?: string, labels?: string, auditAction?: string, newFolder?: string, newPosition?: number, filter?: string, linksUp?: string, linksDown?: string, currentVersion?: number, onlyThoseFields?: number, onlyThoseLabels?: number, failOnCleanup?: number, options?: any): Promise<TrimItem>;
+	    projectItemItemPut(body: ItemItemBody, project: string, item: string, options?: any): Promise<TrimItem>;
 	    /**
 	     * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
 	     * @summary Adds an item in a folder
+	     * @param {ProjectItemBody} body
 	     * @param {string} project Project short label
-	     * @param {string} title Item title
-	     * @param {string} folder Reference of the folder (F-categ-serial)
-	     * @param {string} reason The reason why the user is doing this
-	     * @param {string} linksUp Comma-delimited (%2C)list of references to up items
-	     * @param {string} linksDown Comma-delimited (%2C)list of references to down items
-	     * @param {string} [fxID_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-	     * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-	     * @param {string} [author] The author (login name) - only works when superadmin is issuing this
-	     * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     */
-	    projectItemPost(project: string, title: string, folder: string, reason: string, linksUp: string, linksDown: string, fxID_?: string, labels?: string, author?: string, failOnCleanup?: number, options?: any): Promise<AddItemAck>;
+	    projectItemPost(body: ProjectItemBody, project: string, options?: any): Promise<AddItemAck>;
 	    /**
 	     * Permissions - ?. Valid from version 2.1
 	     * @summary Removes (inactivate) a link between 2 items. Items are in the form CATEG-number
@@ -8197,7 +8577,7 @@ declare module matrixApi
 	    projectMergeinfoGet(project: string, excludeCategories?: string, fromDate?: string, push?: number, options?: any): Promise<MergeInfo[]>;
 	    /**
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
-	     * @summary Imports some folders from a project to another as a module
+	     * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
 	     * @param {string} project Project short label
 	     * @param {string} mode Import mode -  can be include or copy
 	     * @param {string} sourceProject Source project
@@ -9424,45 +9804,24 @@ declare module matrixApi
 	    /**
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
 	     * @summary Modifies an item or a folder. Item has the form CATEG-number, folders -  F-CATEG-number
+	     * @param {ItemItemBody} body
 	     * @param {string} project Project short label
 	     * @param {string} item Item reference (XXX-nn)
-	     * @param {string} reason The reason why the user is doing this
-	     * @param {string} [title] Specify new title for the item -- if not there, keep the old title
-	     * @param {string} [fxid_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-	     * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-	     * @param {string} [auditAction] (optional) Specify a new verb for the audit action. Defaults to edit
-	     * @param {string} [newFolder] (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
-	     * @param {number} [newPosition] (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
-	     * @param {string} [filter] (optional) A filter
-	     * @param {string} [linksUp] (optional) Comma-delimited (%2C)list of references to up items
-	     * @param {string} [linksDown] (optional) Comma-delimited (%2C)list of references to down items
-	     * @param {number} [currentVersion] (optional) will not make the change if the current version is not that one
-	     * @param {number} [onlyThoseFields] (optional) when set to 1 says that the only fields to change are those passed
-	     * @param {number} [onlyThoseLabels] (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
-	     * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     * @memberof DefaultApi
 	     */
-	    projectItemItemPut(project: string, item: string, reason: string, title?: string, fxid_?: string, labels?: string, auditAction?: string, newFolder?: string, newPosition?: number, filter?: string, linksUp?: string, linksDown?: string, currentVersion?: number, onlyThoseFields?: number, onlyThoseLabels?: number, failOnCleanup?: number, options?: any): Promise<TrimItem>;
+	    projectItemItemPut(body: ItemItemBody, project: string, item: string, options?: any): Promise<TrimItem>;
 	    /**
 	     * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
 	     * @summary Adds an item in a folder
+	     * @param {ProjectItemBody} body
 	     * @param {string} project Project short label
-	     * @param {string} title Item title
-	     * @param {string} folder Reference of the folder (F-categ-serial)
-	     * @param {string} reason The reason why the user is doing this
-	     * @param {string} linksUp Comma-delimited (%2C)list of references to up items
-	     * @param {string} linksDown Comma-delimited (%2C)list of references to down items
-	     * @param {string} [fxID_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-	     * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-	     * @param {string} [author] The author (login name) - only works when superadmin is issuing this
-	     * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
 	     * @param {*} [options] Override http request option.
 	     * @throws {RequiredError}
 	     * @memberof DefaultApi
 	     */
-	    projectItemPost(project: string, title: string, folder: string, reason: string, linksUp: string, linksDown: string, fxID_?: string, labels?: string, author?: string, failOnCleanup?: number, options?: any): Promise<AddItemAck>;
+	    projectItemPost(body: ProjectItemBody, project: string, options?: any): Promise<AddItemAck>;
 	    /**
 	     * Permissions - ?. Valid from version 2.1
 	     * @summary Removes (inactivate) a link between 2 items. Items are in the form CATEG-number
@@ -9589,7 +9948,7 @@ declare module matrixApi
 	    projectMergeinfoGet(project: string, excludeCategories?: string, fromDate?: string, push?: number, options?: any): Promise<MergeInfo[]>;
 	    /**
 	     * Permissions - Must have read/write access to the project. Valid from version 2.1
-	     * @summary Imports some folders from a project to another as a module
+	     * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
 	     * @param {string} project Project short label
 	     * @param {string} mode Import mode -  can be include or copy
 	     * @param {string} sourceProject Source project
@@ -10571,217 +10930,25 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=PluginCore.d.ts.map
 
-	interface ISetField {
-	    fieldName: string;
-	    value: string;
+	interface ITitleAndId {
+	    title: string;
+	    id: string;
+	    isFolder: boolean;
 	}
-	interface ISimpleSessionControl {
-	    getCsrfCookie(): string;
-	    setComment(comment: string): void;
-	    getComment(): string;
-	    setProject(project: string): void;
-	    getProject(): string;
-	    /**
-	     * In the web app environment, where this api is used in a context with
-	     * existing global variables, the default project context should be
-	     * provided. It provides "live" access to globals of the current project.
-	     * @returns A valid IProjectContext or null if none is available.
-	     */
-	    getDefaultProjectContext(): IProjectContext;
-	}
-	function CreateConsoleAPI(token: string, baseRestUrl: string, baseMatrixUrl: string): StandaloneMatrixAPI;
-	class StandaloneMatrixAPI implements IProjectNeeds {
-	    protected config: Configuration;
-	    protected session: ISimpleSessionControl;
-	    protected baseRestUrl: string;
-	    protected matrixBaseUrl: string;
-	    protected logger: ILoggerTools;
-	    protected json: IJSONTools;
-	    protected simpleItemTools: ISimpleItemTools;
-	    protected instance: DefaultApi;
-	    private ItemConfig;
-	    protected labelManager: ILabelManager;
-	    debug: boolean;
-	    private projectMap;
-	    private fetchWrapper;
-	    constructor(config: Configuration, session: ISimpleSessionControl, initialItemConfig: ItemConfiguration, baseRestUrl: string, matrixBaseUrl: string, logger: ILoggerTools, json: IJSONTools, simpleItemTools: ISimpleItemTools);
-	    getFetchLog(): string[];
-	    createNewItemConfig(): ItemConfiguration;
-	    getLabelManager(): ILabelManager;
-	    getItemConfig(): ItemConfiguration;
-	    setItemConfig(newItemConfig: ItemConfiguration): void;
-	    private getHeadersForPost;
-	    private initializeProject;
-	    private log;
-	    setComment(comment: string): void;
-	    getComment(): string;
-	    setProject(project: string): Promise<void>;
-	    getProject(): string;
-	    getProjects(): Promise<string[]>;
-	    protected parseRef(itemId: string): IItemIdParts;
-	    private getType;
-	    /**
-	     * get an item from the database as json object.
-	     *
-	     * Use: await api.getItem("F-DOC-1")
-	     *
-	     * @param itemId the id of the item like "REQ-1" or a specific version like "REQ-1-v1"
-	     * @throws error in case the itemId is bad.
-	     * @returns Promise to json object with all fields, links and labels
-	     */
-	    getItem(itemId: string): Promise<IItem>;
+	interface IProjectNeeds {
 	    parseRefForProject(project: string, itemRef: string): IItemIdParts;
+	    setFieldsInProject(project: string, projectItemConfig: ItemConfiguration, itemId: string, data: ISetField[]): Promise<IItemGet>;
 	    getItemFromProject(project: string, id: string): Promise<IItemGet>;
-	    /**
-	     * get the initial tree structure from a project. Project must be set first.
-	     */
-	    getTree(): Promise<ITitleAndId[]>;
-	    getFullTreeFromProject(projectName: string): Promise<FancyFolder[]>;
-	    getTreeFromProject(projectName: string): Promise<ITitleAndId[]>;
-	    /**
-	     * get a folder from the database, filling in it's children.
-	     * @param folderId  the id of the folder like "F-<type>-<id>"
-	     * @throws error if folderId is invalid
-	     * @returns Promise to ITitleAndId array
-	     */
-	    getFolderChildren(folderId: string): Promise<ITitleAndId[]>;
-	    getFolderChildrenFromProject(projectName: string, folderId: string): Promise<ITitleAndId[]>;
-	    private parseItemJSON;
-	    private appGetItemAsync;
-	    getDownlinks(itemId: string): Promise<IReference[]>;
-	    getDownlinkIds(itemId: string): Promise<string[]>;
-	    getUplinks(itemId: string): Promise<IReference[]>;
-	    getUplinkIds(itemId: string): Promise<string[]>;
-	    /**
-	     * search items
-	     *
-	     * @param term search expression, e.g. mrql:category=REQ
-	     * @param includeFields true to include fields
-	     * @param includeLinks true to include links
-	     * @param includeLabels true to include labels
-	     * @returns search results
-	     */
-	    search(term: string, includeFields?: boolean, includeLinks?: boolean, includeLabels?: boolean, filter?: string): Promise<ISearchResult[]>;
-	    /**
-	     * Move items to a particular folder.
-	     * @param project a valid project on the instance
-	     * @param folderId a valid folder id within the project
-	     * @param itemIds an array of itemIds
-	     * @returns the string "Ok" on success
-	     */
+	    updateItemInProject(project: string, item: IItemPut, currentVersion?: number): Promise<string>;
+	    createItemInProject(project: string, parentFolderId: string, item: IItemPut): Promise<string>;
+	    deleteItemInProject(project: string, itemId: string, force?: boolean): Promise<string>;
 	    moveItemsInProject(project: string, folderId: string, itemIds: string[]): Promise<string>;
-	    /**
-	     * Execute a search in the given project, returning matching item ids.
-	     * @param project
-	     * @param term
-	     * @returns an array of item ids.
-	     */
 	    searchInProject(project: string, term: string): Promise<string[]>;
 	    complexSearchInProject(project: string, term: string, filter: string, fieldList: string, includeLabels: boolean, includeDownlinks: boolean, includeUplinks: boolean, treeOrder: boolean): Promise<ISearchResult[]>;
-	    uploadProjectFile(url: string): Promise<AddFileAck>;
-	    execute(payload: any): Promise<FolderAnswer>;
-	    /**
-	     * The session object contains a string that represents the "current project."
-	     * This convenience method calls openProject() with that string.
-	     * @returns A valid Project object.
-	     */
-	    openCurrentProjectFromSession(): Promise<Project>;
-	    /**
-	     * Retrieve or create a Project object for the given project name.  The method is
-	     * asynchronous because it may require a trip to the server to retrieve project
-	     * configuration.
-	     * @param project
-	     * @returns A valid Project object
-	     */
-	    openProject(project: string): Promise<Project>;
-	    private parseSearchResult;
-	    private appSearchAsync;
-	    getItemIdsInCategory(category: string): Promise<string[]>;
-	    /**
-	     * gets the value of a field of an item from the database
-	     *
-	     * Use: await getField( "REQ-1", "description")
-	     *
-	     * @param itemId the id of the item like "REQ-1" or a specific version like "REQ-1-v1"
-	     * @param fieldName name of the field
-	     * @throws Error in case of invalid item or field
-	     * @returns Promise to the value of the field
-	     */
-	    getField(itemId: string, fieldName: string): Promise<any>;
-	    /**
-	     * set a field of an item in the database
-	     *
-	     * Use: await api.setField("PROC-83", "plain english", "x");
-	     *
-	     * @param itemId itemId the id of the item like "REQ-1"
-	     * @param fieldName name of the field
-	     * @param value value of the field
-	     * @throws Error in case of invalid itemId or fieldName
-	     * @returns Promise to the updated item
-	     */
-	    setField(itemId: string, fieldName: string, value: string): Promise<IItemGet>;
-	    setTitle(itemId: string, value: string): Promise<IItemGet>;
-	    private appUpdateItemInDBAsync;
-	    updateItemInProject(project: string, item: IItemPut): Promise<string>;
-	    createItemInProject(project: string, parentFolderId: string, item: IItemPut): Promise<string>;
-	    /**
-	     * sets multiple fields in the database
-	     *
-	     * Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
-	     *
-	     * @param itemId itemId itemId the id of the item like "REQ-1"
-	     * @param data array of fieldName and value tupels
-	     * @throws Error in case of invalid id or fields
-	     * @returns the updated item
-	     */
-	    setFields(itemId: string, data: ISetField[]): Promise<IItemGet>;
-	    addDownLink(fromId: string, toId: string): Promise<string>;
-	    deleteItem(itemId: string, force?: boolean): Promise<string>;
-	    deleteItemInProject(project: string, itemId: string, force?: boolean): Promise<string>;
-	    private appDeleteItem;
-	    deleteDownLink(fromId: string, toId: string): Promise<string>;
-	    deleteDownLinks(fromId: string): Promise<string[]>;
-	    deleteUpLinks(fromId: string): Promise<string[]>;
-	    /**
-	     * create a new item in the database
-	     *
-	     * Use: createItem( "F-REQ-1", "my item", [{fieldName:"description",value:"x"}], ["labelx"], downlinks:["SPEC-1"], uplinks:[] )
-	     *
-	     * @param folder where to store the item
-	     * @param title name of the item
-	     * @param data array with fieldNames and values
-	     * @param labels list of labels to set
-	     * @param downlinks list of downlinks to create
-	     * @param uplinks list of uplinks to create
-	     * @returns the created item id
-	     */
-	    createItem(folder: string, title: string, data?: ISetField[], labels?: [], downlinks?: [], uplinks?: []): Promise<string>;
-	    createItemFromIItemPut(project: string, folder: string, item: IItemPut): Promise<string>;
-	    private appCreateItemOfTypeAsync;
-	    /**
-	     * Creates a folder
-	     *
-	     * @param parent where to store the folder
-	     * @param title name of the folder
-	     * @param data array with fieldNames and values
-	     * @throws error in case of input error (bad fields, etc)
-	     * @returns Promise to the item id of folder
-	     */
-	    createFolder(parent: string, title: string, data?: ISetField[]): Promise<string>;
-	    getItemIdByTitle(category: string, title: string): Promise<string | null>;
-	    copyItem(fromProject: string, fromItem: string, toProject: string, toFolder: string, copyLabels: boolean): Promise<CopyItemAck>;
-	    /**
-	     * Get the TODOs for a project.
-	     * @param project project name
-	     * @param itemRef if specified, returns all todos linked to an item, regardless of user
-	     * @param includeDone - if true, includes done todos
-	     * @param includeAllUsers - if true, includes all todos for all users.
-	     * @param includeFuture - false by default. If true, includes future todos.
-	     * @returns Information on the todos.
-	     */
+	    getFullTreeFromProject(projectName: string): Promise<FancyFolder[]>;
 	    getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
 	}
-	//# sourceMappingURL=standalone.d.ts.map
+	//# sourceMappingURL=standalone-interfaces.d.ts.map
 
 	interface IProjectContext {
 	    getItemConfig(): ItemConfiguration;
@@ -10828,7 +10995,19 @@ declare module matrixApi
 	     */
 	    createFolder(type: string): Item;
 	    getItem(id: string): Promise<Item>;
+	    /**
+	     * Save an item into a given folder.
+	     * @param parentFolderId
+	     * @param item
+	     * @returns A fresh copy of the Item from the server
+	     */
 	    putItem(parentFolderId: string, item: Item): Promise<Item>;
+	    /**
+	     * Update an item on the server.
+	     * @param item
+	     * @returns A fresh copy of the Item from the server.
+	     */
+	    updateItem(item: Item): Promise<Item>;
 	    /**
 	     * Delete an Item from the project. If the Item is a folder with children, then parameter
 	     * {force} must be true.
@@ -10846,6 +11025,29 @@ declare module matrixApi
 	     */
 	    moveItems(folderId: string, itemIds: string[]): Promise<string>;
 	    /**
+	     * set a field of an item in the database
+	     *
+	     * Use: await project.setField("PROC-83", "plain english", "x");
+	     *
+	     * @param itemId itemId the id of the item like "REQ-1"
+	     * @param fieldName name of the field
+	     * @param value value of the field
+	     * @throws Error in case of invalid itemId or fieldName
+	     * @returns Promise to the updated item
+	     */
+	    setField(itemId: string, fieldName: string, value: string): Promise<IItemGet>;
+	    /**
+	     * sets multiple fields in the database
+	     *
+	     * Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
+	     *
+	     * @param itemId itemId itemId the id of the item like "REQ-1"
+	     * @param data array of fieldName and value tupels
+	     * @throws Error in case of invalid id or fields
+	     * @returns the updated item
+	     */
+	    setFields(itemId: string, data: ISetField[]): Promise<IItemGet>;
+	    /**
 	     * Get the TODOs for a project.
 	     * @param itemRef if specified, returns all todos linked to an item, regardless of user
 	     * @param includeDone - if true, includes done todos
@@ -10861,25 +11063,6 @@ declare module matrixApi
 	    getTestConfig(): TestManagerConfiguration;
 	}
 	//# sourceMappingURL=Project.d.ts.map
-
-	interface ITitleAndId {
-	    title: string;
-	    id: string;
-	    isFolder: boolean;
-	}
-	interface IProjectNeeds {
-	    parseRefForProject(project: string, itemRef: string): IItemIdParts;
-	    getItemFromProject(project: string, id: string): Promise<IItemGet>;
-	    updateItemInProject(project: string, item: IItemPut): Promise<string>;
-	    createItemInProject(project: string, parentFolderId: string, item: IItemPut): Promise<string>;
-	    deleteItemInProject(project: string, itemId: string, force?: boolean): Promise<string>;
-	    moveItemsInProject(project: string, folderId: string, itemIds: string[]): Promise<string>;
-	    searchInProject(project: string, term: string): Promise<string[]>;
-	    complexSearchInProject(project: string, term: string, filter: string, fieldList: string, includeLabels: boolean, includeDownlinks: boolean, includeUplinks: boolean, treeOrder: boolean): Promise<ISearchResult[]>;
-	    getFullTreeFromProject(projectName: string): Promise<FancyFolder[]>;
-	    getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
-	}
-	//# sourceMappingURL=standalone-interfaces.d.ts.map
 
 	/**
 	 * An ItemFieldMask contains a list of field ids valid within a particular
@@ -10999,10 +11182,93 @@ declare module matrixApi
 	    private title;
 	    private labels;
 	    private isFolder;
+	    private downLinks;
+	    private upLinks;
 	    private creationDate;
+	    private maxVersion;
+	    private history;
 	    private toBeIntegrated;
 	    private setDirty;
 	    getFieldMask(): ItemFieldMask;
+	    /**
+	     * Read-only.
+	     * @returns
+	     */
+	    getMaxVersion(): number | undefined;
+	    /**
+	     * Return the history for an item, if present.
+	     * @returns an IItemHistory array
+	     */
+	    getHistory(): IItemHistory[];
+	    private hasLink;
+	    private addLink;
+	    private removeLink;
+	    /**
+	     * Return any downlinks.
+	     * @returns An array of downlinks (may be undefined)
+	     */
+	    getDownlinks(): IReference[];
+	    /**
+	     * Check if there is a downlink to another item
+	     * @param id
+	     * @returns true if this item links to the item given by {id}
+	     */
+	    hasDownlink(id: string): boolean;
+	    /**
+	     * Replace the current array of downlinks with a new one.
+	     * @param downLinks
+	     * @returns the Item itself
+	     */
+	    setDownlinks(downLinks: IReference[]): Item;
+	    /**
+	     * Add a new downlink to the item. Does nothing if the item is
+	     * already represented
+	     * @param id - the id of the item to add.
+	     * @param title - optional. The title is just for convenience.
+	     *     It is neither saved nor representative of the actual title of the item.
+	     * @throws Error if the passed id matches the id of the current item.
+	     * @returns the Item
+	     */
+	    addDownlink(id: string, title?: string): Item;
+	    /**
+	     * Remove a link given by {id} if it exists.
+	     * @param id  the id of the downlinked item to remove
+	     * @returns the current Item
+	     */
+	    removeDownlink(id: string): Item;
+	    /**
+	     * Return any uplinks.
+	     * @returns An array of uplinks (may be undefined)
+	     */
+	    getUplinks(): IReference[];
+	    /**
+	     * Check if there is an uplink to another item
+	     * @param id
+	     * @returns true if this item links to the item given by {id}
+	     */
+	    hasUplink(id: string): boolean;
+	    /**
+	     * Replace the current array of uplinks with a new one.
+	     * @param upLinks
+	     * @returns the Item itself
+	     */
+	    setUplinks(upLinks: IReference[]): Item;
+	    /**
+	     * Add a new uplink to the item. Does nothing if the item is
+	     * already represented
+	     * @param id - the id of the item to add.
+	     * @param title - optional. The title is just for convenience.
+	     *     It is neither saved nor representative of the actual title of the item.
+	     * @throws Error if the passed id matches the id of the current item.
+	     * @returns the Item
+	     */
+	    addUplink(id: string, title?: string): Item;
+	    /**
+	     * Remove a link given by {id} if it exists.
+	     * @param id  the id of the uplinked item to remove
+	     * @returns the current Item
+	     */
+	    removeUplink(id: string): Item;
 	    /**
 	     * Helper method to test if a field id is valid within the Item Category, irrespective of
 	     * whether or not it is specified in the mask.
@@ -11010,6 +11276,10 @@ declare module matrixApi
 	     * @returns true if fieldId is valid within the Category.
 	     */
 	    private isValidFieldId;
+	    /**
+	     * Initializes the data fields for the item from an IItemGet structure
+	     * @param item
+	     */
 	    private setData;
 	    /**
 	     * Sometimes you've been given an Item with a restrictive ItemFieldMask, however, you'd
@@ -11026,6 +11296,10 @@ declare module matrixApi
 	     * @returns the Field object
 	     */
 	    expandFieldMaskWithEmptyField(fieldId: number): Field;
+	    /**
+	     * Export the data from this item into an IItemPut structure
+	     * @returns
+	     */
 	    extractData(): IItemPut;
 	    getId(): string;
 	    getIsFolder(): boolean;
@@ -11065,6 +11339,10 @@ declare module matrixApi
 	     * @throws throws error if the Item category doesn't allow labels
 	     */
 	    unsetLabel(labelToUnset: string): Item;
+	    /**
+	     * Return the Category for the current item
+	     * @returns Category
+	     */
 	    getCategory(): Category;
 	    needsSave(): boolean;
 	    /**
@@ -11098,6 +11376,14 @@ declare module matrixApi
 	     * @returns a valid Field.
 	     */
 	    getSingleFieldByName(fieldName: string): Field;
+	    /**
+	     * Returns all fields within the mask which match the fieldType.
+	     * @param fieldType
+	     * @returns an array of Fields. Note that if the mask has limited the set of fields from
+	     *     the Category which are tracked for this particular item, the number of returned Field
+	     *     objects may be less than you expect.
+	     */
+	    getFieldsByType(fieldType: string): Field[];
 	}
 	//# sourceMappingURL=Item.d.ts.map
 
@@ -11211,99 +11497,33 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=object-interfaces.d.ts.map
 
+	//# sourceMappingURL=print.d.ts.map
+
 	//# sourceMappingURL=init.d.ts.map
 
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IProjectDataMap {
-	    [key: string]: XRGetProject_ProjectInfo_ProjectInfo;
-	}
-	class ConfigApp implements IConfigApp {
-	    private dbConnection;
-	    private currentItem;
-	    private _user;
-	    private _status;
-	    private _control;
-	    private _needsSave;
-	    private triggerSelectionChangeMySelf;
-	    private configTree;
-	    private projectData;
-	    private lastProject;
-	    plugins: IServerPluginSettings[];
-	    private PROJECT_FOLDER_ID;
-	    private PROJECT_FOLDER_WAIT_ID;
-	    configPages: ConfigPageFactory;
-	    itemForm: JQuery;
-	    printForm: JQuery;
-	    dlgForm: JQuery;
-	    constructor(dataSource: RestDB);
-	    init(itemForm: JQuery, dlgForm: JQuery): void;
-	    getUser(): string;
-	    getVersion(): string;
-	    getVersionQualifier(): string;
-	    getNeedsSave(): boolean;
-	    getLastProject(): string;
-	    getType(): string;
-	    getParentId(itemId: string): string;
-	    saveAsync(): JQueryDeferred<any>;
-	    cancel(): void;
-	    resizeItem(): void;
-	    postLogin(user: string): void;
-	    treeSelectionChange(pageId: string): void;
-	    selectItem(itemId: string, itemLabel: string): void;
-	    getTree(subtreeFilter?: string[]): IDB[];
-	    getItem(itemId: string): IDB;
-	    isConfigApp(): boolean;
-	    getCurrentItemId(): string;
-	    pingCurrentItem(): void;
-	    registerPage(item: IItem, parent: string, updateUI?: boolean): void;
-	    insertItem(item: IItem, parent: string): void;
-	    itemChanged(needsSave: boolean): void;
-	    setLastConnection(): void;
-	    canNavigateAwayAsync(): JQueryDeferred<any>;
-	    canDragDrop(nodeType: string, pageId: string): boolean;
-	    dragEnter(dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode): string[] | boolean;
-	    getJSONProjectSettings(projectId: string, settingId?: string): IJsonSetting[];
-	    settingExists(projectId: string, settingId: string): boolean;
-	    setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<IRestResult>;
-	    setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<IRestResult>;
-	    setServerSettingAsync(settingId: string, settingValue: string): JQueryDeferred<any>;
-	    getServerSetting(settingId: string, defaultValue: any): any;
-	    setServerSetting(settingId: string, property: string, newValue: any): void;
-	    getCustomerSetting(setting: string): string;
-	    setCategorySettingAsync(projectId: string, category: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<any>;
-	    getProjectConfig(projectId: string): XRGetProject_ProjectInfo_ProjectInfo;
-	    getCatgegoryConfig(projectId: string, category: string): XRCategoryExtendedType;
-	    getCategories(projectId: string): string[];
-	    getUserPermission(projectId: string): XRUserPermissionType[];
-	    getGroupPermission(projectId: string): XRGroupPermissionType[];
-	    canUserWrite(projectId: string, login: string): boolean;
-	    canGroupWrite(projectId: string, groupId: number): boolean;
-	    getFieldConfig(projectId: string, category: string, field: string): XRFieldType;
-	    updateFieldConfig(projectId: string, category: string, field: string, newConfig: XRFieldType): void;
-	    removedFromTree(itemId: string, newId: string): void;
-	    renamePage(pageId: string, label: string, parent: string): void;
-	    updateProjectData(projectId: string): JQueryDeferred<IRestResult>;
-	    private removeACL;
-	    reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
-	    signOut(): void;
-	    private clear;
-	    private movePage;
-	    private prepareTree;
-	    private addProjectsToTree;
-	    private showUrl;
-	    private navigateToUrl;
-	    private expandProject;
-	    private renderPage;
-	    private loadProjectAsync;
-	    initConfigPages(): void;
-	    getConfigPages(): ConfigPageFactory;
-	}
-	//# sourceMappingURL=ConfigApp.d.ts.map
-
+	/**
+	// debugging functionality for old browsers
+	(function () {
+	    var method:string;
+	    var noop = function () {
+	    };
+	    var methods:string[] = [
+	        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+	        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+	        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+	        'timeStamp', 'trace', 'warn'
+	    ];
+	    var length = methods.length;
+	    var console = (window.console = window.console || {});
+	    while (length--) {
+	        method = methods[length];
+	        // Only stub undefined methods.
+	        if (!console[method]) {
+	            console[method] = noop;
+	        }
+	    }
+	}());
+	*/ 
 	//# sourceMappingURL=init.d.ts.map
 
 	//# sourceMappingURL=ui.d.ts.map
@@ -11335,8 +11555,6 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=BaseWidget.d.ts.map
 
-	//# sourceMappingURL=print.d.ts.map
-
 	export interface IPub {
 	    publicationItem: string;
 	    publicationTitle: Date;
@@ -11366,72 +11584,18 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IItemHasLabelConditionParams extends ILabelIteratorParams {
-	    iterator?: string;
+	interface IFolderHasItemsConditionParams {
+	    iterator: string;
 	    negate: boolean;
-	    labels: string[];
-	    setOrUnset: boolean;
-	    includeNonPrintable?: boolean;
 	}
-	class ItemHasLabels implements IConditionFunction {
+	class FolderHasItems implements IConditionFunction {
 	    itemOrFolder: boolean;
 	    static uid: string;
 	    getHelp(): string;
 	    getName(): string;
-	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IItemHasLabelConditionParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
+	    evaluate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFolderHasItemsConditionParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
 	}
-	//# sourceMappingURL=ItemHasLabels.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface ILabelIteratorParams {
-	    includeNonPrintable?: boolean;
-	    excludeSet?: boolean;
-	    excludeUnSet?: boolean;
-	    includeAllUnSet?: boolean;
-	    positiveList?: string[];
-	}
-	class LabelIterator implements IPrintLabelIterator {
-	    worksOnItem: boolean;
-	    worksOnFolder: boolean;
-	    static uid: string;
-	    getHelp(): string;
-	    getName(): string;
-	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: ILabelIteratorParams, item: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): IPrintLabelInfo[];
-	    protected getReportName(label: ILabel, set: boolean): string;
-	    protected getIcon(label: ILabel, set: boolean): string;
-	    protected getStyle(label: ILabel, set: boolean): {
-	        foreground: string;
-	        background: string;
-	        icon?: string;
-	        displayName: string;
-	        tooltip?: string;
-	    };
-	    editParams(params: ILabelIteratorParams, onUpdate: (newParams: ILabelIteratorParams) => void): JQuery;
-	}
-	//# sourceMappingURL=LabelIterator.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IFieldOfTypeParams extends IPrintMacroParams {
-	    fieldType: string;
-	    fieldTypes: string[];
-	    negate: boolean;
-	}
-	class FieldIsOfType implements IConditionFunction {
-	    itemOrFolder: boolean;
-	    static uid: string;
-	    getHelp(): string;
-	    getName(): string;
-	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IFieldOfTypeParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
-	}
-	//# sourceMappingURL=FieldOfType.d.ts.map
+	//# sourceMappingURL=FolderHasChildren.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -11496,52 +11660,77 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFolderHasItemsConditionParams {
-	    iterator: string;
+	interface IItemHasLabelConditionParams extends ILabelIteratorParams {
+	    iterator?: string;
 	    negate: boolean;
+	    labels: string[];
+	    setOrUnset: boolean;
+	    includeNonPrintable?: boolean;
 	}
-	class FolderHasItems implements IConditionFunction {
+	class ItemHasLabels implements IConditionFunction {
 	    itemOrFolder: boolean;
 	    static uid: string;
 	    getHelp(): string;
 	    getName(): string;
-	    evaluate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IFolderHasItemsConditionParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
+	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IItemHasLabelConditionParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
 	}
-	//# sourceMappingURL=FolderHasChildren.d.ts.map
+	//# sourceMappingURL=ItemHasLabels.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldHasContentParams extends IPrintMacroParams {
-	    fieldType?: string;
-	    fieldName?: string;
-	    match: string;
-	    negate: boolean;
-	    lowerCase: boolean;
-	    matchHTML?: boolean;
+	interface ILabelIteratorParams {
+	    includeNonPrintable?: boolean;
+	    excludeSet?: boolean;
+	    excludeUnSet?: boolean;
+	    includeAllUnSet?: boolean;
+	    positiveList?: string[];
 	}
-	class FieldHasContent implements IConditionFunction {
-	    itemOrFolder: boolean;
+	class LabelIterator implements IPrintLabelIterator {
+	    worksOnItem: boolean;
+	    worksOnFolder: boolean;
 	    static uid: string;
 	    getHelp(): string;
 	    getName(): string;
-	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IFieldHasContentParams, itemOrFolderRef: string, ifo: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
+	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: ILabelIteratorParams, item: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): IPrintLabelInfo[];
+	    protected getReportName(label: ILabel, set: boolean): string;
+	    protected getIcon(label: ILabel, set: boolean): string;
+	    protected getStyle(label: ILabel, set: boolean): {
+	        foreground: string;
+	        background: string;
+	        icon?: string;
+	        displayName: string;
+	        tooltip?: string;
+	    };
+	    editParams(params: ILabelIteratorParams, onUpdate: (newParams: ILabelIteratorParams) => void): JQuery;
 	}
-	//# sourceMappingURL=FieldHasContent.d.ts.map
+	//# sourceMappingURL=LabelIterator.d.ts.map
+
+	interface IPrintParamMacro extends IPrintMacro {
+	    param: string;
+	}
+	//# sourceMappingURL=PrintParam.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	class PrintSortByItemId implements IPrintSorter {
+	interface IFieldOfTypeParams extends IPrintMacroParams {
+	    fieldType: string;
+	    fieldTypes: string[];
+	    negate: boolean;
+	}
+	class FieldIsOfType implements IConditionFunction {
+	    itemOrFolder: boolean;
+	    static uid: string;
 	    getHelp(): string;
 	    getName(): string;
-	    sort(ia: string, ib: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): 0 | 1 | -1;
+	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IFieldOfTypeParams, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
 	}
-	//# sourceMappingURL=PrintSortByItemId.d.ts.map
+	//# sourceMappingURL=FieldOfType.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -11599,12 +11788,34 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	class PrintSortByRevisionDate implements IPrintSorter {
+	class PrintSortByItemId implements IPrintSorter {
 	    getHelp(): string;
 	    getName(): string;
-	    sort(a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): number;
+	    sort(ia: string, ib: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): 0 | 1 | -1;
 	}
-	//# sourceMappingURL=PrintSortByDate.d.ts.map
+	//# sourceMappingURL=PrintSortByItemId.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IFieldHasContentParams extends IPrintMacroParams {
+	    fieldType?: string;
+	    fieldName?: string;
+	    match: string;
+	    negate: boolean;
+	    lowerCase: boolean;
+	    matchHTML?: boolean;
+	}
+	class FieldHasContent implements IConditionFunction {
+	    itemOrFolder: boolean;
+	    static uid: string;
+	    getHelp(): string;
+	    getName(): string;
+	    evaluate(overwrites: IGlobalPrintFunctionParams, params: IFieldHasContentParams, itemOrFolderRef: string, ifo: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): boolean;
+	}
+	//# sourceMappingURL=FieldHasContent.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -11623,31 +11834,35 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	class FieldHelper {
-	    static fixTermsAndAbbreviation(text: string, mf: JQuery): string;
-	    static renderMacroIfNotRenderedBefore(text: string, macroText: string, replacement: string): string;
+	class PrintSortByRevisionDate implements IPrintSorter {
+	    getHelp(): string;
+	    getName(): string;
+	    sort(a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): number;
 	}
-	//# sourceMappingURL=FieldHelper.d.ts.map
+	//# sourceMappingURL=PrintSortByDate.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IItemDateParams {
-	    class: string;
-	    format: string;
+	interface IRowIteratorParams extends IPrintItemIteratorParams {
+	    fieldName: string;
+	    showRowsMatching?: IStringMap;
 	}
-	class ItemDate implements IPrintFunction {
+	class TableRowIterator implements IPrintItemIterator {
+	    worksOnItem: boolean;
+	    worksOnFolder: boolean;
+	    folderIterator: boolean;
+	    traceIterator: boolean;
+	    tableRowIterator: boolean;
 	    static uid: string;
-	    getGroup(): string;
 	    getHelp(): string;
+	    getValidation(): any;
 	    getName(): string;
-	    private defaults;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    editParams(params: IItemDateParams, onUpdate: (newParams: IItemDateParams) => void): JQuery;
+	    iterate(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
 	}
-	//# sourceMappingURL=FieldItemDate.d.ts.map
+	//# sourceMappingURL=TableRowIterator.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -11704,6 +11919,45 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
+	interface IChildrenIteratorParams extends IPrintItemIteratorParams {
+	    leafs?: boolean;
+	    maxDepth?: number;
+	    includeItems?: boolean;
+	    includeFolders?: boolean;
+	}
+	class ChildrenIterator implements IPrintItemIterator {
+	    worksOnItem: boolean;
+	    worksOnFolder: boolean;
+	    folderIterator: boolean;
+	    traceIterator: boolean;
+	    tableRowIterator: boolean;
+	    static uid: string;
+	    private paramsDefault;
+	    getHelp(): string;
+	    getValidation(): any;
+	    getName(): string;
+	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IChildrenIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
+	    private getChildrenRec;
+	    editParams(params: IChildrenIteratorParams, onUpdate: (newParams: IChildrenIteratorParams) => void): JQuery;
+	}
+	//# sourceMappingURL=ChildrenIterator.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	class FieldHelper {
+	    static fixTermsAndAbbreviation(text: string, mf: JQuery): string;
+	    static renderMacroIfNotRenderedBefore(text: string, macroText: string, replacement: string): string;
+	}
+	//# sourceMappingURL=FieldHelper.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
 	interface IFieldLabelParams extends IPrintFieldParams {
 	    checkboxLabel: number;
 	    class: string;
@@ -11716,6 +11970,26 @@ declare module matrixApi
 	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, item: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
 	//# sourceMappingURL=FieldLabel.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IItemDateParams {
+	    class: string;
+	    format: string;
+	}
+	class ItemDate implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    private defaults;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    editParams(params: IItemDateParams, onUpdate: (newParams: IItemDateParams) => void): JQuery;
+	}
+	//# sourceMappingURL=FieldItemDate.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -11823,6 +12097,23 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
+	interface IFieldTextParams extends IPrintFieldParams {
+	    class: string;
+	}
+	class FieldText implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldText.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
 	interface IFieldCheckboxParams extends IPrintFieldParams {
 	    class: string;
 	    onlyIfSet: boolean;
@@ -11835,6 +12126,97 @@ declare module matrixApi
 	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
 	//# sourceMappingURL=FieldCheckbox.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IFieldUserParams extends IPrintFieldParams {
+	    login: boolean;
+	    first: boolean;
+	    last: boolean;
+	    email: boolean;
+	    formatUser: "list" | "comma";
+	    class: string;
+	}
+	class FieldUser implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldUser.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IFieldGateControlParams extends IPrintFieldParams {
+	    showStatus: number;
+	    passedStatus: string;
+	    failedStatus: string;
+	    progressStatus: string;
+	    showLines: number;
+	    showDate: boolean;
+	    showUser: boolean;
+	    showComment: boolean;
+	    passedLine: string;
+	    failedLine: string;
+	    progressLine: string;
+	    login: boolean;
+	    first: boolean;
+	    last: boolean;
+	    email: boolean;
+	    showHeader: boolean;
+	    class: string;
+	}
+	class FieldGateControl implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldGateControl.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IFieldFileManagerParams extends IPrintFieldParams {
+	    formatFile: "list" | "comma";
+	    asLinkFile: boolean;
+	    class: string;
+	}
+	class FieldFileManager implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldFileManager.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IFieldRichtextParams extends IPrintFieldParams {
+	    class: string;
+	}
+	class FieldRichText implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldRichtext.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -11876,81 +12258,6 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldTextParams extends IPrintFieldParams {
-	    class: string;
-	}
-	class FieldText implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldText.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IFieldRichtextParams extends IPrintFieldParams {
-	    class: string;
-	}
-	class FieldRichText implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldRichtext.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IFieldUserParams extends IPrintFieldParams {
-	    login: boolean;
-	    first: boolean;
-	    last: boolean;
-	    email: boolean;
-	    formatUser: "list" | "comma";
-	    class: string;
-	}
-	class FieldUser implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldUser.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IFieldFileManagerParams extends IPrintFieldParams {
-	    formatFile: "list" | "comma";
-	    asLinkFile: boolean;
-	    class: string;
-	}
-	class FieldFileManager implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldFileManager.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
 	interface IFieldtest_resultParams extends IPrintFieldParams {
 	    class: string;
 	}
@@ -11968,33 +12275,17 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldGateControlParams extends IPrintFieldParams {
-	    showStatus: number;
-	    passedStatus: string;
-	    failedStatus: string;
-	    progressStatus: string;
-	    showLines: number;
-	    showDate: boolean;
-	    showUser: boolean;
-	    showComment: boolean;
-	    passedLine: string;
-	    failedLine: string;
-	    progressLine: string;
-	    login: boolean;
-	    first: boolean;
-	    last: boolean;
-	    email: boolean;
-	    showHeader: boolean;
+	interface IFieldTextlineParams extends IPrintFieldParams {
 	    class: string;
 	}
-	class FieldGateControl implements IPrintFunction {
+	class FieldTextline implements IPrintFunction {
 	    static uid: string;
 	    getGroup(): string;
 	    getHelp(): string;
 	    getName(): string;
 	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
 	}
-	//# sourceMappingURL=FieldGateControl.d.ts.map
+	//# sourceMappingURL=FieldTextline.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -12085,43 +12376,6 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IFieldCrossLinksParams extends IPrintFieldParams {
-	    formatCross: "list" | "comma";
-	    asLinkCross: boolean;
-	    showTitle: boolean;
-	    class: string;
-	}
-	class FieldCrossLinks implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldCrossLinks.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IFieldTextlineParams extends IPrintFieldParams {
-	    class: string;
-	}
-	class FieldTextline implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	}
-	//# sourceMappingURL=FieldTextline.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
 	interface ILabelPrimitiveParams {
 	    showIcon: boolean;
 	    showText: boolean;
@@ -12139,6 +12393,26 @@ declare module matrixApi
 	    editParams(params: ILabelPrimitiveParams, onUpdate: (newParams: ILabelPrimitiveParams) => void): JQuery;
 	}
 	//# sourceMappingURL=LabelIconAndName.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	interface IFieldCrossLinksParams extends IPrintFieldParams {
+	    formatCross: "list" | "comma";
+	    asLinkCross: boolean;
+	    showTitle: boolean;
+	    class: string;
+	}
+	class FieldCrossLinks implements IPrintFunction {
+	    static uid: string;
+	    getGroup(): string;
+	    getHelp(): string;
+	    getName(): string;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	}
+	//# sourceMappingURL=FieldCrossLinks.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -12269,35 +12543,6 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IBreadcrumbsPrimitiveParams {
-	    excludeItem?: boolean;
-	    showIDs?: boolean;
-	    showLinks?: boolean;
-	    showLinksInside?: boolean;
-	    rangeStart?: number;
-	    rangeEnd?: number;
-	    separator?: string;
-	    class: string;
-	    classBreadcrumb: string;
-	    classBreadcrumbSeparator: string;
-	}
-	class BreadcrumbPrimitive implements IPrintFunction {
-	    static uid: string;
-	    getGroup(): string;
-	    getHelp(): string;
-	    getName(): string;
-	    private defaults;
-	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
-	    private toString;
-	    editParams(params: IBreadcrumbsPrimitiveParams, onUpdate: (newParams: IBreadcrumbsPrimitiveParams) => void): JQuery;
-	}
-	//# sourceMappingURL=BreadcrumbsPrimitive.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
 	interface ICustomCountTableRowsParams {
 	    fieldName: string;
 	    showRowsMatching: {
@@ -12392,61 +12637,34 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=TableSummary.d.ts.map
 
-	interface IPrintParamMacro extends IPrintMacro {
-	    param: string;
-	}
-	//# sourceMappingURL=PrintParam.d.ts.map
-
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IRowIteratorParams extends IPrintItemIteratorParams {
-	    fieldName: string;
-	    showRowsMatching?: IStringMap;
+	interface IBreadcrumbsPrimitiveParams {
+	    excludeItem?: boolean;
+	    showIDs?: boolean;
+	    showLinks?: boolean;
+	    showLinksInside?: boolean;
+	    rangeStart?: number;
+	    rangeEnd?: number;
+	    separator?: string;
+	    class: string;
+	    classBreadcrumb: string;
+	    classBreadcrumbSeparator: string;
 	}
-	class TableRowIterator implements IPrintItemIterator {
-	    worksOnItem: boolean;
-	    worksOnFolder: boolean;
-	    folderIterator: boolean;
-	    traceIterator: boolean;
-	    tableRowIterator: boolean;
+	class BreadcrumbPrimitive implements IPrintFunction {
 	    static uid: string;
+	    getGroup(): string;
 	    getHelp(): string;
-	    getValidation(): any;
 	    getName(): string;
-	    iterate(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
+	    private defaults;
+	    render(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string;
+	    private toString;
+	    editParams(params: IBreadcrumbsPrimitiveParams, onUpdate: (newParams: IBreadcrumbsPrimitiveParams) => void): JQuery;
 	}
-	//# sourceMappingURL=TableRowIterator.d.ts.map
-
-	/// <reference types="jquery" />
-	/// <reference types="jqueryui" />
-	/// <reference types="matrixrequirements-type-declarations" />
-	/// <reference types="bootstrap" />
-	/// <reference types="bootstrap-datepicker" />
-	interface IChildrenIteratorParams extends IPrintItemIteratorParams {
-	    leafs?: boolean;
-	    maxDepth?: number;
-	    includeItems?: boolean;
-	    includeFolders?: boolean;
-	}
-	class ChildrenIterator implements IPrintItemIterator {
-	    worksOnItem: boolean;
-	    worksOnFolder: boolean;
-	    folderIterator: boolean;
-	    traceIterator: boolean;
-	    tableRowIterator: boolean;
-	    static uid: string;
-	    private paramsDefault;
-	    getHelp(): string;
-	    getValidation(): any;
-	    getName(): string;
-	    iterate(overwrites: IGlobalPrintFunctionParams, paramsCaller: IChildrenIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): string[];
-	    private getChildrenRec;
-	    editParams(params: IChildrenIteratorParams, onUpdate: (newParams: IChildrenIteratorParams) => void): JQuery;
-	}
-	//# sourceMappingURL=ChildrenIterator.d.ts.map
+	//# sourceMappingURL=BreadcrumbsPrimitive.d.ts.map
 
 	/// <reference types="matrixrequirements-type-declarations" />
 	interface SchemaDef {
@@ -16636,8 +16854,8 @@ declare module matrixApi
 	//# sourceMappingURL=SmartTextTools.d.ts.map
 
 	class GenericFieldHandler implements IFieldHandler {
-	    private fieldType;
-	    private data;
+	    protected fieldType: string;
+	    protected data: string;
 	    private config;
 	    constructor(fieldTypeIn: string, configIn: XRFieldTypeAnnotatedParamJson);
 	    getFieldType(): string;
@@ -16973,6 +17191,68 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=ThemeSelector.d.ts.map
 
+	/// <reference types="matrixrequirements-type-declarations" />
+	export class DateTimeBL {
+	    simpleDateTimeFormat: SimpleDateFormat;
+	    simpleDateFormat: SimpleDateFormat;
+	    simpleCustomerDateTimeFormat: SimpleDateFormat;
+	    simpleCustomerDateFormat: SimpleDateFormat;
+	    userDateTimeFormat: string;
+	    userDateOnlyFormat: string;
+	    userTimezone: string;
+	    dateIso8601FromServer: string;
+	    dateUserFromServer: string;
+	    serverDateTimeFormat: string;
+	    serverDateOnlyFormat: string;
+	    serverTimezone: string;
+	    static instance: DateTimeBL;
+	    static getInstance(): DateTimeBL;
+	    private constructor();
+	    private isValidDate;
+	    renderHumanDate(date: Date, dateOnly?: boolean): string;
+	    renderCustomerHumanDate(date: Date, dateOnly?: boolean): string;
+	    renderHumanMonth(dateObj: Date): string;
+	    renderDashFormat(dateObj: Date): string;
+	    getSimpleDateFormat(): string;
+	    private toMoment;
+	    getSimpleDateFormatMoment(): string;
+	    getSimpleDateTimeFormatMoment(): string;
+	    initDateTimeSettings(update?: boolean): Promise<void>;
+	}
+	//# sourceMappingURL=DateTimeBL.d.ts.map
+
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	class DateTimeUI implements IDateTimeUI {
+	    initDateTimeSettings(update?: boolean): Promise<void>;
+	    renderHumanDate(date: Date, dateOnly?: boolean): string;
+	    renderCustomerHumanDate(date: Date, dateOnly?: boolean): string;
+	    renderHumanMonth(dateObj: Date): string;
+	    renderDashFormat(dateObj: Date): string;
+	    getSimpleDateFormat(): string;
+	    getSimpleDateFormatMoment(): string;
+	    getSimpleDateTimeFormatMoment(): string;
+	    private showControls;
+	    private renderDateTimeFormat;
+	    private showTime;
+	    private setSetting;
+	    private renderTimeZone;
+	    private renderTimeZoneWarning;
+	    renderSettingControls(options: {
+	        table: JQuery;
+	        user: string;
+	        help: string;
+	    }): void;
+	    renderSettingDialog(user: string): void;
+	    requiresTimeZoneWarning(): boolean;
+	    getTimeZoneCTA(): JQuery;
+	    protected initAsync(user: string): Promise<ITimeZoneSetting>;
+	}
+	//# sourceMappingURL=DateTimeUI.d.ts.map
+
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
 	/// <reference types="matrixrequirements-type-declarations" />
@@ -17074,46 +17354,6 @@ declare module matrixApi
 	    protected getIndex(lineArray: any[], idProp: string, lineId: string): number;
 	    protected moveUp(moveBtn: JQuery): any;
 	    protected moveDown(moveBtn: JQuery): any;
-	}
-	class DateTimeUI implements IDateTimeUI {
-	    private userDateTimeFormat;
-	    private userDateOnlyFormat;
-	    private userTimezone;
-	    private simpleDateTimeFormat;
-	    private simpleDateFormat;
-	    private dateIso8601FromServer;
-	    private dateUserFromServer;
-	    private serverDateTimeFormat;
-	    private serverDateOnlyFormat;
-	    private serverTimezone;
-	    private simpleCustomerDateTimeFormat;
-	    private simpleCustomerDateFormat;
-	    constructor();
-	    private showControls;
-	    private initAsync;
-	    private renderDateTimeFormat;
-	    private showTime;
-	    private setSetting;
-	    private renderTimeZone;
-	    private renderTimeZoneWarning;
-	    private isValidDate;
-	    initDateTimeSettings(update?: boolean): JQueryDeferred<{}>;
-	    renderHumanDate(date: Date, dateOnly?: boolean): string;
-	    renderCustomerHumanDate(date: Date, dateOnly?: boolean): string;
-	    renderHumanMonth(dateObj: Date): string;
-	    renderDashFormat(dateObj: Date): string;
-	    renderSettingControls(options: {
-	        table: JQuery;
-	        user: string;
-	        help: string;
-	    }): void;
-	    renderSettingDialog(user: string): void;
-	    requiresTimeZoneWarning(): boolean;
-	    getTimeZoneCTA(): JQuery;
-	    getSimpleDateFormat(): string;
-	    getSimpleDateFormatMoment(): string;
-	    getSimpleDateTimeFormatMoment(): string;
-	    private toMoment;
 	}
 	class BlockingProgressUI implements IBlockingProgressUI {
 	    private progressLauncher;
@@ -17621,6 +17861,7 @@ declare module matrixApi
 	    protected config: XRFieldTypeAnnotatedParamJson;
 	    protected items: IReference[];
 	    constructor(configIn: XRFieldTypeAnnotatedParamJson, fieldTypeIn?: string);
+	    addSignatures(signatures: string[], includeAll: boolean): void;
 	    getFieldType(): string;
 	    initData(serializedFieldData: string): void;
 	    getData(): string;
@@ -17633,6 +17874,9 @@ declare module matrixApi
 	    removeItem(position: number): ItemSelectionFieldHandler;
 	    clear(): ItemSelectionFieldHandler;
 	    setItems(selectedItems: IReference[]): void;
+	    protected name: string;
+	    getFieldName(): string;
+	    setFieldName(value: string): void;
 	}
 	//# sourceMappingURL=ItemSelectionFieldHandler.d.ts.map
 
@@ -17783,6 +18027,44 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=docReview.d.ts.map
 
+	interface ITableControlParams extends ITableControlBaseParams {
+	    readonly?: boolean;
+	    onDblClick?: Function;
+	    canBeModified?: boolean;
+	    create?: boolean;
+	    showLineNumbers?: boolean;
+	    maxRows?: number;
+	    fixRows?: number;
+	    readonly_allowfocus?: boolean;
+	    passFailEditorConfig?: any;
+	    readOnlyFields?: string[];
+	    limitEditRow?: string;
+	    manualTableHeights?: boolean;
+	    doNotRememberWidth?: boolean;
+	    onColumnsResized?: Function;
+	    cellAskEdit?: string;
+	    disableColumnReorder?: boolean;
+	    inlineHelp?: string;
+	    initialContent?: IStringMap[];
+	    autoUpdate?: string;
+	}
+	interface ITableControlOptions extends IBaseControlOptions {
+	    controlState?: ControlState;
+	    dummyData?: any;
+	    canEdit?: boolean;
+	    help?: string;
+	    fieldValue?: string;
+	    valueChanged?: Function;
+	    parameter?: ITableControlParams;
+	}
+	interface ITableRow {
+	    idx: number;
+	    id: string;
+	    name: string;
+	    [key: string]: any;
+	}
+	//# sourceMappingURL=tableCtrl.d.ts.map
+
 	enum ColumnEditor {
 	    none = "none",
 	    number = "number",
@@ -17830,7 +18112,6 @@ declare module matrixApi
 	}
 	class BaseTableFieldHandler implements IFieldHandler {
 	    protected data: any[];
-	    dhfFieldConfig: IAnyMap;
 	    protected tableConfig: ITableControlBaseParams;
 	    constructor(configIn: ITableControlBaseParams);
 	    getFieldType(): string;
@@ -17846,6 +18127,9 @@ declare module matrixApi
 	    insertRow(rowNumber: number, columnData: Array<any>): void;
 	    clear(): void;
 	    getColumnCount(): number;
+	    setColumnData(row: number, columnId: string, data: any): void;
+	    setCellData(row: number, col: number, data: any): void;
+	    getColumnData(row: number, columnId: string): any;
 	    getCellData(row: number, col: number): any;
 	    getRowData(row: number): Array<any>;
 	}
@@ -17886,44 +18170,6 @@ declare module matrixApi
 	    private updateControls;
 	}
 	//# sourceMappingURL=cascadingSelect.d.ts.map
-
-	interface ITableControlParams extends ITableControlBaseParams {
-	    readonly?: boolean;
-	    onDblClick?: Function;
-	    canBeModified?: boolean;
-	    create?: boolean;
-	    showLineNumbers?: boolean;
-	    maxRows?: number;
-	    fixRows?: number;
-	    readonly_allowfocus?: boolean;
-	    passFailEditorConfig?: any;
-	    readOnlyFields?: string[];
-	    limitEditRow?: string;
-	    manualTableHeights?: boolean;
-	    doNotRememberWidth?: boolean;
-	    onColumnsResized?: Function;
-	    cellAskEdit?: string;
-	    disableColumnReorder?: boolean;
-	    inlineHelp?: string;
-	    initialContent?: IStringMap[];
-	    autoUpdate?: string;
-	}
-	interface ITableControlOptions extends IBaseControlOptions {
-	    controlState?: ControlState;
-	    dummyData?: any;
-	    canEdit?: boolean;
-	    help?: string;
-	    fieldValue?: string;
-	    valueChanged?: Function;
-	    parameter?: ITableControlParams;
-	}
-	interface ITableRow {
-	    idx: number;
-	    id: string;
-	    name: string;
-	    [key: string]: any;
-	}
-	//# sourceMappingURL=tableCtrl.d.ts.map
 
 	/// <reference types="jquery" />
 	/// <reference types="jqueryui" />
@@ -17980,10 +18226,137 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=JsonEditor.d.ts.map
 
+	/// <reference types="jquery" />
+	/// <reference types="jqueryui" />
+	/// <reference types="matrixrequirements-type-declarations" />
+	/// <reference types="bootstrap" />
+	/// <reference types="bootstrap-datepicker" />
+	export interface IDHFSectionOptions {
+	    globalOptions?: boolean;
+	    show_section_title?: string;
+	    automation?: string;
+	    page_break?: string;
+	    landscape?: boolean;
+	    sub_section?: string;
+	}
+	export interface IDHFFieldParameter {
+	    autoHide?: boolean;
+	    perItemVisibility?: boolean;
+	}
+	export interface IDHFFieldValue {
+	    type: string;
+	}
+	export interface IDHFXMLOptions {
+	}
+	export interface IDHFPasteBuffer {
+	    tree: ISimpleTree;
+	    items: IDHFPasteBufferItem[];
+	}
+	export interface IDHFPasteBufferItem {
+	    sourceItem: string;
+	    sourceProject: string;
+	    pasteSource: string;
+	    title: string;
+	    item: IDHFPasteBufferValue[];
+	}
+	export interface IDHFPasteBufferValue {
+	    def: XRFieldTypeAnnotated;
+	    val: string;
+	}
+	export interface IDHFReorder {
+	    idx: number;
+	    id: string;
+	    name: string;
+	    type: string;
+	}
+	export interface IDHFFileOption {
+	    name: string;
+	    click: Function;
+	}
+	export interface IDHFGuidOid {
+	    guid: string;
+	    oid: string;
+	}
+	export interface IDHFWizardData {
+	    dhfItems: any[];
+	    dhfNumber: string;
+	    dhfGUID: string;
+	    dhfName: string;
+	    template?: string;
+	}
+	export interface IDHFFactory {
+	    [key: string]: (config: IDHFConfig) => IDHFSection;
+	}
+	export interface ISectionInfo {
+	    sectionName: string;
+	    sectionType: DocumentSectionType;
+	    hidden: boolean;
+	    dynamic: boolean;
+	}
+	export enum DocumentSectionType {
+	    Static = 1,
+	    Database = 2,
+	    Table = 3,
+	    Technical = 4,
+	    CustomTable = 5
+	}
+	export interface IGrandMother {
+	    id: string;
+	    version: number;
+	    fullId: string;
+	    title: string;
+	}
+	export interface ISectionMap {
+	    [key: string]: ISectionInfo;
+	}
+	export interface ItemSortInfo {
+	    itemId: string;
+	    item: JQuery;
+	    existsInBoth: boolean;
+	}
+	export interface IPluginDocumentSection {
+	}
+	export interface IDHFFieldListItem {
+	    id: string;
+	    label: string;
+	}
+	export interface IDHFField {
+	    type: string;
+	    name: string;
+	}
+	export interface IDHFControlDefinition extends IControlDefinition {
+	    dhfValue?: IDHFControlDefinitionValue;
+	    configTouched?: boolean;
+	}
+	export interface IDHFControlDefinitionValue {
+	    fieldValue?: string;
+	    fieldValueXML?: string;
+	    name?: string;
+	    type?: string;
+	    ctrlConfig?: IDHFSectionOptions;
+	}
+	export interface IDHFSection {
+	    renderControl: (ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions) => void;
+	    setFieldHandler: (fieldHandler: IDocFieldHandler) => void;
+	    getFieldHandler: () => IDocFieldHandler;
+	    getConfig: (ctrl: IDHFControlDefinition) => IDHFSectionOptions;
+	    showSpecificSettings: (ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery) => void;
+	    saveSpecificSettings: (ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery) => boolean;
+	    hasSearch?: (ctrl: IDHFControlDefinition) => boolean;
+	    executeSearch?: (ctrl: IDHFControlDefinition) => void;
+	    verifySearch?: (ctrl: IDHFControlDefinition) => void;
+	    verifyContent: (ctrl: IDHFControlDefinition) => void;
+	}
+	//# sourceMappingURL=DHFInterfaces.d.ts.map
+
 	export interface IDocFieldHandler extends IFieldHandler {
 	    dhfFieldConfig: IAnyMap;
+	    setConfig(config: IAnyMap): void;
 	    getDefaultConfig(): any;
 	    getXmlValue(): string;
+	    getFieldName(): string;
+	    setFieldName(value: string): void;
+	    addSignatures(signatures: string[], includeAll?: boolean): void;
 	}
 	//# sourceMappingURL=IDocFieldHandler.d.ts.map
 
@@ -18009,8 +18382,13 @@ declare module matrixApi
 	export abstract class ItemSelectionFromToAbstractDocFieldHandler extends ItemSelectionFieldHandlerFromTo implements IDocFieldHandler {
 	    dhfFieldConfig: IAnyMap;
 	    constructor(fielType: string, config: IAnyMap, fieldValue: string);
+	    setConfig(config: IAnyMap): void;
+	    addSignatures(signatures: string[], includeAll: boolean): void;
 	    abstract getDefaultConfig(): any;
 	    abstract getXmlValue(): string;
+	    protected name: string;
+	    getFieldName(): string;
+	    setFieldName(value: string): void;
 	}
 	//# sourceMappingURL=ItemSelectionFromToAbstractDocFieldHandler.d.ts.map
 
@@ -18170,18 +18548,24 @@ declare module matrixApi
 	    private sectionType;
 	    dhfFieldConfig: IAnyMap;
 	    constructor(sectionType: string, config: XRFieldTypeAnnotatedParamJson, fieldValue: string);
+	    setConfig(config: IAnyMap): void;
+	    addSignatures(signatures: string[], includeAll: boolean): void;
 	    rawValue: string;
 	    getData(): string;
 	    getFieldType(): string;
 	    initData(serializedFieldData: string): void;
 	    abstract getXmlValue(): string;
 	    abstract getDefaultConfig(): any;
+	    protected name: string;
+	    getFieldName(): string;
+	    setFieldName(value: string): void;
 	}
 	//# sourceMappingURL=GenericDocAbstractFieldHandler.d.ts.map
 
 	export class GenericDocFieldHandler extends GenericDocAbstractFieldHandler {
 	    getDefaultConfig(): any;
 	    getXmlValue(): string;
+	    addSignatures(signatures: string[], includeAll?: boolean): void;
 	}
 	//# sourceMappingURL=GenericDocFieldHandler.d.ts.map
 
@@ -18192,7 +18576,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class Hidden extends BaseDHFSection<IDHFSectionOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -18361,13 +18744,6 @@ declare module matrixApi
 	}
 	//# sourceMappingURL=CrosslinksFieldHandler.d.ts.map
 
-	export function InitializeFieldHandlers(): void;
-	export class FieldHandlerFactory {
-	    static UpdateFieldConfig(itemConfig: ItemConfiguration, testConfig: TestManagerConfiguration, fieldType: string, itemType: string, fieldValue: string, config: XRFieldTypeAnnotatedParamJson): void;
-	    static CreateHandler(fieldType: string, config: XRFieldTypeAnnotatedParamJson): IFieldHandler;
-	}
-	//# sourceMappingURL=index.d.ts.map
-
 	interface IDueDateOptions extends IDHFSectionOptions {
 	}
 	interface IDHFDueDateConfig {
@@ -18378,18 +18754,30 @@ declare module matrixApi
 	    constructor(type: string, config: IAnyMap, fieldValue: string);
 	    static default_config: IDHFDueDateConfig;
 	    getFieldType(): string;
+	    setConfig(config: IAnyMap): void;
 	    getXmlValue(): string;
+	    addSignatures(signatures: string[], includeAll: boolean): void;
 	    dhfFieldConfig: IAnyMap;
 	    getDefaultConfig(): any;
+	    protected name: string;
+	    getFieldName(): string;
+	    setFieldName(value: string): void;
 	}
 	//# sourceMappingURL=DateDocHandler.d.ts.map
 
 	export abstract class DropdownAbstractDocFieldHandler extends DropdownFieldHandler implements IDocFieldHandler {
+	    protected itemConfig: ItemConfiguration;
 	    private sectionType;
 	    dhfFieldConfig: IAnyMap;
-	    constructor(type: string, config: IBaseDropdownFieldParams, initialValue?: string);
+	    constructor(itemConfig: ItemConfiguration, type: string, config: IBaseDropdownFieldParams, initialValue?: string);
+	    getFieldType(): string;
+	    setConfig(config: IAnyMap): void;
+	    addSignatures(signatures: string[], includeAll: boolean): void;
 	    abstract getDefaultConfig(): any;
 	    abstract getXmlValue(): string;
+	    protected name: string;
+	    getFieldName(): string;
+	    setFieldName(value: string): void;
 	}
 	//# sourceMappingURL=DropdownAbstractDocFieldHandler.d.ts.map
 
@@ -18412,12 +18800,17 @@ declare module matrixApi
 	}
 	export class CheckBoxDocFieldHandler extends CheckboxFieldHandler implements IDocFieldHandler {
 	    private sectionType;
-	    dhfConfig: XRFieldTypeAnnotatedParamJson;
 	    constructor(sectionType: string, config: XRFieldTypeAnnotatedParamJson, fieldValue: string);
+	    getFieldType(): string;
+	    addSignatures(signatures: string[], includeAll: boolean): void;
 	    static default_config: IDHFCheckboxConfig;
 	    dhfFieldConfig: IAnyMap;
 	    getDefaultConfig(): object;
+	    setConfig(config: IAnyMap): void;
 	    getXmlValue(): string;
+	    protected name: string;
+	    getFieldName(): string;
+	    setFieldName(value: string): void;
 	}
 	//# sourceMappingURL=CheckBoxDocFieldHandler.d.ts.map
 
@@ -18439,6 +18832,7 @@ declare module matrixApi
 	    constructor(sectionType: string, config: XRFieldTypeAnnotatedParamJson, fieldValue: string);
 	    static defaut_config: IDHFDesignReviewsConfig;
 	    getDefaultConfig(): IDesignReviewsOptions;
+	    setConfig(config: IAnyMap): void;
 	    getXmlValue(): string;
 	}
 	//# sourceMappingURL=DesignReviewDocFieldHandler.d.ts.map
@@ -18496,7 +18890,9 @@ declare module matrixApi
 	export abstract class ItemSelectionAbstractDocFieldHandler extends ItemSelectionFieldHandler implements IDocFieldHandler {
 	    dhfFieldConfig: IAnyMap;
 	    abstract getDefaultConfig(): any;
+	    addSignatures(signatures: string[], includeAll: boolean): void;
 	    constructor(sectionType: string, config: XRFieldTypeAnnotatedParamJson, fieldValue: string);
+	    setConfig(config: IAnyMap): void;
 	    abstract getXmlValue(): any;
 	}
 	//# sourceMappingURL=ItemSelectionAbstractDocFieldHandler.d.ts.map
@@ -18518,6 +18914,7 @@ declare module matrixApi
 	export class ItemListDocFieldHandler extends ItemSelectionAbstractDocFieldHandler implements IDocFieldHandler {
 	    getDefaultConfig(): IItemsOptions;
 	    static default_config: IItemsFromConfig;
+	    setConfig(config: IAnyMap): void;
 	    getXmlValue(): string;
 	}
 	//# sourceMappingURL=ItemListDocFieldHandler.d.ts.map
@@ -18581,6 +18978,7 @@ declare module matrixApi
 
 	export class ItemRefDocFieldHandler extends ItemSelectionAbstractDocFieldHandler implements IDocFieldHandler {
 	    static default_configs: IDHFItemListConfig;
+	    setConfig(config: IAnyMap): void;
 	    getDefaultConfig(): IItemListOptions;
 	    constructor(type: string, ctrlConfig: IAnyMap, fieldValue: string);
 	    getXmlValue(): string;
@@ -18677,6 +19075,7 @@ declare module matrixApi
 	        };
 	    };
 	    getDefaultConfig(): any;
+	    setConfig(config: IDocumentOptionsOptions): void;
 	    getXmlValue(): string;
 	}
 	//# sourceMappingURL=DocumentOptionsFieldHandler.d.ts.map
@@ -18765,7 +19164,30 @@ declare module matrixApi
 
 	export class DocFieldHandlerFactory {
 	    static GetDHFFieldConfig(itemConfig: ItemConfiguration, fieldType: string, config: IAnyMap): IAnyMap;
-	    static createHandler(dhfValue: IDHFControlDefinitionValue): IDocFieldHandler;
+	    static createHandler(itemConfig: ItemConfiguration, dhfValue: IDHFControlDefinitionValue): IDocFieldHandler;
+	}
+	//# sourceMappingURL=index.d.ts.map
+
+	interface IDHFControlDefinition extends IControlDefinition {
+	    dhfValue?: IDHFControlDefinitionValue;
+	    configTouched?: boolean;
+	}
+	export class DHFFieldHandler extends GenericFieldHandler {
+	    private fieldConfig;
+	    innerDataHandler: IDocFieldHandler;
+	    private itemConfig;
+	    constructor(fieldConfig: IDHFControlDefinition);
+	    setItemConfig(itemConfig: ItemConfiguration): void;
+	    getData(): string;
+	    initData(fieldValue: string): void;
+	    setFieldHandler(docFieldHandler: IDocFieldHandler): void;
+	}
+	//# sourceMappingURL=DHFFieldHandler.d.ts.map
+
+	export function InitializeFieldHandlers(): void;
+	export class FieldHandlerFactory {
+	    static UpdateFieldConfig(itemConfig: ItemConfiguration, testConfig: TestManagerConfiguration, fieldType: string, itemType: string, fieldValue: string, config: XRFieldTypeAnnotatedParamJson): void;
+	    static CreateHandler(fieldType: string, config: XRFieldTypeAnnotatedParamJson): IFieldHandler;
 	}
 	//# sourceMappingURL=index.d.ts.map
 
@@ -18774,123 +19196,6 @@ declare module matrixApi
 	/// <reference types="matrixrequirements-type-declarations" />
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
-	interface IPluginDocumentSection {
-	}
-	interface IDHFFieldListItem {
-	    id: string;
-	    label: string;
-	}
-	interface IDHFField {
-	    type: string;
-	    name: string;
-	}
-	interface IDHFControlDefinition extends IControlDefinition {
-	    dhfValue?: IDHFControlDefinitionValue;
-	    configTouched?: boolean;
-	}
-	interface IDHFControlDefinitionValue {
-	    fieldValue?: string;
-	    fieldValueXML?: string;
-	    name?: string;
-	    type?: string;
-	    ctrlConfig?: IDHFSectionOptions;
-	}
-	interface IDHFSection {
-	    renderControl: (ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions) => void;
-	    setFieldHandler: (fieldHandler: IDocFieldHandler) => void;
-	    getFieldHandler: () => IDocFieldHandler;
-	    getConfig: (ctrl: IDHFControlDefinition) => IDHFSectionOptions;
-	    addSignatures: (signatures: string[], currentValue: IDHFControlDefinition, all?: boolean) => void;
-	    showSpecificSettings: (ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery) => void;
-	    saveSpecificSettings: (ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery) => boolean;
-	    hasSearch?: (ctrl: IDHFControlDefinition) => boolean;
-	    executeSearch?: (ctrl: IDHFControlDefinition) => void;
-	    verifySearch?: (ctrl: IDHFControlDefinition) => void;
-	    verifyContent: (ctrl: IDHFControlDefinition) => void;
-	}
-	interface IDHFSectionOptions {
-	    globalOptions?: boolean;
-	    show_section_title?: string;
-	    automation?: string;
-	    page_break?: string;
-	    landscape?: boolean;
-	    sub_section?: string;
-	}
-	interface IDHFFieldParameter {
-	    autoHide?: boolean;
-	    perItemVisibility?: boolean;
-	}
-	interface IDHFFieldValue {
-	    type: string;
-	}
-	interface IDHFXMLOptions {
-	}
-	interface IDHFPasteBuffer {
-	    tree: ISimpleTree;
-	    items: IDHFPasteBufferItem[];
-	}
-	interface IDHFPasteBufferItem {
-	    sourceItem: string;
-	    sourceProject: string;
-	    pasteSource: string;
-	    title: string;
-	    item: IDHFPasteBufferValue[];
-	}
-	interface IDHFPasteBufferValue {
-	    def: XRFieldTypeAnnotated;
-	    val: string;
-	}
-	interface IDHFReorder {
-	    idx: number;
-	    id: string;
-	    name: string;
-	    type: string;
-	}
-	interface IDHFFileOption {
-	    name: string;
-	    click: Function;
-	}
-	interface IDHFGuidOid {
-	    guid: string;
-	    oid: string;
-	}
-	interface IDHFWizardData {
-	    dhfItems: any[];
-	    dhfNumber: string;
-	    dhfGUID: string;
-	    dhfName: string;
-	    template?: string;
-	}
-	interface IDHFFactory {
-	    [key: string]: (config: IDHFConfig) => IDHFSection;
-	}
-	interface ISectionInfo {
-	    sectionName: string;
-	    sectionType: DocumentSectionType;
-	    hidden: boolean;
-	    dynamic: boolean;
-	}
-	enum DocumentSectionType {
-	    Static = 1,
-	    Database = 2,
-	    Table = 3,
-	    Technical = 4,
-	    CustomTable = 5
-	}
-	interface IGrandMother {
-	    id: string;
-	    version: number;
-	    fullId: string;
-	    title: string;
-	}
-	interface ISectionMap {
-	    [key: string]: ISectionInfo;
-	}
-	interface ItemSortInfo {
-	    itemId: string;
-	    item: JQuery;
-	    existsInBoth: boolean;
-	}
 	class PluginManagerDocuments {
 	    private wasInformedToday;
 	    private wasInformedTodayAbout;
@@ -19043,12 +19348,20 @@ declare module matrixApi
 	    options: IDropdownOption[];
 	}
 	export class GenericTableDocHandler extends BaseTableFieldHandler implements IDocFieldHandler {
+	    private sectionType;
 	    private controller;
-	    constructor(fieldType: string, config: IDHFSectionOptions, fieldValue: string);
+	    dhfFieldConfig: IAnyMap;
+	    constructor(sectionType: string, config: IDHFSectionOptions, fieldValue: string);
 	    validate(): void;
+	    setConfig(config: IAnyMap): void;
+	    getFieldType(): string;
 	    protected GetColumnCount(controllerConfig: ITableControlBaseParams): number;
 	    getXmlValue(): string;
 	    getDefaultConfig(): any;
+	    protected name: string;
+	    getFieldName(): string;
+	    setFieldName(value: string): void;
+	    addSignatures(signatures: string[], includeAll?: boolean): void;
 	}
 	//# sourceMappingURL=GenericTableDocHandler.d.ts.map
 
@@ -21732,7 +22045,7 @@ declare module matrixApi
 	    timezone?: string;
 	}
 	interface IDateTimeUI {
-	    initDateTimeSettings(update?: boolean): JQueryDeferred<{}>;
+	    initDateTimeSettings(update?: boolean): Promise<void>;
 	    renderHumanDate(date: Date, dateOnly?: boolean): string;
 	    renderCustomerHumanDate(date: Date, dateOnly?: boolean): string;
 	    renderHumanMonth(dateObj: Date): string;
@@ -25865,7 +26178,6 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	class Checkbox extends BaseDHFSection<ICheckboxOptions> implements IDHFSection {
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -25879,7 +26191,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class CustomSection extends DoubleSelectBase<ICustomSectionOptions> {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	}
@@ -25892,7 +26203,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class Items extends SingleSelectBase<IItemsOptions> {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery, hideFolder?: boolean): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	}
@@ -25908,7 +26218,6 @@ declare module matrixApi
 	    constructor();
 	    setFieldHandler(fieldHandler: IDocFieldHandler): void;
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    protected config: IDoubleDefaultControllerConfig;
@@ -25922,7 +26231,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class DesignReviews extends SingleSelectBase<IDesignReviewsOptions> {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	}
@@ -25940,7 +26248,6 @@ declare module matrixApi
 	    constructor(defaultConfig: IDHFConfig, dhfTypeXML: string, dhfType: string, columnTypes: ColumnTypesInfo);
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
 	    getConfig(ctrl: IDHFControlDefinition): IDhfTableOptions;
-	    addSignatures(signatures: string[], ctrl: IDHFControlDefinition, includeAll?: boolean): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -25955,7 +26262,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class DocumentOptions extends BaseDHFSection<IDocumentOptionsOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -25969,7 +26275,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class DueDate extends BaseDHFSection<IDueDateOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -25983,7 +26288,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class ItemIndex extends BaseDHFSection<IItemIndexOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -25999,7 +26303,6 @@ declare module matrixApi
 	    protected isSIGNPackage: boolean;
 	    constructor(isPackage: boolean);
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    protected config: ISingleDefaultControllerConfig;
@@ -26026,7 +26329,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class LinkList extends SingleSelectBase<ILinkListOptions> {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    protected config: ISingleDefaultControllerConfig;
@@ -26040,7 +26342,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class ListOfFigures extends BaseDHFSection<IListOfFiguresOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -26054,7 +26355,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class MultiSelect extends BaseDHFSection<IMultiSelectOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -26067,7 +26367,6 @@ declare module matrixApi
 	/// <reference types="bootstrap" />
 	/// <reference types="bootstrap-datepicker" />
 	class Remarks extends BaseDHFSection<IRemarkOptions> implements IDHFSection {
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
@@ -26082,7 +26381,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class RichText extends BaseDHFSection<IRichTextOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -26096,7 +26394,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class RiskStats extends SingleSelectBase<IRiskStatsOptions> {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	}
@@ -26109,7 +26406,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class SmartText extends BaseDHFSection<ISmartTextOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -26123,7 +26419,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class TableOfContent extends BaseDHFSection<ITableOfContentOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -26137,7 +26432,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class TestResults extends DoubleSelectBase<ITestResultsOptions> {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -26151,7 +26445,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class TextLine extends BaseDHFSection<ITextLineOptions> implements IDHFSection {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;
@@ -26165,7 +26458,6 @@ declare module matrixApi
 	/// <reference types="bootstrap-datepicker" />
 	class TraceMatrix extends DoubleSelectBase<ITraceMatrixOptions> {
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	}
@@ -26183,7 +26475,6 @@ declare module matrixApi
 	    setFieldHandler(fieldHandler: IDocFieldHandler): void;
 	    constructor(isUp: boolean);
 	    renderControl(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions): void;
-	    addSignatures(signatures: string[], currentValue: IDHFControlDefinition): void;
 	    showSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): void;
 	    saveSpecificSettings(ctrl: IDHFControlDefinition, ctrlParameter: IBaseControlOptions, custom: JQuery): boolean;
 	    verifyContent(ctrl: IDHFControlDefinition): void;

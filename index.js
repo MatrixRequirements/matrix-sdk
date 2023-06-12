@@ -9,745 +9,6746 @@
 		root["matrixConsoleApi"] = factory();
 })(this, () => {
 return /******/ (() => { // webpackBootstrap
-/******/ 	var __webpack_modules__ = ({
+/******/ 	var __webpack_modules__ = ([
+/* 0 */,
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */
+/***/ ((module, exports, __webpack_require__) => {
 
-/***/ 246:
-/***/ ((module) => {
-
-(function () {
-  "use strict";
-
-  function btoa(str) {
-    var buffer;
-
-    if (str instanceof Buffer) {
-      buffer = str;
-    } else {
-      buffer = Buffer.from(str.toString(), 'binary');
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.InstallLegacyAdaptor = exports.setApp = exports.setMatrixApplicationUI = exports.setRestConnection = exports.setMatrixSession = exports.setIC = exports.matrixApplicationUI = exports.app = exports.restConnection = exports.matrixSession = exports.globalMatrix = exports.ControlState = void 0;
+    ;
+    class GlobalMatrix {
+        constructor() {
+            this.ITEM_DOES_NOT_EXIST = "";
+            this.globalShiftDown = false;
+            this.globalCtrlDown = false;
+            this.historyFilter = "merge,delete,undelete,add,edit,execute,reviewed,signature,report,touch,release";
+            this.mobileApp = undefined;
+        }
+        installLegacyAdaptor() {
+            globalThis.ITEM_DOES_NOT_EXIST = this.ITEM_DOES_NOT_EXIST;
+            globalThis.matrixRestUrl = this.matrixRestUrl;
+            globalThis.matrixBaseUrl = this.matrixBaseUrl;
+            globalThis.matrixWfgw = this.matrixWfgw;
+            globalThis.matrixExpress = this.matrixExpress;
+            globalThis.matrixProduct = this.matrixProduct;
+            globalThis.mxOauth = this.mxOauth;
+            globalThis.mxOauthLoginUrl = this.mxOauthLoginUrl;
+            globalThis.serverStorage = this.serverStorage;
+            globalThis.projectStorage = this.projectStorage;
+            globalThis.wfgwConnection = this.wfgwConnection;
+            globalThis.globalShiftDown = this.globalShiftDown;
+            globalThis.globalCtrlDown = this.globalCtrlDown;
+            globalThis.jsonValidator = this.jsonValidator;
+        }
     }
-
-    return buffer.toString('base64');
-  }
-
-  module.exports = btoa;
-}());
+    var globalMatrix = new GlobalMatrix();
+    exports.globalMatrix = globalMatrix;
+    function setIC(newIC) {
+        globalMatrix.ItemConfig = newIC; // To use in matrixApi
+        globalThis.IC = newIC; // legacy support
+    }
+    exports.setIC = setIC;
+    var matrixSession;
+    exports.matrixSession = matrixSession;
+    function setMatrixSession(session) {
+        exports.matrixSession = matrixSession = session;
+    }
+    exports.setMatrixSession = setMatrixSession;
+    var restConnection; // global rest connection
+    exports.restConnection = restConnection;
+    function setRestConnection(rc) {
+        exports.restConnection = restConnection = rc;
+    }
+    exports.setRestConnection = setRestConnection;
+    var matrixApplicationUI; // the application
+    exports.matrixApplicationUI = matrixApplicationUI;
+    function setMatrixApplicationUI(ui) {
+        exports.matrixApplicationUI = matrixApplicationUI = ui;
+    }
+    exports.setMatrixApplicationUI = setMatrixApplicationUI;
+    // TODO(modules): app was declared as interface MatrixReq, which is empty, and then usually
+    // assigned to a variable of type businesslogic/UI/MatrixReq. We just opt out of typing for
+    // this variable and ideally we should fix that with a real interface. I changed the type to
+    // any to make the true situation easier to see.
+    var app; // main application 
+    exports.app = app;
+    function setApp(newApp) {
+        exports.app = app = newApp;
+    }
+    exports.setApp = setApp;
+    ;
+    var ControlState;
+    (function (ControlState) {
+        ControlState[ControlState["FormEdit"] = 0] = "FormEdit";
+        ControlState[ControlState["FormView"] = 1] = "FormView";
+        ControlState[ControlState["DialogCreate"] = 2] = "DialogCreate";
+        ControlState[ControlState["HistoryView"] = 3] = "HistoryView";
+        ControlState[ControlState["Tooltip"] = 4] = "Tooltip";
+        ControlState[ControlState["Print"] = 5] = "Print";
+        ControlState[ControlState["Report"] = 6] = "Report";
+        ControlState[ControlState["DialogEdit"] = 7] = "DialogEdit"; // between FormEdit and DialogCreate to edit an item in popup
+    })(ControlState || (ControlState = {}));
+    exports.ControlState = ControlState;
+    ;
+    // This is so that old legacy scripts can "just work" to a degree.
+    function InstallLegacyAdaptor() {
+        globalThis.ControlState = ControlState;
+        globalThis.IC = globalMatrix.ItemConfig;
+        globalThis.matrixSession = matrixSession;
+        globalThis.restConnection = restConnection;
+        globalThis.app = app;
+        globalThis.matrixApplicationUI = matrixApplicationUI;
+        globalMatrix.installLegacyAdaptor();
+    }
+    exports.InstallLegacyAdaptor = InstallLegacyAdaptor;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
+/* 7 */,
+/* 8 */,
+/* 9 */
+/***/ ((module, exports, __webpack_require__) => {
 
-/***/ 242:
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, RefLinkDefines_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.SimpleItemTools = void 0;
+    // Implements ItemTools functionality with minimal dependencies
+    class SimpleItemTools {
+        // extract different parts from item ids, like version, category, ...
+        parseRef(itemRef, project, matrixBaseUrl) {
+            let ref = itemRef; // e.g. F-REQ-13-v12
+            var result = {
+                id: "",
+                number: 0,
+                version: 0,
+                type: "",
+                isFolder: false,
+                url: "",
+                link: "",
+                linkv: "" // <a href=url>url</a>
+            };
+            var vp = ref.indexOf("-v");
+            if (vp !== -1) {
+                result.version = parseInt(ref.substr(vp + 2));
+                ref = ref.substr(0, vp);
+            }
+            result.id = ref;
+            if (ref.indexOf("F-") === 0) {
+                result.isFolder = true;
+                ref = ref.substr(2);
+            }
+            var parts = ref.split("-");
+            if (parts.length > 1) {
+                result.type = parts[0];
+                result.number = Number(parts[1]);
+            }
+            result.url = matrixBaseUrl + "/" + project + "/" + itemRef;
+            result.link = "<a style='color:blue !important' href='" + result.url + "'>" + itemRef + "</a>";
+            result.linkv = "<a style='color:blue !important' href='" + result.url + "'>" + result.url + "</a>";
+            return result;
+        }
+        ;
+        getCreator(item) {
+            return item.history[item.history.length - 1].user;
+        }
+        getLastEditor(item) {
+            return item.history.length > 0 ? item.history[0].user : "";
+        }
+        // render a list of item ids, to show up as <b>ID</b> name, <b>ID</b> name, 
+        refListToDisplayString(inputItems, prefix, getTitleFunction, shorten) {
+            function makeLink(itemobj, shorten) {
+                if (!itemobj.projectShortLabel) {
+                    return "<b>" + itemobj.to + "</b>" + (shorten ? "" : (" " + getTitleFunction(itemobj.to)));
+                }
+                var label = itemobj.projectShortLabel + ":" + itemobj.to;
+                return "#" + itemobj.projectShortLabel + "/" + itemobj.to + "#";
+                //return "<a class='crossProjectLink' title='" + itemobj.title + "' href='" + matrixBaseUrl + "/" + itemobj.projectShortLabel + "/" + itemobj.to + "' target='_blank'>" + label + "</a> ";
+            }
+            if (inputItems) {
+                // build the list ItemId Title can take a long time, e.g. if there's dozens of search results and the list should be a short list. In that case only show names if there's less than 5 items 
+                let refs = inputItems.map(function (inputItem) { return makeLink(inputItem, shorten && inputItems.length > 4 ? true : false); });
+                let list = refs.join(", ");
+                if (shorten && list.replace(/<b>/g, "").replace(/<\/b>/g, "").length > shorten) {
+                    refs = inputItems.map(function (inputItem) { return makeLink(inputItem, true); });
+                    list = refs.join(", ");
+                }
+                if (shorten && list.replace(/<b>/g, "").replace(/<\/b>/g, "").length > shorten) {
+                    list = "<b>" + list.replace(/<b>/g, "").replace(/<\/b>/g, "").substr(0, shorten - 4) + " ...</b>";
+                }
+                if (prefix) {
+                    list = prefix + " " + list;
+                }
+                return list;
+            }
+            else {
+                return "";
+            }
+        }
+        ;
+        renderLink(itemId, itemTitle, newWindow) {
+            let dbt = itemTitle;
+            return $("<div>").refLink({
+                id: itemId,
+                folder: false,
+                title: dbt ? dbt : "(deleted)",
+                style: newWindow ? RefLinkDefines_1.refLinkStyle.link : RefLinkDefines_1.refLinkStyle.selectTree,
+                tooltip: RefLinkDefines_1.refLinkTooltip.html
+            });
+        }
+        // update and changes to reference lists
+        updateReferences(oldReferences, newReferences, fromId, toId) {
+            var changeList = [];
+            // find links to add
+            for (var idx = 0; idx < newReferences.length; idx++) {
+                var found = false;
+                for (var jdx = 0; jdx < oldReferences.length; jdx++) {
+                    if (newReferences[idx].to === oldReferences[jdx].to) {
+                        found = true;
+                        continue;
+                    }
+                }
+                if (!found) {
+                    if (fromId) {
+                        changeList.push({ action: 'addLink', fromId: fromId, toId: newReferences[idx].to });
+                    }
+                    else if (toId) {
+                        changeList.push({ action: 'addLink', fromId: newReferences[idx].to, toId: toId });
+                    }
+                }
+            }
+            // find links to remove
+            for (var jdx = 0; jdx < oldReferences.length; jdx++) {
+                var found = false;
+                for (var idx = 0; idx < newReferences.length; idx++) {
+                    if (newReferences[idx].to === oldReferences[jdx].to) {
+                        found = true;
+                        continue;
+                    }
+                }
+                if (!found) {
+                    if (fromId) {
+                        changeList.push({ action: 'removeLink', fromId: fromId, toId: oldReferences[jdx].to });
+                    }
+                    else if (toId) {
+                        changeList.push({ action: 'removeLink', fromId: oldReferences[jdx].to, toId: toId });
+                    }
+                }
+            }
+            return changeList;
+        }
+        ;
+        // clone item from IItemGet to IItemPut
+        clone(item, copyLabels) {
+            var newItem = {};
+            $.each(item, function (idx, val) {
+                if (idx !== "maxVersion" && idx !== "labels" && idx !== "labels" && idx !== "downLinks" && idx !== "upLinks" && idx !== "type" && idx !== "children" && idx !== "hide" && idx !== "history" && idx !== "isUnselected" && idx !== "modDate" && idx !== "restricted" && idx !== "upLinkList" && idx !== "userRights") {
+                    newItem[idx] = val;
+                }
+            });
+            if (copyLabels) {
+                newItem.labels = item.labels.join(",");
+            }
+            else {
+                newItem.labels = "";
+            }
+            return newItem;
+        }
+        sort(a, b, project, matrixBaseUrl) {
+            let at = this.parseRef(a, project, matrixBaseUrl);
+            let bt = this.parseRef(b, project, matrixBaseUrl);
+            if (at.type == bt.type) {
+                if (at.isFolder && !bt.isFolder)
+                    return -1;
+                if (bt.isFolder && !at.isFolder)
+                    return 1;
+                return at.number - bt.number;
+            }
+            return a < b ? -1 : 1;
+        }
+    }
+    exports.SimpleItemTools = SimpleItemTools;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 10 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.refLinkTooltip = exports.refLinkStyle = void 0;
+    var refLinkStyle;
+    (function (refLinkStyle) {
+        refLinkStyle[refLinkStyle["edit"] = 1] = "edit";
+        refLinkStyle[refLinkStyle["link"] = 2] = "link";
+        refLinkStyle[refLinkStyle["show"] = 3] = "show";
+        refLinkStyle[refLinkStyle["select"] = 4] = "select";
+        refLinkStyle[refLinkStyle["selectTree"] = 5] = "selectTree"; // like link, but selects in tree unless ctrl-was clicked
+    })(refLinkStyle || (refLinkStyle = {}));
+    exports.refLinkStyle = refLinkStyle;
+    var refLinkTooltip;
+    (function (refLinkTooltip) {
+        refLinkTooltip[refLinkTooltip["none"] = 1] = "none";
+        refLinkTooltip[refLinkTooltip["html"] = 2] = "html"; // full html tooltip
+    })(refLinkTooltip || (refLinkTooltip = {}));
+    exports.refLinkTooltip = refLinkTooltip;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// example generation of json schema from typescript type
+// 
+//  typescript-json-schema web/ts/ProjectSettings.ts ITestConfig > test.txt
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ACL_SETTING = exports.defaultNotificationConfig = exports.notificationSetting = exports.autoColumnDefault = exports.autoColumnSetting = exports.smartTextConfigSetting = exports.mailConfigSetting = exports.qmsDefaultConfig = exports.EnumItemPublish = void 0;
+    // *******************************
+    // qms configuration        
+    // *******************************
+    var EnumItemPublish;
+    (function (EnumItemPublish) {
+        EnumItemPublish[EnumItemPublish["IfNotInGroup"] = 0] = "IfNotInGroup";
+        EnumItemPublish[EnumItemPublish["Always"] = 1] = "Always";
+        EnumItemPublish[EnumItemPublish["Never"] = 2] = "Never"; // items cannot be published by itself 
+    })(EnumItemPublish || (EnumItemPublish = {}));
+    exports.EnumItemPublish = EnumItemPublish;
+    const qmsDefaultConfig = {
+        publications: [{
+                rules: [
+                    {
+                        category: "PROC",
+                        readyLabels: ["PROCOK"],
+                        itemRules: EnumItemPublish.IfNotInGroup,
+                        groupName: "SOP",
+                        groupLabelType: "SOPS",
+                        groupDown: ["WI"]
+                    },
+                    {
+                        category: "WI",
+                        readyLabels: ["WIOK"],
+                        itemRules: EnumItemPublish.IfNotInGroup,
+                    }
+                ],
+                toCategory: "PUB",
+                target: "pub",
+                keepFlatList: false,
+                publisher: "_" // comma separated list of publishers _ for legacy: look in category setting for PUB,
+            }
+        ],
+        legacyRoles: false // use user groups 
+    };
+    exports.qmsDefaultConfig = qmsDefaultConfig;
+    // *******************************
+    // mail config
+    // *******************************
+    const mailConfigSetting = "mail_config";
+    exports.mailConfigSetting = mailConfigSetting;
+    // ******************************* 
+    // ACL user access lists
+    // *******************************
+    const ACL_SETTING = "acl";
+    exports.ACL_SETTING = ACL_SETTING;
+    // *******************************
+    // smart text , abbreviations, ....
+    // *******************************
+    const smartTextConfigSetting = "rtf";
+    exports.smartTextConfigSetting = smartTextConfigSetting;
+    let notificationSetting = "";
+    exports.notificationSetting = notificationSetting;
+    let defaultNotificationConfig = {
+        enabled: true,
+        closeAuto: true,
+        manualCreate: true,
+        browserNotificationDisabled: false,
+        browserNotificationAutoCloseAfter: 9000
+    };
+    exports.defaultNotificationConfig = defaultNotificationConfig;
+    // setting can be for customer (e.g. user titles) and project (user roles)
+    const autoColumnSetting = "autoColumn";
+    exports.autoColumnSetting = autoColumnSetting;
+    const autoColumnDefault = { maps: [] };
+    exports.autoColumnDefault = autoColumnDefault;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 31 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.FieldDescriptions = void 0;
+    class FieldDescriptions {
+        static findById(idToFind) {
+            const result = this.descriptions.filter((description) => description.id === idToFind);
+            return result.length === 1 ? result[0] : undefined;
+        }
+        static appendFieldDescriptions(newFields) {
+            for (let fco of newFields) {
+                if (!this.findById(fco.id)) {
+                    this.descriptions.push(fco);
+                }
+            }
+        }
+        static get() { return FieldDescriptions.descriptions; }
+        static setValidationFunction(fieldId, validator) {
+            let fieldDesc = FieldDescriptions.findById(fieldId);
+            if (!fieldDesc) {
+                throw new Error(`No such field type ${fieldId} registered`);
+            }
+            fieldDesc.capabilities.validationFunction = validator;
+        }
+    }
+    exports.FieldDescriptions = FieldDescriptions;
+    FieldDescriptions.Field_sourceref = "sourceref";
+    FieldDescriptions.Field_markAsTemplate = "markAsTemplate";
+    FieldDescriptions.Field_dhf = "dhf";
+    FieldDescriptions.Field_docFilter = "docFilter";
+    // normal fields
+    FieldDescriptions.Field_richtext = "richtext";
+    FieldDescriptions.Field_text = "text";
+    FieldDescriptions.Field_section = "section";
+    FieldDescriptions.Field_fileManager = "fileManager";
+    FieldDescriptions.Field_tasksControl = "tasksControl";
+    FieldDescriptions.Field_textline = "textline";
+    FieldDescriptions.Field_user = "user";
+    FieldDescriptions.Field_date = "date";
+    FieldDescriptions.Field_dropdown = "dropdown";
+    FieldDescriptions.Field_links = "links";
+    FieldDescriptions.Field_uplinkinfo = "uplinkinfo";
+    FieldDescriptions.Field_crosslinks = "crosslinks";
+    FieldDescriptions.Field_risk2 = "risk2";
+    FieldDescriptions.Field_checkbox = "checkbox";
+    FieldDescriptions.Field_gateControl = "gateControl";
+    FieldDescriptions.Field_colorPicker = "colorPicker";
+    FieldDescriptions.Field_steplist = "steplist";
+    // toolbar
+    FieldDescriptions.Field_labels = "labels";
+    FieldDescriptions.Field_workflow = "workflow";
+    // tests and xtcs
+    FieldDescriptions.Field_test_steps = "test_steps";
+    FieldDescriptions.Field_test_steps_result = "test_steps_result";
+    FieldDescriptions.Field_test_result = "test_result";
+    // agile sync
+    FieldDescriptions.Field_syncStatus = "syncStatus";
+    FieldDescriptions.Field_syncSourceInfo = "syncSourceInfo";
+    // beta should not be used really
+    FieldDescriptions.Field_report = "report";
+    FieldDescriptions.Field_cascadingSelect = "cascadingSelect";
+    FieldDescriptions.Field_hyperlink = "hyperlink";
+    // technical - these need to be added once when creating a new DOC category or something special like this
+    FieldDescriptions.Field_reportId = "reportId";
+    FieldDescriptions.Field_filter_file = "filter_file";
+    FieldDescriptions.Field_signature = "signature";
+    FieldDescriptions.Field_signatureControl = "signatureControl";
+    FieldDescriptions.Field_signCache = "signCache";
+    FieldDescriptions.Field_publishedItemList = "publishedItemList";
+    FieldDescriptions.Field_publishedFilesList = "publishedFilesList";
+    FieldDescriptions.Field_publishedContent = "publishedContent";
+    FieldDescriptions.Field_publishedTitle = "publishedTitle";
+    FieldDescriptions.Field_docTraining = "docTraining";
+    FieldDescriptions.Field_docReview = "docReview";
+    FieldDescriptions.Field_risk = "risk";
+    FieldDescriptions.Field_htmlForm = "htmlForm";
+    FieldDescriptions.Field_hidden = "hidden";
+    FieldDescriptions.Field_dummy = "dummy";
+    FieldDescriptions.Field_guid = "guid";
+    FieldDescriptions.Field_oid = "oid";
+    FieldDescriptions.Field_versionLive = "versionLive";
+    FieldDescriptions.Field_version = "version";
+    FieldDescriptions.Field_currentVersion = "currentVersion";
+    FieldDescriptions.Field_riskFolder = "riskFolder";
+    FieldDescriptions.Field_reviewControl = "reviewControl";
+    // A [fieldId]: JsonValidationFunction map built up at runtime.
+    // We can't build this at compile time because validation functions are high-level entities.
+    FieldDescriptions.validationFunctions = {};
+    FieldDescriptions.descriptions = [
+        // docs and sign
+        { id: FieldDescriptions.Field_sourceref, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Source (Original Document) [sourceref]", class: "docsign", help: "keeps a reference to original document when copying and pasting" },
+        { id: FieldDescriptions.Field_markAsTemplate, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Mark as template [markAsTemplate]", class: "docsign", help: "allows to define DOC templates which can be used in other projects" },
+        { id: FieldDescriptions.Field_dhf, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "DFH field  [dhf]", class: "docs", help: "for documents only: holds a section in a document" },
+        { id: FieldDescriptions.Field_docFilter, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Label Filter in DOCs [docFilter]", class: "docs", help: "a special field for Document categories to filter documents by label" },
+        // normal fields
+        { id: FieldDescriptions.Field_richtext, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Rich Text Control [richtext]", class: "all", help: "a rich text editor field (with formatting)" },
+        { id: FieldDescriptions.Field_text, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Plain Text Control [text]", class: "all", help: "a text editor field (no formatting)" },
+        { id: FieldDescriptions.Field_section, capabilities: { canBeUsedInDocs: false, canHideInDoc: false, canBeXtcPreset: false, canBePublished: true, canBeReadonly: false, canRequireContent: false }, label: "Section with explanation [section]", class: "all", help: "a title with some explanation to separate fields" },
+        { id: FieldDescriptions.Field_fileManager, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "File Manager Control [fileManager]", class: "all", help: "a control which allows to attach files by browsing or drag and drop" },
+        { id: FieldDescriptions.Field_tasksControl, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Tasks Control [tasksControl]", class: "all", help: "a field which shows links to external systems, like JIRA, github etc. (eg extensions folder)" },
+        { id: FieldDescriptions.Field_textline, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Text Line Control [textline]", class: "all", help: "a field for one line of text" },
+        { id: FieldDescriptions.Field_user, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "User Select Control [user]", class: "all", help: "a drop down to select a user in the project" },
+        { id: FieldDescriptions.Field_date, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Date Select Control [date]", class: "all", help: "a field to select a date" },
+        { id: FieldDescriptions.Field_dropdown, capabilities: { canBeUnsafe: true, needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Drop Down Control [dropdown]", class: "all", help: "a drop-down selection field" },
+        { id: FieldDescriptions.Field_links, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Down Traces Control [links]", class: "all", help: "a field to show and edit down traces as defined in the traceability configuration" },
+        { id: FieldDescriptions.Field_uplinkinfo, capabilities: { schema: "IUpLinkDetails", needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Uplink information [uplinkinfo]", class: "all", help: "a field to show information about up traces in the user interface" },
+        { id: FieldDescriptions.Field_crosslinks, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Cross Project Link Control [crosslinks]", class: "all", help: "a field to add links to other matrix projects" },
+        { id: FieldDescriptions.Field_risk2, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Risk Control [risk2]", class: "all", help: "a field rendering an FMEA-type risk field" },
+        { id: FieldDescriptions.Field_checkbox, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "Checkbox Control [checkbox]", class: "all", help: "a checkbox field" },
+        {
+            id: FieldDescriptions.Field_gateControl,
+            capabilities: {
+                canBeUnsafe: true, needsConfiguration: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: false,
+                canBeReadonly: true, schema: "IGate"
+            },
+            label: "Gate Control [gateControl]", class: "all", help: "a quality gate field"
+        },
+        {
+            id: FieldDescriptions.Field_colorPicker,
+            capabilities: {
+                canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true,
+                canBePublished: true, canBeReadonly: true, canRequireContent: true
+            },
+            label: "Color picker [colorPicker]", class: "super", help: "a color picker field"
+        },
+        {
+            id: "steplist",
+            capabilities: {
+                needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false,
+                canBePublished: true, canBeReadonly: true, canBeUnsafe: true,
+                schema: "IFieldParameter",
+            },
+            label: "Table Control [steplist]",
+            class: "all",
+            help: "a field rendered as a table",
+        },
+        // toolbar
+        { id: FieldDescriptions.Field_labels, capabilities: { onlyOne: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Labels [labels]", class: "toolbar", help: "shows defined labels in the item's tool bar" },
+        { id: FieldDescriptions.Field_workflow, capabilities: { onlyOne: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "One2One Issue Mapping [workflow]", class: "toolbar", help: "a field shown in the item's tool bar showing the status of an external ticket (i.e. jira)" },
+        // tests and xtcs
+        { id: FieldDescriptions.Field_test_steps, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Table [test_steps]", class: "tests", help: "a special table control to define tests (see test configuration)" },
+        { id: FieldDescriptions.Field_test_steps_result, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Result Table [test_steps_result]", class: "xtcs", help: "a special table control to define tests with results (see test configuration)" },
+        { id: FieldDescriptions.Field_test_result, capabilities: { onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Result Summary [test_result]", class: "xtcs", help: "a special field to compute or specify the overall test result" },
+        // agile sync
+        { id: FieldDescriptions.Field_syncStatus, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "SYNC Status [syncStatus]", class: "sync", help: "control to hold the information about synced external items " },
+        { id: FieldDescriptions.Field_syncSourceInfo, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "SYNC Source Info [syncSourceInfo]", class: "sync", help: "a control to show control syncing of external items" },
+        // beta should not be used really
+        { id: FieldDescriptions.Field_report, capabilities: { canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Embedded Report [report]", class: "beta", help: "allows to embed a standard report" },
+        { id: FieldDescriptions.Field_cascadingSelect, capabilities: { canHideInDoc: false, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "Cascading Select [cascadingSelect]", class: "beta", help: "a field to select values from hierachies of drop downs" },
+        { id: FieldDescriptions.Field_hyperlink, capabilities: { canHideInDoc: false, canBeXtcPreset: false, canBePublished: true, canBeReadonly: true }, label: "Hyperlink Control [hyperlink]", class: "beta", help: "a field holding a hyperlink (url)" },
+        // technical - these need to be added once when creating a new DOC category or something special like this
+        { id: FieldDescriptions.Field_reportId, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "report ID [reportId]", class: "super", help: "contains the id of the xslt template for reports" },
+        { id: FieldDescriptions.Field_filter_file, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "filter_file [filter_file]", class: "super", help: "internal field required for documents" },
+        { id: FieldDescriptions.Field_signature, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Signature Table [signature]", class: "super", help: "field showing signature in documents" },
+        { id: FieldDescriptions.Field_signatureControl, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Signature Password Field [signatureControl]", class: "super", help: "field with control for signatures" }
+    ];
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestManagerConfiguration = void 0;
+    class TestManagerConfiguration {
+        constructor() {
+            this.XTCconfig = {};
+        }
+        initialize(itemConfig) {
+            this.XTCconfig = itemConfig.getTestConfig();
+            if (!this.XTCconfig) {
+                // default until 1.3
+                this.XTCconfig = {
+                    "xtcType": "XTC",
+                    "cloneSources": ["TC", "UC"],
+                    "columnsSteps": [{ "name": "Action", "field": "action", "editor": "text" },
+                        { "name": "Expected Result", "field": "expected", "editor": "text" }],
+                    "columnsStepsResult": [{ "name": "Action", "field": "action", "editor": "none" },
+                        { "name": "Expected Result", "field": "expected", "editor": "none" },
+                        { "name": "Passed/Failed", "field": "result", "editor": "result" },
+                        { "name": "Comment", "field": "comment", "editor": "text" }],
+                    "automatic": [],
+                    "manual": [
+                        { "human": "passed", "command": "passed", "render": "ok", "code": "p" },
+                        { "human": "failed", "command": "failed", "render": "error", "code": "f" },
+                        { "human": "", "command": "not executed", "render": "warning", "code": "" }
+                    ],
+                    "perStep": [
+                        { "human": "passed", "command": "passed", "render": "ok", "code": "p", "key": "p", "image": "success.png" },
+                        { "human": "failed", "command": "failed", "render": "error", "code": "f", "key": "f", "image": "fail.png" },
+                        { "human": "", "command": "not executed", "render": "warning", "code": "", "key": "r", "image": "" }
+                    ]
+                };
+            }
+        }
+        // returns possible values for the drop down of the completed test case
+        getTestRunResultOptions() {
+            var opts = [];
+            if (this.XTCconfig.automatic && this.XTCconfig.automatic.length > 0) {
+                opts.push({ id: "a", label: "automatic" });
+            }
+            for (var idx = 0; idx < this.XTCconfig.manual.length; idx++) {
+                opts.push({ id: this.XTCconfig.manual[idx].code, label: this.XTCconfig.manual[idx].command });
+            }
+            return opts;
+        }
+        // get the configuration for a test definition table (e.g. test actions and expected results)
+        getTestStepsConfig(category) {
+            if (this.XTCconfig.render && this.XTCconfig.render[category]) {
+                return this.XTCconfig.render[category];
+            }
+            // this is actually a fallback for project created with version 1.5 or before
+            // these project can be upgraded by just replacing the xtc_config with the latest version
+            // UNLESS column names have been changed (which never happend)....
+            return {
+                columns: (category === this.XTCconfig.xtcType) ? this.XTCconfig.columnsStepsResult : this.XTCconfig.columnsSteps
+            };
+        }
+        // get definition for a test execution table (e.g. including columns with results/comments)
+        getTestStepsResultsConfig() {
+            return {
+                canBeModified: false,
+                columns: this.getTestStepsConfig(this.XTCconfig.xtcType).columns,
+                passFailEditorConfig: this.XTCconfig.perStep
+            };
+        }
+        // check if the category is an executed test case (usually this will mean category type XTC)
+        isXTC(type) {
+            return this.XTCconfig.xtcType && this.XTCconfig.xtcType.toLowerCase() === type.toLowerCase();
+        }
+        // check if this is a test case, use case, or something else which can be converted to a TC
+        isTC(type) {
+            return this.isCloneSource(type);
+        }
+        // return the executed test case category type, (usually this will mean type XTC)
+        getXTCType() {
+            return this.XTCconfig.xtcType;
+        }
+        // return a simple array of all categories which can be converted to XTC
+        getCloneSources() {
+            return this.XTCconfig.cloneSources;
+        }
+        // returns place holder text if no value is selected
+        getTestRunResultPlaceholder(value) {
+            var code = value ? (value.split("|")[0]) : "";
+            if (this.XTCconfig.automatic && this.XTCconfig.automatic.length > 0) {
+                for (var idx = 0; idx < this.XTCconfig.automatic.length; idx++) {
+                    if (this.XTCconfig.automatic[idx].code === code) {
+                        return "automatic - was '" + this.XTCconfig.automatic[idx].human + "' when last saved";
+                    }
+                }
+            }
+            return "select test result";
+        }
+        isCloneSource(category) {
+            if (!this.XTCconfig.cloneSources) {
+                return false;
+            }
+            for (var csi = 0; csi < this.XTCconfig.cloneSources.length; csi++) {
+                if (this.XTCconfig.cloneSources[csi] === category) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    exports.TestManagerConfiguration = TestManagerConfiguration;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(61), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(69), __webpack_require__(71), __webpack_require__(72), __webpack_require__(73), __webpack_require__(74), __webpack_require__(76), __webpack_require__(63), __webpack_require__(61), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(69), __webpack_require__(71), __webpack_require__(75), __webpack_require__(74), __webpack_require__(73), __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, EmptyFieldHandler_1, RichtextFieldHandler_1, TextlineFieldHandler_1, CheckboxFieldHandler_1, SteplistFieldHandler_1, GenericFieldHandler_1, DropdownFieldHandler_1, TestStepsFieldHandler_1, TestStepsResultFieldHandler_1, TestResultFieldHandler_1, UserFieldHandler_1, DateFieldHandler_1, GateFieldHandler_1, HyperlinkFieldHandler_1, CrosslinksFieldHandler_1, DHFFieldHandler_1, BaseTableFieldHandler_1, SteplistFieldHandler_2, TestStepsFieldHandler_2, TestStepsResultFieldHandler_2, TestResultFieldHandler_2, UserFieldHandler_2, DateFieldHandler_2, ItemSelectionFieldHandler_1, CrosslinksFieldHandler_2, HyperlinkFieldHandler_2, ItemSelectionFieldHandlerFromTo_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemSelectionFieldHandlerFromTo = exports.FieldHandlerFactory = exports.InitializeFieldHandlers = void 0;
+    __exportStar(BaseTableFieldHandler_1, exports);
+    __exportStar(SteplistFieldHandler_2, exports);
+    __exportStar(TestStepsFieldHandler_2, exports);
+    __exportStar(TestStepsResultFieldHandler_2, exports);
+    __exportStar(TestResultFieldHandler_2, exports);
+    __exportStar(UserFieldHandler_2, exports);
+    __exportStar(DateFieldHandler_2, exports);
+    __exportStar(ItemSelectionFieldHandler_1, exports);
+    __exportStar(CrosslinksFieldHandler_2, exports);
+    __exportStar(HyperlinkFieldHandler_2, exports);
+    function InitializeFieldHandlers() {
+        (0, SteplistFieldHandler_1.initialize)();
+    }
+    exports.InitializeFieldHandlers = InitializeFieldHandlers;
+    // TODO(modules): At the moment, handling of structured data is spread all over the client
+    // code base. We'd like to get all the data manipulation into these classes, separating
+    // that code from say, UI code.
+    class FieldHandlerFactory {
+        static UpdateFieldConfig(itemConfig, testConfig, fieldType, itemType, fieldValue, config) {
+            switch (fieldType) {
+                case FieldDescriptions_1.FieldDescriptions.Field_test_steps:
+                    TestStepsFieldHandler_1.TestStepsFieldHandler.UpdateFieldConfig(config, itemType, testConfig);
+                    break;
+                case FieldDescriptions_1.FieldDescriptions.Field_test_steps_result:
+                    TestStepsResultFieldHandler_1.TestStepsResultFieldHandler.UpdateFieldConfig(config, testConfig);
+                    break;
+                case FieldDescriptions_1.FieldDescriptions.Field_test_result:
+                    TestResultFieldHandler_1.TestResultFieldHandler.UpdateFieldConfig(config, testConfig);
+                    break;
+                case FieldDescriptions_1.FieldDescriptions.Field_user:
+                    UserFieldHandler_1.UserFieldHandler.UpdateFieldConfig(config, fieldValue, itemConfig);
+                    break;
+                case FieldDescriptions_1.FieldDescriptions.Field_crosslinks:
+                    CrosslinksFieldHandler_1.CrosslinksFieldHandler.UpdateFieldConfig(config);
+                    break;
+                default:
+                    break;
+            }
+        }
+        static CreateHandler(fieldType, config) {
+            const description = FieldDescriptions_1.FieldDescriptions.findById(fieldType);
+            if (!description) {
+                //Do not throw an error here, because this is called for every field on every item...
+                console.warn(`Unable to find handler for fieldType ${fieldType}`);
+                return new EmptyFieldHandler_1.EmptyFieldHandler("notFound", config);
+            }
+            switch (description.id) {
+                case FieldDescriptions_1.FieldDescriptions.Field_tasksControl:
+                case FieldDescriptions_1.FieldDescriptions.Field_section:
+                case FieldDescriptions_1.FieldDescriptions.Field_links:
+                case FieldDescriptions_1.FieldDescriptions.Field_uplinkinfo:
+                case FieldDescriptions_1.FieldDescriptions.Field_labels:
+                case FieldDescriptions_1.FieldDescriptions.Field_workflow:
+                case FieldDescriptions_1.FieldDescriptions.Field_syncStatus:
+                case FieldDescriptions_1.FieldDescriptions.Field_syncSourceInfo:
+                    return new EmptyFieldHandler_1.EmptyFieldHandler(description.id, config);
+                case FieldDescriptions_1.FieldDescriptions.Field_textline:
+                    return new TextlineFieldHandler_1.TextlineFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_richtext:
+                    return new RichtextFieldHandler_1.RichtextFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_checkbox:
+                    return new CheckboxFieldHandler_1.CheckboxFieldHandler(config);
+                // Table-like handlers
+                case FieldDescriptions_1.FieldDescriptions.Field_steplist:
+                    return new SteplistFieldHandler_1.SteplistFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_test_steps:
+                    return new TestStepsFieldHandler_1.TestStepsFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_test_steps_result:
+                    return new TestStepsResultFieldHandler_1.TestStepsResultFieldHandler(config);
+                // Dropdown-like field handlers
+                case FieldDescriptions_1.FieldDescriptions.Field_dropdown:
+                    return new DropdownFieldHandler_1.DropdownFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_user:
+                    return new UserFieldHandler_1.UserFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_test_result:
+                    return new TestResultFieldHandler_1.TestResultFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_date:
+                    return new DateFieldHandler_1.DateFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_gateControl:
+                    return new GateFieldHandler_1.GateFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_crosslinks:
+                    return new CrosslinksFieldHandler_1.CrosslinksFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_hyperlink:
+                    return new HyperlinkFieldHandler_1.HyperlinkFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_dummy:
+                    return new EmptyFieldHandler_1.EmptyFieldHandler(fieldType, config);
+                case FieldDescriptions_1.FieldDescriptions.Field_colorPicker:
+                case FieldDescriptions_1.FieldDescriptions.Field_dhf:
+                    return new DHFFieldHandler_1.DHFFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_sourceref:
+                case FieldDescriptions_1.FieldDescriptions.Field_markAsTemplate:
+                case FieldDescriptions_1.FieldDescriptions.Field_docFilter:
+                case FieldDescriptions_1.FieldDescriptions.Field_text:
+                case FieldDescriptions_1.FieldDescriptions.Field_fileManager:
+                case FieldDescriptions_1.FieldDescriptions.Field_risk2:
+                case FieldDescriptions_1.FieldDescriptions.Field_report:
+                case FieldDescriptions_1.FieldDescriptions.Field_cascadingSelect:
+                case FieldDescriptions_1.FieldDescriptions.Field_reportId:
+                case FieldDescriptions_1.FieldDescriptions.Field_filter_file:
+                case FieldDescriptions_1.FieldDescriptions.Field_signature:
+                case FieldDescriptions_1.FieldDescriptions.Field_signatureControl:
+                case FieldDescriptions_1.FieldDescriptions.Field_publishedContent:
+                case FieldDescriptions_1.FieldDescriptions.Field_reviewControl:
+                default:
+                    return new GenericFieldHandler_1.GenericFieldHandler(fieldType, config);
+            }
+        }
+    }
+    exports.FieldHandlerFactory = FieldHandlerFactory;
+    Object.defineProperty(exports, "ItemSelectionFieldHandlerFromTo", ({ enumerable: true, get: function () { return ItemSelectionFieldHandlerFromTo_1.ItemSelectionFieldHandlerFromTo; } }));
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 57 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.EmptyFieldHandler = void 0;
+    class EmptyFieldHandler {
+        constructor(fieldTypeIn, configIn) {
+            this.fieldType = fieldTypeIn;
+            this.config = configIn;
+        }
+        getFieldType() { return this.fieldType; }
+        initData(serializedFieldData) { }
+        getData() { return ""; }
+    }
+    exports.EmptyFieldHandler = EmptyFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 58 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.RichtextFieldHandler = void 0;
+    class RichtextFieldHandler {
+        constructor(configIn) {
+            this.data = "";
+            this.config = configIn;
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_richtext; }
+        // TODO: is there more to richtext than just an html string?
+        initData(serializedFieldData) { this.data = serializedFieldData; }
+        getData() { return this.data; }
+        getHtml() { return this.data; }
+        setHtml(str) {
+            this.data = str;
+            return this;
+        }
+    }
+    exports.RichtextFieldHandler = RichtextFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 59 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TextlineFieldHandler = void 0;
+    class TextlineFieldHandler {
+        constructor(configIn) {
+            this.data = "";
+            this.config = configIn;
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_textline; }
+        initData(serializedFieldData) { this.data = serializedFieldData; }
+        getData() { return this.data; }
+        getText() { return this.data; }
+        setText(str) {
+            // make sure there are no newlines.
+            this.data = str.replace("\n", "");
+        }
+    }
+    exports.TextlineFieldHandler = TextlineFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 60 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.CheckboxFieldHandler = void 0;
+    class CheckboxFieldHandler {
+        constructor(configIn) {
+            this.config = configIn;
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_checkbox; }
+        initData(serializedFieldData) {
+            this.data = serializedFieldData;
+        }
+        getData() {
+            return this.data;
+        }
+        getValue() {
+            if (this.data) {
+                if (this.data == "1" || this.data == "true") {
+                    return true;
+                }
+                else if (this.data == "0" || this.data == "false") {
+                    return false;
+                }
+            }
+            return undefined;
+        }
+        setValue(value) {
+            if (value !== undefined) {
+                this.data = value ? "true" : "false";
+            }
+            else {
+                this.data = undefined;
+            }
+        }
+    }
+    exports.CheckboxFieldHandler = CheckboxFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 61 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.SteplistFieldHandler = exports.initialize = void 0;
+    class SteplistFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
+        constructor(configIn) {
+            super(configIn);
+        }
+    }
+    exports.SteplistFieldHandler = SteplistFieldHandler;
+    function validateTableControlParams(json) {
+        return new Promise((resolve) => {
+            if (!json.columns || json.columns.length == 0) {
+                resolve("There are no columns defined. You need at least one column!");
+            }
+            const validXmlRegex = /^([_a-z][\w]?|[a-w_yz][\w]{2,}|[_a-z][a-l_n-z\d][\w]+|[_a-z][\w][a-k_m-z\d][\w]*)$/i;
+            // check for bad column field properties
+            let badFields = [];
+            json.columns.forEach(function (column, idx) {
+                if (!column.field) {
+                    badFields.push("Column " + (idx + 1) + " needs a field property");
+                }
+                else if (!column.field.match(validXmlRegex)) {
+                    badFields.push("The field of column " + (idx + 1) + ": ' " + column.field + "' needs to be a valid XML element name.");
+                }
+                if (column.options) {
+                    for (let option in column.options) {
+                        if (!option.match(validXmlRegex)) {
+                            badFields.push("The option '" + option + "' of field of column " + (idx + 1) + ": ' " + column.field + "' needs to be a valid XML element name.");
+                        }
+                    }
+                }
+            });
+            if (badFields.length) {
+                resolve(badFields.join("<br>"));
+            }
+            resolve(null);
+        });
+    }
+    function initialize() {
+        FieldDescriptions_1.FieldDescriptions.setValidationFunction(FieldDescriptions_1.FieldDescriptions.Field_steplist, validateTableControlParams);
+    }
+    exports.initialize = initialize;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 62 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
+// by the table control.
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BaseTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.BaseValidatedTableFieldHandler = void 0;
+    class BaseValidatedTableFieldHandler extends BaseTableFieldHandler_1.BaseTableFieldHandler {
+        constructor(configIn) {
+            super(configIn);
+        }
+        validate() {
+            // Data should be an array.
+            if (typeof this.data.length == 'undefined') {
+                throw new Error("data is not an array of rows");
+            }
+            for (let row of this.data) {
+                // Each row has a property name for each column.
+                for (const fieldId in row) {
+                    let colDetails = this.getColumnByField(fieldId);
+                    if (!colDetails) {
+                        throw new Error(`Unable to find definition for column with field id ${fieldId}`);
+                    }
+                    // TODO: validate the type of the field data.
+                }
+            }
+        }
+        setData(dataIn, fixData = false) {
+            const oldData = this.data;
+            if (fixData) {
+                for (let row of this.data) {
+                    // Each row has a property name for each column.
+                    for (const colId in row) {
+                        let colDetails = this.getColumnByField(colId);
+                        if (!colDetails) {
+                            delete row[colId];
+                        }
+                    }
+                }
+            }
+            this.data = dataIn;
+            this.validate();
+        }
+    }
+    exports.BaseValidatedTableFieldHandler = BaseValidatedTableFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 63 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
+// by the table control.
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.BaseTableFieldHandler = exports.ColumnEditor = void 0;
+    // A steplist has a table with different column types. They are defined here and interpreted in the table
+    // control and field configuration options.
+    var ColumnEditor;
+    (function (ColumnEditor) {
+        ColumnEditor["none"] = "none";
+        ColumnEditor["number"] = "number";
+        ColumnEditor["textline"] = "textline";
+        ColumnEditor["select"] = "select";
+        ColumnEditor["commentlog"] = "commentlog";
+        ColumnEditor["colorPicker"] = "colorPicker";
+        ColumnEditor["category"] = "category";
+        ColumnEditor["readonly"] = "readonly";
+        ColumnEditor["selectIcon"] = "selectIcon";
+        ColumnEditor["text"] = "text";
+        ColumnEditor["date_today"] = "date_today";
+        ColumnEditor["date"] = "date";
+        ColumnEditor["today"] = "today";
+        ColumnEditor["current_version"] = "current_version";
+        ColumnEditor["versionletter"] = "versionletter";
+        ColumnEditor["signaturemeaning"] = "signaturemeaning";
+        ColumnEditor["user"] = "user";
+        ColumnEditor["user_self"] = "user_self";
+        ColumnEditor["self"] = "self";
+        ColumnEditor["group"] = "group";
+        ColumnEditor["revision"] = "revision";
+        ColumnEditor["result"] = "result";
+        ColumnEditor["design"] = "design";
+        ColumnEditor["uprules"] = "uprules";
+        ColumnEditor["downrules"] = "downrules";
+        ColumnEditor["ecocapa"] = "ecocapa";
+        ColumnEditor["eco"] = "eco";
+        ColumnEditor["uid"] = "uid";
+        ColumnEditor["rules"] = "rules";
+    })(ColumnEditor || (ColumnEditor = {}));
+    exports.ColumnEditor = ColumnEditor;
+    class BaseTableFieldHandler {
+        constructor(configIn) {
+            this.data = [];
+            this.tableConfig = configIn;
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_steplist;
+        }
+        getColumnByField(fieldId) {
+            if (this.tableConfig.columns) {
+                const cols = this.tableConfig.columns.filter((col) => col.field == fieldId);
+                if (cols.length >= 1) {
+                    return cols[0];
+                }
+            }
+            return undefined;
+        }
+        columnNumberToFieldId(columnNumber) {
+            if (columnNumber >= this.tableConfig.columns.length) {
+                throw new Error(`${columnNumber} is outside the range [0..${this.tableConfig.columns.length}]`);
+            }
+            return this.tableConfig.columns[columnNumber].field;
+        }
+        validate() {
+            // No validation by default
+        }
+        initData(serializedFieldData) {
+            if (!serializedFieldData) {
+                this.data = [];
+            }
+            else {
+                // This requirement to remove <div> tags comes from the table control implementation.
+                this.data = JSON.parse(serializedFieldData.replace("<div/>", ""));
+            }
+        }
+        getData() {
+            return JSON.stringify(this.data);
+        }
+        getDataRaw() { return this.data; }
+        setData(dataIn, fixData = false) {
+            this.data = dataIn;
+        }
+        getRowCount() {
+            return this.data.length;
+        }
+        deleteRow(rowNumber) {
+            if (rowNumber >= this.data.length) {
+                throw new Error(`Row ${rowNumber} not found`);
+            }
+            this.data.splice(rowNumber, 1);
+            this.validate();
+        }
+        insertRow(rowNumber, columnData) {
+            // Construct a row object from the column data
+            let o = {};
+            columnData.forEach((v, i) => {
+                o[this.columnNumberToFieldId(i)] = v;
+            });
+            this.data.splice(rowNumber, 0, o);
+            this.validate();
+        }
+        clear() {
+            this.data = [];
+        }
+        getColumnCount() {
+            let columnCount = 0;
+            if (this.tableConfig.columns) {
+                columnCount = this.tableConfig.columns.length;
+            }
+            return columnCount;
+        }
+        setColumnData(row, columnId, data) {
+            // TODO: there should be a switch statement here on type. Complex types may
+            // be JSON objects and should be parsed.
+            this.data[row][columnId] = data;
+        }
+        setCellData(row, col, data) {
+            const fieldId = this.columnNumberToFieldId(col);
+            // TODO: there should be a switch statement here on type. Complex types may
+            // be JSON objects and should be parsed.
+            this.data[row][fieldId] = data;
+        }
+        getColumnData(row, columnId) {
+            // TODO: there should be a switch statement here on type. Complex types may
+            // be JSON objects and should be parsed.
+            return this.data[row][columnId];
+        }
+        getCellData(row, col) {
+            const fieldId = this.columnNumberToFieldId(col);
+            // TODO: there should be a switch statement here on type. Complex types may
+            // be JSON objects and should be parsed.
+            return this.data[row][fieldId];
+        }
+        getRowData(row) {
+            let result = [];
+            for (let i = 0; i < this.getColumnCount(); i++) {
+                result[i] = this.getCellData(row, i);
+            }
+            return result;
+        }
+    }
+    exports.BaseTableFieldHandler = BaseTableFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 64 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.GenericFieldHandler = void 0;
+    class GenericFieldHandler {
+        constructor(fieldTypeIn, configIn) {
+            this.fieldType = fieldTypeIn;
+            this.config = configIn;
+        }
+        getFieldType() { return this.fieldType; }
+        initData(serializedFieldData) { this.data = serializedFieldData; }
+        getData() { return this.data; }
+    }
+    exports.GenericFieldHandler = GenericFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 65 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DropdownFieldHandler = void 0;
+    class DropdownFieldHandler {
+        getData() {
+            return this.rawData;
+        }
+        constructor(params, initialValue) {
+            this.rawData = "";
+            this.human = "";
+            this.params = params;
+            this.initData(initialValue);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_dropdown;
+        }
+        initData(serializedFieldData) {
+            this.rawData = serializedFieldData;
+            let that = this;
+            if (typeof serializedFieldData === 'undefined') {
+                serializedFieldData = "";
+            }
+            if (this.params && this.params.splitHuman) {
+                let split = serializedFieldData.split("|");
+                this.rawData = split[0];
+                this.human = split[split.length - 1];
+            }
+            else {
+                this.rawData = serializedFieldData;
+                if (this.params && this.params.options) {
+                    for (let value of this.params.options) {
+                        if (value.id === that.getData()) {
+                            that.human = value.label;
+                        }
+                    }
+                }
+            }
+        }
+        /**
+         * Retrieve the current value of the field, formatted as an array.
+         * If there are N current values, the array will have N items.
+         * @param filterOnOptions true if you only want to get back values that show up
+         *     in the options list.
+         * @returns an array. Empty if there is no current value.
+         */
+        getValues(filterOnOptions = true) {
+            if (this.rawData != undefined || this.rawData != null) {
+                let values = this.rawData.split(",");
+                if (filterOnOptions && this.params && !this.params.create) {
+                    return values.filter((value) => {
+                        return this.params.options.some((option) => {
+                            return option.id === value;
+                        });
+                    });
+                }
+                else {
+                    // When creating new values, we don't want to return empty value like this : [""] but []
+                    if (this.params && this.params.create && this.rawData === "")
+                        return [];
+                    else
+                        return values;
+                }
+            }
+            return [];
+        }
+        getHuman() {
+            return this.human;
+        }
+    }
+    exports.DropdownFieldHandler = DropdownFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 66 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestStepsFieldHandler = void 0;
+    class TestStepsFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
+        static UpdateFieldConfig(options, itemType, testConfig) {
+            // This field handler gets it's configuration options from the test manager.
+            // Ignore input options completely.
+            const rconfig = testConfig.getTestStepsConfig(itemType);
+            for (let name in rconfig) {
+                options[name] = rconfig[name];
+            }
+        }
+        constructor(options) {
+            super(options);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_test_steps;
+        }
+    }
+    exports.TestStepsFieldHandler = TestStepsFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 67 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestStepsResultFieldHandler = void 0;
+    class TestStepsResultFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
+        static UpdateFieldConfig(options, testConfig) {
+            // This field handler gets it's configuration options from the test manager.
+            const rconfig = testConfig.getTestStepsResultsConfig();
+            for (let name in rconfig) {
+                options[name] = rconfig[name];
+            }
+        }
+        constructor(options) {
+            super(options);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_test_steps_result;
+        }
+        validate() {
+            // TODO: validation for this kind of table is more difficult.
+            // There is a property "passFailEditorConfig" on the options that needs to
+            // be looked at.
+        }
+    }
+    exports.TestStepsResultFieldHandler = TestStepsResultFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 68 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestResultFieldHandler = void 0;
+    // TODO: This is configuring a dropdown control. It should be possible to combine this code
+    // with the DropdownFieldHandler code.
+    class TestResultFieldHandler {
+        static UpdateFieldConfig(params, testConfig) {
+            // There are default params for dropdown for test results
+            params.maxItems = 1; // maxItems which can be selected
+            params.options = [], // options in dropdown  [{id:..., label: ...}]
+                params.create = false, // true if values can be added
+                params.splitHuman = true; // if human values differ from real values (e.g. for XTCs which are passed|ok|p (only the fist part is interesting).
+            // This field handler gets its configuration options from the test manager.
+            params.options = testConfig.getTestRunResultOptions();
+        }
+        constructor(params, initialValue) {
+            this.rawData = "";
+            this.human = "";
+            this.params = params;
+            this.initData(initialValue);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_test_result;
+        }
+        getData() {
+            return this.rawData;
+        }
+        initData(serializedFieldData) {
+            this.rawData = serializedFieldData;
+            let that = this;
+            if (typeof serializedFieldData === 'undefined') {
+                serializedFieldData = "";
+            }
+            if (this.params.splitHuman) {
+                let split = serializedFieldData.split("|");
+                this.rawData = split[0];
+                this.human = split[split.length - 1];
+            }
+            else {
+                this.rawData = serializedFieldData;
+                for (let value of this.params.options) {
+                    if (value.id === that.getData()) {
+                        that.human = value.label;
+                    }
+                }
+            }
+        }
+        getValues(filterOnOptions = true) {
+            if (this.rawData) {
+                let values = this.rawData.split(",");
+                if (filterOnOptions && !this.params.create) {
+                    return values.filter((value) => {
+                        return this.params.options.some((option) => {
+                            return option.id === value;
+                        });
+                    });
+                }
+                else {
+                    return values;
+                }
+            }
+            return [];
+        }
+        getHuman() {
+            return this.human;
+        }
+    }
+    exports.TestResultFieldHandler = TestResultFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 69 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BasicFunctions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.UserFieldHandler = void 0;
+    // TODO: UserFieldHandler is a lot like DropdownFieldHandler. Combine them somehow.
+    class UserFieldHandler {
+        // TODO: IDropdownParams is too broad. Use a narrower type
+        static UpdateFieldConfig(params, fieldValue, itemConfig) {
+            let userDropdown = itemConfig.getValidUserOptions(!BasicFunctions_1.BasicFunctions.isFalse(params.showUsers), // by default show users, if not specified
+            BasicFunctions_1.BasicFunctions.isTrue(params.showGroups), // by default do not show groups
+            undefined, fieldValue); // special treatment for deleted users
+            params.create = false;
+            // TODO: WARNING ! ERROR ! BUG ! This is altering the params object stored in the item configuration
+            // where it was originally retrieved from. We need a clone operation by the caller to stop doing this, however,
+            // I'm wondering if we have code that relies on these things being updated.
+            params.options = userDropdown;
+            params.maxItems = params.maxItems ? params.maxItems : 1;
+        }
+        getData() {
+            return this.rawData;
+        }
+        constructor(params, initialValue) {
+            this.rawData = "";
+            this.human = "";
+            this.params = params;
+            this.initData(initialValue);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_user;
+        }
+        initData(serializedFieldData) {
+            if (typeof serializedFieldData === 'undefined') {
+                serializedFieldData = "";
+            }
+            if (this.params.splitHuman) {
+                let split = serializedFieldData.split("|");
+                this.rawData = split[0];
+                this.human = split[split.length - 1];
+            }
+            else {
+                this.rawData = serializedFieldData;
+                for (let value of this.params.options) {
+                    if (value.id === this.getData()) {
+                        // TODO: what to do about "human" when there are multiple values?
+                        this.human = value.label;
+                    }
+                }
+            }
+        }
+        getValues(filterOnOptions = true) {
+            if (this.rawData) {
+                let values = this.rawData.split(",");
+                if (filterOnOptions && !this.params.create) {
+                    return values.filter((value) => {
+                        return this.params.options.some((option) => {
+                            return option.id === value;
+                        });
+                    });
+                }
+                else {
+                    return values;
+                }
+            }
+            return [];
+        }
+        getMaxItems() {
+            if (this.params.maxItems) {
+                return Number(this.params.maxItems);
+            }
+            return undefined;
+        }
+        setValues(values) {
+            const maxItems = this.getMaxItems();
+            if (maxItems && maxItems < values.length) {
+                throw new Error(`The field may only store ${maxItems} items`);
+            }
+            if (!this.params.create) {
+                // Validate against the existing options.
+                // TODO: validation should probably be in a central method checked by
+                // setData().
+                for (let value of values) {
+                    if (!this.params.options.some(o => o.id === value)) {
+                        throw new Error(`Value ${value} not found in accepted options`);
+                    }
+                }
+            }
+            this.initData(values.join());
+        }
+        getHuman() {
+            return this.human;
+        }
+    }
+    exports.UserFieldHandler = UserFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 70 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.BasicFunctions = void 0;
+    class BasicFunctions {
+        static isTrue(obj) {
+            if (obj && (obj.toString().toLowerCase() === "true" || obj.toString() === "1")) {
+                return true;
+            }
+            return false;
+        }
+        static isFalse(obj) {
+            if (typeof obj == "undefined") {
+                return false;
+            }
+            if (obj == false || obj == 0 || obj.toString().toLowerCase() === "false" || obj.toString() === "0") {
+                return true;
+            }
+            return false;
+        }
+    }
+    exports.BasicFunctions = BasicFunctions;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 71 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DateFieldHandler = void 0;
+    class DateFieldHandler {
+        constructor(config) {
+            this.date = undefined;
+        }
+        getData() {
+            if (!this.date)
+                return "";
+            return this.date.getFullYear() + "/" + (this.date.getMonth() + 1) + "/" + this.date.getDate();
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_date;
+        }
+        initData(serializedFieldData) {
+            if (!serializedFieldData)
+                return;
+            let date = DateFieldHandler.getDateFromString(serializedFieldData);
+            if (date) {
+                this.date = date;
+            }
+            else {
+                this.date = undefined;
+            }
+        }
+        static getDateFromString(dateStr) {
+            if (dateStr) {
+                let split = (dateStr).split("/");
+                if (split.length === 3 && split[0] !== "NaN") {
+                    let date = new Date(parseInt(split[0]), parseInt(split[1]) - 1, parseInt(split[2]));
+                    return date;
+                }
+            }
+            return null;
+        }
+        setDate(date) {
+            this.date = date;
+        }
+        getDate() {
+            return this.date;
+        }
+    }
+    exports.DateFieldHandler = DateFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 72 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.GateFieldHandler = void 0;
+    class GateFieldHandler {
+        constructor(config) {
+            this.defautValue = {
+                passed: false,
+                failed: false,
+                lines: [],
+                search: "",
+            };
+            // TODO: implement
+            this.config = config;
+        }
+        getData() {
+            return JSON.stringify(this.currentValue);
+        }
+        getFieldType() {
+            return FieldDescriptions_1.FieldDescriptions.Field_gateControl;
+        }
+        initData(serializedFieldData) {
+            this.currentValue = this.parseFieldValue(serializedFieldData);
+        }
+        // the field value is saved as json object
+        parseFieldValue(stored) {
+            // default
+            let state = Object.assign({}, this.defautValue);
+            // if something was saved before, use it
+            if (stored) {
+                state = JSON.parse(stored);
+            }
+            // remove lines which do not exist anymore (might happen if config changes)
+            let lineIds = this.config.lines.map((lineDef) => { return lineDef.id; });
+            state.lines = state.lines.filter((line) => { return lineIds.indexOf(line.id) != -1; });
+            // add missing lines
+            let existsIds = state.lines.map((lineValue) => { return lineValue.id; });
+            let newLines = this.config.lines.map((lineDef) => {
+                return {
+                    id: lineDef.id,
+                    passed: false,
+                    failed: false,
+                    user: "",
+                    comment: "",
+                    date: "",
+                    dateUser: ""
+                };
+            }).filter((defaultLine) => {
+                return existsIds.indexOf(defaultLine.id) == -1;
+            });
+            state.lines = state.lines.concat(newLines);
+            // update overall status and text
+            this.updateOverallStatusInternal(state);
+            return state;
+        }
+        updateOverallStatus() {
+            this.updateOverallStatusInternal(this.currentValue);
+        }
+        updateOverallStatusInternal(status) {
+            let that = this;
+            this.allPassed = false;
+            status.passed = false;
+            // if one line is failed, the whole status is failed
+            status.failed = status.lines.filter((line) => { return line.failed; }).length > 0;
+            if (!status.failed) {
+                // if all lines passed, the status is passed
+                status.passed = status.lines.filter((line) => { return line.passed; }).length == status.lines.length;
+            }
+            // build searchable string
+            /*
+                _passed_ (all lines passed)
+                _failed_ (one line failed)
+                _todo_ (needs some action)
+                _pass_userId_ (a user passed it)
+                _fail_userId_ (a user failed it)
+                _todo_userId_ (a user needs to do something)
+            */
+            status.search = "";
+            if (status.passed) {
+                status.search += "_passed_";
+                this.allPassed = true;
+            }
+            else if (status.failed) {
+                status.search += "_failed_";
+            }
+            else {
+                status.search += "_todo_";
+            }
+            for (let state of status.lines) {
+                if (state.passed) {
+                    status.search += "_pass_" + state.user + "_";
+                }
+                else if (state.failed) {
+                    status.search += "_fail_" + state.user + "_";
+                }
+                else {
+                    for (let lineDef of that.config.lines) {
+                        if (lineDef.id == state.id) {
+                            for (let user of lineDef.users) {
+                                status.search += "_todo_" + user + "_";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        getGateValue() {
+            return this.currentValue;
+        }
+        setGateValue(gateValue) {
+            if (!gateValue)
+                gateValue = Object.assign({}, this.defautValue);
+            this.currentValue = gateValue;
+        }
+    }
+    exports.GateFieldHandler = GateFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 73 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.HyperlinkFieldHandler = void 0;
+    class HyperlinkFieldHandler {
+        constructor(configIn) {
+            this.config = configIn;
+        }
+        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_hyperlink; }
+        initData(serializedFieldData) {
+            this.data = serializedFieldData;
+        }
+        getData() {
+            return this.data;
+        }
+        getValue() {
+            if (this.data) {
+                if (this.data == "1" || this.data == "true") {
+                    return true;
+                }
+                else if (this.data == "0" || this.data == "false") {
+                    return false;
+                }
+            }
+            return undefined;
+        }
+        setValue(value) {
+            if (value !== undefined) {
+                this.data = value ? "true" : "false";
+            }
+            else {
+                this.data = undefined;
+            }
+        }
+    }
+    exports.HyperlinkFieldHandler = HyperlinkFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 74 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, ItemSelectionFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.CrosslinksFieldHandler = void 0;
+    class CrosslinksFieldHandler extends ItemSelectionFieldHandler_1.ItemSelectionFieldHandler {
+        static UpdateFieldConfig(params) {
+            params.crossProject = true;
+            if (params.linkTypes == undefined) {
+                params.linkTypes = [];
+            }
+            if (params.prefix == undefined) {
+                params.prefix = "Links";
+            }
+        }
+        constructor(configIn) {
+            super(configIn, FieldDescriptions_1.FieldDescriptions.Field_crosslinks);
+        }
+        /**
+         * Add an item to the list at the given position
+         * @param position
+         * @param item
+         * @returns the field handler
+         * @throws Error in case a projectShortLabel doesn't exist in the item.
+         */
+        insertItem(position, item) {
+            if (!item.projectShortLabel) {
+                throw new Error("item must be a cross project link");
+            }
+            return super.insertItem(position, item);
+        }
+        /**
+         * Append the given item to the end of the list of items.
+         * @param item
+         * @returns the field handler.
+         * @throws Error in case a projectShort label doesn't exist in the item.
+         */
+        appendItem(item) {
+            if (!item.projectShortLabel) {
+                throw new Error("item must be a cross project link");
+            }
+            return super.appendItem(item);
+        }
+    }
+    exports.CrosslinksFieldHandler = CrosslinksFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 75 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
+// by the item selection control
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemSelectionFieldHandler = void 0;
+    class ItemSelectionFieldHandler {
+        constructor(configIn, fieldTypeIn) {
+            this.name = "";
+            this.config = configIn;
+            if (fieldTypeIn) {
+                this.fieldType = fieldTypeIn;
+            }
+            else {
+                // Field_links is a kind of default. This field handler is often used
+                // in cases that don't map to an item field, just to a control used
+                // to display a UI. In those cases, no one cares about the field type.
+                this.fieldType = FieldDescriptions_1.FieldDescriptions.Field_links;
+            }
+        }
+        addSignatures(signatures, includeAll) {
+            //Nothing to do here
+        }
+        getFieldType() { return this.fieldType; }
+        initData(serializedFieldData) {
+            this.data = serializedFieldData;
+            if (serializedFieldData)
+                this.items = JSON.parse(serializedFieldData);
+            else
+                this.items = [];
+        }
+        getData() {
+            return JSON.stringify(this.items);
+        }
+        getItems() {
+            return this.items;
+        }
+        getItemCount() {
+            return this.getItems().length;
+        }
+        hasItems() {
+            return this.getItemCount() > 0;
+        }
+        hasItem(itemId, projectShortLabel) {
+            for (let item of this.getItems()) {
+                if (item.to == itemId && item.projectShortLabel == projectShortLabel) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        insertItem(position, item) {
+            if (this.hasItem(item.to, item.projectShortLabel)) {
+                const label = item.projectShortLabel ? (item.projectShortLabel + "/") : "";
+                throw new Error(`Item ${label}${item.to} is already included`);
+            }
+            let items = this.getItems();
+            items.splice(position, 0, item);
+            this.data = JSON.stringify(items);
+            return this;
+        }
+        appendItem(item) {
+            const position = this.getItemCount();
+            return this.insertItem(position, item);
+        }
+        removeItem(position) {
+            let items = this.getItems();
+            items.splice(position, 1);
+            this.data = JSON.stringify(items);
+            return this;
+        }
+        clear() {
+            let items = [];
+            this.data = JSON.stringify(items);
+            return this;
+        }
+        setItems(selectedItems) {
+            if (!selectedItems)
+                selectedItems = [];
+            this.items = selectedItems;
+        }
+        getFieldName() {
+            return this.name;
+        }
+        setFieldName(value) {
+            this.name = value;
+        }
+    }
+    exports.ItemSelectionFieldHandler = ItemSelectionFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 76 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(64), __webpack_require__(6), __webpack_require__(31), __webpack_require__(77), __webpack_require__(79), __webpack_require__(80), __webpack_require__(91)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericFieldHandler_1, globals_1, FieldDescriptions_1, GenericDocFieldHandler_1, SectionDescriptions_1, Document_1, JQueryExtendReplacement_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DHFFieldHandler = void 0;
+    class DHFFieldHandler extends GenericFieldHandler_1.GenericFieldHandler {
+        constructor(fieldConfig) {
+            super(FieldDescriptions_1.FieldDescriptions.Field_dhf, fieldConfig);
+            this.fieldConfig = fieldConfig;
+            this.innerDataHandler = new GenericDocFieldHandler_1.GenericDocFieldHandler(SectionDescriptions_1.SectionDescriptions.section_hidden, {}, "");
+            this.itemConfig = globals_1.globalMatrix.ItemConfig;
+        }
+        setItemConfig(itemConfig) {
+            this.itemConfig = itemConfig;
+        }
+        getData() {
+            if (this.innerDataHandler == undefined || this.innerDataHandler.getFieldType() == SectionDescriptions_1.SectionDescriptions.section_hidden) {
+                return undefined;
+            }
+            let dhfValue = { type: this.innerDataHandler.getFieldType(),
+                name: this.innerDataHandler.getFieldName(),
+                fieldValueXML: "",
+                fieldValue: "" };
+            // create the controller
+            let fieldHandler = this.innerDataHandler;
+            // udpate the controller values
+            dhfValue.fieldValue = fieldHandler.getData();
+            // define global options
+            let controllerConfig = (0, JQueryExtendReplacement_1.extend)(fieldHandler.dhfFieldConfig, fieldHandler.getDefaultConfig());
+            let global = {
+                globalOptions: true,
+                page_break: controllerConfig['page_break'],
+                sub_section: controllerConfig['sub_section'],
+                landscape: controllerConfig['landscape'],
+                show_section_title: controllerConfig['show_section_title'],
+                automation: controllerConfig['automation']
+            };
+            // get specific options of control and add global as a row
+            let options = JSON.parse(fieldHandler.getXmlValue());
+            options.push(global);
+            // update the xml dump
+            dhfValue.fieldValueXML = JSON.stringify(options);
+            //MATRIX-5714 : Dompurify in SDK... Should we make it available ?
+            //
+            // sanitize the name
+            if (globalThis["DOMPurify"] && globalThis["DOMPurify"].sanitize)
+                dhfValue.name = (DOMPurify.sanitize(dhfValue.name) + '');
+            dhfValue.name = dhfValue.name.replace(/&lt;/g, "<");
+            return JSON.stringify(dhfValue);
+        }
+        initData(fieldValue) {
+            if (fieldValue && fieldValue.length > 0 && this.itemConfig) {
+                this.fieldConfig.dhfValue = JSON.parse(fieldValue);
+                this.fieldConfig.dhfValue.ctrlConfig = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.itemConfig, this.fieldConfig.dhfValue.type, this.fieldConfig.dhfValue.ctrlConfig);
+                this.innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.itemConfig, this.fieldConfig.dhfValue);
+            }
+        }
+        setFieldHandler(docFieldHandler) {
+            this.innerDataHandler = docFieldHandler;
+        }
+    }
+    exports.DHFFieldHandler = DHFFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 77 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.GenericDocFieldHandler = void 0;
+    class GenericDocFieldHandler extends GenericDocAbstractFieldHandler_1.GenericDocAbstractFieldHandler {
+        getDefaultConfig() {
+            return {};
+        }
+        getXmlValue() {
+            var _a;
+            return JSON.stringify([((_a = this.rawValue) !== null && _a !== void 0 ? _a : "")]);
+        }
+        addSignatures(signatures, includeAll) { }
+    }
+    exports.GenericDocFieldHandler = GenericDocFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 78 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.GenericDocAbstractFieldHandler = void 0;
+    class GenericDocAbstractFieldHandler {
+        constructor(sectionType, config, fieldValue) {
+            this.name = "";
+            if (!config)
+                config = this.getDefaultConfig();
+            this.dhfFieldConfig = config;
+            this.sectionType = sectionType;
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        addSignatures(signatures, includeAll) {
+            //Nothing to do here
+        }
+        getData() {
+            return this.rawValue;
+        }
+        getFieldType() {
+            return this.sectionType;
+        }
+        initData(serializedFieldData) {
+            this.rawValue = serializedFieldData;
+        }
+        getFieldName() {
+            return this.name;
+        }
+        setFieldName(value) {
+            this.name = value;
+        }
+    }
+    exports.GenericDocAbstractFieldHandler = GenericDocAbstractFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 79 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.SectionDescriptions = void 0;
+    class SectionDescriptions {
+    }
+    exports.SectionDescriptions = SectionDescriptions;
+    SectionDescriptions.section_Checkbox = "Checkbox";
+    SectionDescriptions.section_Custom = "Custom";
+    SectionDescriptions.section_derivedfrom = "derivedfrom";
+    SectionDescriptions.section_designreviews = "designreviews";
+    SectionDescriptions.section_audittrail = "audittrail";
+    SectionDescriptions.section_signatures = "signatures";
+    SectionDescriptions.section_responsibilities = "responsibilities";
+    SectionDescriptions.section_genericTable = "genericTable";
+    SectionDescriptions.section_dhf_table = "dhf_table";
+    SectionDescriptions.section_document_options = "document_options";
+    SectionDescriptions.section_Date = "Date";
+    SectionDescriptions.section_item_index = "item_index";
+    SectionDescriptions.section_itemlist = "itemlist";
+    SectionDescriptions.section_package = "package";
+    SectionDescriptions.section_items = "items";
+    SectionDescriptions.section_itemtable = "itemtable";
+    SectionDescriptions.section_linklist = "linklist";
+    SectionDescriptions.section_figures_tables = "figures_tables";
+    SectionDescriptions.section_multiselect = "multiselect";
+    SectionDescriptions.section_remarks = "remarks";
+    SectionDescriptions.section_richtext = "richtext";
+    SectionDescriptions.section_riskstats = "riskstats";
+    SectionDescriptions.section_terms_abbreviations = "terms_abbreviations";
+    SectionDescriptions.section_table_of_content = "table_of_content";
+    SectionDescriptions.section_testresults = "testresults";
+    SectionDescriptions.section_textline = "textline";
+    SectionDescriptions.section_tracematrix = "tracematrix";
+    SectionDescriptions.section_downtraces = "downtraces";
+    SectionDescriptions.section_uptraces = "uptraces";
+    SectionDescriptions.section_duedate = "duedate";
+    SectionDescriptions.section_templateapproval = "templateapproval";
+    SectionDescriptions.section_signaturebox = "signaturebox";
+    SectionDescriptions.section_CustomSection = "CustomSection";
+    SectionDescriptions.section_checkbox = "checkbox";
+    SectionDescriptions.section_hidden = "hidden";
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 80 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79), __webpack_require__(77), __webpack_require__(81), __webpack_require__(82), __webpack_require__(84), __webpack_require__(87), __webpack_require__(89), __webpack_require__(90), __webpack_require__(92), __webpack_require__(93), __webpack_require__(95), __webpack_require__(96), __webpack_require__(97), __webpack_require__(98), __webpack_require__(99), __webpack_require__(100), __webpack_require__(101), __webpack_require__(102), __webpack_require__(103), __webpack_require__(104), __webpack_require__(105), __webpack_require__(107), __webpack_require__(108), __webpack_require__(109), __webpack_require__(106)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, SectionDescriptions_1, GenericDocFieldHandler_1, GenericTableDocHandler_1, DateDocHandler_1, CustomDocFieldHandler_1, RemarksDocFieldHandler_1, CheckBoxDocFieldHandler_1, DesignReviewDocFieldHandler_1, ItemIndexDocFieldHander_1, ItemListDocFieldHandler_1, LinkListDocFieldHandler_1, ItemTableDocFieldHandler_1, RiskStatsDocFieldHandler_1, ItemRefDocFieldHandler_1, ListOfFiguresDocFieldHandler_1, SmartTextDocFieldHandler_1, TableOfContentDocFieldHandler_1, testResultsDocFieldHandler_1, DerivedFromDocFieldHandler_1, DocumentOptionsFieldHandler_1, TextLineDocFieldHandler_1, TraceMatrixDocFieldHandler_1, TraceDocFieldHandler_1, DropdownDocFieldHandler_1, RichTextDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DocFieldHandlerFactory = void 0;
+    class DocFieldHandlerFactory {
+        static GetDHFFieldConfig(itemConfig, fieldType, config) {
+            let dhfConfig = itemConfig.getDHFConfig();
+            let foundConfig = undefined;
+            // special case for signatures
+            if (fieldType == SectionDescriptions_1.SectionDescriptions.section_signaturebox || fieldType == SectionDescriptions_1.SectionDescriptions.section_templateapproval)
+                fieldType = "signatures";
+            if (dhfConfig && dhfConfig[fieldType]) {
+                foundConfig = dhfConfig[fieldType];
+            }
+            if (foundConfig != undefined)
+                return Object.assign(Object.assign({}, foundConfig), (config || {}));
+            return config;
+        }
+        static createHandler(itemConfig, dhfValue) {
+            let returnedFieldHandler = undefined;
+            switch (dhfValue.type) {
+                case SectionDescriptions_1.SectionDescriptions.section_audittrail:
+                case SectionDescriptions_1.SectionDescriptions.section_signatures:
+                case SectionDescriptions_1.SectionDescriptions.section_signaturebox:
+                case SectionDescriptions_1.SectionDescriptions.section_responsibilities:
+                case SectionDescriptions_1.SectionDescriptions.section_genericTable:
+                case SectionDescriptions_1.SectionDescriptions.section_templateapproval:
+                case SectionDescriptions_1.SectionDescriptions.section_dhf_table:
+                    returnedFieldHandler = new GenericTableDocHandler_1.GenericTableDocHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_Date:
+                case SectionDescriptions_1.SectionDescriptions.section_duedate:
+                    returnedFieldHandler = new DateDocHandler_1.DateDocHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_remarks:
+                    returnedFieldHandler = new RemarksDocFieldHandler_1.RemarksDocFieldHandler(itemConfig, dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_multiselect:
+                    returnedFieldHandler = new DropdownDocFieldHandler_1.MultiSelectDocFieldHandler(itemConfig, dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_downtraces:
+                case SectionDescriptions_1.SectionDescriptions.section_uptraces:
+                    returnedFieldHandler = new TraceDocFieldHandler_1.TraceDocFieldHandler(itemConfig, dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_designreviews:
+                    returnedFieldHandler = new DesignReviewDocFieldHandler_1.DesignReviewDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_package:
+                case SectionDescriptions_1.SectionDescriptions.section_itemlist:
+                    returnedFieldHandler = new ItemRefDocFieldHandler_1.ItemRefDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_riskstats:
+                    returnedFieldHandler = new RiskStatsDocFieldHandler_1.RiskStatsDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_linklist:
+                    returnedFieldHandler = new LinkListDocFieldHandler_1.LinkListDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_itemtable:
+                    returnedFieldHandler = new ItemTableDocFieldHandler_1.ItemTableDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_items:
+                    returnedFieldHandler = new ItemListDocFieldHandler_1.ItemListDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_Checkbox: // Legacy
+                case SectionDescriptions_1.SectionDescriptions.section_checkbox:
+                    returnedFieldHandler = new CheckBoxDocFieldHandler_1.CheckBoxDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_Custom: // Legacy
+                case SectionDescriptions_1.SectionDescriptions.section_CustomSection:
+                    returnedFieldHandler = new CustomDocFieldHandler_1.CustomDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_item_index:
+                    returnedFieldHandler = new ItemIndexDocFieldHander_1.ItemIndexDocFieldHander(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_figures_tables:
+                    returnedFieldHandler = new ListOfFiguresDocFieldHandler_1.ListOfFiguresDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_terms_abbreviations:
+                    returnedFieldHandler = new SmartTextDocFieldHandler_1.SmartTextDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_table_of_content:
+                    returnedFieldHandler = new TableOfContentDocFieldHandler_1.TableOfContentDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_testresults:
+                    returnedFieldHandler = new testResultsDocFieldHandler_1.TestResultsDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_derivedfrom:
+                    break;
+                    returnedFieldHandler = new DerivedFromDocFieldHandler_1.DerivedFromDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                case SectionDescriptions_1.SectionDescriptions.section_document_options:
+                    returnedFieldHandler = new DocumentOptionsFieldHandler_1.DocumentOptionsFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_richtext:
+                    returnedFieldHandler = new RichTextDocFieldHandler_1.RichTextDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_textline:
+                    returnedFieldHandler = new TextLineDocFieldHandler_1.TextLineDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                case SectionDescriptions_1.SectionDescriptions.section_tracematrix:
+                    returnedFieldHandler = new TraceMatrixDocFieldHandler_1.TraceMatrixDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+                    break;
+                default:
+                    returnedFieldHandler = new GenericDocFieldHandler_1.GenericDocFieldHandler(dhfValue.type, dhfValue.ctrlConfig, dhfValue.fieldValue);
+            }
+            if (dhfValue.name) {
+                returnedFieldHandler.setFieldName(dhfValue.name);
+            }
+            return returnedFieldHandler;
+        }
+    }
+    exports.DocFieldHandlerFactory = DocFieldHandlerFactory;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 81 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BaseTableFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.GenericTableDocHandler = void 0;
+    class GenericTableDocHandler extends BaseTableFieldHandler_1.BaseTableFieldHandler {
+        constructor(sectionType, config, fieldValue) {
+            // The IDHFSectionOptions config parameter is really a ITableControlBaseParams.
+            super(config);
+            this.sectionType = sectionType;
+            this.name = "";
+            this.dhfFieldConfig = config;
+            this.initData(fieldValue);
+        }
+        validate() {
+            super.validate();
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        getFieldType() {
+            return this.sectionType;
+        }
+        GetColumnCount(controllerConfig) {
+            return controllerConfig.columns ? controllerConfig.columns.length : 0;
+        }
+        getXmlValue() {
+            let controllerConfig = this.dhfFieldConfig;
+            // get data entered into table
+            let table = [];
+            let fieldValue = this.getData();
+            if (fieldValue) {
+                table = JSON.parse(fieldValue);
+            }
+            // add some extras for the xml dump: table header, sorting and colum type
+            const col_order = { sortedtable: 1 };
+            const col_types = { columnTypes: 1 };
+            const col_header = {};
+            const colSorter = [];
+            let idx = 0;
+            //There might be no columns defined
+            let columns = controllerConfig.columns || [];
+            for (let columnConfig of columns) {
+                let castedColumnConfig = columnConfig;
+                colSorter.push({ name: castedColumnConfig.field, order: castedColumnConfig.pos });
+                col_types[castedColumnConfig.field] = castedColumnConfig.columnType;
+                col_header[castedColumnConfig.field] = castedColumnConfig.name;
+                // fix custom drop down values
+                let colOpts = this.getColumnByField(controllerConfig.columns[idx].field);
+                if (colOpts) {
+                    for (let row = 0; row < table.length; row++) {
+                        if (table[row]["col" + idx] && colOpts[table[row]["col" + idx]]) {
+                            // replace value with human readable value
+                            table[row]["col" + idx] = colOpts[table[row]["col" + idx]];
+                        }
+                    }
+                }
+                idx++;
+            }
+            // make sure col indexes start at 0
+            colSorter.sort(function (a, b) {
+                return a.order - b.order;
+            });
+            let colIdx = 0;
+            for (let s of colSorter) {
+                col_order[s.name] = colIdx;
+                colIdx++;
+            }
+            table.splice(0, 0, col_header);
+            table.splice(0, 0, col_types);
+            table.splice(0, 0, col_order);
+            // return the xml dump
+            return JSON.stringify(table);
+        }
+        getDefaultConfig() {
+            // Default is empty as it's configured from itemConfig.getDHFConfig();
+            return {};
+        }
+        getFieldName() {
+            return this.name;
+        }
+        setFieldName(value) {
+            this.name = value;
+        }
+        addSignatures(signatures, includeAll) {
+            let controllerConfig = this.dhfFieldConfig;
+            let signatureNameColumn;
+            let eSign = false;
+            for (let col = 0; col < this.getColumnCount(); col++) {
+                if (controllerConfig.columns[col].columnType === "type4") {
+                    // drop down with user names
+                    signatureNameColumn = controllerConfig.columns[col].field;
+                }
+                else if (controllerConfig.columns[col].columnType === "type10") {
+                    // drop down with user names
+                    signatureNameColumn = controllerConfig.columns[col].field;
+                }
+                else if (controllerConfig.columns[col].columnType === "type3") {
+                    // empty field to add signature image and token
+                    eSign = true;
+                }
+            }
+            if (!eSign && !signatureNameColumn) {
+                return;
+            }
+            if (!eSign) {
+                return;
+            }
+            if (!signatureNameColumn) {
+                return;
+            }
+            // get data entered into table
+            let table = [];
+            table = this.getDataRaw();
+            for (let row = 0; row < table.length; row++) {
+                let userId = table[row][signatureNameColumn];
+                if ((includeAll || userId) && signatures.indexOf(userId) === -1) {
+                    signatures.push(userId);
+                }
+            }
+        }
+    }
+    exports.GenericTableDocHandler = GenericTableDocHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 82 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(71), __webpack_require__(83)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DateFieldHandler_1, DateTimeBL_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DateDocHandler = void 0;
+    class DateDocHandler extends DateFieldHandler_1.DateFieldHandler {
+        constructor(type, config, fieldValue) {
+            if (config == undefined)
+                config = DateDocHandler.default_config;
+            super(config);
+            this.name = "";
+            this.type = type;
+            this.dhfFieldConfig = config;
+            this.initData(fieldValue);
+        }
+        getFieldType() {
+            return this.type;
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        getXmlValue() {
+            let xmlval = [];
+            let yyyymmdd = this.getDate();
+            // new Date take mm-1
+            let dateStr = DateTimeBL_1.DateTimeBL.getInstance().renderCustomerHumanDate(yyyymmdd, true);
+            xmlval.push({ "date": dateStr });
+            return JSON.stringify(xmlval);
+        }
+        addSignatures(signatures, includeAll) {
+            //Nothing to do here
+        }
+        getDefaultConfig() {
+            return {};
+        }
+        getFieldName() {
+            return this.name;
+        }
+        setFieldName(value) {
+            this.name = value;
+        }
+    }
+    exports.DateDocHandler = DateDocHandler;
+    DateDocHandler.default_config = {
+        default: {}
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 83 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, globals_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DateTimeBL = void 0;
+    class DateTimeBL {
+        static getInstance() {
+            if (DateTimeBL.instance == null) {
+                DateTimeBL.instance = new DateTimeBL();
+            }
+            return DateTimeBL.instance;
+        }
+        constructor() {
+            this.userDateTimeFormat = "yyyy/MM/dd HH:mm:ss";
+            this.userDateOnlyFormat = "yyyy/MM/dd";
+            this.userTimezone = "UTC";
+            this.simpleDateTimeFormat = new SimpleDateFormat(this.userDateTimeFormat);
+            this.simpleDateFormat = new SimpleDateFormat(this.userDateOnlyFormat);
+            this.dateIso8601FromServer = "";
+            this.dateUserFromServer = "";
+            this.serverDateTimeFormat = "yyyy/MM/dd HH:mm:ss";
+            this.serverDateOnlyFormat = "yyyy/MM/dd";
+            this.serverTimezone = "UTC";
+            this.simpleCustomerDateTimeFormat = new SimpleDateFormat(this.userDateTimeFormat);
+            this.simpleCustomerDateFormat = new SimpleDateFormat(this.userDateOnlyFormat);
+        }
+        // isValidateDate(new Date("ccccc")) -> false
+        isValidDate(d) {
+            if (Object.prototype.toString.call(d) === "[object Date]") {
+                return !isNaN(d.getTime());
+            }
+            return false;
+        }
+        // render a human date and time in the user's preferred style
+        renderHumanDate(date, dateOnly) {
+            if (!this.isValidDate(date)) {
+                return "";
+            }
+            if (dateOnly) {
+                return this.simpleDateFormat.format(date);
+            }
+            return this.simpleDateTimeFormat.format(date);
+        }
+        // render a human date and time in the user's preferred style
+        renderCustomerHumanDate(date, dateOnly) {
+            if (!this.isValidDate(date)) {
+                return "";
+            }
+            if (dateOnly) {
+                return this.simpleCustomerDateFormat.format(date);
+            }
+            return this.simpleCustomerDateTimeFormat.format(date);
+        }
+        // render a date 3 letter abbreviation (e.g. for calendars)
+        renderHumanMonth(dateObj) {
+            let dateFormat = new SimpleDateFormat("MMM");
+            return dateFormat.format(dateObj);
+        }
+        renderDashFormat(dateObj) {
+            let dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            return dateFormat.format(dateObj);
+        }
+        // return the simple date format for controls
+        getSimpleDateFormat() {
+            return this.userDateOnlyFormat;
+        }
+        toMoment(format) {
+            // see https://www.angularfaces.net/cheatsheet/
+            return format
+                .replace("a", "A")
+                .replace("DDD", "DDDD")
+                .replace("D", "DDD")
+                .replace("dd", "DD")
+                .replace("d", "D")
+                .replace("EEEE", "dddd")
+                .replace("EEE", "ddd")
+                .replace("EE", "dd")
+                .replace("E", "d")
+                .replace("u", "E")
+                .replace("w", "W")
+                .replace("ww", "WW")
+                .replace("xxx", "Z")
+                .replace("xx", "ZZ")
+                .replace("YYYY", "gggg")
+                .replace("YY", "gg")
+                .replace("yyyy", "YYYY")
+                .replace("yyy", "YYY")
+                .replace("yy", "YY")
+                .replace("y", "Y")
+                .replace("Z", "ZZ");
+        }
+        getSimpleDateFormatMoment() {
+            return this.toMoment(this.userDateOnlyFormat);
+        }
+        getSimpleDateTimeFormatMoment() {
+            return this.toMoment(this.userDateTimeFormat);
+        }
+        async initDateTimeSettings(update) {
+            let dateSettings;
+            let that = this;
+            function updateSettings() {
+                that.userDateTimeFormat = dateSettings.timeformat;
+                that.userDateOnlyFormat = dateSettings.dateformat;
+                that.userTimezone = dateSettings.timeZone;
+                that.serverDateOnlyFormat = dateSettings.customerDateformat;
+                that.serverDateTimeFormat = dateSettings.customerTimeformat;
+                that.serverTimezone = dateSettings.customerTimezone;
+                // create formatting strings
+                that.simpleCustomerDateTimeFormat = new SimpleDateFormat(that.serverDateTimeFormat);
+                that.simpleCustomerDateFormat = new SimpleDateFormat(that.serverDateOnlyFormat);
+                // remember the date time settings as the server thinks it should be
+                that.dateIso8601FromServer = dateSettings.dateIso8601;
+                that.dateUserFromServer = dateSettings.timeUserFormat;
+                // create formatting strings
+                that.simpleDateTimeFormat = new SimpleDateFormat(that.userDateTimeFormat);
+                that.simpleDateFormat = new SimpleDateFormat(that.userDateOnlyFormat);
+            }
+            if (update) {
+                await globals_1.restConnection.getServer("all/date").done(function (ds) {
+                    dateSettings = ds;
+                    updateSettings();
+                });
+            }
+            else {
+                dateSettings = globals_1.matrixSession.getDateInfo();
+                updateSettings();
+            }
+            return;
+        }
+    }
+    exports.DateTimeBL = DateTimeBL;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 84 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(85)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.CustomDocFieldHandler = void 0;
+    class CustomDocFieldHandler extends ItemSelectionFromToAbstractDocFieldHandler_1.ItemSelectionFromToAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return CustomDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let controllerConfig = this.dhfFieldConfig;
+            // get lists
+            let reflist = this.getSelectedItems();
+            let td = [];
+            let r0 = {};
+            for (let idx = 0; idx < reflist.from.length; idx++) {
+                r0["from" + idx] = reflist.from[idx].to;
+            }
+            td.push(r0);
+            let r1 = {};
+            for (let idx = 0; idx < reflist.to.length; idx++) {
+                r1["to" + idx] = reflist.to[idx].to;
+            }
+            td.push(r1);
+            // copy parameters
+            let r2 = {};
+            r2["SETTINGS"] = JSON.stringify(controllerConfig.options);
+            td.push(r2);
+            // return the xml dump
+            return JSON.stringify(td);
+        }
+    }
+    exports.CustomDocFieldHandler = CustomDocFieldHandler;
+    CustomDocFieldHandler.default_config = {
+        default: {
+            includeInToc: false, landscape: false, options: {
+                description: "",
+                descriptionContent: "",
+                descriptionNoContent: "<p>not applicable</p>",
+                formatter: ""
+            }
+        }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 85 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandlerFromTo_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemSelectionFromToAbstractDocFieldHandler = void 0;
+    class ItemSelectionFromToAbstractDocFieldHandler extends ItemSelectionFieldHandlerFromTo_1.ItemSelectionFieldHandlerFromTo {
+        constructor(fielType, config, fieldValue) {
+            super(config, fielType);
+            this.name = "";
+            if (!config)
+                config = this.getDefaultConfig();
+            this.dhfFieldConfig = config;
+            this.initData(fieldValue);
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        addSignatures(signatures, includeAll) {
+            //Nothing to do here
+        }
+        getFieldName() {
+            return this.name;
+        }
+        setFieldName(value) {
+            this.name = value;
+        }
+    }
+    exports.ItemSelectionFromToAbstractDocFieldHandler = ItemSelectionFromToAbstractDocFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 86 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemSelectionFieldHandlerFromTo = void 0;
+    class ItemSelectionFieldHandlerFromTo {
+        constructor(configIn, fieldTypeIn) {
+            this.defaultSelection = [];
+            this.config = configIn;
+            this.fieldType = fieldTypeIn;
+            // initialize object
+            this.selectedItems = { from: [], to: [] };
+        }
+        getData() {
+            return JSON.stringify(this.selectedItems);
+        }
+        getFieldType() {
+            return this.fieldType;
+        }
+        initData(serializedFieldData) {
+            this.selectedItems = { from: [], to: [] };
+            if (serializedFieldData && serializedFieldData !== 'undefined' && serializedFieldData !== "") {
+                this.selectedItems = JSON.parse(serializedFieldData);
+            }
+            else if (this.config && this.config.parameter && this.config.parameter.allTo) {
+                this.selectedItems.to = this.defaultSelection;
+            }
+        }
+        getSelectedItems() {
+            return this.selectedItems;
+        }
+        setSelectedItems(data) {
+            this.selectedItems = data;
+        }
+        setFromSelectiont(newSelection) {
+            this.selectedItems.from = newSelection;
+        }
+        setToSelectiont(newSelection) {
+            this.selectedItems.to = newSelection;
+        }
+        isDefaultSelection() {
+            if (this.defaultSelection.length !== this.selectedItems.to.length) {
+                return false;
+            }
+            const notInDefault = this.selectedItems.to.filter((d) => {
+                return this.defaultSelection.reduce((prev, item) => {
+                    if (item.to === d.to) {
+                        return false;
+                    }
+                    else {
+                        return prev;
+                    }
+                }, true);
+            });
+            return notInDefault.length === 0;
+        }
+        setDefaultSelection(map) {
+            this.defaultSelection = map;
+        }
+        setConfig(config) {
+            this.config = config;
+        }
+    }
+    exports.ItemSelectionFieldHandlerFromTo = ItemSelectionFieldHandlerFromTo;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 87 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(88)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.RemarksDocFieldHandler = void 0;
+    class RemarksDocFieldHandler extends DropdownAbstractDocFieldHandler_1.DropdownAbstractDocFieldHandler {
+        getXmlValue() {
+            let tt = [];
+            tt.push({ lines: this.getData() });
+            return JSON.stringify(tt);
+        }
+        getDefaultConfig() {
+            return RemarksDocFieldHandler.default_config.default;
+        }
+    }
+    exports.RemarksDocFieldHandler = RemarksDocFieldHandler;
+    RemarksDocFieldHandler.default_config = {
+        default: {}
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 88 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(65)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DropdownAbstractDocFieldHandler = void 0;
+    class DropdownAbstractDocFieldHandler extends DropdownFieldHandler_1.DropdownFieldHandler {
+        constructor(itemConfig, type, config, initialValue) {
+            super(config, initialValue);
+            this.itemConfig = itemConfig;
+            this.name = "";
+            if (!config)
+                config = this.getDefaultConfig();
+            this.dhfFieldConfig = config;
+            this.sectionType = type;
+        }
+        getFieldType() {
+            return this.sectionType;
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        addSignatures(signatures, includeAll) {
+            //Nothing to do here
+        }
+        getFieldName() {
+            return this.name;
+        }
+        setFieldName(value) {
+            this.name = value;
+        }
+    }
+    exports.DropdownAbstractDocFieldHandler = DropdownAbstractDocFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 89 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(60)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, CheckboxFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.CheckBoxDocFieldHandler = void 0;
+    class CheckBoxDocFieldHandler extends CheckboxFieldHandler_1.CheckboxFieldHandler {
+        constructor(sectionType, config, fieldValue) {
+            super(config);
+            this.name = "";
+            this.sectionType = sectionType;
+            if (!config)
+                config = this.getDefaultConfig();
+            this.dhfFieldConfig = config;
+            this.initData(fieldValue);
+        }
+        getFieldType() {
+            return this.sectionType;
+        }
+        addSignatures(signatures, includeAll) {
+            //Nothing to do here
+        }
+        getDefaultConfig() {
+            return CheckBoxDocFieldHandler.default_config.default;
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        getXmlValue() {
+            let xmlval = [];
+            let val = this.getValue();
+            xmlval.push({ "checked": val ? "true" : "false" });
+            return JSON.stringify(xmlval);
+        }
+        getFieldName() {
+            return this.name;
+        }
+        setFieldName(value) {
+            this.name = value;
+        }
+    }
+    exports.CheckBoxDocFieldHandler = CheckBoxDocFieldHandler;
+    CheckBoxDocFieldHandler.default_config = {
+        default: {}
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 90 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(75), __webpack_require__(91)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandler_1, JQueryExtendReplacement_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DesignReviewDocFieldHandler = void 0;
+    class DesignReviewDocFieldHandler extends ItemSelectionFieldHandler_1.ItemSelectionFieldHandler {
+        constructor(sectionType, config, fieldValue) {
+            super(config, sectionType);
+            if (!config)
+                config = this.getDefaultConfig();
+            this.dhfFieldConfig = config;
+            this.initData(fieldValue);
+        }
+        getDefaultConfig() {
+            return DesignReviewDocFieldHandler.defaut_config.default;
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        getXmlValue() {
+            let js = this.getItems();
+            if (!js) {
+                return JSON.stringify({});
+            }
+            let controllerConfig = this.dhfFieldConfig;
+            let reviews = {
+                user: controllerConfig.user,
+                date: controllerConfig.date,
+                revision: controllerConfig.revision,
+                comment: controllerConfig.comment,
+                includeInToc: controllerConfig.includeInToc,
+                numericalOrder: controllerConfig.numericalOrder
+            };
+            for (let review of controllerConfig.reviews) {
+                reviews[review] = '1';
+            }
+            for (let row = 0; row < js.length; row++) {
+                (0, JQueryExtendReplacement_1.extend)(true, js[row], reviews);
+            }
+            return JSON.stringify(js);
+        }
+    }
+    exports.DesignReviewDocFieldHandler = DesignReviewDocFieldHandler;
+    DesignReviewDocFieldHandler.defaut_config = {
+        default: { reviews: [], user: false, date: false, revision: false, comment: false, includeInToc: false, numericalOrder: false }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 91 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.extend = void 0;
+    // This is ported from the JQuery 3.5.1 codebase. It is tough to get a recursive extend function
+    // exactly right. Safest option is to keep the implementation we've used for years, and eliminate
+    // the JQuery dependency.
+    function isFunction(obj) {
+        // Support: Chrome <=57, Firefox <=52
+        // In some browsers, typeof returns "function" for HTML <object> elements
+        // (i.e., `typeof document.createElement( "object" ) === "function"`).
+        // We don't want to classify *any* DOM node as a function.
+        return typeof obj === "function" && typeof obj.nodeType !== "number";
+    }
+    var class2type = {};
+    const hasOwn = class2type.hasOwnProperty;
+    const fnToString = hasOwn.toString;
+    const ObjectFunctionString = fnToString.call(Object);
+    function isPlainObject(obj) {
+        var proto, Ctor;
+        // Detect obvious negatives
+        // Use toString instead of jQuery.type to catch host objects
+        if (!obj || toString.call(obj) !== "[object Object]") {
+            return false;
+        }
+        proto = Object.getPrototypeOf(obj);
+        // Objects with no prototype (e.g., `Object.create( null )`) are plain
+        if (!proto) {
+            return true;
+        }
+        // Objects with prototype are plain iff they were constructed by a global Object function
+        Ctor = hasOwn.call(proto, "constructor") && proto.constructor;
+        return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
+    }
+    function extend(...args) {
+        var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {}, i = 1, length = arguments.length, deep = false;
+        // Handle a deep copy situation
+        if (typeof target === "boolean") {
+            deep = target;
+            // Skip the boolean and the target
+            target = arguments[i] || {};
+            i++;
+        }
+        // Handle case when target is a string or something (possible in deep copy)
+        if (typeof target !== "object" && !isFunction(target)) {
+            target = {};
+        }
+        // Extend jQuery itself if only one argument is passed
+        if (i === length) {
+            target = this;
+            i--;
+        }
+        for (; i < length; i++) {
+            // Only deal with non-null/undefined values
+            if ((options = arguments[i]) != null) {
+                // Extend the base object
+                for (name in options) {
+                    copy = options[name];
+                    // Prevent Object.prototype pollution
+                    // Prevent never-ending loop
+                    if (name === "__proto__" || target === copy) {
+                        continue;
+                    }
+                    // Recurse if we're merging plain objects or arrays
+                    if (deep && copy && (isPlainObject(copy) ||
+                        (copyIsArray = Array.isArray(copy)))) {
+                        src = target[name];
+                        // Ensure proper type for the source value
+                        if (copyIsArray && !Array.isArray(src)) {
+                            clone = [];
+                        }
+                        else if (!copyIsArray && !isPlainObject(src)) {
+                            clone = {};
+                        }
+                        else {
+                            clone = src;
+                        }
+                        copyIsArray = false;
+                        // Never move original objects, clone them
+                        target[name] = extend(deep, clone, copy);
+                        // Don't bring in undefined values
+                    }
+                    else if (copy !== undefined) {
+                        target[name] = copy;
+                    }
+                }
+            }
+        }
+        // Return the modified object
+        return target;
+    }
+    exports.extend = extend;
+    var initCalled = false;
+    function init() {
+        if (initCalled)
+            return;
+        initCalled = true;
+        const typeStrings = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
+        typeStrings.forEach((t) => {
+            class2type["[object " + t + "]"] = t.toLowerCase();
+        });
+    }
+    init();
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 92 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemIndexDocFieldHander = void 0;
+    class ItemIndexDocFieldHander extends GenericDocAbstractFieldHandler_1.GenericDocAbstractFieldHandler {
+        getXmlValue() {
+            let controllerConfig = this.dhfFieldConfig;
+            if (this.dhfFieldConfig == undefined)
+                controllerConfig = ItemIndexDocFieldHander.defaultConfig;
+            let options = { format: controllerConfig.format };
+            return JSON.stringify([options]);
+        }
+        getDefaultConfig() {
+            return ItemIndexDocFieldHander.defaultConfig.default;
+        }
+    }
+    exports.ItemIndexDocFieldHander = ItemIndexDocFieldHander;
+    ItemIndexDocFieldHander.defaultConfig = { default: { format: '\\e "\\t" \\c "1"' } };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 93 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(91), __webpack_require__(94)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, JQueryExtendReplacement_1, ItemSelectionAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemListDocFieldHandler = void 0;
+    class ItemListDocFieldHandler extends ItemSelectionAbstractDocFieldHandler_1.ItemSelectionAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return ItemListDocFieldHandler.default_config.default;
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        getXmlValue() {
+            let js = this.getItems();
+            // add params (parameter: "showbreadcrumb:true,extracolumn:EX") to each row
+            let controllerConfig = this.dhfFieldConfig;
+            for (let row = 0; row < js.length; row++) {
+                (0, JQueryExtendReplacement_1.extend)(true, js[row], controllerConfig);
+            }
+            return JSON.stringify(js);
+        }
+    }
+    exports.ItemListDocFieldHandler = ItemListDocFieldHandler;
+    ItemListDocFieldHandler.default_config = {
+        default: {
+            breadcrumb: true,
+            folderDetails: '',
+            extracolumn: '',
+            showlinks: true,
+            showUpOnly: false,
+            showDownOnly: false,
+            showDeeplinks: false,
+            showExternal: 0,
+            dateoptions: '',
+            refdocs: false,
+            hideLinkErrors: false,
+            hideLabels: false,
+            showAllParentFolders: false,
+            hideEmptyFolders: false,
+            includeInToc: false,
+            breakAfterItems: false
+        }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 94 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemSelectionAbstractDocFieldHandler = void 0;
+    class ItemSelectionAbstractDocFieldHandler extends ItemSelectionFieldHandler_1.ItemSelectionFieldHandler {
+        addSignatures(signatures, includeAll) {
+            //Nothing to do here
+        }
+        constructor(sectionType, config, fieldValue) {
+            super(config, sectionType);
+            if (!config)
+                config = this.getDefaultConfig();
+            this.dhfFieldConfig = config;
+            this.initData(fieldValue);
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+    }
+    exports.ItemSelectionAbstractDocFieldHandler = ItemSelectionAbstractDocFieldHandler;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 95 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(94)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.LinkListDocFieldHandler = void 0;
+    class LinkListDocFieldHandler extends ItemSelectionAbstractDocFieldHandler_1.ItemSelectionAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return LinkListDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let reflist = this.getItems();
+            for (let idx = 0; idx < reflist.length; idx++) {
+                reflist[idx]['showExternal'] = this.dhfFieldConfig.showExternal;
+                reflist[idx]['includeInToc'] = this.dhfFieldConfig.includeInToc;
+            }
+            return JSON.stringify(reflist);
+        }
+    }
+    exports.LinkListDocFieldHandler = LinkListDocFieldHandler;
+    LinkListDocFieldHandler.default_config = { default: { showExternal: 1, includeInToc: false } };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 96 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(94)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemTableDocFieldHandler = void 0;
+    class ItemTableDocFieldHandler extends ItemSelectionAbstractDocFieldHandler_1.ItemSelectionAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return ItemTableDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let reflist = this.getItems();
+            for (let idx = 0; idx < reflist.length; idx++) {
+                reflist[idx]['includeInToc'] = this.dhfFieldConfig.includeInToc;
+                reflist[idx]['includeFolders'] = this.dhfFieldConfig.includeFolders;
+                reflist[idx]['sortedList'] = this.dhfFieldConfig.sortedList;
+                reflist[idx]['columns'] = this.dhfFieldConfig.columns;
+            }
+            return JSON.stringify(reflist);
+        }
+    }
+    exports.ItemTableDocFieldHandler = ItemTableDocFieldHandler;
+    ItemTableDocFieldHandler.default_config = {
+        default: { includeInToc: false, sortedList: false, includeFolders: false, columns: "item,labels,down" }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 97 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(91), __webpack_require__(94)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, JQueryExtendReplacement_1, ItemSelectionAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.RiskStatsDocFieldHandler = void 0;
+    class RiskStatsDocFieldHandler extends ItemSelectionAbstractDocFieldHandler_1.ItemSelectionAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return RiskStatsDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let reflist = this.getItems();
+            for (let idx = 0; idx < reflist.length; idx++) {
+                (0, JQueryExtendReplacement_1.extend)(true, reflist[idx], this.dhfFieldConfig);
+            }
+            return JSON.stringify(reflist);
+        }
+    }
+    exports.RiskStatsDocFieldHandler = RiskStatsDocFieldHandler;
+    RiskStatsDocFieldHandler.default_config = {
+        default: {
+            includeInToc: false,
+            table: "Risk table",
+            rbm: "Risk levels before controls",
+            ram: "Risk levels after controls",
+            noTest: "Test coverage overview",
+            mustReduce: "Risks which need to be further reduced",
+            noBenefits: "Risks which are not justified by benefits",
+            riskAfterByZone: "Risks by zone after control",
+            riskBeforeByZone: "Risks by zone before control",
+            riskNoTest: "Risks without tests",
+            mitNoTest: "Risk controls without tests",
+            traceMitTest: "Traces from risks to tests"
+        }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 98 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79), __webpack_require__(94)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, SectionDescriptions_1, ItemSelectionAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemRefDocFieldHandler = void 0;
+    class ItemRefDocFieldHandler extends ItemSelectionAbstractDocFieldHandler_1.ItemSelectionAbstractDocFieldHandler {
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        getDefaultConfig() {
+            if (this.fieldType == SectionDescriptions_1.SectionDescriptions.section_itemlist)
+                return ItemRefDocFieldHandler.default_configs.default;
+            else
+                return ItemRefDocFieldHandler.default_configs.defaultPackage;
+        }
+        constructor(type, ctrlConfig, fieldValue) {
+            super(type, ctrlConfig, fieldValue);
+            this.initData(fieldValue);
+        }
+        getXmlValue() {
+            let reflist = this.getItems();
+            for (let ref of reflist) {
+                let refOption = ref;
+                refOption['recursive'] = this.dhfFieldConfig.recursive;
+                refOption['tree'] = this.dhfFieldConfig.tree;
+                refOption['hideEmptyFolders'] = this.dhfFieldConfig.hideEmptyFolders;
+                refOption['showParentFolders'] = this.dhfFieldConfig.showParentFolders;
+                refOption['includeInToc'] = this.dhfFieldConfig.includeInToc;
+                refOption['sortedList'] = this.dhfFieldConfig.sortedList;
+            }
+            return JSON.stringify(reflist);
+        }
+    }
+    exports.ItemRefDocFieldHandler = ItemRefDocFieldHandler;
+    ItemRefDocFieldHandler.default_configs = {
+        default: {
+            recursive: true,
+            tree: true,
+            refdocs: false,
+            hideEmptyFolders: false,
+            includeInToc: false,
+            sortedList: false,
+            showParentFolders: false
+        },
+        defaultPackage: {
+            recursive: false,
+            tree: false,
+            refdocs: false,
+            hideEmptyFolders: false,
+            includeInToc: false,
+            sortedList: true,
+            showParentFolders: false
+        }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 99 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ListOfFiguresDocFieldHandler = void 0;
+    class ListOfFiguresDocFieldHandler extends GenericDocAbstractFieldHandler_1.GenericDocAbstractFieldHandler {
+        getXmlValue() {
+            return JSON.stringify([this.dhfFieldConfig]);
+        }
+        getDefaultConfig() {
+            return ListOfFiguresDocFieldHandler.default_config.default;
+        }
+    }
+    exports.ListOfFiguresDocFieldHandler = ListOfFiguresDocFieldHandler;
+    ListOfFiguresDocFieldHandler.default_config = {
+        default: {
+            figures: true, tables: true
+        }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 100 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.SmartTextDocFieldHandler = void 0;
+    class SmartTextDocFieldHandler extends GenericDocAbstractFieldHandler_1.GenericDocAbstractFieldHandler {
+        getDefaultConfig() {
+            return SmartTextDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let options = {
+                abbreviations: this.dhfFieldConfig.abbreviations,
+                terms: this.dhfFieldConfig.terms,
+                richtext: this.dhfFieldConfig.richtext,
+                plaintext: this.dhfFieldConfig.plaintext,
+                includeAll: this.dhfFieldConfig.includeAll,
+                customerTags: true,
+                projectTags: true,
+                firstColumnName: this.dhfFieldConfig.firstColumnName ? this.dhfFieldConfig.firstColumnName : "",
+                secondColumnName: this.dhfFieldConfig.secondColumnName ? this.dhfFieldConfig.secondColumnName : ""
+            };
+            return JSON.stringify([options]);
+        }
+    }
+    exports.SmartTextDocFieldHandler = SmartTextDocFieldHandler;
+    SmartTextDocFieldHandler.default_config = { default: {
+            plaintext: false, richtext: false, abbreviations: true, terms: true, customerTags: true, projectTags: true, includeAll: false,
+            firstColumnName: "", secondColumnName: ""
+        } };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 101 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TableOfContentDocFieldHandler = void 0;
+    class TableOfContentDocFieldHandler extends GenericDocAbstractFieldHandler_1.GenericDocAbstractFieldHandler {
+        getDefaultConfig() {
+            return TableOfContentDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let options = { format: this.dhfFieldConfig.format };
+            return JSON.stringify([options]);
+        }
+    }
+    exports.TableOfContentDocFieldHandler = TableOfContentDocFieldHandler;
+    TableOfContentDocFieldHandler.default_config = { default: { format: "\\o \"1-3\" \\h \\z \\u \\f" } };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 102 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(85)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TestResultsDocFieldHandler = void 0;
+    class TestResultsDocFieldHandler extends ItemSelectionFromToAbstractDocFieldHandler_1.ItemSelectionFromToAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return TestResultsDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let controllerConfig = this.dhfFieldConfig;
+            // get lists
+            let reflist = this.getSelectedItems();
+            let td = [];
+            let r0 = {};
+            for (let idx = 0; idx < reflist.from.length; idx++) {
+                r0["from" + idx] = reflist.from[idx].to;
+            }
+            td.push(r0);
+            let r1 = {};
+            for (let idx = 0; idx < reflist.to.length; idx++) {
+                r1["to" + idx] = reflist.to[idx].to;
+            }
+            td.push(r1);
+            td.push({ lastOnly: controllerConfig.lastOnly });
+            td.push({ lastCreatedOnly: controllerConfig.lastCreatedOnly });
+            td.push({ completeTree: controllerConfig.completeTree });
+            td.push({ failedOnly: controllerConfig.failedOnly });
+            td.push({ includeInToc: controllerConfig.includeInToc });
+            td.push({ numericalOrder: controllerConfig.numericalOrder });
+            td.push({ dateoptions: controllerConfig.dateoptions });
+            return JSON.stringify(td);
+        }
+    }
+    exports.TestResultsDocFieldHandler = TestResultsDocFieldHandler;
+    TestResultsDocFieldHandler.default_config = { default: { lastOnly: true, lastCreatedOnly: false, completeTree: false, failedOnly: false, dateoptions: '', includeInToc: false, numericalOrder: false } };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 103 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(85)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DerivedFromDocFieldHandler = void 0;
+    class DerivedFromDocFieldHandler extends ItemSelectionFromToAbstractDocFieldHandler_1.ItemSelectionFromToAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return DerivedFromDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let reflist = this.getSelectedItems();
+            let td = [];
+            let r0 = {};
+            for (let idx = 0; idx < reflist.from.length; idx++) {
+                r0["from" + idx] = reflist.from[idx].to;
+            }
+            td.push(r0);
+            let r1 = {};
+            for (let idx = 0; idx < reflist.to.length; idx++) {
+                r1["to" + idx] = reflist.to[idx].to;
+            }
+            td.push(r1);
+            // copy parameters
+            let r2 = {};
+            // copy parameters
+            for (let param in Object.keys(this.dhfFieldConfig)) {
+                r2[param] = this.dhfFieldConfig[param];
+            }
+            td.push(r2);
+            // update the xml dump
+            return JSON.stringify(td);
+        }
+    }
+    exports.DerivedFromDocFieldHandler = DerivedFromDocFieldHandler;
+    DerivedFromDocFieldHandler.default_config = {
+        default: { render: 'items', includeInToc: false, numericalOrder: false, noHitMessage: "" } // list, items, tree, table
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 104 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DocumentOptionsFieldHandler = void 0;
+    class DocumentOptionsFieldHandler extends GenericDocAbstractFieldHandler_1.GenericDocAbstractFieldHandler {
+        getDefaultConfig() {
+            return DocumentOptionsFieldHandler.default_config.default;
+        }
+        setConfig(config) {
+            this.dhfFieldConfig = config;
+        }
+        getXmlValue() {
+            let controllerConfig = this.dhfFieldConfig;
+            let options = {};
+            options.auto_number = controllerConfig.auto_number || false;
+            options.omit_title = controllerConfig.omit_title || false;
+            options.internal_links = controllerConfig.internal_links || false;
+            options.no_folder_ids = controllerConfig.no_folder_ids || false;
+            options.hide_links = controllerConfig.hide_links || false;
+            return JSON.stringify([options]);
+        }
+    }
+    exports.DocumentOptionsFieldHandler = DocumentOptionsFieldHandler;
+    DocumentOptionsFieldHandler.default_config = {
+        default: { auto_number: true, omit_title: true, internal_links: false }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 105 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78), __webpack_require__(106)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1, RichTextDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TextLineDocFieldHandler = void 0;
+    class TextLineDocFieldHandler extends GenericDocAbstractFieldHandler_1.GenericDocAbstractFieldHandler {
+        getDefaultConfig() {
+            return RichTextDocFieldHandler_1.RichTextDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            return JSON.stringify([]);
+        }
+    }
+    exports.TextLineDocFieldHandler = TextLineDocFieldHandler;
+    TextLineDocFieldHandler.default_config = {
+        default: {}
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 106 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.RichTextDocFieldHandler = void 0;
+    class RichTextDocFieldHandler extends GenericDocAbstractFieldHandler_1.GenericDocAbstractFieldHandler {
+        getDefaultConfig() {
+            return RichTextDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            return JSON.stringify([]);
+        }
+    }
+    exports.RichTextDocFieldHandler = RichTextDocFieldHandler;
+    RichTextDocFieldHandler.default_config = {
+        default: {}
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 107 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(85)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TraceMatrixDocFieldHandler = void 0;
+    class TraceMatrixDocFieldHandler extends ItemSelectionFromToAbstractDocFieldHandler_1.ItemSelectionFromToAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return TraceMatrixDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            let controllerConfig = this.dhfFieldConfig;
+            // get lists
+            let reflist = this.getSelectedItems();
+            let td = [];
+            let r0 = {};
+            for (let idx = 0; idx < reflist.from.length; idx++) {
+                r0["from" + idx] = reflist.from[idx].to;
+            }
+            td.push(r0);
+            let r1 = {};
+            for (let idx = 0; idx < reflist.to.length; idx++) {
+                r1["to" + idx] = reflist.to[idx].to;
+            }
+            td.push(r1);
+            // copy parameters
+            let r2 = {};
+            // copy parameters
+            for (let param in Object.keys(this.dhfFieldConfig)) {
+                r2[param] = this.dhfFieldConfig[param];
+            }
+            td.push(r2);
+            // update the xml dump
+            return JSON.stringify(td);
+        }
+    }
+    exports.TraceMatrixDocFieldHandler = TraceMatrixDocFieldHandler;
+    TraceMatrixDocFieldHandler.default_config = {
+        default: { includeInToc: false, numericalOrder: false, showIdOnly: false, columnDef: "" }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 108 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(88)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TraceDocFieldHandler = void 0;
+    class TraceDocFieldHandler extends DropdownAbstractDocFieldHandler_1.DropdownAbstractDocFieldHandler {
+        getDefaultConfig() {
+            return TraceDocFieldHandler.default_config.default;
+        }
+        getXmlValue() {
+            var traces = {};
+            if (this.getData()) {
+                var sel = this.getData().split('|');
+                traces.from = sel[0];
+                traces.to = sel[1].split("+").join(",");
+            }
+            traces.strict = this.dhfFieldConfig.strict;
+            traces.dateoptions = this.dhfFieldConfig.dateoptions;
+            traces.includeInToc = this.dhfFieldConfig.includeInToc;
+            traces.numericalOrder = this.dhfFieldConfig.numericalOrder;
+            return JSON.stringify([traces]);
+        }
+    }
+    exports.TraceDocFieldHandler = TraceDocFieldHandler;
+    TraceDocFieldHandler.default_config = { default: { strict: true, dateoptions: '', includeInToc: false, numericalOrder: false }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 109 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(88)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.MultiSelectDocFieldHandler = void 0;
+    class MultiSelectDocFieldHandler extends DropdownAbstractDocFieldHandler_1.DropdownAbstractDocFieldHandler {
+        getXmlValue() {
+            let selectionIds = this.getValues(false);
+            // convert to values
+            let selectionLabels = [];
+            let dropdownOptions = this.itemConfig.getSettingJSON(this.dhfFieldConfig.optionSetting);
+            if (dropdownOptions) {
+                for (let id of selectionIds) {
+                    let label = id;
+                    for (let option of dropdownOptions.options) {
+                        if (option.id == id) {
+                            label = option.label;
+                        }
+                    }
+                    selectionLabels.push({ label: label, id: id });
+                }
+                selectionLabels.push({ optionSetting: this.dhfFieldConfig.optionSetting });
+            }
+            return JSON.stringify(selectionLabels);
+        }
+        getDefaultConfig() {
+            return MultiSelectDocFieldHandler.default_config.default;
+        }
+    }
+    exports.MultiSelectDocFieldHandler = MultiSelectDocFieldHandler;
+    MultiSelectDocFieldHandler.default_config = {
+        default: { maxItems: 1, create: false, sort: false, optionSetting: "" }
+    };
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 110 */,
+/* 111 */,
+/* 112 */,
+/* 113 */,
+/* 114 */,
+/* 115 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ProjectSettings_1, FieldDescriptions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemConfiguration = void 0;
+    class ItemConfiguration {
+        constructor(logger, json) {
+            // TODO: it seems that we have category information in configuration and also in variable
+            // settings, with SLIGHTLY DIFFERENT FIELDS, WHAT THE HECK?
+            // (one has shortLabel, the other doesnt).
+            this.configuration = {};
+            this.settingsString = {};
+            this.settingsJSON = {};
+            this.users = []; // server
+            this.userList = []; // cleaned up
+            this.userGroups = [];
+            this.logger = logger;
+            this.json = json;
+        }
+        isConfigured() {
+            return this.getCategories() && this.getCategories().length > 0;
+        }
+        addUsers(userPermission, groupPermission) {
+            this.userGroups = groupPermission;
+            this.users = userPermission;
+            this.userList = [];
+            if (userPermission) {
+                for (var idx = 0; idx < this.users.length; idx++) {
+                    var ignore = false;
+                    if (this.users[idx].permission === 3) {
+                        // 3 is an admin without write write access
+                        ignore = true;
+                    }
+                    for (var ex = 0; !ignore && ex < this.userList.length; ex++) {
+                        if (this.userList[ex].login.toLowerCase() === this.users[idx].login.toLowerCase() || this.userList[ex].id === this.users[idx].id) {
+                            // somethings wrong here...
+                            this.logger.log("warning", "Ignoring duplicate user... login:" + this.userList[ex].id + " ID:" + this.users[idx].login);
+                            ignore = true;
+                        }
+                    }
+                    if (!ignore) {
+                        this.userList.push({
+                            id: this.users[idx].id,
+                            login: this.users[idx].login.toLowerCase(),
+                            email: this.users[idx].email,
+                            permission: this.users[idx].permission,
+                            firstName: this.users[idx].firstName,
+                            lastName: this.users[idx].lastName
+                        });
+                    }
+                }
+            }
+        }
+        getUserInfo(login) {
+            let theUser = null;
+            for (let user of this.getUserNames()) {
+                if (user.login.toLowerCase() === login.toLowerCase()) {
+                    theUser = user;
+                }
+            }
+            return theUser;
+        }
+        getCombinedName(user) {
+            let name = (user.firstName ? user.firstName : "") + " " + (user.lastName ? user.lastName : "");
+            return user.login + (name == " " ? "" : (" - ") + name);
+        }
+        getFullName(login) {
+            let user = this.getUserInfo(login);
+            if (user === null) {
+                return login;
+            }
+            return this.getCombinedName(user);
+        }
+        groupIdToName(groupId) {
+            return `g_${groupId}_g`;
+        }
+        hasGroupInfo(group) {
+            return this.getUserGroups().findIndex((g) => { return this.groupIdToName(g.groupId) === group.toLowerCase(); }) > -1;
+        }
+        // {login} may have been deleted or doesn't exist.
+        hasUserInfo(login) {
+            return this.getUserInfo(login) !== null;
+        }
+        getUserIds() {
+            return this.getUserNames().map(function (user) { return user.login; });
+        }
+        getEmail(user) {
+            let email = "";
+            for (let otherUser of this.getUserNames()) {
+                if (otherUser.login.toLowerCase() === user.toLowerCase()) {
+                    email = otherUser.email;
+                }
+            }
+            return email;
+        }
+        activateTimewarp(date) {
+            this.timewarpDate = date;
+        }
+        getTimeWarp() {
+            return this.timewarpDate;
+        }
+        isAfterTimeWarp(date) {
+            return this.timewarpDate && new Date(date) > new Date(this.timewarpDate);
+        }
+        hasWriteAccess(user) {
+            if (!user || this.timewarpDate) {
+                return false;
+            }
+            let permission = this.getPermission(user);
+            // -1 super admin, 2 read write, 3 admin
+            return permission == -1 || permission == 2 || permission == 3;
+        }
+        getPermission(user) {
+            let permission = -1; // (in case the user does not exists, it's a super admin)
+            // get permission directly for user
+            for (var idx = 0; idx < this.users.length; idx++) {
+                if (this.users[idx].login.toLowerCase() === user.toLowerCase()) {
+                    permission = this.users[idx].permission;
+                }
+            }
+            // now go through all groups, maybe it's better
+            for (let ug of this.getUserGroups()) {
+                if (ug.membership.map(member => member.login.toLowerCase()).indexOf(user.toLowerCase()) != -1) {
+                    // user is in this group, let's see if we can bump him up
+                    if (ug.permission == 3)
+                        permission = 3;
+                    if (ug.permission == 2 && permission != 3)
+                        permission = 2;
+                    if (ug.permission == 1 && permission <= 0)
+                        permission = 1;
+                }
+            }
+            return permission;
+        }
+        getUserNames(sorted) {
+            let users = this.json.clone(this.userList);
+            // add users from user groups if they are not directly in
+            for (let ug of this.getUserGroups()) {
+                for (let m of ug.membership) {
+                    if (users.map(user => user.login).indexOf(m.login) == -1) {
+                        users.push({
+                            id: -1,
+                            login: m.login,
+                            email: m.email,
+                            permission: -1,
+                            firstName: m.firstName,
+                            lastName: m.lastName
+                        });
+                    }
+                }
+            }
+            if (sorted) {
+                users.sort(function (a, b) { if (a.login < b.login)
+                    return -1;
+                else
+                    return 1; });
+            }
+            return users;
+        }
+        getUserGroups() {
+            return this.userGroups;
+        }
+        /**
+         * getValidUserOptions returns an array of option values that describe
+         * the users and groups available as values for a user field in the
+         * database (fields of type {@link FieldDescriptions.Field_user}).
+         *
+         * @param showUsers - pass true to include users
+         * @param showGroups - pass true to include groups
+         * @param preSelectedUsers - if present, the list of users will be limited
+         *     to this subset and the full user list will not be consulted to
+         *     construct the return value.
+         * @param possiblyDeletedUserGroupNames - if present, a comma-separated
+         *     list of user and group names. The returned options will include
+         *     these values, and mark deleted user and groups as disabled.
+         * @returns An array of {@link IDropdownOptions} configured according to
+         *     the input parameters and the users and groups of the current project.
+         */
+        getValidUserOptions(showUsers, showGroups, preSelectedUsers, possiblyDeletedUserGroupNames) {
+            let that = this;
+            let options = [];
+            let users = preSelectedUsers
+                ? preSelectedUsers
+                : this.getUserNames();
+            let groups = this.getUserGroups().sort((a, b) => {
+                return a.groupName < b.groupName ? -1 : 1;
+            });
+            // if {possiblyDeletedUsernames} are not found in {users}, we want to add them.
+            const isGroup = /g_([0-9])+_g/;
+            let names = possiblyDeletedUserGroupNames ? possiblyDeletedUserGroupNames.split(',') : [];
+            names.forEach(name => {
+                if (!this.hasUserInfo(name)) {
+                    if (!isGroup.test(name)) {
+                        users.push({
+                            id: 0,
+                            login: name,
+                            email: "unknown",
+                            permission: 0,
+                            firstName: "",
+                            lastName: "",
+                            deleted: true
+                        });
+                    }
+                    else if (!this.hasGroupInfo(name)) {
+                        // We know match found a group because isGroup.test(name) returned true.
+                        const groupId = parseInt(name.match(isGroup)[1]);
+                        groups.push({
+                            groupName: name,
+                            permission: 0,
+                            groupId: groupId,
+                            membership: [],
+                            deleted: true
+                        });
+                    }
+                }
+            });
+            if (showUsers) {
+                // sort users alphabetically
+                users = users.sort((a, b) => {
+                    return a.login < b.login ? -1 : 1;
+                });
+                // add to user select
+                users.forEach((user) => {
+                    // Deleted users have strikethrough text, and are disabled from selection.
+                    // We only display their login, not their full name.
+                    const deletedUser = user.deleted === true;
+                    const labelText = deletedUser ? user.login : this.getCombinedName(user);
+                    options.push({
+                        id: user.login, label: labelText, class: "users",
+                        disabled: deletedUser,
+                        strikethrough: deletedUser
+                    });
+                });
+            }
+            if (showGroups) {
+                groups.forEach((group) => {
+                    const deletedGroup = group.deleted === true;
+                    let groupName = group.groupName;
+                    let groupId = deletedGroup ? groupName : that.groupIdToName(group.groupId);
+                    options.push({
+                        id: groupId, label: groupName, class: "groups",
+                        disabled: deletedGroup,
+                        strikethrough: deletedGroup
+                    });
+                });
+            }
+            return options;
+        }
+        // TODO(modules): This is a performance hack. Better if private.
+        addGroupMember(gid, user) {
+            let gs = this.userGroups.filter(g => g.groupId == gid && g.membership.map(u => u.login).indexOf(user) == -1);
+            if (gs.length) {
+                gs[0].membership.push({ login: user });
+            }
+        }
+        // TODO(modules): This is a performance hack. Better if private.
+        removeGroupMember(gid, user) {
+            let gs = this.userGroups.filter(g => g.groupId == gid && g.membership.map(u => u.login).indexOf(user) != -1);
+            if (gs.length) {
+                gs[0].membership = gs[0].membership.filter(m => m.login != user);
+            }
+        }
+        // TODO(modules): This is a performance hack. Better if private.
+        addSettings(s) {
+            let that = this;
+            this.settings = s;
+            this.settingsString = {};
+            this.settingsJSON = {};
+            if (s.settingList) {
+                for (let setting of s.settingList) {
+                    that.settingsString[setting.key] = setting.value;
+                    if (setting.value && setting.value.indexOf('{') !== -1 && setting.value.indexOf('<') !== 0) {
+                        // assume it a json
+                        var val = this.json.fromString(setting.value);
+                        if (val.status === "ok") {
+                            that.settingsJSON[setting.key] = val.value;
+                        }
+                    }
+                }
+            }
+        }
+        getSettings() {
+            return this.settings.settingList;
+        }
+        getSetting(s) {
+            return this.settingsString[s];
+        }
+        getSettingJSON(s, def) {
+            return this.settingsJSON[s] ? this.settingsJSON[s] : def;
+        }
+        getDropDowns(dropdownId) {
+            let that = this;
+            let dropdowns = [];
+            for (let key of Object.keys(this.settingsJSON)) {
+                let setting = that.settingsJSON[key];
+                if (setting.options && (!dropdownId || dropdownId == key)) {
+                    dropdowns.push({
+                        id: key,
+                        label: key,
+                        value: setting
+                    });
+                }
+            }
+            return dropdowns;
+        }
+        getTasksConfig() {
+            return this.getSettingJSON("task_config");
+        }
+        getDHFConfig() {
+            return this.getSettingJSON("dhf_config");
+        }
+        getExtrasConfig() {
+            let extras = this.getSettingJSON("extras");
+            return (extras ? extras : {});
+        }
+        getLabelsConfig() {
+            return this.getSettingJSON("labels");
+        }
+        getIncludeConfig() {
+            let conf = this.getSettingJSON("imports");
+            return (conf ? conf : {
+                copies: {
+                    importMasters: [],
+                    lockLabel: ""
+                }, includes: {
+                    importMasters: [],
+                    lockLabel: ""
+                }
+            });
+        }
+        getQMSConfig() {
+            // get qms config (as project setting, handle 2.1 and earlier setting in category setting)
+            let setting = this.getSettingJSON("qms_config");
+            if (!setting) {
+                setting = ProjectSettings_1.qmsDefaultConfig; // as in 2.1 and earlier
+            }
+            for (let p of setting.publications) {
+                if (p.publisher == "_") {
+                    let legacy = this.getCategorySetting(p.toCategory, "publish");
+                    p.publisher = legacy ? legacy.publisher : "";
+                }
+            }
+            return setting;
+        }
+        getRiskConfig() {
+            return this.getSettingJSON("risk_config");
+        }
+        getCategoryGroupConfig() {
+            return this.getSettingJSON("category_groups");
+        }
+        getACLConfig() {
+            return this.getSettingJSON(ProjectSettings_1.ACL_SETTING);
+        }
+        getTraceConfig() {
+            return this.getSettingJSON("trace_config");
+        }
+        getNavigationBarConfig() {
+            return this.getSettingJSON("nav_config");
+        }
+        getContextPagesConfig() {
+            return this.getSettingJSON("project_help");
+        }
+        getMailConfig() {
+            return this.getSettingJSON(ProjectSettings_1.mailConfigSetting);
+        }
+        getSearchConfig() {
+            return this.getSettingJSON("search_config");
+        }
+        getLabelLockConfig() {
+            return this.getSettingJSON("lockingLabels");
+        }
+        getTestConfig() {
+            return this.getSettingJSON("xtc_config");
+        }
+        setSettingJSON(key, valueJSON) {
+            this.settingsString[key] = JSON.stringify(valueJSON);
+            this.settingsJSON[key] = valueJSON;
+        }
+        getSmartText() {
+            return this.getSettingJSON(ProjectSettings_1.smartTextConfigSetting);
+        }
+        addCategorySetting(categorySetting) {
+            if (!this.settings || !this.settings.categorySettingList) {
+                return;
+            }
+            this.settings.categorySettingList.push(categorySetting);
+        }
+        getCategorySettings(category) {
+            if (!this.settings || !this.settings.categorySettingList) {
+                return [];
+            }
+            for (var idx = 0; idx < this.settings.categorySettingList.length; idx++) {
+                if (this.settings.categorySettingList[idx].categoryShort === category && this.settings.categorySettingList[idx].settingList) {
+                    return this.settings.categorySettingList[idx].settingList;
+                }
+            }
+            return [];
+        }
+        // return the setting for a plugin or null if plugin or setting does not exist
+        // TODO(modules): is this ever called?
+        getPluginSetting(pluginId, setting) {
+            /*
+             * pluginSettingsList: [
+                {
+                    pluginId: 101,
+                    settings: [ {
+                        setting: "serverType",
+                        value: "medical",
+                        encrypted: false
+                    }, {
+                    setting: "baseUrl",
+                        value: "https://matrixtest.atlassian.net",
+                        encrypted: false
+                    } ]
+                }
+            ]
+             */
+            if (!this.settings || !this.settings.pluginSettingsList) {
+                return null;
+            }
+            for (var idx = 0; idx < this.settings.pluginSettingsList.length; idx++) {
+                var ps = this.settings.pluginSettingsList[idx];
+                if (ps.pluginId == pluginId) {
+                    for (var jdx = 0; jdx < ps.settings.length; jdx++) {
+                        if (ps.settings[jdx].setting === setting) {
+                            return ps.settings[jdx].value;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        getPluginSettings() {
+            return this.settings.pluginSettingsList;
+        }
+        // return tuples {category, field} of all categories which use a type
+        // used for tisk traceability in DHF
+        getFieldsOfType(fieldType, categoryType) {
+            var hits = [];
+            if (!this.settings) {
+                return hits;
+            }
+            for (var idx = 0; idx < this.settings.categorySettingList.length; idx++) {
+                var category = this.settings.categorySettingList[idx].categoryShort;
+                if (!categoryType || categoryType === category) {
+                    var cc = this.getItemConfiguration(category);
+                    if (cc) {
+                        var fields = cc.fieldList;
+                        for (var fdx = 0; fdx < fields.length; fdx++) {
+                            if (fields[fdx].fieldType === fieldType) {
+                                //    var jconfig = this.json.fromString(fields[fdx].parameter);
+                                hits.push({ category: category, field: fields[fdx] });
+                            }
+                        }
+                    }
+                }
+            }
+            return hits;
+        }
+        getCategorySetting(category, setting) {
+            var catSettings = this.getCategorySettings(category);
+            for (var idx = 0; idx < catSettings.length; idx++) {
+                if (catSettings[idx].key === setting) {
+                    var jconfig = this.json.fromString(catSettings[idx].value);
+                    if (jconfig.status === 'ok') {
+                        // apparently parsing went well
+                    }
+                    else if (jconfig.status === 'error') {
+                        this.logger.log("error", "The category setting '" + catSettings[idx].key + "' has an invalid value. Ignoring it.");
+                    }
+                    else {
+                        this.logger.log("warning", "The category setting '" + catSettings[idx].key + "' is empty.");
+                    }
+                    return jconfig.value;
+                }
+            }
+            return null;
+        }
+        getCategories(noFolders) {
+            let catgories = Object.keys(this.configuration);
+            if (noFolders) {
+                catgories.splice(catgories.indexOf("FOLDER"), 1);
+            }
+            return catgories;
+        }
+        getCategoryLabel(category) {
+            if (this.configuration[category]) {
+                return this.configuration[category].label;
+            }
+            return "";
+        }
+        getCategoryId(category) {
+            let cd = this.settings.categoryList.categoryExtended.filter(function (cat) { return cat.category.shortLabel == category; });
+            if (cd.length == 1) {
+                return "" + cd[0].category.id;
+            }
+            return "";
+        }
+        // links for 1.5 and earlier (configured as category setting)
+        getDownLinkTypes(category, required) {
+            if (required) {
+                return this.configuration[category].downLinksRequired;
+            }
+            return this.configuration[category].downLinksOptional;
+        }
+        // links for 1.5 and earlier (configured as category setting)
+        getUpLinkTypes(category, required) {
+            var up = [];
+            for (var key in this.configuration) {
+                if (key && key != category && this.configuration[key]) {
+                    if (required && this.configuration[key].downLinksRequired.indexOf(category) != -1) {
+                        up.push(key);
+                    }
+                    if (!required && this.configuration[key].downLinksOptional.indexOf(category) != -1) {
+                        up.push(key);
+                    }
+                }
+            }
+            return up;
+        }
+        addCategories(config) {
+            for (var idx = 0; config.categoryList.categoryExtended != undefined && idx < config.categoryList.categoryExtended.length; idx++) {
+                this.addCategory(config.categoryList.categoryExtended[idx]);
+            }
+        }
+        init(config) {
+            this.addCategories(config);
+            this.addSettings(config);
+            this.addUsers(config.userPermission, config.groupPermission);
+        }
+        canEdit(category) {
+            return this.canDo(category, "edit");
+        }
+        canEditTitle(category) {
+            return this.canDo(category, "rename");
+        }
+        canMove(category) {
+            return this.canDo(category, "move");
+        }
+        canCreate(category) {
+            return this.canDo(category, "create");
+        }
+        canDelete(category) {
+            return this.canDo(category, "delete");
+        }
+        canModifyLabels(category) {
+            return this.canDo(category, "label");
+        }
+        canSign(category) {
+            return this.canDo(category, "sign");
+        }
+        canReport(category) {
+            return this.canDo(category, "report");
+        }
+        canDo(category, task) {
+            if (!this.configuration[category])
+                return false;
+            if (!this.configuration[category].enable)
+                return true; // no limitation specified for this user
+            if (this.configuration[category].enable.indexOf(task) != -1)
+                return true;
+            return false;
+        }
+        addCategory(config) {
+            this.configuration[config.category.shortLabel] = {
+                fieldList: [],
+                label: config.category.label,
+                downLinksRequired: [],
+                downLinksOptional: [],
+                enable: config.enable
+            };
+            var fieldList = config.fieldList.field;
+            if (!fieldList) {
+                fieldList = [];
+            }
+            for (var idx = 0; idx < fieldList.length; idx++) {
+                var jconfig = this.json.fromString(fieldList[idx].parameter);
+                if (jconfig.status === 'ok') {
+                    // apparently parsing went well
+                }
+                else if (jconfig.status === 'error') {
+                    this.logger.log("error", "The field with id '" + fieldList[idx].id + "' has an invalid value. Ignoring it.");
+                }
+                else {
+                    // quite normal
+                }
+                fieldList[idx].parameterJson = jconfig.value;
+                this.configuration[config.category.shortLabel].fieldList.push(fieldList[idx]);
+                if (fieldList[idx].fieldType === FieldDescriptions_1.FieldDescriptions.Field_links) {
+                    if (fieldList[idx].parameterJson && fieldList[idx].parameterJson.linkTypes) {
+                        for (var l = 0; l < fieldList[idx].parameterJson.linkTypes.length; l++) {
+                            var dl = fieldList[idx].parameterJson.linkTypes[l];
+                            if (this.json.isTrue(dl.required)) {
+                                this.configuration[config.category.shortLabel].downLinksRequired.push(dl.type);
+                            }
+                            else {
+                                this.configuration[config.category.shortLabel].downLinksOptional.push(dl.type);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        getItemConfiguration(category) {
+            return this.configuration[category];
+        }
+        getFieldId(category, fieldLabel) {
+            var cc = this.getItemConfiguration(category);
+            if (!cc) {
+                return 0;
+            }
+            var fields = cc.fieldList;
+            for (var idx = 0; idx < fields.length; idx++) {
+                if (fields[idx].label.toLowerCase() === fieldLabel.toLowerCase()) {
+                    return fields[idx].id;
+                }
+            }
+            return 0;
+        }
+        getFields(category) {
+            var cc = this.getItemConfiguration(category);
+            if (!cc) {
+                return null;
+            }
+            return cc.fieldList;
+        }
+        getFieldByName(category, name) {
+            let fields = this.getFields(category).filter(function (field) { return field.label && field.label.toLowerCase() == name.toLowerCase(); });
+            if (fields.length == 1)
+                return fields[0];
+            return undefined;
+        }
+        getFieldById(category, fieldId) {
+            var cc = this.getItemConfiguration(category);
+            if (!cc) {
+                return null;
+            }
+            let fields = cc.fieldList.filter(function (field) { return field.id == fieldId; });
+            return fields.length ? fields[0] : null;
+        }
+        getFieldConfig(fieldId) {
+            // The fieldId is unique across categories, therefore this code works properly.
+            for (let category of this.getCategories()) {
+                let field = this.getFieldById(category, fieldId);
+                if (field) {
+                    return field.parameterJson;
+                }
+            }
+            return null;
+        }
+        getFieldName(fieldId) {
+            for (let category of this.getCategories()) {
+                let field = this.getFieldById(category, fieldId);
+                if (field) {
+                    return field.label;
+                }
+            }
+            return "";
+        }
+        getFieldType(category, fieldId) {
+            var cc = this.getItemConfiguration(category);
+            if (!cc) {
+                return null;
+            }
+            var fields = cc.fieldList;
+            for (var idx = 0; idx < fields.length; idx++) {
+                // note this is ==: sometimes it is an int sometimes a string 
+                if (fields[idx].id == fieldId) {
+                    return fields[idx].fieldType;
+                }
+            }
+            return null;
+        }
+        // gets required or optional up or downlink categories for a given category
+        // it uses the project setting for the trace configuration if existing,
+        // the category setting (1.5 and earlier) otherwise
+        getLinkTypes(category, down, required) {
+            var tc = this.getTraceConfig();
+            if (!tc) {
+                // use 1.5 and before rules
+                if (down) {
+                    return this.getDownLinkTypes(category, required);
+                }
+                else {
+                    return this.getUpLinkTypes(category, required);
+                }
+            }
+            // get the up/down rule from project setting
+            var updown;
+            for (let rule of tc.rules) {
+                if (rule.category === category) {
+                    updown = down ? rule.down_rules : rule.up_rules;
+                }
+            }
+            if (!updown) {
+                // no rules.. 
+                return [];
+            }
+            var result = [];
+            // rules exist get all required or option links
+            for (let updownRule of updown) {
+                if (updownRule.rule === "must_have" && updownRule.any_of && required) {
+                    for (let any of updownRule.any_of) {
+                        // add to must have
+                        if (result.indexOf(any) === -1) {
+                            result.push(any);
+                        }
+                    }
+                }
+                else if (updownRule.rule === "can_have" && updownRule.any_of && !required) {
+                    for (let any of updownRule.any_of) {
+                        // add to can have
+                        if (result.indexOf(any) === -1) {
+                            result.push(any);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        // gets required or optional up or downlink categories for a given category
+        // including reason why they should / could exist
+        // it uses the project setting for the trace configuration if existing,
+        // the category setting (1.5 and earlier) otherwise
+        getLinkInfo(category, down, required, groupByRule) {
+            var tc = this.getTraceConfig();
+            if (!tc) {
+                var links = [];
+                // use 1.5 and before rules
+                if (down) {
+                    links = this.getDownLinkTypes(category, required);
+                }
+                else {
+                    links = this.getUpLinkTypes(category, required);
+                }
+                var result = [];
+                for (var idx = 0; idx < links.length; idx++) {
+                    result.push({ category: links[idx], reason: (required ? "required" : "optional") });
+                }
+                return result;
+            }
+            // get the up/down rule from project setting
+            var updown;
+            for (let rule of tc.rules) {
+                if (rule.category === category) {
+                    updown = down ? rule.down_rules : rule.up_rules;
+                }
+            }
+            if (!updown) {
+                // no rules.. 
+                return [];
+            }
+            var linkInfo = [];
+            // rules exist get all required or optional links
+            for (let updownRule of updown) {
+                if (updownRule.rule === "must_have" && updownRule.any_of && required) {
+                    if (groupByRule) {
+                        linkInfo.push({ category: updownRule.any_of, reason: updownRule.name });
+                    }
+                    else {
+                        for (let anys of updownRule.any_of) {
+                            // add to must have
+                            linkInfo.push({ category: anys, reason: updownRule.name });
+                        }
+                    }
+                }
+                else if (updownRule.rule === "can_have" && updownRule.any_of && !required) {
+                    if (groupByRule) {
+                        linkInfo.push({ category: updownRule.any_of, reason: updownRule.name });
+                    }
+                    else {
+                        for (let anys of updownRule.any_of) {
+                            // add to can have
+                            linkInfo.push({ category: anys, reason: updownRule.name });
+                        }
+                    }
+                }
+            }
+            return linkInfo;
+        }
+        getMitigations() {
+            let risk_config = this.getRiskConfig();
+            // get the mitigations from the project setting
+            let global = [];
+            if (risk_config && risk_config.mitigationTypes) {
+                global = risk_config.mitigationTypes.map(function (mt) { return mt.type; });
+            }
+            // for each field, check if there's a field setting, if not use the global setting
+            let mitCats = {};
+            for (let riskFieldInfo of this.getFieldsOfType("risk2")) {
+                mitCats[riskFieldInfo.category] = [];
+                let fieldConfig = riskFieldInfo.field.parameterJson;
+                if (fieldConfig && fieldConfig.riskConfig) {
+                    mitCats[riskFieldInfo.category] =
+                        fieldConfig.riskConfig.mitigationTypes.map(mt => mt.type);
+                }
+                else {
+                    mitCats[riskFieldInfo.category] = global;
+                }
+            }
+            return mitCats;
+        }
+        /** return cleanup rules, if there's a project setting that wins, if there's no rules or it's disabled it returns -1 */
+        getCleanupRules() {
+            return this.getSettingJSON("htmlCleanup");
+        }
+    }
+    exports.ItemConfiguration = ItemConfiguration;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 116 */,
+/* 117 */,
+/* 118 */,
+/* 119 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.LabelManager = void 0;
+    class LabelManager {
+        constructor(logger, json, getConfig) {
+            this.logger = logger;
+            this.json = json;
+            this.getConfig = getConfig;
+            this.ignoreProjectFilter = false;
+            this.activeFilter = "";
+        }
+        getFilterColor() {
+            var labels = this.getConfig().getLabelsConfig();
+            if (!labels || !labels.filterBackgroundColor) {
+                return null;
+            }
+            return labels.filterBackgroundColor;
+        }
+        ;
+        // return list of selected filters as , separated list
+        getFilter() {
+            if (this.ignoreProjectFilter) {
+                return "";
+            }
+            var filters = [];
+            var labelsAll = this.getLabelNames();
+            if (labelsAll.length === 0) {
+                return "";
+            }
+            var stored = this.activeFilter;
+            if (!stored || stored === "") {
+                return "";
+            }
+            // only return filters which (still) exist 
+            var cs = stored.split(",");
+            for (let sf of cs) {
+                if (labelsAll.indexOf(sf.replace("!", "")) > -1) {
+                    filters.push(sf);
+                }
+            }
+            return filters.length > 0 ? filters.join(",") : "";
+        }
+        ;
+        getDisplayName(labelId) {
+            let labels = this.getLabelList();
+            let displayName = "";
+            for (let label of labels) {
+                if (label.label == labelId) {
+                    displayName = label.displayName;
+                    if (label.style.label.on.displayName) {
+                        displayName = label.style.label.on.displayName;
+                    }
+                }
+            }
+            return displayName;
+        }
+        getFilterName(labelId) {
+            let labels = this.getLabelList();
+            let displayName = "";
+            for (let label of labels) {
+                if (label.label == labelId) {
+                    displayName = label.displayName;
+                    if (label.style && label.style.filter && label.style && label.style.filter.on && label.style.filter.on.displayName) {
+                        displayName = label.style.filter.on.displayName;
+                    }
+                }
+            }
+            return displayName;
+        }
+        // return the existing labels for the passed types (or all labels if no type is passed)
+        getLabelDefinitions(categories) {
+            var all = this.getLabelList();
+            if (!categories || categories.length === 0) {
+                return all;
+            }
+            let relevant = [];
+            let relevantLabel = [];
+            for (let label of all) {
+                for (let category of label.categories) {
+                    if (categories.indexOf(category) > -1 && relevant.indexOf(label.label) === -1) {
+                        relevant.push(label.label);
+                        relevantLabel.push(label);
+                    }
+                }
+            }
+            return relevantLabel;
+        }
+        ;
+        setFilter(filter) {
+            this.activeFilter = filter.join(",");
+        }
+        ;
+        /* clean up the set labels: in case a set label is in review or design review group,
+            it is possible that the label is removed from the list of set labels / replaced by another label in the group.
+    
+            This depends on the groups's setting.
+    
+            @param addXor If no label is set in a xor group, the default can be automatically set.
+        
+            @return the list of labels after the review groups have been reset
+        
+         */
+        resetReviewLabels(labelIds, category, addXor) {
+            let that = this;
+            let cleaned = [];
+            // get label groups
+            let groups = this.getLabelGroups();
+            let labelList = this.getLabelList();
+            // copy all lables besides the review labels
+            for (let label of labelIds) {
+                let isReviewLabel = false;
+                for (var gid = 0; gid < groups.length; gid++) {
+                    if (((groups[gid].selection === "review" && this.json.isTrue(groups[gid].reset)) ||
+                        (groups[gid].selection === "design_review" && !this.json.isFalse(groups[gid].reset))) &&
+                        groups[gid].labels.indexOf(label) !== -1) {
+                        isReviewLabel = true;
+                    }
+                }
+                if (!isReviewLabel) {
+                    cleaned.push(label);
+                }
+            }
+            // add all default review states - if no other label is set in the review group
+            for (var gid = 0; gid < groups.length; gid++) {
+                if ((groups[gid].selection === "review" ||
+                    (addXor && groups[gid].selection === "xor")) &&
+                    groups[gid].default) {
+                    var groupIsSet = false;
+                    for (let cleanLabel of cleaned) {
+                        if (groups[gid].labels.indexOf(cleanLabel) !== -1) {
+                            groupIsSet = true;
+                        }
+                    }
+                    if (!groupIsSet) {
+                        // verify if label actually is defined for group...
+                        var defaultIsForType = false;
+                        for (let label of labelList) {
+                            if (groups[gid].default === label.label && label.categories.indexOf(category) !== -1) {
+                                defaultIsForType = true;
+                            }
+                        }
+                        if (defaultIsForType) {
+                            cleaned.push(groups[gid].default);
+                        }
+                    }
+                }
+            }
+            return cleaned;
+        }
+        ;
+        /* return the list of default labels for a category */
+        getDefaultLabels(category) {
+            let that = this;
+            // get current positive filters
+            let currentFilter = this.getFilter();
+            let posFilter = [];
+            const filterItems = currentFilter.split(",");
+            for (let f of filterItems) {
+                if (f.indexOf("!") !== 0) {
+                    posFilter.push(f);
+                }
+            }
+            // each label which is not in a xor/review group can be default
+            let defaultLabels = [];
+            let labelList = this.getLabelList();
+            for (let label of labelList) {
+                let group = that.getGroupOfLabel(label.label);
+                if (group && label.categories.indexOf(category) !== -1 && // label must exist for cateogry type
+                    (group.selection !== 'xor' && group.selection !== 'review') && // it must not be in a xor or review group
+                    (this.json.isTrue(label.default) || // the default value must be set to on OR 
+                        (label.default === "filter" && posFilter.indexOf(label.label) !== -1))) { // the default must be filter and it must be set in the current filter
+                    defaultLabels.push(label.label);
+                }
+            }
+            return this.resetReviewLabels(defaultLabels, category, true);
+        }
+        ;
+        hasLabels() {
+            return (this.getLabelList().length > 0);
+        }
+        ;
+        // implement logic to set labels. 
+        setLabels(oldLabelIds, labels) {
+            let that = this;
+            let old = oldLabelIds ? oldLabelIds.split(",") : [];
+            for (let label of labels) {
+                old = that.setLabel(old, label);
+            }
+            return old.join(",");
+        }
+        // implement logic to set a label. 
+        // This depends on the type of group: for xor / review labels other group members must be reset
+        setLabel(oldLabelIds, label) {
+            let labelIds = this.json.clone(oldLabelIds);
+            if (labelIds.indexOf(label) !== -1) {
+                // label already set - ignore
+                return labelIds;
+            }
+            let group = this.getGroupOfLabel(label);
+            if (!group || group.selection == "or") {
+                // simple label without group / or group: just set it
+                labelIds.push(label);
+            }
+            else if (group.selection == "xor" || group.selection == "review") {
+                // remove all labels from group
+                for (let otherLabel of group.labels) {
+                    labelIds = labelIds.filter(function (existingLabel) {
+                        return existingLabel != otherLabel;
+                    });
+                }
+                // set the label
+                labelIds.push(label);
+            }
+            else {
+                this.logger.log("warn", "setLabel: unkown group type of label: '" + label + "'");
+            }
+            return labelIds;
+        }
+        ;
+        // return the last time a label was set on a given item before a revision (=0 if any)
+        decipherLastTimeLabelWasSet(labelHistory, itemId, label, beforeRevision) {
+            let itemHistory = labelHistory.entries.filter(entry => entry.itemRef == itemId);
+            if (itemHistory.length > 0) {
+                let history = itemHistory[0].labels.filter(l => l.label == label);
+                if (history.length > 0 && history[0].set.length > 0) {
+                    // ignore all sets after the beforeRevision  (unless 0 is passed)
+                    let sets = history[0].set.filter(set => !beforeRevision || set.version < beforeRevision);
+                    return sets[sets.length - 1].version;
+                }
+            }
+            // label was never set all good
+            return 0;
+        }
+        // implement logic to reset a label. 
+        // This depends on the type of group: for xor / review labels a default label might need to be set
+        unsetLabel(oldLabelIds, label) {
+            let labelIds = this.json.clone(oldLabelIds);
+            if (labelIds.indexOf(label) === -1) {
+                // label is not actually set - ignore
+                return labelIds;
+            }
+            let group = this.getGroupOfLabel(label);
+            // remove the label
+            labelIds = labelIds.filter(function (existingLabel) {
+                return existingLabel != label;
+            });
+            if (!group || group.selection == "or") {
+                // simple label without group / or group - nothing else to do
+            }
+            else if (group.selection == "xor" || group.selection == "review") {
+                if (group.default) {
+                    labelIds.push(group.default);
+                }
+            }
+            else {
+                this.logger.log("warn", "unsetLabel: unkown group type of label: '" + label + "'");
+            }
+            return labelIds;
+        }
+        ;
+        compareLabels(before, after) {
+            let result = {
+                changed: false,
+                added: [],
+                removed: [],
+                delta: ""
+            };
+            before = before || [];
+            after = after || [];
+            let delta = [];
+            for (var idx = 0; idx < after.length; idx++) {
+                if (before.indexOf(after[idx]) === -1) {
+                    result.added.push(after[idx]);
+                    delta.push(after[idx]);
+                }
+            }
+            for (var idx = 0; idx < before.length; idx++) {
+                if (after.indexOf(before[idx]) === -1) {
+                    result.removed.push(before[idx]);
+                    delta.push("-" + before[idx]);
+                }
+            }
+            result.delta = delta.join(",");
+            result.changed = result.added.length + result.removed.length > 0;
+            return result;
+        }
+        getLabelList() {
+            let labelsAll = this.getConfig().getSetting("labels");
+            if (!labelsAll) {
+                return [];
+            }
+            let labelsJson = this.json.fromString(labelsAll);
+            if (labelsJson.status !== "ok" || !labelsJson.value.labels) {
+                return [];
+            }
+            return labelsJson.value.labels;
+        }
+        getLabelNames() {
+            let labelList = this.getLabelList();
+            let allLabels = [];
+            for (let label of labelList) {
+                allLabels.push(label.label);
+            }
+            return allLabels;
+        }
+        getDesignReviews() {
+            let labelsAll = this.getConfig().getSetting("labels");
+            if (!labelsAll) {
+                return [];
+            }
+            var labelsJson = this.json.fromString(labelsAll);
+            if (labelsJson.status !== "ok") {
+                return [];
+            }
+            return labelsJson.value.design_reviews ? labelsJson.value.design_reviews : [];
+        }
+        getDesignReview(labelId) {
+            var dr = this.getDesignReviews();
+            for (var idx = 0; idx < dr.length; idx++) {
+                if (dr[idx].label === labelId) {
+                    return dr[idx];
+                }
+            }
+            return null;
+        }
+        isFiltered(category, labels) {
+            let filters = this.getFilter();
+            if (!filters)
+                return false; // no filters -> not filtered out 
+            let isFilteredOut = false;
+            // there are some filters so lets check
+            let labelsSet = labels ? labels.split(",") : [];
+            let labelsForItem = this.getLabelDefinitions([category]).map(function (labelDef) { return labelDef.label; });
+            const filtersArray = filters.split(",");
+            filtersArray.forEach((filter) => {
+                let label = filter.replace("!", ""); // to get rid of negation of filters
+                if (labelsForItem.indexOf(label) == -1)
+                    return; // irrelevant, try next filter
+                if (label != filter) { // negative filter
+                    isFilteredOut = isFilteredOut || labelsSet.indexOf(label) != -1;
+                }
+                else {
+                    isFilteredOut = isFilteredOut || labelsSet.indexOf(label) == -1;
+                }
+            });
+            return isFilteredOut;
+        }
+        getLabelsOfLabelGroupsType(labelGroupType) {
+            if (!labelGroupType) {
+                return [];
+            }
+            let labels = [];
+            for (let lg of this.getLabelGroups()) {
+                if (lg.groupType == labelGroupType) {
+                    labels = labels.concat(lg.labels);
+                }
+            }
+            for (let lg of this.getDesignReviews()) {
+                if (lg.groupType == labelGroupType) {
+                    labels.push(lg.label);
+                }
+            }
+            return labels;
+        }
+        getLabelGroups(category) {
+            let labelsAll = this.getConfig().getSetting("labels");
+            if (!labelsAll) {
+                return [];
+            }
+            let labelsJson = this.json.fromString(labelsAll);
+            if (labelsJson.status !== "ok") {
+                return [];
+            }
+            let labelList = this.getLabelList();
+            let groups = labelsJson.value.groups ? labelsJson.value.groups : [];
+            let design_reviews = this.getDesignReviews();
+            // by default all labels end up in the last group
+            for (var gid = 0; gid < groups.length; gid++) {
+                // prepare to add label definitions of actual labels to display
+                groups[gid].labelDef = [];
+                // by default all filters are in "or" mode
+                if (!groups[gid].filterSelection) {
+                    groups[gid].filterSelection = "or";
+                }
+            }
+            // now add actual labels to display to each group, any label should be displayed at most once
+            labelList.forEach((label) => {
+                if (category && label.categories.indexOf(category) === -1) {
+                    // this is an item, and label does not exist for item
+                    return;
+                }
+                // check if label is in group
+                for (var gid = 0; gid < groups.length; gid++) {
+                    for (var lid = 0; lid < groups[gid].labels.length; lid++) {
+                        if (groups[gid].labels[lid] === label.label) {
+                            groups[gid].labelDef.push(label);
+                            return;
+                        }
+                    }
+                }
+                // check if label is in review
+                for (var gid = 0; gid < design_reviews.length; gid++) {
+                    if (design_reviews[gid].label === label.label) {
+                        groups.push({
+                            selection: "design_review", labels: [label.label], filterSelection: "or", labelDef: [label], reset: design_reviews[gid].reset,
+                            filterMenu: design_reviews[gid].filterMenu
+                        });
+                        return;
+                    }
+                }
+                // create a new group
+                groups.push({ virtualGroup: true, selection: "or", labels: [label.label], filterSelection: "or", labelDef: [label] });
+            });
+            return groups;
+        }
+        // returns the group of a label
+        getGroupOfLabel(labelID) {
+            let groups = this.getLabelGroups();
+            for (var gid = 0; gid < groups.length; gid++) {
+                if (groups[gid].labels.indexOf(labelID) !== -1) {
+                    return groups[gid];
+                }
+            }
+            return null;
+        }
+    }
+    exports.LabelManager = LabelManager;
+    LabelManager.timeWarpLabel = "_timewarp_";
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 120 */,
+/* 121 */,
+/* 122 */,
+/* 123 */,
+/* 124 */,
+/* 125 */,
+/* 126 */,
+/* 127 */,
+/* 128 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(70), __webpack_require__(91)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BasicFunctions_1, JQueryExtendReplacement_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.JSONTools = void 0;
+    class JSONTools {
+        constructor(logger) {
+            this.logger = logger;
+        }
+        cloner2(src) {
+            return (0, JQueryExtendReplacement_1.extend)(true, {}, { x: src }).x;
+        }
+        mergeOptions(defaultOptions, options) {
+            let newOptions = this.clone(defaultOptions);
+            // make sure there is a parameter object
+            if (!newOptions.parameter) {
+                newOptions['parameter'] = {};
+            }
+            // copy parameters one by one
+            if (options.parameter) {
+                for (var name in options.parameter) {
+                    newOptions.parameter[name] = options.parameter[name];
+                }
+            }
+            // copy other values
+            for (var name in options) {
+                if (name != 'parameter') {
+                    newOptions[name] = options[name];
+                }
+            }
+            // use parameters to overwrite some default values
+            if (this.isTrue(newOptions.parameter.readonly)) {
+                newOptions.canEdit = false;
+            }
+            return newOptions;
+        }
+        // overwrite default options
+        setOptions(newOptions, options) {
+            // make sure there is a parameter object
+            if (!newOptions.parameter) {
+                newOptions['parameter'] = {};
+            }
+            // copy parameters one by one
+            if (options.parameter) {
+                for (var name in options.parameter) {
+                    newOptions.parameter[name] = options.parameter[name];
+                }
+            }
+            // copy other values
+            for (var name in options) {
+                if (name != 'parameter') {
+                    newOptions[name] = options[name];
+                }
+            }
+            // use parameters to overwrite some default values
+            if (this.isTrue(newOptions.parameter.readonly)) {
+                newOptions.canEdit = false;
+            }
+            // handle readonly for ACLs
+            if (this.isTrue(newOptions.parameter.readonlyACL)) {
+                newOptions.canEdit = false;
+            }
+            return newOptions;
+        }
+        isTrue(obj) {
+            return BasicFunctions_1.BasicFunctions.isTrue(obj);
+        }
+        isFalse(obj) {
+            return BasicFunctions_1.BasicFunctions.isFalse(obj);
+        }
+        fromString(str) {
+            var result = { status: 'empty', value: {} };
+            if (str && str !== "") {
+                // first replace all single quotes outside of double quotes with "
+                var strp = str.replace(/(')(?=(?:[^"]|"[^"]*")*$)/g, '"').replace(/(\r\n|\n|\r)/gm, "");
+                try {
+                    result.value = JSON.parse(strp);
+                    result.status = 'ok';
+                }
+                catch (err) {
+                    try {
+                        result.value = JSON.parse(str);
+                        result.status = 'ok';
+                    }
+                    catch (err) {
+                        this.logger.log("error", "Error trying to parse configuration parameter: " + str);
+                        this.logger.log("error", "Error was:" + err);
+                        result.status = 'error';
+                    }
+                }
+            }
+            return result;
+        }
+        clone(src) {
+            var b = this.cloner2(src);
+            return b;
+        }
+    }
+    exports.JSONTools = JSONTools;
+    ;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 129 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.LoggerTools = exports.SERVER_LOG_LEVEL = void 0;
+    var SERVER_LOG_LEVEL;
+    (function (SERVER_LOG_LEVEL) {
+        SERVER_LOG_LEVEL["WEIRD_STATE"] = "WEIRD_STATE";
+        SERVER_LOG_LEVEL["BROKEN_STATE"] = "BROKEN_STATE";
+    })(SERVER_LOG_LEVEL || (SERVER_LOG_LEVEL = {}));
+    exports.SERVER_LOG_LEVEL = SERVER_LOG_LEVEL;
+    class LoggerTools {
+        constructor(functionRenderHumanDate, sanitize) {
+            this.verbose = false;
+            this.lastLogMsg = "none";
+            this.logData = [];
+            this.logIdx = 0;
+            this.logSize = 50;
+            this.functionRenderHumanDate = functionRenderHumanDate;
+            this.functionSanitize = (sanitize) ? sanitize : (d) => { return DOMPurify.sanitize(d); };
+        }
+        log(id, msg) {
+            if (!this.verbose && id === "debug") {
+                return;
+            }
+            msg = this.functionSanitize(msg) + '';
+            if (!msg) {
+                return;
+            }
+            console.log(id + ":" + msg);
+            if (this.lastLogMsg === msg) {
+                this.logData[this.logIdx] = this.logData[this.logIdx] + ".";
+            }
+            else {
+                this.logIdx++;
+                if (this.logIdx === this.logSize) {
+                    this.logIdx = 0;
+                }
+                // this.logData[this.logIdx] = ml.UI.DateTime.renderHumanDate(new Date()) + " [" + id + "]: " + msg;
+                this.logData[this.logIdx] = this.functionRenderHumanDate(new Date()) + " [" + id + "]: " + msg;
+                this.lastLogMsg = msg;
+            }
+        }
+        debug(message) {
+            this.log("debug", message);
+        }
+        info(message) {
+            this.log("info", message);
+        }
+        warning(message) {
+            this.log("warning", message);
+        }
+        error(message) {
+            this.log("error", message);
+        }
+        getLog() {
+            var msg = "";
+            for (var idx = this.logIdx + 1; idx < this.logIdx + this.logSize + 1; idx++) {
+                if (this.logData[idx % this.logSize]) {
+                    msg += this.logData[idx % this.logSize] + "\n";
+                }
+            }
+            return msg;
+        }
+    }
+    exports.LoggerTools = LoggerTools;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 130 */,
+/* 131 */,
+/* 132 */,
+/* 133 */,
+/* 134 */,
+/* 135 */,
+/* 136 */,
+/* 137 */,
+/* 138 */,
+/* 139 */,
+/* 140 */,
+/* 141 */,
+/* 142 */,
+/* 143 */,
+/* 144 */,
+/* 145 */,
+/* 146 */,
+/* 147 */,
+/* 148 */,
+/* 149 */,
+/* 150 */,
+/* 151 */,
+/* 152 */,
+/* 153 */,
+/* 154 */,
+/* 155 */,
+/* 156 */,
+/* 157 */,
+/* 158 */,
+/* 159 */,
+/* 160 */,
+/* 161 */,
+/* 162 */,
+/* 163 */,
+/* 164 */,
+/* 165 */,
+/* 166 */,
+/* 167 */,
+/* 168 */,
+/* 169 */,
+/* 170 */,
+/* 171 */,
+/* 172 */,
+/* 173 */,
+/* 174 */,
+/* 175 */,
+/* 176 */,
+/* 177 */,
+/* 178 */,
+/* 179 */,
+/* 180 */,
+/* 181 */,
+/* 182 */,
+/* 183 */,
+/* 184 */,
+/* 185 */,
+/* 186 */,
+/* 187 */,
+/* 188 */,
+/* 189 */,
+/* 190 */,
+/* 191 */,
+/* 192 */,
+/* 193 */,
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */,
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(115), __webpack_require__(248), __webpack_require__(249), __webpack_require__(129), __webpack_require__(128), __webpack_require__(9), __webpack_require__(49), __webpack_require__(119), __webpack_require__(257)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1, TestManagerConfiguration_1, LabelManager_1, Project_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.CreateConsoleAPI = exports.StandaloneMatrixAPI = void 0;
+    // import { isomorphicFetch } from "isomorphic-fetch";
+    let isomorphicFetch = __webpack_require__(246);
+    function CreateConsoleAPI(token, baseRestUrl, baseMatrixUrl) {
+        let config = new configuration_1.Configuration({ apiKey: token });
+        let session = new class {
+            getCsrfCookie() { return ""; }
+            setComment(comment) { this.comment = comment; }
+            getComment() { return this.comment; }
+            setProject(project) { this.project = project; }
+            getProject() { return this.project; }
+            getDefaultProjectContext() { return null; }
+        };
+        const logger = new LoggerTools_1.LoggerTools((d) => d.toString(), (d) => d);
+        const json = new JSONTools_1.JSONTools(logger);
+        const itemTools = new SimpleItemTools_1.SimpleItemTools();
+        const itemConfig = new ItemConfiguration_1.ItemConfiguration(logger, json);
+        return new StandaloneMatrixAPI(config, session, itemConfig, baseRestUrl, baseMatrixUrl, logger, json, itemTools);
+    }
+    exports.CreateConsoleAPI = CreateConsoleAPI;
+    class IsomorphicFetchWrapper {
+        constructor(oldFetch) {
+            this.oldFetch = oldFetch;
+            this.log = [];
+            let log = this.log;
+            this.myFetch = async (...args) => {
+                let [resource, config] = args;
+                log.push(resource);
+                const response = oldFetch(resource, config);
+                return response;
+            };
+        }
+        getLog() { return this.log; }
+        getFetch() {
+            return this.myFetch;
+        }
+    }
+    class StandaloneMatrixAPI {
+        constructor(config, session, initialItemConfig, baseRestUrl, matrixBaseUrl, logger, json, simpleItemTools) {
+            this.config = config;
+            this.session = session;
+            this.baseRestUrl = baseRestUrl;
+            this.matrixBaseUrl = matrixBaseUrl;
+            this.logger = logger;
+            this.json = json;
+            this.simpleItemTools = simpleItemTools;
+            this.debug = false;
+            this.projectMap = new Map();
+            this.fetchWrapper = new IsomorphicFetchWrapper(isomorphicFetch);
+            this.instance = new rest_api_1.DefaultApi(this.config, this.baseRestUrl, this.fetchWrapper.getFetch());
+            this.setItemConfig(initialItemConfig);
+            this.labelManager = new LabelManager_1.LabelManager(logger, json, () => {
+                return this.getItemConfig();
+            });
+        }
+        getFetchLog() {
+            return this.fetchWrapper.getLog();
+        }
+        createNewItemConfig() {
+            return new ItemConfiguration_1.ItemConfiguration(this.logger, this.json);
+        }
+        getLabelManager() {
+            return this.labelManager;
+        }
+        getItemConfig() {
+            return this.ItemConfig;
+        }
+        setItemConfig(newItemConfig) {
+            this.ItemConfig = newItemConfig;
+        }
+        getHeadersForPost() {
+            let headers = {};
+            headers['x-csrf'] = this.session.getCsrfCookie();
+            return headers;
+        }
+        // Called by setProject on project change.
+        async initializeProject() {
+            const p = await this.instance.projectGet(this.getProject(), 1);
+            this.setItemConfig(this.createNewItemConfig());
+            this.getItemConfig().init(p);
+        }
+        log(arg) {
+            if (this.debug) {
+                this.logger.info(arg);
+            }
+        }
+        setComment(comment) {
+            this.session.setComment(comment);
+        }
+        getComment() { return this.session.getComment(); }
+        async setProject(project) {
+            this.session.setProject(project);
+            if (project) {
+                await this.initializeProject();
+            }
+        }
+        getProject() { return this.session.getProject(); }
+        async getProjects() {
+            let p = this.instance.rootGet(0);
+            return p.then((result) => {
+                let projects = [];
+                if (result.project) {
+                    result.project.forEach((a) => {
+                        projects.push(a.shortLabel);
+                    });
+                }
+                return projects;
+            });
+        }
+        parseRef(itemId) {
+            return this.parseRefForProject(this.getProject(), itemId);
+        }
+        getType(itemId) {
+            var ir = this.parseRef(itemId);
+            if (ir.type !== "") {
+                return ir.type;
+            }
+            // no idea... 
+            return "";
+        }
+        /**
+         * get an item from the database as json object.
+         *
+         * Use: await api.getItem("F-DOC-1")
+         *
+         * @param itemId the id of the item like "REQ-1" or a specific version like "REQ-1-v1"
+         * @throws error in case the itemId is bad.
+         * @returns Promise to json object with all fields, links and labels
+         */
+        async getItem(itemId) {
+            this.log(`get item "${itemId}`);
+            let type = this.parseRef(itemId).type;
+            if (!type || this.getItemConfig().getCategories(true).indexOf(type) == -1) {
+                const msg = `This is not possibly an item in this project: "${itemId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            return this.appGetItemAsync(this.getProject(), itemId);
+        }
+        parseRefForProject(project, itemRef) {
+            return this.simpleItemTools.parseRef(itemRef, project, this.matrixBaseUrl);
+        }
+        getItemFromProject(project, id) {
+            return this.appGetItemAsync(project, id);
+        }
+        /**
+         * get the initial tree structure from a project. Project must be set first.
+         */
+        async getTree() {
+            return this.getTreeFromProject(this.getProject());
+        }
+        async getFullTreeFromProject(projectName) {
+            const p = await this.instance.projectTreeGet(projectName, "yes");
+            return p;
+        }
+        async getTreeFromProject(projectName) {
+            let p = this.instance.projectTreeGet(projectName, "yes");
+            return p.then((folders) => {
+                let result = [];
+                folders.forEach((v) => {
+                    const hasChildren = v.children && v.children.length > 0;
+                    result.push({ isFolder: hasChildren, title: v.title, id: v.id });
+                });
+                return result;
+            });
+        }
+        /**
+         * get a folder from the database, filling in it's children.
+         * @param folderId  the id of the folder like "F-<type>-<id>"
+         * @throws error if folderId is invalid
+         * @returns Promise to ITitleAndId array
+         */
+        async getFolderChildren(folderId) {
+            this.log(`get folder "${folderId}`);
+            const ref = this.parseRef(folderId);
+            if (!ref.isFolder) {
+                const msg = `This is not a folder: "${folderId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            let type = ref.type;
+            if (!type || this.getItemConfig().getCategories(true).indexOf(type) == -1) {
+                const msg = `This is not possibly a folder in this project: "${folderId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            return this.getFolderChildrenFromProject(this.getProject(), folderId);
+        }
+        async getFolderChildrenFromProject(projectName, folderId) {
+            this.log(`get folder ${folderId} from project ${projectName}`);
+            const ref = this.parseRef(folderId);
+            if (!ref.isFolder) {
+                const msg = `This is not a folder: "${folderId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            const p = this.instance.projectItemFolderGet(projectName, folderId, 0, "", "yes");
+            return p.then((value) => {
+                let result = [];
+                // Harvest the children's IDs.
+                if (value.itemList) {
+                    value.itemList.forEach((v) => {
+                        result.push({ isFolder: v.isFolder > 0, title: v.title, id: v.itemRef });
+                    });
+                }
+                return result;
+            });
+        }
+        parseItemJSON(itemId, result) {
+            var item = {
+                id: itemId,
+                title: result.title,
+                type: this.getType(itemId),
+                downLinks: [],
+                upLinks: [],
+                modDate: result.modDate,
+                isUnselected: result.isUnselected,
+                labels: result.labels ? result.labels : [],
+                maxVersion: result.maxVersion
+            };
+            if (result.isFolder != undefined) {
+                item.isFolder = result.isFolder == 1;
+                item.children = [];
+            }
+            else {
+                item.isFolder = false;
+            }
+            if (result.docHasPackage) {
+                item.docHasPackage = result.docHasPackage;
+            }
+            if (!result.maxVersion) {
+                item.isDeleted = true;
+            }
+            if (result.fieldValList) {
+                for (var fieldVal in result.fieldValList.fieldVal) {
+                    item[result.fieldValList.fieldVal[fieldVal].id.toString()] = result.fieldValList.fieldVal[fieldVal].value;
+                }
+            }
+            for (var idx = 0; result.downLinkList && idx < result.downLinkList.length; idx++) {
+                var tol = result.downLinkList[idx].itemRef;
+                item.downLinks.push({ to: this.parseRef(tol).id, title: result.downLinkList[idx].title, modDate: result.downLinkList[idx].modDate });
+            }
+            for (var idx = 0; result.upLinkList && idx < result.upLinkList.length; idx++) {
+                var tol = result.upLinkList[idx].itemRef;
+                item.upLinks.push({ to: this.parseRef(tol).id, title: result.upLinkList[idx].title, modDate: result.upLinkList[idx].modDate });
+            }
+            // copy original up list
+            item.upLinkList = result.upLinkList;
+            if (result.availableFormats) {
+                item["availableFormats"] = result.availableFormats;
+            }
+            if (result.selectSubTree) {
+                item["selectSubTree"] = result.selectSubTree;
+            }
+            if (result.requireSubTree) {
+                item["requireSubTree"] = result.requireSubTree;
+            }
+            var hoi = [];
+            for (var idx = 0; result.itemHistoryList && idx < result.itemHistoryList.itemHistory.length; idx++) {
+                var theAction = result.itemHistoryList.itemHistory[idx];
+                var historyInfo = {
+                    id: itemId,
+                    user: theAction.createdByUserLogin,
+                    action: theAction.auditAction,
+                    version: theAction.version,
+                    date: theAction.createdAt,
+                    dateUserFormat: theAction.createdAtUserFormat,
+                    title: theAction.title,
+                    comment: theAction.reason
+                };
+                // now use the information that undeleted items have been deleted just before
+                if (theAction.auditAction === "undelete") {
+                    if (result.itemHistoryList.itemHistory.length > idx + 1) {
+                        var theDelete = result.itemHistoryList.itemHistory[idx + 1];
+                        if (theDelete.auditAction !== "delete") {
+                            historyInfo["deletedate"] = theDelete.deletedAtUserFormat;
+                        }
+                    }
+                }
+                hoi.push(historyInfo);
+            }
+            item['history'] = hoi;
+            return item;
+        }
+        async appGetItemAsync(project, itemId) {
+            const p = this.instance.projectItemItemGet(project, itemId, 1);
+            return p.then((value) => {
+                if (value.isFolder) {
+                    value["children"] = [];
+                }
+                const item = this.parseItemJSON(itemId, value);
+                return item;
+            });
+        }
+        async getDownlinks(itemId) {
+            this.log(`get downlinks of item "${itemId}`);
+            const itemPromise = this.getItem(itemId);
+            return itemPromise.then((value) => {
+                return value.downLinks ? value.downLinks : [];
+            });
+        }
+        async getDownlinkIds(itemId) {
+            this.log(`get downlink ids of item "${itemId}`);
+            const links = this.getDownlinks(itemId);
+            return links.then((value) => {
+                return value.map(d => d.to);
+            });
+        }
+        async getUplinks(itemId) {
+            this.log(`get Uplinks of item "${itemId}`);
+            const itemPromise = this.getItem(itemId);
+            return itemPromise.then((value) => {
+                return value.upLinks ? value.upLinks : [];
+            });
+        }
+        async getUplinkIds(itemId) {
+            this.log(`get uplink ids of item "${itemId}`);
+            const links = this.getUplinks(itemId);
+            return links.then((value) => {
+                return value.map(d => d.to);
+            });
+        }
+        /**
+         * search items
+         *
+         * @param term search expression, e.g. mrql:category=REQ
+         * @param includeFields true to include fields
+         * @param includeLinks true to include links
+         * @param includeLabels true to include labels
+         * @returns search results
+         */
+        async search(term, includeFields, includeLinks, includeLabels, filter) {
+            this.log(`Search for "${term}"`);
+            return this.appSearchAsync(this.getProject(), term, filter !== null && filter !== void 0 ? filter : null, true, includeFields ? "*" : null, null, includeLabels !== null && includeLabels !== void 0 ? includeLabels : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false);
+        }
+        /**
+         * Move items to a particular folder.
+         * @param project a valid project on the instance
+         * @param folderId a valid folder id within the project
+         * @param itemIds an array of itemIds
+         * @returns the string "Ok" on success
+         */
+        async moveItemsInProject(project, folderId, itemIds) {
+            this.log(`Move items in ${project} to folder ${folderId}"`);
+            const comment = this.getComment();
+            const itemsString = itemIds.join(",");
+            return this.instance.projectMoveinFolderPost(project, folderId, comment, itemsString);
+        }
+        /**
+         * Execute a search in the given project, returning matching item ids.
+         * @param project
+         * @param term
+         * @returns an array of item ids.
+         */
+        async searchInProject(project, term) {
+            this.log(`Search in ${project} for "${term}"`);
+            const results = await this.instance.projectNeedleminimalGet(project, term);
+            return results;
+        }
+        async complexSearchInProject(project, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder) {
+            return this.appSearchAsync(project, term, filter, true, fieldList, // "*" for all fields
+            null, includeLabels, includeDownlinks, includeUplinks);
+        }
+        async uploadProjectFile(url) {
+            const options = { headers: this.getHeadersForPost() };
+            let result = await this.instance.projectFilePost(this.getProject(), url, options);
+            return result;
+        }
+        async execute(payload) {
+            const options = { headers: this.getHeadersForPost() };
+            let items = await this.instance.projectExecutePost(this.getProject(), payload, options);
+            return items;
+        }
+        /**
+         * The session object contains a string that represents the "current project."
+         * This convenience method calls openProject() with that string.
+         * @returns A valid Project object.
+         */
+        async openCurrentProjectFromSession() {
+            const project = this.session.getProject();
+            return this.openProject(project);
+        }
+        /**
+         * Retrieve or create a Project object for the given project name.  The method is
+         * asynchronous because it may require a trip to the server to retrieve project
+         * configuration.
+         * @param project
+         * @returns A valid Project object
+         */
+        async openProject(project) {
+            if (this.projectMap.has(project)) {
+                return this.projectMap.get(project);
+            }
+            // If we are running in the web application context, and the user asks to open the current
+            // project, provide them with the current web application globals. Otherwise, create a new
+            // context on the fly. That requires a server call to get the item configuration information.
+            let context = null;
+            if (this.session.getProject() == project &&
+                this.session.getDefaultProjectContext() != null) {
+                context = this.session.getDefaultProjectContext();
+            }
+            else {
+                const p = await this.instance.projectGet(project, 1);
+                let config = this.createNewItemConfig();
+                config.init(p);
+                const labelManager = new LabelManager_1.LabelManager(this.logger, this.json, () => config);
+                const testManagerConfig = new TestManagerConfiguration_1.TestManagerConfiguration();
+                testManagerConfig.initialize(config);
+                context = {
+                    getItemConfig: () => { return config; },
+                    getJsonTools: () => { return this.json; },
+                    getLogger: () => { return this.logger; },
+                    getLabelManager: () => { return labelManager; },
+                    getTestManagerConfig: () => { return testManagerConfig; }
+                };
+            }
+            const proj = new Project_1.Project(this, project, context);
+            this.projectMap.set(project, proj);
+            return proj;
+        }
+        parseSearchResult(needle, fieldList) {
+            let fullitem = this.parseRef(needle.itemOrFolderRef);
+            const that = this;
+            let sr = {
+                itemId: fullitem.id, version: fullitem.version, title: needle.title, downlinks: [], uplinks: [], labels: []
+            };
+            if (fieldList && fieldList.length > 0) {
+                sr.fieldVal = needle.fieldVal;
+            }
+            if (needle.downLinkList) {
+                for (let link of needle.downLinkList) {
+                    sr.downlinks.push(that.parseRef(link.itemRef).id);
+                }
+            }
+            if (needle.upLinkList) {
+                for (let link of needle.upLinkList) {
+                    sr.uplinks.push(that.parseRef(link.itemRef).id);
+                }
+            }
+            if (needle.labels) {
+                let labels = needle.labels.split(",");
+                for (let label of labels) {
+                    sr.labels.push(label.substr(1, label.length - 2));
+                }
+            }
+            if (needle.creationDate) {
+                sr["creationDate"] = needle.creationDate;
+            }
+            return sr;
+        }
+        // TODO: crossProject is not handled (it is a server query, not a project query).
+        async appSearchAsync(project, term, filter, ignoreFilters, fieldList, crossProject, labels, down, up, treeOrder) {
+            let linksReq = "";
+            if (down && up) {
+                linksReq = "up,down";
+            }
+            else if (down) {
+                linksReq = "down";
+            }
+            else if (up) {
+                linksReq = "up";
+            }
+            const p = this.instance.projectNeedleGet(project, term, "", filter, fieldList, labels ? 1 : 0, treeOrder ? 1 : 0, linksReq);
+            return p.then((result) => {
+                var hoi = [];
+                for (var idx = 0; idx < result.needles.length; idx++) {
+                    hoi.push(this.parseSearchResult(result.needles[idx], fieldList));
+                }
+                return hoi;
+            });
+        }
+        async getItemIdsInCategory(category) {
+            this.log(`get items of type "${category}"`);
+            let items = await this.search("mrql:category=" + category);
+            return items.map(item => item.itemId);
+        }
+        /**
+         * gets the value of a field of an item from the database
+         *
+         * Use: await getField( "REQ-1", "description")
+         *
+         * @param itemId the id of the item like "REQ-1" or a specific version like "REQ-1-v1"
+         * @param fieldName name of the field
+         * @throws Error in case of invalid item or field
+         * @returns Promise to the value of the field
+         */
+        async getField(itemId, fieldName) {
+            this.log(`get field "${fieldName} of item "${itemId}" `);
+            let type = this.parseRef(itemId).type;
+            if (!type || this.getItemConfig().getCategories(true).indexOf(type) == -1) {
+                const msg = `This is not possibly an item in this project: "${itemId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            let fieldId = this.getItemConfig().getFieldId(type, fieldName);
+            if (!fieldId) {
+                const msg = `"${fieldName}" is not a field of this item "${itemId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            let itemPromise = this.appGetItemAsync(this.getProject(), itemId);
+            return itemPromise.then((value) => {
+                return value[fieldId];
+            });
+        }
+        /**
+         * set a field of an item in the database
+         *
+         * Use: await api.setField("PROC-83", "plain english", "x");
+         *
+         * @param itemId itemId the id of the item like "REQ-1"
+         * @param fieldName name of the field
+         * @param value value of the field
+         * @throws Error in case of invalid itemId or fieldName
+         * @returns Promise to the updated item
+         */
+        async setField(itemId, fieldName, value) {
+            this.log(`set field "${fieldName} of item "${itemId}" `);
+            return this.setFields(itemId, [{ fieldName: fieldName, value: value }]);
+        }
+        async setTitle(itemId, value) {
+            this.log(`set title of item "${itemId}" `);
+            let update = {
+                id: itemId,
+                onlyThoseFields: 1,
+                onlyThoseLabels: 1,
+                title: value
+            };
+            let type = this.parseRef(itemId).type;
+            if (!type) {
+                const msg = `This is not possibly an item in this project: "${itemId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            return this.appUpdateItemInDBAsync(this.getProject(), update, "edit");
+        }
+        appUpdateItemInDBAsync(project, itemJson, auditAction, currentVersion) {
+            const comment = this.getComment();
+            let body = {
+                reason: comment,
+                currentVersion: currentVersion,
+                linksAreComplete: 1,
+                itemProperties: {}
+            };
+            if (auditAction) {
+                body["auditAction"] = auditAction;
+            }
+            const regex = /fx[0-9]+/;
+            for (var par in itemJson) {
+                if (!itemJson.hasOwnProperty(par))
+                    continue;
+                if (body.hasOwnProperty(par))
+                    continue;
+                if (par === "type")
+                    continue;
+                if (par === "category")
+                    continue;
+                if (par === "links")
+                    continue;
+                if (par === "id")
+                    continue;
+                if (par === "downLinks" || par === "upLinks") {
+                    // These are sent in fields linksDown and linksUp.
+                    continue;
+                }
+                if (isNaN(par)) {
+                    // it's attribute other than a field
+                    body[par] = itemJson[par];
+                }
+                else {
+                    // it's a number so we assume it's a field
+                    body.itemProperties["fx" + par] = itemJson[par];
+                }
+                // If itemJson already has "fx" fields, we need to put those in the fxFields bucket.
+                if (regex.test(par)) {
+                    body.itemProperties[par] = itemJson[par];
+                }
+            }
+            const options = { headers: this.getHeadersForPost() };
+            const p = this.instance.projectItemItemPut(body, project, itemJson.id, options);
+            return p.then((result) => {
+                var item = this.parseItemJSON(itemJson.id, result);
+                return item;
+            });
+        }
+        async updateItemInProject(project, item, currentVersion) {
+            return (await this.appUpdateItemInDBAsync(project, item, "edit", currentVersion)).id;
+        }
+        async createItemInProject(project, parentFolderId, item) {
+            const newId = await this.createItemFromIItemPut(project, parentFolderId, item);
+            return newId;
+        }
+        /**
+         * sets multiple fields in the database
+         *
+         * Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
+         *
+         * @param itemId itemId itemId the id of the item like "REQ-1"
+         * @param data array of fieldName and value tupels
+         * @throws Error in case of invalid id or fields
+         * @returns the updated item
+         */
+        async setFields(itemId, data) {
+            return this.setFieldsInProject(this.getProject(), this.getItemConfig(), itemId, data);
+        }
+        async setFieldsInProject(project, projectItemConfig, itemId, data) {
+            this.log(`set fields "${JSON.stringify(data)} of item "${itemId}" in project "${project}" `);
+            let update = {
+                id: itemId,
+                onlyThoseFields: 1,
+                onlyThoseLabels: 1
+            };
+            let type = this.parseRefForProject(project, itemId).type;
+            if (!type) {
+                const msg = `This is not possibly an item in this project: "${itemId}"!`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            for (let s of data) {
+                let fieldId = projectItemConfig.getFieldId(type, s.fieldName);
+                if (!fieldId) {
+                    const msg = `"${s.fieldName}" is not a field of this item "${itemId}"!`;
+                    this.logger.error(msg);
+                    throw new Error(msg);
+                }
+                update["fx" + fieldId] = s.value;
+            }
+            return this.appUpdateItemInDBAsync(this.getProject(), update, "edit");
+        }
+        async addDownLink(fromId, toId) {
+            this.log(`Add downlink from "${fromId} to "${toId}"`);
+            const options = { headers: this.getHeadersForPost() };
+            return this.instance.projectItemlinkUpitemDownitemPost(this.getProject(), fromId, toId, this.getComment(), options);
+        }
+        async deleteItem(itemId, force) {
+            this.log(`Delete Item "${itemId}"`);
+            if (force == undefined) {
+                force = false;
+            }
+            return this.appDeleteItem(this.getProject(), itemId, force);
+        }
+        async deleteItemInProject(project, itemId, force) {
+            this.log(`Delete Item "${itemId}" in project "${project}"`);
+            if (force == undefined) {
+                force = false;
+            }
+            return this.appDeleteItem(project, itemId, force);
+        }
+        async appDeleteItem(project, itemId, force) {
+            return this.appGetItemAsync(project, itemId).then((itemJson) => {
+                const comment = this.getComment();
+                let confirm = "no";
+                if (itemJson.isFolder && itemJson.children && force) {
+                    confirm = "yes";
+                }
+                if (!force && itemJson.children.length > 0) {
+                    throw new Error(`Item "${itemId}" not deleted because it has children`);
+                }
+                return this.instance.projectItemItemDelete(project, itemId, confirm, comment);
+            });
+        }
+        async deleteDownLink(fromId, toId) {
+            this.log(`Delete downlink from "${fromId} to "${toId}"`);
+            return this.instance.projectItemlinkUpitemDownitemDelete(this.getProject(), fromId, toId, this.getComment());
+        }
+        async deleteDownLinks(fromId) {
+            this.log(`Delete all downlinks from "${fromId}"`);
+            let dls = await this.getDownlinkIds(fromId);
+            let results = [];
+            for (let dl of dls) {
+                results.push(await this.deleteDownLink(fromId, dl));
+            }
+            return results;
+        }
+        async deleteUpLinks(fromId) {
+            this.log(`Delete all uplinks from "${fromId}"`);
+            let uls = await this.getUplinkIds(fromId);
+            let results = [];
+            for (let ul of uls) {
+                results.push(await this.deleteDownLink(ul, fromId));
+            }
+            return results;
+        }
+        /**
+         * create a new item in the database
+         *
+         * Use: createItem( "F-REQ-1", "my item", [{fieldName:"description",value:"x"}], ["labelx"], downlinks:["SPEC-1"], uplinks:[] )
+         *
+         * @param folder where to store the item
+         * @param title name of the item
+         * @param data array with fieldNames and values
+         * @param labels list of labels to set
+         * @param downlinks list of downlinks to create
+         * @param uplinks list of uplinks to create
+         * @returns the created item id
+         */
+        createItem(folder, title, data, labels, downlinks, uplinks) {
+            this.log(`Create item ${title} in folder ${folder} with labels: ${labels ? labels.join(",") : ""} downlinks: ${downlinks ? downlinks.join(",") : ""} and uplinks:${uplinks ? uplinks.join(",") : ""} `);
+            let that = this;
+            let category = this.parseRef(folder).type;
+            let update = { title: title, type: category };
+            if (data) {
+                for (let s of data) {
+                    let fieldId = this.getItemConfig().getFieldId(category, s.fieldName);
+                    if (!fieldId) {
+                        const msg = `"${s.fieldName}" is not a field of this category "${category}"!`;
+                        this.logger.error(msg);
+                        throw new Error(msg);
+                    }
+                    update[fieldId] = s.value;
+                }
+            }
+            if (labels && labels.length)
+                update.labels = labels.join(",");
+            const result = that.appCreateItemOfTypeAsync(this.getProject(), category, update, "add", folder);
+            return result.then(async (newItemId) => {
+                let itemId = that.parseRef(newItemId).id;
+                if (downlinks) {
+                    for (let link of downlinks) {
+                        await that.addDownLink(itemId, link);
+                    }
+                }
+                if (uplinks) {
+                    for (let link of uplinks) {
+                        await that.addDownLink(link, itemId);
+                    }
+                }
+                return newItemId;
+            });
+        }
+        async createItemFromIItemPut(project, folder, item) {
+            let that = this;
+            let category = this.parseRef(folder).type;
+            if (category != item.type) {
+                const msg = `Folder category of ${category} does not match item category of ${item.type}`;
+                this.logger.error(msg);
+                throw new Error(msg);
+            }
+            const result = this.appCreateItemOfTypeAsync(project, category, item, "add", folder);
+            return result.then(async (newItemId) => {
+                let itemId = that.parseRef(newItemId).id;
+                // TODO: why can't this be done in the initial call? Seems like more trips to server than
+                // required.
+                if (item.downlinks) {
+                    for (let link of item.downlinks) {
+                        await that.addDownLink(itemId, link);
+                    }
+                }
+                if (item.uplinks) {
+                    for (let link of item.uplinks) {
+                        await that.addDownLink(link, itemId);
+                    }
+                }
+                return newItemId;
+            });
+        }
+        // Returns a promise with the id of the created item.
+        async appCreateItemOfTypeAsync(project, category, itemJson, actions, parentId) {
+            const comment = this.getComment();
+            let body = {
+                reason: comment,
+                title: itemJson.title,
+                linksUp: itemJson.linksUp,
+                linksDown: itemJson.linksDown,
+                folder: parentId,
+                itemProperties: {}
+            };
+            if (itemJson.children) {
+                let postItFolder = {
+                    label: itemJson.title,
+                    parent: parentId,
+                    reason: comment
+                };
+                let fxFields = {};
+                for (var par in itemJson) {
+                    if (!itemJson.hasOwnProperty(par))
+                        continue;
+                    if (postItFolder.hasOwnProperty(par))
+                        continue;
+                    if (par === "type" || par === "children" ||
+                        par === "title" || par === "labels" ||
+                        par === "linksUp" || par === "linksDown") {
+                        continue;
+                    }
+                    if (!isNaN(par)) {
+                        fxFields["fx" + par] = itemJson[par];
+                    }
+                }
+                const options = { query: fxFields, headers: this.getHeadersForPost() };
+                let ack = this.instance.projectFolderPost(project, parentId, itemJson.title, comment, undefined, options);
+                return ack.then((result) => {
+                    itemJson.id = "F-" + itemJson.type + "-" + result.serial;
+                    return itemJson.id;
+                });
+            }
+            for (var par in itemJson) {
+                if (!itemJson.hasOwnProperty(par))
+                    continue;
+                if (par === "type" || par === "labels" ||
+                    par === "linksUp" || par === "linksDown") {
+                    continue;
+                }
+                if (!isNaN(par)) {
+                    // it's a number so we assume it's a field
+                    body.itemProperties["fx" + par] = itemJson[par];
+                }
+            }
+            const options = { headers: this.getHeadersForPost() };
+            let ack = this.instance.projectItemPost(body, project, options);
+            return ack.then((result) => {
+                itemJson.id = itemJson.type + "-" + result.serial;
+                return itemJson.id;
+            });
+        }
+        /**
+         * Creates a folder
+         *
+         * @param parent where to store the folder
+         * @param title name of the folder
+         * @param data array with fieldNames and values
+         * @throws error in case of input error (bad fields, etc)
+         * @returns Promise to the item id of folder
+         */
+        async createFolder(parent, title, data) {
+            this.log(`Create folder "${title} in folder "${parent}" `);
+            let type = this.parseRef(parent).type;
+            let update = { title: title, children: [], type: type };
+            if (data) {
+                for (let s of data) {
+                    let fieldId = this.getItemConfig().getFieldId("FOLDER", s.fieldName);
+                    if (!fieldId) {
+                        const msg = `"${s.fieldName}" is not a field of a FOLDER"!`;
+                        this.logger.error(msg);
+                        throw new Error(msg);
+                    }
+                    update[fieldId] = s.value;
+                }
+            }
+            // TODO: is XTC really correct here?
+            return this.appCreateItemOfTypeAsync(this.getProject(), "XTC", update, "add", parent);
+        }
+        async getItemIdByTitle(category, title) {
+            this.log(`get item by title "${title}" in category "${category}"`);
+            let that = this;
+            let itemsPromise = this.search("mrql:category=" + category);
+            return itemsPromise.then((items) => {
+                if (!items || items.length == 0) {
+                    that.log(`Warning there's no item with title '${title}' in category '${category}'`);
+                    return null;
+                }
+                const itemsFilteredByName = items.filter(item => item.title == title);
+                if (itemsFilteredByName.length == 0) {
+                    that.log(`Warning there's no item with title '${title}' in category '${category}'`);
+                    return null;
+                }
+                if (itemsFilteredByName.length > 1) {
+                    that.log(`Warning there's more than one match. Returning first item with title '${title}' in category '${category}'`);
+                }
+                that.log(`get item by title "${title}" in category "${category}" => ${itemsFilteredByName[0].itemId}`);
+                return itemsFilteredByName[0].itemId;
+            });
+        }
+        async copyItem(fromProject, fromItem, toProject, toFolder, copyLabels) {
+            this.log(`Copy Item "${fromProject}/${fromItem}" to  "${toProject}/${toFolder}"`);
+            return this.instance.projectCopyItemOrFolderPost(fromProject, fromItem, toFolder, this.getComment(), toProject, copyLabels ? 1 : 0);
+        }
+        /**
+         * Get the TODOs for a project.
+         * @param project project name
+         * @param itemRef if specified, returns all todos linked to an item, regardless of user
+         * @param includeDone - if true, includes done todos
+         * @param includeAllUsers - if true, includes all todos for all users.
+         * @param includeFuture - false by default. If true, includes future todos.
+         * @returns Information on the todos.
+         */
+        async getProjectTodos(project, itemRef, includeDone, includeAllUsers, includeFuture) {
+            return this.instance.projectTodoGet(project, itemRef, includeDone ? 1 : 0, includeAllUsers ? 1 : 0, includeFuture ? 1 : 0);
+        }
+    }
+    exports.StandaloneMatrixAPI = StandaloneMatrixAPI;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 246 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
 // Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(243);
+__webpack_require__(247);
 module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-
-/***/ 248:
-/***/ (function(module, exports, __webpack_require__) {
-
-/* module decorator */ module = __webpack_require__.nmd(module);
-var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.3.2 by @mathias */
-;(function(root) {
-
-	/** Detect free variables */
-	var freeExports =  true && exports &&
-		!exports.nodeType && exports;
-	var freeModule =  true && module &&
-		!module.nodeType && module;
-	var freeGlobal = typeof __webpack_require__.g == 'object' && __webpack_require__.g;
-	if (
-		freeGlobal.global === freeGlobal ||
-		freeGlobal.window === freeGlobal ||
-		freeGlobal.self === freeGlobal
-	) {
-		root = freeGlobal;
-	}
-
-	/**
-	 * The `punycode` object.
-	 * @name punycode
-	 * @type Object
-	 */
-	var punycode,
-
-	/** Highest positive signed 32-bit float value */
-	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
-
-	/** Bootstring parameters */
-	base = 36,
-	tMin = 1,
-	tMax = 26,
-	skew = 38,
-	damp = 700,
-	initialBias = 72,
-	initialN = 128, // 0x80
-	delimiter = '-', // '\x2D'
-
-	/** Regular expressions */
-	regexPunycode = /^xn--/,
-	regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
-	regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
-
-	/** Error messages */
-	errors = {
-		'overflow': 'Overflow: input needs wider integers to process',
-		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
-		'invalid-input': 'Invalid input'
-	},
-
-	/** Convenience shortcuts */
-	baseMinusTMin = base - tMin,
-	floor = Math.floor,
-	stringFromCharCode = String.fromCharCode,
-
-	/** Temporary variable */
-	key;
-
-	/*--------------------------------------------------------------------------*/
-
-	/**
-	 * A generic error utility function.
-	 * @private
-	 * @param {String} type The error type.
-	 * @returns {Error} Throws a `RangeError` with the applicable error message.
-	 */
-	function error(type) {
-		throw RangeError(errors[type]);
-	}
-
-	/**
-	 * A generic `Array#map` utility function.
-	 * @private
-	 * @param {Array} array The array to iterate over.
-	 * @param {Function} callback The function that gets called for every array
-	 * item.
-	 * @returns {Array} A new array of values returned by the callback function.
-	 */
-	function map(array, fn) {
-		var length = array.length;
-		var result = [];
-		while (length--) {
-			result[length] = fn(array[length]);
-		}
-		return result;
-	}
-
-	/**
-	 * A simple `Array#map`-like wrapper to work with domain name strings or email
-	 * addresses.
-	 * @private
-	 * @param {String} domain The domain name or email address.
-	 * @param {Function} callback The function that gets called for every
-	 * character.
-	 * @returns {Array} A new string of characters returned by the callback
-	 * function.
-	 */
-	function mapDomain(string, fn) {
-		var parts = string.split('@');
-		var result = '';
-		if (parts.length > 1) {
-			// In email addresses, only the domain name should be punycoded. Leave
-			// the local part (i.e. everything up to `@`) intact.
-			result = parts[0] + '@';
-			string = parts[1];
-		}
-		// Avoid `split(regex)` for IE8 compatibility. See #17.
-		string = string.replace(regexSeparators, '\x2E');
-		var labels = string.split('.');
-		var encoded = map(labels, fn).join('.');
-		return result + encoded;
-	}
-
-	/**
-	 * Creates an array containing the numeric code points of each Unicode
-	 * character in the string. While JavaScript uses UCS-2 internally,
-	 * this function will convert a pair of surrogate halves (each of which
-	 * UCS-2 exposes as separate characters) into a single code point,
-	 * matching UTF-16.
-	 * @see `punycode.ucs2.encode`
-	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-	 * @memberOf punycode.ucs2
-	 * @name decode
-	 * @param {String} string The Unicode input string (UCS-2).
-	 * @returns {Array} The new array of code points.
-	 */
-	function ucs2decode(string) {
-		var output = [],
-		    counter = 0,
-		    length = string.length,
-		    value,
-		    extra;
-		while (counter < length) {
-			value = string.charCodeAt(counter++);
-			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-				// high surrogate, and there is a next character
-				extra = string.charCodeAt(counter++);
-				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-				} else {
-					// unmatched surrogate; only append this code unit, in case the next
-					// code unit is the high surrogate of a surrogate pair
-					output.push(value);
-					counter--;
-				}
-			} else {
-				output.push(value);
-			}
-		}
-		return output;
-	}
-
-	/**
-	 * Creates a string based on an array of numeric code points.
-	 * @see `punycode.ucs2.decode`
-	 * @memberOf punycode.ucs2
-	 * @name encode
-	 * @param {Array} codePoints The array of numeric code points.
-	 * @returns {String} The new Unicode string (UCS-2).
-	 */
-	function ucs2encode(array) {
-		return map(array, function(value) {
-			var output = '';
-			if (value > 0xFFFF) {
-				value -= 0x10000;
-				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
-				value = 0xDC00 | value & 0x3FF;
-			}
-			output += stringFromCharCode(value);
-			return output;
-		}).join('');
-	}
-
-	/**
-	 * Converts a basic code point into a digit/integer.
-	 * @see `digitToBasic()`
-	 * @private
-	 * @param {Number} codePoint The basic numeric code point value.
-	 * @returns {Number} The numeric value of a basic code point (for use in
-	 * representing integers) in the range `0` to `base - 1`, or `base` if
-	 * the code point does not represent a value.
-	 */
-	function basicToDigit(codePoint) {
-		if (codePoint - 48 < 10) {
-			return codePoint - 22;
-		}
-		if (codePoint - 65 < 26) {
-			return codePoint - 65;
-		}
-		if (codePoint - 97 < 26) {
-			return codePoint - 97;
-		}
-		return base;
-	}
-
-	/**
-	 * Converts a digit/integer into a basic code point.
-	 * @see `basicToDigit()`
-	 * @private
-	 * @param {Number} digit The numeric value of a basic code point.
-	 * @returns {Number} The basic code point whose value (when used for
-	 * representing integers) is `digit`, which needs to be in the range
-	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
-	 * used; else, the lowercase form is used. The behavior is undefined
-	 * if `flag` is non-zero and `digit` has no uppercase form.
-	 */
-	function digitToBasic(digit, flag) {
-		//  0..25 map to ASCII a..z or A..Z
-		// 26..35 map to ASCII 0..9
-		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
-	}
-
-	/**
-	 * Bias adaptation function as per section 3.4 of RFC 3492.
-	 * http://tools.ietf.org/html/rfc3492#section-3.4
-	 * @private
-	 */
-	function adapt(delta, numPoints, firstTime) {
-		var k = 0;
-		delta = firstTime ? floor(delta / damp) : delta >> 1;
-		delta += floor(delta / numPoints);
-		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
-			delta = floor(delta / baseMinusTMin);
-		}
-		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
-	}
-
-	/**
-	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
-	 * symbols.
-	 * @memberOf punycode
-	 * @param {String} input The Punycode string of ASCII-only symbols.
-	 * @returns {String} The resulting string of Unicode symbols.
-	 */
-	function decode(input) {
-		// Don't use UCS-2
-		var output = [],
-		    inputLength = input.length,
-		    out,
-		    i = 0,
-		    n = initialN,
-		    bias = initialBias,
-		    basic,
-		    j,
-		    index,
-		    oldi,
-		    w,
-		    k,
-		    digit,
-		    t,
-		    /** Cached calculation results */
-		    baseMinusT;
-
-		// Handle the basic code points: let `basic` be the number of input code
-		// points before the last delimiter, or `0` if there is none, then copy
-		// the first basic code points to the output.
-
-		basic = input.lastIndexOf(delimiter);
-		if (basic < 0) {
-			basic = 0;
-		}
-
-		for (j = 0; j < basic; ++j) {
-			// if it's not a basic code point
-			if (input.charCodeAt(j) >= 0x80) {
-				error('not-basic');
-			}
-			output.push(input.charCodeAt(j));
-		}
-
-		// Main decoding loop: start just after the last delimiter if any basic code
-		// points were copied; start at the beginning otherwise.
-
-		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
-
-			// `index` is the index of the next character to be consumed.
-			// Decode a generalized variable-length integer into `delta`,
-			// which gets added to `i`. The overflow checking is easier
-			// if we increase `i` as we go, then subtract off its starting
-			// value at the end to obtain `delta`.
-			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
-
-				if (index >= inputLength) {
-					error('invalid-input');
-				}
-
-				digit = basicToDigit(input.charCodeAt(index++));
-
-				if (digit >= base || digit > floor((maxInt - i) / w)) {
-					error('overflow');
-				}
-
-				i += digit * w;
-				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-
-				if (digit < t) {
-					break;
-				}
-
-				baseMinusT = base - t;
-				if (w > floor(maxInt / baseMinusT)) {
-					error('overflow');
-				}
-
-				w *= baseMinusT;
-
-			}
-
-			out = output.length + 1;
-			bias = adapt(i - oldi, out, oldi == 0);
-
-			// `i` was supposed to wrap around from `out` to `0`,
-			// incrementing `n` each time, so we'll fix that now:
-			if (floor(i / out) > maxInt - n) {
-				error('overflow');
-			}
-
-			n += floor(i / out);
-			i %= out;
-
-			// Insert `n` at position `i` of the output
-			output.splice(i++, 0, n);
-
-		}
-
-		return ucs2encode(output);
-	}
-
-	/**
-	 * Converts a string of Unicode symbols (e.g. a domain name label) to a
-	 * Punycode string of ASCII-only symbols.
-	 * @memberOf punycode
-	 * @param {String} input The string of Unicode symbols.
-	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
-	 */
-	function encode(input) {
-		var n,
-		    delta,
-		    handledCPCount,
-		    basicLength,
-		    bias,
-		    j,
-		    m,
-		    q,
-		    k,
-		    t,
-		    currentValue,
-		    output = [],
-		    /** `inputLength` will hold the number of code points in `input`. */
-		    inputLength,
-		    /** Cached calculation results */
-		    handledCPCountPlusOne,
-		    baseMinusT,
-		    qMinusT;
-
-		// Convert the input in UCS-2 to Unicode
-		input = ucs2decode(input);
-
-		// Cache the length
-		inputLength = input.length;
-
-		// Initialize the state
-		n = initialN;
-		delta = 0;
-		bias = initialBias;
-
-		// Handle the basic code points
-		for (j = 0; j < inputLength; ++j) {
-			currentValue = input[j];
-			if (currentValue < 0x80) {
-				output.push(stringFromCharCode(currentValue));
-			}
-		}
-
-		handledCPCount = basicLength = output.length;
-
-		// `handledCPCount` is the number of code points that have been handled;
-		// `basicLength` is the number of basic code points.
-
-		// Finish the basic string - if it is not empty - with a delimiter
-		if (basicLength) {
-			output.push(delimiter);
-		}
-
-		// Main encoding loop:
-		while (handledCPCount < inputLength) {
-
-			// All non-basic code points < n have been handled already. Find the next
-			// larger one:
-			for (m = maxInt, j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-				if (currentValue >= n && currentValue < m) {
-					m = currentValue;
-				}
-			}
-
-			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
-			// but guard against overflow
-			handledCPCountPlusOne = handledCPCount + 1;
-			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
-				error('overflow');
-			}
-
-			delta += (m - n) * handledCPCountPlusOne;
-			n = m;
-
-			for (j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-
-				if (currentValue < n && ++delta > maxInt) {
-					error('overflow');
-				}
-
-				if (currentValue == n) {
-					// Represent delta as a generalized variable-length integer
-					for (q = delta, k = base; /* no condition */; k += base) {
-						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-						if (q < t) {
-							break;
-						}
-						qMinusT = q - t;
-						baseMinusT = base - t;
-						output.push(
-							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
-						);
-						q = floor(qMinusT / baseMinusT);
-					}
-
-					output.push(stringFromCharCode(digitToBasic(q, 0)));
-					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
-					delta = 0;
-					++handledCPCount;
-				}
-			}
-
-			++delta;
-			++n;
-
-		}
-		return output.join('');
-	}
-
-	/**
-	 * Converts a Punycode string representing a domain name or an email address
-	 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
-	 * it doesn't matter if you call it on a string that has already been
-	 * converted to Unicode.
-	 * @memberOf punycode
-	 * @param {String} input The Punycoded domain name or email address to
-	 * convert to Unicode.
-	 * @returns {String} The Unicode representation of the given Punycode
-	 * string.
-	 */
-	function toUnicode(input) {
-		return mapDomain(input, function(string) {
-			return regexPunycode.test(string)
-				? decode(string.slice(4).toLowerCase())
-				: string;
-		});
-	}
-
-	/**
-	 * Converts a Unicode string representing a domain name or an email address to
-	 * Punycode. Only the non-ASCII parts of the domain name will be converted,
-	 * i.e. it doesn't matter if you call it with a domain that's already in
-	 * ASCII.
-	 * @memberOf punycode
-	 * @param {String} input The domain name or email address to convert, as a
-	 * Unicode string.
-	 * @returns {String} The Punycode representation of the given domain name or
-	 * email address.
-	 */
-	function toASCII(input) {
-		return mapDomain(input, function(string) {
-			return regexNonASCII.test(string)
-				? 'xn--' + encode(string)
-				: string;
-		});
-	}
-
-	/*--------------------------------------------------------------------------*/
-
-	/** Define the public API */
-	punycode = {
-		/**
-		 * A string representing the current Punycode.js version number.
-		 * @memberOf punycode
-		 * @type String
-		 */
-		'version': '1.3.2',
-		/**
-		 * An object of methods to convert from JavaScript's internal character
-		 * representation (UCS-2) to Unicode code points, and back.
-		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-		 * @memberOf punycode
-		 * @type Object
-		 */
-		'ucs2': {
-			'decode': ucs2decode,
-			'encode': ucs2encode
-		},
-		'decode': decode,
-		'encode': encode,
-		'toASCII': toASCII,
-		'toUnicode': toUnicode
-	};
-
-	/** Expose `punycode` */
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
-	// like the following:
-	if (
-		true
-	) {
-		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
-			return punycode;
-		}).call(exports, __webpack_require__, exports, module),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {}
-
-}(this));
-
-
-/***/ }),
-
-/***/ 251:
-/***/ ((module) => {
+/* 247 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DOMException": () => (/* binding */ DOMException),
+/* harmony export */   "Headers": () => (/* binding */ Headers),
+/* harmony export */   "Request": () => (/* binding */ Request),
+/* harmony export */   "Response": () => (/* binding */ Response),
+/* harmony export */   "fetch": () => (/* binding */ fetch)
+/* harmony export */ });
+var global =
+  (typeof globalThis !== 'undefined' && globalThis) ||
+  (typeof self !== 'undefined' && self) ||
+  (typeof global !== 'undefined' && global)
 
-
-
-// If obj.hasOwnProperty has been overridden, then calling
-// obj.hasOwnProperty(prop) will break.
-// See: https://github.com/joyent/node/issues/1707
-function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
+var support = {
+  searchParams: 'URLSearchParams' in global,
+  iterable: 'Symbol' in global && 'iterator' in Symbol,
+  blob:
+    'FileReader' in global &&
+    'Blob' in global &&
+    (function() {
+      try {
+        new Blob()
+        return true
+      } catch (e) {
+        return false
+      }
+    })(),
+  formData: 'FormData' in global,
+  arrayBuffer: 'ArrayBuffer' in global
 }
 
-module.exports = function(qs, sep, eq, options) {
-  sep = sep || '&';
-  eq = eq || '=';
-  var obj = {};
+function isDataView(obj) {
+  return obj && DataView.prototype.isPrototypeOf(obj)
+}
 
-  if (typeof qs !== 'string' || qs.length === 0) {
-    return obj;
+if (support.arrayBuffer) {
+  var viewClasses = [
+    '[object Int8Array]',
+    '[object Uint8Array]',
+    '[object Uint8ClampedArray]',
+    '[object Int16Array]',
+    '[object Uint16Array]',
+    '[object Int32Array]',
+    '[object Uint32Array]',
+    '[object Float32Array]',
+    '[object Float64Array]'
+  ]
+
+  var isArrayBufferView =
+    ArrayBuffer.isView ||
+    function(obj) {
+      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
+    }
+}
+
+function normalizeName(name) {
+  if (typeof name !== 'string') {
+    name = String(name)
+  }
+  if (/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(name) || name === '') {
+    throw new TypeError('Invalid character in header field name: "' + name + '"')
+  }
+  return name.toLowerCase()
+}
+
+function normalizeValue(value) {
+  if (typeof value !== 'string') {
+    value = String(value)
+  }
+  return value
+}
+
+// Build a destructive iterator for the value list
+function iteratorFor(items) {
+  var iterator = {
+    next: function() {
+      var value = items.shift()
+      return {done: value === undefined, value: value}
+    }
   }
 
-  var regexp = /\+/g;
-  qs = qs.split(sep);
-
-  var maxKeys = 1000;
-  if (options && typeof options.maxKeys === 'number') {
-    maxKeys = options.maxKeys;
+  if (support.iterable) {
+    iterator[Symbol.iterator] = function() {
+      return iterator
+    }
   }
 
-  var len = qs.length;
-  // maxKeys <= 0 means that we should not limit keys count
-  if (maxKeys > 0 && len > maxKeys) {
-    len = maxKeys;
+  return iterator
+}
+
+function Headers(headers) {
+  this.map = {}
+
+  if (headers instanceof Headers) {
+    headers.forEach(function(value, name) {
+      this.append(name, value)
+    }, this)
+  } else if (Array.isArray(headers)) {
+    headers.forEach(function(header) {
+      this.append(header[0], header[1])
+    }, this)
+  } else if (headers) {
+    Object.getOwnPropertyNames(headers).forEach(function(name) {
+      this.append(name, headers[name])
+    }, this)
   }
+}
 
-  for (var i = 0; i < len; ++i) {
-    var x = qs[i].replace(regexp, '%20'),
-        idx = x.indexOf(eq),
-        kstr, vstr, k, v;
+Headers.prototype.append = function(name, value) {
+  name = normalizeName(name)
+  value = normalizeValue(value)
+  var oldValue = this.map[name]
+  this.map[name] = oldValue ? oldValue + ', ' + value : value
+}
 
-    if (idx >= 0) {
-      kstr = x.substr(0, idx);
-      vstr = x.substr(idx + 1);
+Headers.prototype['delete'] = function(name) {
+  delete this.map[normalizeName(name)]
+}
+
+Headers.prototype.get = function(name) {
+  name = normalizeName(name)
+  return this.has(name) ? this.map[name] : null
+}
+
+Headers.prototype.has = function(name) {
+  return this.map.hasOwnProperty(normalizeName(name))
+}
+
+Headers.prototype.set = function(name, value) {
+  this.map[normalizeName(name)] = normalizeValue(value)
+}
+
+Headers.prototype.forEach = function(callback, thisArg) {
+  for (var name in this.map) {
+    if (this.map.hasOwnProperty(name)) {
+      callback.call(thisArg, this.map[name], name, this)
+    }
+  }
+}
+
+Headers.prototype.keys = function() {
+  var items = []
+  this.forEach(function(value, name) {
+    items.push(name)
+  })
+  return iteratorFor(items)
+}
+
+Headers.prototype.values = function() {
+  var items = []
+  this.forEach(function(value) {
+    items.push(value)
+  })
+  return iteratorFor(items)
+}
+
+Headers.prototype.entries = function() {
+  var items = []
+  this.forEach(function(value, name) {
+    items.push([name, value])
+  })
+  return iteratorFor(items)
+}
+
+if (support.iterable) {
+  Headers.prototype[Symbol.iterator] = Headers.prototype.entries
+}
+
+function consumed(body) {
+  if (body.bodyUsed) {
+    return Promise.reject(new TypeError('Already read'))
+  }
+  body.bodyUsed = true
+}
+
+function fileReaderReady(reader) {
+  return new Promise(function(resolve, reject) {
+    reader.onload = function() {
+      resolve(reader.result)
+    }
+    reader.onerror = function() {
+      reject(reader.error)
+    }
+  })
+}
+
+function readBlobAsArrayBuffer(blob) {
+  var reader = new FileReader()
+  var promise = fileReaderReady(reader)
+  reader.readAsArrayBuffer(blob)
+  return promise
+}
+
+function readBlobAsText(blob) {
+  var reader = new FileReader()
+  var promise = fileReaderReady(reader)
+  reader.readAsText(blob)
+  return promise
+}
+
+function readArrayBufferAsText(buf) {
+  var view = new Uint8Array(buf)
+  var chars = new Array(view.length)
+
+  for (var i = 0; i < view.length; i++) {
+    chars[i] = String.fromCharCode(view[i])
+  }
+  return chars.join('')
+}
+
+function bufferClone(buf) {
+  if (buf.slice) {
+    return buf.slice(0)
+  } else {
+    var view = new Uint8Array(buf.byteLength)
+    view.set(new Uint8Array(buf))
+    return view.buffer
+  }
+}
+
+function Body() {
+  this.bodyUsed = false
+
+  this._initBody = function(body) {
+    /*
+      fetch-mock wraps the Response object in an ES6 Proxy to
+      provide useful test harness features such as flush. However, on
+      ES5 browsers without fetch or Proxy support pollyfills must be used;
+      the proxy-pollyfill is unable to proxy an attribute unless it exists
+      on the object before the Proxy is created. This change ensures
+      Response.bodyUsed exists on the instance, while maintaining the
+      semantic of setting Request.bodyUsed in the constructor before
+      _initBody is called.
+    */
+    this.bodyUsed = this.bodyUsed
+    this._bodyInit = body
+    if (!body) {
+      this._bodyText = ''
+    } else if (typeof body === 'string') {
+      this._bodyText = body
+    } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+      this._bodyBlob = body
+    } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+      this._bodyFormData = body
+    } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+      this._bodyText = body.toString()
+    } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+      this._bodyArrayBuffer = bufferClone(body.buffer)
+      // IE 10-11 can't handle a DataView body.
+      this._bodyInit = new Blob([this._bodyArrayBuffer])
+    } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
+      this._bodyArrayBuffer = bufferClone(body)
     } else {
-      kstr = x;
-      vstr = '';
+      this._bodyText = body = Object.prototype.toString.call(body)
     }
 
-    k = decodeURIComponent(kstr);
-    v = decodeURIComponent(vstr);
-
-    if (!hasOwnProperty(obj, k)) {
-      obj[k] = v;
-    } else if (Array.isArray(obj[k])) {
-      obj[k].push(v);
-    } else {
-      obj[k] = [obj[k], v];
-    }
-  }
-
-  return obj;
-};
-
-
-/***/ }),
-
-/***/ 252:
-/***/ ((module) => {
-
-"use strict";
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-var stringifyPrimitive = function(v) {
-  switch (typeof v) {
-    case 'string':
-      return v;
-
-    case 'boolean':
-      return v ? 'true' : 'false';
-
-    case 'number':
-      return isFinite(v) ? v : '';
-
-    default:
-      return '';
-  }
-};
-
-module.exports = function(obj, sep, eq, name) {
-  sep = sep || '&';
-  eq = eq || '=';
-  if (obj === null) {
-    obj = undefined;
-  }
-
-  if (typeof obj === 'object') {
-    return Object.keys(obj).map(function(k) {
-      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
-      if (Array.isArray(obj[k])) {
-        return obj[k].map(function(v) {
-          return ks + encodeURIComponent(stringifyPrimitive(v));
-        }).join(sep);
-      } else {
-        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+    if (!this.headers.get('content-type')) {
+      if (typeof body === 'string') {
+        this.headers.set('content-type', 'text/plain;charset=UTF-8')
+      } else if (this._bodyBlob && this._bodyBlob.type) {
+        this.headers.set('content-type', this._bodyBlob.type)
+      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+        this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
       }
-    }).join(sep);
-
+    }
   }
 
-  if (!name) return '';
-  return encodeURIComponent(stringifyPrimitive(name)) + eq +
-         encodeURIComponent(stringifyPrimitive(obj));
-};
+  if (support.blob) {
+    this.blob = function() {
+      var rejected = consumed(this)
+      if (rejected) {
+        return rejected
+      }
+
+      if (this._bodyBlob) {
+        return Promise.resolve(this._bodyBlob)
+      } else if (this._bodyArrayBuffer) {
+        return Promise.resolve(new Blob([this._bodyArrayBuffer]))
+      } else if (this._bodyFormData) {
+        throw new Error('could not read FormData body as blob')
+      } else {
+        return Promise.resolve(new Blob([this._bodyText]))
+      }
+    }
+
+    this.arrayBuffer = function() {
+      if (this._bodyArrayBuffer) {
+        var isConsumed = consumed(this)
+        if (isConsumed) {
+          return isConsumed
+        }
+        if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
+          return Promise.resolve(
+            this._bodyArrayBuffer.buffer.slice(
+              this._bodyArrayBuffer.byteOffset,
+              this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
+            )
+          )
+        } else {
+          return Promise.resolve(this._bodyArrayBuffer)
+        }
+      } else {
+        return this.blob().then(readBlobAsArrayBuffer)
+      }
+    }
+  }
+
+  this.text = function() {
+    var rejected = consumed(this)
+    if (rejected) {
+      return rejected
+    }
+
+    if (this._bodyBlob) {
+      return readBlobAsText(this._bodyBlob)
+    } else if (this._bodyArrayBuffer) {
+      return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer))
+    } else if (this._bodyFormData) {
+      throw new Error('could not read FormData body as text')
+    } else {
+      return Promise.resolve(this._bodyText)
+    }
+  }
+
+  if (support.formData) {
+    this.formData = function() {
+      return this.text().then(decode)
+    }
+  }
+
+  this.json = function() {
+    return this.text().then(JSON.parse)
+  }
+
+  return this
+}
+
+// HTTP methods whose capitalization should be normalized
+var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+function normalizeMethod(method) {
+  var upcased = method.toUpperCase()
+  return methods.indexOf(upcased) > -1 ? upcased : method
+}
+
+function Request(input, options) {
+  if (!(this instanceof Request)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
+  }
+
+  options = options || {}
+  var body = options.body
+
+  if (input instanceof Request) {
+    if (input.bodyUsed) {
+      throw new TypeError('Already read')
+    }
+    this.url = input.url
+    this.credentials = input.credentials
+    if (!options.headers) {
+      this.headers = new Headers(input.headers)
+    }
+    this.method = input.method
+    this.mode = input.mode
+    this.signal = input.signal
+    if (!body && input._bodyInit != null) {
+      body = input._bodyInit
+      input.bodyUsed = true
+    }
+  } else {
+    this.url = String(input)
+  }
+
+  this.credentials = options.credentials || this.credentials || 'same-origin'
+  if (options.headers || !this.headers) {
+    this.headers = new Headers(options.headers)
+  }
+  this.method = normalizeMethod(options.method || this.method || 'GET')
+  this.mode = options.mode || this.mode || null
+  this.signal = options.signal || this.signal
+  this.referrer = null
+
+  if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+    throw new TypeError('Body not allowed for GET or HEAD requests')
+  }
+  this._initBody(body)
+
+  if (this.method === 'GET' || this.method === 'HEAD') {
+    if (options.cache === 'no-store' || options.cache === 'no-cache') {
+      // Search for a '_' parameter in the query string
+      var reParamSearch = /([?&])_=[^&]*/
+      if (reParamSearch.test(this.url)) {
+        // If it already exists then set the value with the current time
+        this.url = this.url.replace(reParamSearch, '$1_=' + new Date().getTime())
+      } else {
+        // Otherwise add a new '_' parameter to the end with the current time
+        var reQueryString = /\?/
+        this.url += (reQueryString.test(this.url) ? '&' : '?') + '_=' + new Date().getTime()
+      }
+    }
+  }
+}
+
+Request.prototype.clone = function() {
+  return new Request(this, {body: this._bodyInit})
+}
+
+function decode(body) {
+  var form = new FormData()
+  body
+    .trim()
+    .split('&')
+    .forEach(function(bytes) {
+      if (bytes) {
+        var split = bytes.split('=')
+        var name = split.shift().replace(/\+/g, ' ')
+        var value = split.join('=').replace(/\+/g, ' ')
+        form.append(decodeURIComponent(name), decodeURIComponent(value))
+      }
+    })
+  return form
+}
+
+function parseHeaders(rawHeaders) {
+  var headers = new Headers()
+  // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
+  // https://tools.ietf.org/html/rfc7230#section-3.2
+  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ')
+  // Avoiding split via regex to work around a common IE11 bug with the core-js 3.6.0 regex polyfill
+  // https://github.com/github/fetch/issues/748
+  // https://github.com/zloirock/core-js/issues/751
+  preProcessedHeaders
+    .split('\r')
+    .map(function(header) {
+      return header.indexOf('\n') === 0 ? header.substr(1, header.length) : header
+    })
+    .forEach(function(line) {
+      var parts = line.split(':')
+      var key = parts.shift().trim()
+      if (key) {
+        var value = parts.join(':').trim()
+        headers.append(key, value)
+      }
+    })
+  return headers
+}
+
+Body.call(Request.prototype)
+
+function Response(bodyInit, options) {
+  if (!(this instanceof Response)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
+  }
+  if (!options) {
+    options = {}
+  }
+
+  this.type = 'default'
+  this.status = options.status === undefined ? 200 : options.status
+  this.ok = this.status >= 200 && this.status < 300
+  this.statusText = options.statusText === undefined ? '' : '' + options.statusText
+  this.headers = new Headers(options.headers)
+  this.url = options.url || ''
+  this._initBody(bodyInit)
+}
+
+Body.call(Response.prototype)
+
+Response.prototype.clone = function() {
+  return new Response(this._bodyInit, {
+    status: this.status,
+    statusText: this.statusText,
+    headers: new Headers(this.headers),
+    url: this.url
+  })
+}
+
+Response.error = function() {
+  var response = new Response(null, {status: 0, statusText: ''})
+  response.type = 'error'
+  return response
+}
+
+var redirectStatuses = [301, 302, 303, 307, 308]
+
+Response.redirect = function(url, status) {
+  if (redirectStatuses.indexOf(status) === -1) {
+    throw new RangeError('Invalid status code')
+  }
+
+  return new Response(null, {status: status, headers: {location: url}})
+}
+
+var DOMException = global.DOMException
+try {
+  new DOMException()
+} catch (err) {
+  DOMException = function(message, name) {
+    this.message = message
+    this.name = name
+    var error = Error(message)
+    this.stack = error.stack
+  }
+  DOMException.prototype = Object.create(Error.prototype)
+  DOMException.prototype.constructor = DOMException
+}
+
+function fetch(input, init) {
+  return new Promise(function(resolve, reject) {
+    var request = new Request(input, init)
+
+    if (request.signal && request.signal.aborted) {
+      return reject(new DOMException('Aborted', 'AbortError'))
+    }
+
+    var xhr = new XMLHttpRequest()
+
+    function abortXhr() {
+      xhr.abort()
+    }
+
+    xhr.onload = function() {
+      var options = {
+        status: xhr.status,
+        statusText: xhr.statusText,
+        headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+      }
+      options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
+      var body = 'response' in xhr ? xhr.response : xhr.responseText
+      setTimeout(function() {
+        resolve(new Response(body, options))
+      }, 0)
+    }
+
+    xhr.onerror = function() {
+      setTimeout(function() {
+        reject(new TypeError('Network request failed'))
+      }, 0)
+    }
+
+    xhr.ontimeout = function() {
+      setTimeout(function() {
+        reject(new TypeError('Network request failed'))
+      }, 0)
+    }
+
+    xhr.onabort = function() {
+      setTimeout(function() {
+        reject(new DOMException('Aborted', 'AbortError'))
+      }, 0)
+    }
+
+    function fixUrl(url) {
+      try {
+        return url === '' && global.location.href ? global.location.href : url
+      } catch (e) {
+        return url
+      }
+    }
+
+    xhr.open(request.method, fixUrl(request.url), true)
+
+    if (request.credentials === 'include') {
+      xhr.withCredentials = true
+    } else if (request.credentials === 'omit') {
+      xhr.withCredentials = false
+    }
+
+    if ('responseType' in xhr) {
+      if (support.blob) {
+        xhr.responseType = 'blob'
+      } else if (
+        support.arrayBuffer &&
+        request.headers.get('Content-Type') &&
+        request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1
+      ) {
+        xhr.responseType = 'arraybuffer'
+      }
+    }
+
+    if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers)) {
+      Object.getOwnPropertyNames(init.headers).forEach(function(name) {
+        xhr.setRequestHeader(name, normalizeValue(init.headers[name]))
+      })
+    } else {
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value)
+      })
+    }
+
+    if (request.signal) {
+      request.signal.addEventListener('abort', abortXhr)
+
+      xhr.onreadystatechange = function() {
+        // DONE (success or failure)
+        if (xhr.readyState === 4) {
+          request.signal.removeEventListener('abort', abortXhr)
+        }
+      }
+    }
+
+    xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+  })
+}
+
+fetch.polyfill = true
+
+if (!global.fetch) {
+  global.fetch = fetch
+  global.Headers = Headers
+  global.Request = Request
+  global.Response = Response
+}
 
 
 /***/ }),
-
-/***/ 250:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-exports.decode = exports.parse = __webpack_require__(251);
-exports.encode = exports.stringify = __webpack_require__(252);
-
-
-/***/ }),
-
-/***/ 244:
+/* 248 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disable
@@ -781,1030 +6782,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disabl
 
 
 /***/ }),
-
-/***/ 254:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.ItemsFieldMask = exports.ItemFieldMask = exports.Category = void 0;
-    /**
-     * An ItemFieldMask contains a list of field ids valid within a particular
-     * category. It should be created via the Category method createFieldMask().
-     */
-    class ItemFieldMask {
-        constructor(fieldIds) {
-            this.fieldIds = fieldIds;
-        }
-        hasFieldId(fieldId) {
-            return this.fieldIds.filter((id) => id == fieldId).length > 0;
-        }
-        getFieldIds() { return this.fieldIds; }
-        /**
-         * Combine the other ItemFieldMask with this one.
-         * @param other an ItemFieldMask
-         */
-        union(other) {
-            for (let i of other.getFieldIds()) {
-                if (!this.hasFieldId(i)) {
-                    this.fieldIds.push(i);
-                }
-            }
-        }
-        toString() {
-            return this.fieldIds.join(",");
-        }
-    }
-    exports.ItemFieldMask = ItemFieldMask;
-    /**
-     * An ItemsFieldMask keeps track of fields masked by category, as well as some globally
-     * masked Item fields (currently labels, uplinks and downlinks). This class is used
-     * by the user of the SDK to narrow the set of fields brought down in a search query,
-     * and then to allow the SDK to safely construct partial items from those results.
-     */
-    class ItemsFieldMask {
-        constructor(includeFields = true, includeLabels = true, includeDownlinks = false, includeUplinks = false) {
-            this.includeFields = includeFields;
-            this.includeLabels = includeLabels;
-            this.includeDownlinks = includeDownlinks;
-            this.includeUplinks = includeUplinks;
-            this.masks = new Map();
-        }
-        getIncludeFields() { return this.includeFields; }
-        getIncludeLabels() { return this.includeLabels; }
-        getIncludeDownlinks() { return this.includeDownlinks; }
-        getIncludeUplinks() { return this.includeUplinks; }
-        /**
-         * Add fields to the mask for the given Category. If there is already a field mask for the
-         * Category, its values will be combined with the new information via set union.
-         * @param category
-         * @param fieldIdsOrItemFieldMask either an ItemFieldMask object or an array of Category field ids
-         * @throws Error if getIncludeFields() is false.
-         * @returns this
-         */
-        addMask(category, fieldIdsOrItemFieldMask) {
-            if (!this.includeFields) {
-                throw new Error(`This ItemsFieldMask is not configured to care about fields.`);
-            }
-            let newMask;
-            if (fieldIdsOrItemFieldMask instanceof ItemFieldMask) {
-                newMask = fieldIdsOrItemFieldMask;
-            }
-            else {
-                newMask = category.createFieldMask(fieldIdsOrItemFieldMask);
-            }
-            if (this.masks.has(category.getId())) {
-                let cat = this.masks.get(category.getId());
-                cat.union(newMask);
-            }
-            else {
-                this.masks.set(category.getId(), newMask);
-            }
-            return this;
-        }
-        /**
-         * Adds fields to the Category mask by name. If the name doesn't exist or if there are more
-         * than one fields with the name, an Error is thrown.
-         * @param category
-         * @param fieldNames
-         * @throws Error if a field name exists more than once in the given Category or not at all.
-         *         Also throws Error if getIncludeFields() is false.
-         * @returns this
-         */
-        addMaskByNames(category, fieldNames) {
-            if (!this.includeFields) {
-                throw new Error(`This ItemsFieldMask is not configured to care about fields.`);
-            }
-            let fieldIds = [];
-            const fields = category.getFields();
-            for (let name of fieldNames) {
-                const catFieldIds = category.getFieldIdFromLabel(name);
-                if (catFieldIds.length == 0) {
-                    throw new Error(`Unable to find field name ${name} in category ${category.getId()}`);
-                }
-                if (catFieldIds.length > 1) {
-                    throw new Error(`Multiple fields with name ${name} in category ${category.getId()}`);
-                }
-                fieldIds.push(catFieldIds[0]);
-            }
-            return this.addMask(category, fieldIds);
-        }
-        /**
-         * Returns an ItemFieldMask for the given Category if it exists
-         * @param categoryId
-         * @returns null if there is no mask for the given Category.
-         */
-        getCategoryMask(categoryId) {
-            if (!this.masks.has(categoryId))
-                return null;
-            return this.masks.get(categoryId);
-        }
-        /**
-         * Suitable to send to the server for a search query.
-         * @returns A comma-seperated string of ids or "*" (which means all fields accepted)
-         */
-        getFieldMaskString() {
-            if (this.masks.size == 0) {
-                // If we have no masks, but fields are included, then return all fields.
-                // Otherwise, no fields (empty string).
-                return this.includeFields ? "*" : "";
-            }
-            let result = "";
-            let firstKey = true;
-            for (let key of this.masks.keys()) {
-                if (!firstKey) {
-                    result += ",";
-                }
-                result += this.masks.get(key).toString();
-                firstKey = false;
-            }
-            return result;
-        }
-    }
-    exports.ItemsFieldMask = ItemsFieldMask;
-    /**
-     * A Category represents a category within a project. It has various configuration
-     * settings. It also has a list of fields for that category.
-     */
-    class Category {
-        constructor(category, project) {
-            this.category = category;
-            this.project = project;
-            // Cache a mask for all fields since it may be created often.
-            this.allFieldsFieldMask = new ItemFieldMask(this.getFields().map((c) => c.id));
-        }
-        getProject() { return this.project; }
-        getItemConfig() { return this.project.getItemConfig(); }
-        getTestConfig() { return this.project.getTestConfig(); }
-        getId() {
-            return this.category;
-        }
-        getConfig() {
-            return this.project.getItemConfig().getItemConfiguration(this.category);
-        }
-        getFields() {
-            return this.project.getItemConfig().getFields(this.category);
-        }
-        /**
-         * Return field ids from the Category which match the given label.
-         * These labels are searched in a case-insensitive way.
-         * @param label
-         * @returns a non-empty array of field ids if the label is present in the Category.
-         */
-        getFieldIdFromLabel(label) {
-            let results = [];
-            for (let field of this.getFields()) {
-                if (field.label.toLowerCase() == label.toLowerCase()) {
-                    results.push(field.id);
-                }
-            }
-            return results;
-        }
-        isFolderCategory() { return this.getId() == "FOLDER"; }
-        /**
-         * An ItemFieldMask allows you to specify which fields out of the Category
-         * fields of an Item should be considered valid.
-         * @param fieldIds If specified, a valid set of field ids for this Category. Otherwise,
-         *        the returned ItemFieldMask expresses that all fields in the Item are to be
-         *        considered valid.
-         * @throws throws an Error if any of the field ids specified in fieldIds do not exist in the Category.
-         * @returns an ItemFieldMask.
-         */
-        createFieldMask(fieldIds) {
-            const fields = this.getFields();
-            if (fieldIds) {
-                // Validate that we have these fields.
-                for (let f of fieldIds) {
-                    if (fields.filter(c => c.id == f).length == 0) {
-                        throw new Error(`Field id ${f} not found in category ${this.category}`);
-                    }
-                }
-                return new ItemFieldMask(fieldIds);
-            }
-            return this.allFieldsFieldMask;
-        }
-    }
-    exports.Category = Category;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 256:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.Field = void 0;
-    class Field {
-        constructor(config, handler) {
-            this.config = config;
-            this.handler = handler;
-            if (this.config.fieldType != this.handler.getFieldType()) {
-                throw new Error(`Field type ${this.config.fieldType} doesn't match handler field type ${this.handler.getFieldType()}`);
-            }
-            this.oldData = handler.getData();
-        }
-        getHandlerRaw() { return this.handler; }
-        getHandler() {
-            // return the handler cast appropriately given the type of the field.
-            // TODO: check this somehow.
-            return this.handler;
-        }
-        getFieldType() { return this.config.fieldType; }
-        getFieldId() { return this.config.id; }
-        getFieldName() { return this.config.label; }
-        getFieldConfigParameter(name) {
-            return this.config.parameterJson[name];
-        }
-        needsSave() {
-            return this.handler.getData() !== this.oldData;
-        }
-    }
-    exports.Field = Field;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 255:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(256), __webpack_require__(56)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Field_1, index_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.Item = void 0;
-    function assert(result, msg) {
-        if (!result) {
-            throw new Error("assertion failed: " + msg ? msg : 0);
-        }
-    }
-    /**
-     * An Item represents a database item. Every Item must have at least a category.
-     * If it has an id, then it was retrieved from the database and may be altered and later
-     * saved (use needsSave() to determine if the Item needs saving). If it doesn't have
-     * an id, it needs to be saved. When an item is saved, it's data is re-initialized from
-     * the database.
-     */
-    class Item {
-        constructor(category, item, fieldMask) {
-            this.category = category;
-            this.dirty = false;
-            this.fieldMap = new Map();
-            this.isFolder = category.isFolderCategory();
-            if (this.isFolder) {
-                if (!item) {
-                    throw new Error(`A folder requires an item`);
-                }
-                if (!item.type) {
-                    throw new Error(`A folder requires item.type`);
-                }
-            }
-            if (fieldMask) {
-                this.fieldMask = fieldMask;
-            }
-            else {
-                // Create a field mask that includes all fields.
-                this.fieldMask = this.category.createFieldMask();
-            }
-            this.setData(item);
-        }
-        // TODO: also, what about labels? Are these in toBeIntegrated right now?
-        setDirty() { this.dirty = true; }
-        getFieldMask() { return this.fieldMask; }
-        /**
-         * Helper method to test if a field id is valid within the Item Category, irrespective of
-         * whether or not it is specified in the mask.
-         * @param fieldId
-         * @returns true if fieldId is valid within the Category.
-         */
-        isValidFieldId(fieldId) {
-            return this.getCategory().getFields().filter(c => c.id == fieldId).length > 0;
-        }
-        setData(item) {
-            this.dirty = false;
-            // toBeIntegrated contains standard item fields I just haven't gotten around to
-            // exposing and validating yet.
-            if (item) {
-                this.toBeIntegrated = item;
-                this.id = item.id;
-                this.type = item.type;
-                this.title = item.title;
-                this.labels = item.labels;
-                this.isFolder = item.isFolder;
-                if (item["creationDate"]) {
-                    this.creationDate = item["creationDate"];
-                }
-                assert((this.type == this.category.getId()) ||
-                    (this.isFolder && this.category.isFolderCategory()), `the item type ${this.type} does not match category type ${this.category.getId()}`);
-            }
-            else {
-                // We can assert that we don't have a folder, because the constructor, which
-                // calls this method doesn't allow an undefined item parameter for folders.
-                assert(!this.category.isFolderCategory(), "A folder requires a valid item parameter");
-                this.toBeIntegrated = {};
-                // This is a new item.
-                this.id = undefined;
-                // Category
-                this.type = this.category.getId();
-                this.title = undefined;
-                this.isFolder = false;
-            }
-            // Now deal with the category fields.
-            for (let field of this.category.getFields()) {
-                // The mask influences whether we actually have this field data or not.
-                if (this.fieldMask.hasFieldId(field.id)) {
-                    let value = undefined;
-                    if (item && item[field.id]) {
-                        value = item[field.id];
-                    }
-                    index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
-                    let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
-                    handler.initData(value);
-                    this.fieldMap.set(field.id, new Field_1.Field(field, handler));
-                }
-            }
-            // TODO: deal with labels. They show up as a pseudo field, but are really not.
-        }
-        /**
-         * Sometimes you've been given an Item with a restrictive ItemFieldMask, however, you'd
-         * like to set a value for a field that was not in the mask. With this method, you can
-         * expand the field mask to include the field given by the fieldId (easily obtained
-         * from the Category object).
-         *
-         * This field will be added to the mask, and the associated Field object will be returned
-         * with an empty value, which you could set. The object will be marked as "dirty" at this point,
-         * because we don't know if the server has an empty value for this field or not, so we assume
-         * the pessimistic case.
-         * @param fieldId a valid fieldId from the Category of the item.
-         * @throws if the fieldId is already in the ItemFieldMask, or if the fieldId is not valid for the Category.
-         * @returns the Field object
-         */
-        expandFieldMaskWithEmptyField(fieldId) {
-            if (this.fieldMask.hasFieldId(fieldId)) {
-                throw new Error(`Field ${fieldId} is already specified in the field mask`);
-            }
-            const foundFields = this.getCategory().getFields().filter(c => c.id == fieldId);
-            if (foundFields.length == 0) {
-                throw new Error(`Field ${fieldId} does not exist in category ${this.getCategory().getId()}`);
-            }
-            // Update the mask.
-            let fieldIds = this.fieldMask.getFieldIds();
-            fieldIds.push(fieldId);
-            this.fieldMask = this.category.createFieldMask(fieldIds);
-            // Create the Field.
-            const field = foundFields[0];
-            const value = undefined; // empty field.
-            index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
-            let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
-            handler.initData(value);
-            this.fieldMap.set(field.id, new Field_1.Field(field, handler));
-            assert(field.id == fieldId);
-            this.setDirty();
-            return this.getFieldById(field.id);
-        }
-        extractData() {
-            let item = {
-                upLinks: this.toBeIntegrated.upLinks,
-                upLinkList: this.toBeIntegrated.upLinkList,
-                downLinks: this.toBeIntegrated.downLinks,
-                children: this.toBeIntegrated.children,
-                history: this.toBeIntegrated.history,
-                modDate: this.toBeIntegrated.modDate,
-                isUnselected: this.toBeIntegrated.isUnselected,
-                availableFormats: this.toBeIntegrated.availableFormats,
-                selectSubTree: this.toBeIntegrated.selectSubTree,
-                requireSubTree: this.toBeIntegrated.requireSubTree,
-                icon: this.toBeIntegrated.icon,
-                type: this.type,
-                id: this.toBeIntegrated.id,
-                title: this.title,
-                linksUp: this.toBeIntegrated.linksUp,
-                linksDown: this.toBeIntegrated.linksDown,
-                isFolder: this.isFolder,
-                isDeleted: this.toBeIntegrated.isDeleted,
-                maxVersion: this.toBeIntegrated.maxVersion,
-                docHasPackage: this.toBeIntegrated.docHasPackage,
-                // TODO: where is parent in IItemGet? Doesn't every item have a parent?
-                labels: this.labels ? this.labels.join(",") : ""
-                // TODO: where is crossLinks in IItemPut?
-            };
-            // Now deal with the category fields.
-            for (let field of this.category.getFields()) {
-                // The mask influences what we send out.
-                if (this.fieldMask.hasFieldId(field.id)) {
-                    const myField = this.fieldMap.get(field.id);
-                    item[field.id] = myField.getHandlerRaw().getData();
-                    // TODO: do we need to do this?
-                    item[`x${field.id.toString()}`] = myField.getHandlerRaw().getData();
-                }
-            }
-            // Note that "creationDate" was ignored.
-            return item;
-        }
-        getId() {
-            return this.id;
-        }
-        getIsFolder() {
-            return this.isFolder;
-        }
-        getType() {
-            assert((this.type == this.category.getId()) ||
-                (this.isFolder && this.category.isFolderCategory()), `Item type ${this.type} does not match category type ${this.category.getId()}`);
-            return this.type;
-        }
-        getCreationDate() {
-            return this.creationDate;
-        }
-        setCreationDate(creationDate) {
-            this.creationDate = creationDate;
-            // Not setting this as dirty because creationDate doesn't "really" change.
-            // It is just an expensive piece of information from the server that needs a
-            // home.
-            return this;
-        }
-        getTitle() {
-            return this.title;
-        }
-        setTitle(title) {
-            if (title !== this.title) {
-                this.title = title;
-                this.setDirty();
-            }
-            return this;
-        }
-        /**
-         * Returns an array of labels set for the Item.
-         * @returns array of strings
-         */
-        getLabels() {
-            return this.labels ? this.labels : [];
-        }
-        labelsToString() {
-            if (this.labels) {
-                return this.labels.join(",");
-            }
-            return "";
-        }
-        stringToLabels(input) { return input.split(","); }
-        verifyLabelsAllowed(labels) {
-            // Are labels allowed for our category?
-            const labelDefs = this.category.getProject().getLabelManager().getLabelDefinitions([this.type]);
-            if (labelDefs.length == 0 && labels.length > 0) {
-                // Forgive empty strings.
-                const foundNonEmpty = labels.some((l) => l != undefined && l != "");
-                if (foundNonEmpty) {
-                    throw new Error(`Category ${this.type} doesn't allow labels`);
-                }
-            }
-        }
-        /**
-         * Sets the labels for an Item, overwriting any previous labels
-         * @param newLabels
-         * @returns Item
-         * @throws throws error if the Item category doesn't allow labels
-         */
-        setLabels(newLabels) {
-            this.verifyLabelsAllowed(newLabels);
-            this.labels = this.stringToLabels(this.category.getProject().getLabelManager().setLabels("", newLabels));
-            return this;
-        }
-        /**
-         * Adds one label to the item if it isn't already set. Note that if the
-         * label is in an XOR group with another set label, that label will be
-         * removed.
-         * @param labelToSet
-         * @returns Item
-         * @throws throws error if the Item category doesn't allow labels
-         */
-        setLabel(labelToSet) {
-            this.verifyLabelsAllowed([labelToSet]);
-            const labelsAsString = this.labelsToString();
-            this.labels = this.stringToLabels(this.category.getProject().getLabelManager().setLabels(labelsAsString, [labelToSet]));
-            return this;
-        }
-        /**
-         * Unsets one label if it exists.
-         * @param labelToUnset
-         * @returns Item
-         * @throws throws error if the Item category doesn't allow labels
-         */
-        unsetLabel(labelToUnset) {
-            this.verifyLabelsAllowed([labelToUnset]);
-            this.labels = this.category.getProject().getLabelManager().unsetLabel(this.getLabels(), labelToUnset);
-            return this;
-        }
-        getCategory() { return this.category; }
-        needsSave() {
-            // Are any fields dirty?
-            for (let field of this.fieldMap.values()) {
-                if (field.needsSave()) {
-                    this.dirty = true;
-                    break;
-                }
-            }
-            return this.dirty;
-        }
-        /**
-         * An Item can be complete or partial, based on the ItemFieldMask passed in
-         * at construction.
-         * @returns true if the item has all of its Category fields.
-         */
-        hasAllFields() {
-            return this.fieldMask.getFieldIds().length == this.getCategory().getFields().length;
-        }
-        /**
-         * In case the Item is masked (hasAllFields() returns false), one or more Fields may
-         * not be tracked. hasFieldId() allows you to check if the field is present.
-         * @param fieldId a valid field id within the Category
-         * @throws Error if fieldId is not valid within the Category
-         * @returns true if the Item's mask allows for this field.
-         */
-        hasFieldId(fieldId) {
-            if (!this.isValidFieldId(fieldId)) {
-                throw new Error(`Field id ${fieldId} is not valid within Category ${this.getCategory().getId()}`);
-            }
-            return this.fieldMask.hasFieldId(fieldId);
-        }
-        getFieldById(fieldId) {
-            // Is it in our mask?
-            if (!this.hasFieldId(fieldId)) {
-                throw new Error(`Field id ${fieldId} is not in the ItemFieldMask for this Item.`);
-            }
-            // We should definitely have the field at this point.
-            assert(this.fieldMap.has(fieldId));
-            return this.fieldMap.get(fieldId);
-        }
-        /**
-         * Returns all fields within the mask which match the fieldName.
-         * @param fieldName
-         * @returns an array of Fields. Note that if the mask has limited the set of fields from
-         *     the Category which are tracked for this particular item, the number of returned Field
-         *     objects may be less than you expect.
-         */
-        getFieldByName(fieldName) {
-            let results = [];
-            for (let field of this.fieldMap.values()) {
-                if (field.getFieldName() == fieldName) {
-                    results.push(field);
-                }
-            }
-            return results;
-        }
-        /**
-         * Returns a Field matching the field name. The field should exist and be within the mask.
-         * @param fieldName
-         * @throws Error if there is no such field, either because the name is invalid or it is not within
-         *     the mask for the Item.
-         * @returns a valid Field.
-         */
-        getSingleFieldByName(fieldName) {
-            const fields = this.getFieldByName(fieldName);
-            assert(fields.length == 1, `There are ${fields.length} fields with name ${fieldName}`);
-            return fields[0];
-        }
-    }
-    exports.Item = Item;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 253:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(254), __webpack_require__(255), __webpack_require__(257)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Category_1, Item_1, TreeFolder_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.Project = void 0;
-    ;
-    class Project {
-        constructor(server, name, context) {
-            this.server = server;
-            this.name = name;
-            this.context = context;
-            // Create category objects.
-            this.categories = new Map();
-            for (let c of context.getItemConfig().getCategories(false)) {
-                this.categories.set(c, new Category_1.Category(c, this));
-            }
-        }
-        async getProjectTree() {
-            const that = this;
-            const folders = await that.server.getFullTreeFromProject(that.name);
-            // The top level folder has to be created here synthetically.
-            const f = {
-                id: undefined,
-                title: undefined,
-                children: folders
-            };
-            return new TreeFolder_1.TreeFolder(that, f);
-        }
-        async search(term) {
-            return this.server.searchInProject(this.name, term);
-        }
-        /**
-         * Execute a more complex search, where the fields in the results can be limited.
-         * @param project
-         * @param term
-         * @param filter default empty string
-         * @param fieldList empty string to mean no fields, * to mean all, or comma-seperated list of
-         *   field ids from the various categories from which items will be returned. The default
-         *   value is *.
-         * @param includeLabels default true
-         * @param includeDownlinks default false
-         * @param includeUplinks default false
-         * @param treeOrder default false
-         */
-        async complexSearchInProject(term, filter = "", fieldList = "*", includeLabels = true, includeDownlinks = false, includeUplinks = false, treeOrder = false) {
-            return this.server.complexSearchInProject(this.name, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder);
-        }
-        async complexSearch(term, filter = "", treeOrder = false, mask) {
-            let includeLabels = true;
-            let includeDownlinks = false;
-            let includeUplinks = false;
-            let fieldList = "*";
-            if (mask) {
-                includeLabels = mask.getIncludeLabels();
-                includeDownlinks = mask.getIncludeDownlinks();
-                includeUplinks = mask.getIncludeUplinks();
-                fieldList = mask.getFieldMaskString();
-            }
-            const results = await this.complexSearchInProject(term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder);
-            let items = [];
-            // Turn the results into Items.
-            // ItemFieldMasks are unique per category. This cache allows us to avoid creating
-            // a new mask for each item, a waste of memory.
-            let maskCache = new Map();
-            for (let oneResult of results) {
-                const catName = this.parseRef(oneResult.itemId).type;
-                const cat = this.getCategory(catName);
-                let catMask = maskCache.get(catName);
-                if (!catMask) {
-                    if (mask) {
-                        if (mask.getCategoryMask(catName) != null) {
-                            catMask = mask.getCategoryMask(catName);
-                        }
-                        else {
-                            // Create a field mask that allows all or no fields, depending on
-                            // whether fields are included.
-                            catMask = mask.getIncludeFields() ? cat.createFieldMask() : cat.createFieldMask([]);
-                        }
-                    }
-                    else {
-                        // If no mask was specified for the search, then we get all category fields in the
-                        // item mask.
-                        catMask = cat.createFieldMask();
-                    }
-                    maskCache.set(catName, catMask);
-                }
-                let iitemGet = {
-                    id: oneResult.itemId,
-                    type: catName,
-                    title: oneResult.title,
-                    labels: includeLabels ? oneResult.labels : undefined,
-                    version: oneResult.version
-                };
-                // Deal with labels.
-                if (includeLabels) {
-                    iitemGet.labels = oneResult.labels;
-                }
-                // Deal with the links.
-                if (includeDownlinks) {
-                    iitemGet.downLinks = [];
-                    if (oneResult.downlinks) {
-                        // TODO: We don't have link titles.
-                        iitemGet.downLinks = oneResult.downlinks.map((linkId) => { return { to: linkId, title: "" }; });
-                    }
-                }
-                if (includeUplinks) {
-                    iitemGet.upLinks = [];
-                    if (oneResult.uplinks) {
-                        // TODO: We don't have link titles.
-                        iitemGet.upLinks = oneResult.uplinks.map((linkId) => { return { to: linkId, title: "" }; });
-                    }
-                }
-                // Deal with fields.
-                for (let fieldId of catMask.getFieldIds()) {
-                    let value = undefined;
-                    if (oneResult.fieldVal) {
-                        const values = oneResult.fieldVal.filter((r) => r.id == fieldId);
-                        if (values.length > 0) {
-                            value = values[0].value;
-                        }
-                    }
-                    iitemGet[fieldId] = value;
-                }
-                // creationDate is a synthetic field, but if it is available we can pass it through iitemGet
-                // into Item, which knows to look for the field.
-                if (oneResult["creationDate"]) {
-                    iitemGet["creationDate"] = oneResult["creationDate"];
-                }
-                // Finally, we have a filled-in iitemGet.
-                // TODO: the item should probably take the master mask, so it knows if labels and up/downlinks are included.
-                items.push(new Item_1.Item(cat, iitemGet, catMask));
-            }
-            return items;
-        }
-        constructSearchFieldMask(includeFields = true, includeLabels = true, includeDownlinks = false, includeUplinks = false) {
-            return new Category_1.ItemsFieldMask(includeFields, includeLabels, includeDownlinks, includeUplinks);
-        }
-        /**
-         * Returns information about an item from an id in a given project.
-         * @param itemId A valid item id in the project
-         * @returns The itemId decomposed into parts
-         */
-        parseRef(itemId) {
-            return this.server.parseRefForProject(this.name, itemId);
-        }
-        createItem(category) {
-            if (category == "FOLDER") {
-                throw new Error(`Folders should be created with method createFolder`);
-            }
-            return new Item_1.Item(this.getCategory(category));
-        }
-        /**
-         * Create a folder. Every folder must contain only items of a particular type.
-         * @param type
-         * @returns a new Folder item of the given type.
-         */
-        createFolder(type) {
-            let item = { isFolder: true, type: type, children: [] };
-            return new Item_1.Item(this.getCategory("FOLDER"), item);
-        }
-        async getItem(id) {
-            const iitem = await this.server.getItemFromProject(this.name, id);
-            const category = iitem.isFolder ? this.getCategory("FOLDER") : this.getCategory(iitem.type);
-            return new Item_1.Item(category, iitem);
-        }
-        async putItem(parentFolderId, item) {
-            let iitem = item.extractData();
-            let newId;
-            if (iitem.id) {
-                // this is an update.
-                newId = await this.server.updateItemInProject(this.name, iitem);
-            }
-            else {
-                // this is creation.
-                newId = await this.server.createItemInProject(this.name, parentFolderId, iitem);
-            }
-            // For now, go back to the server and get a fresh item.
-            return await this.getItem(newId);
-        }
-        /**
-         * Delete an Item from the project. If the Item is a folder with children, then parameter
-         * {force} must be true.
-         * @param itemId A valid item
-         * @param force
-         * @throws Error if the item is a non-empty folder and force was not specified as true.
-         * @returns A promise with the string "Ok" on success.
-         */
-        async deleteItem(itemId, force) {
-            return this.server.deleteItemInProject(this.name, itemId, force);
-        }
-        /**
-         * Move items in the project to a particular folder.
-         * @param folderId a valid folder id within the project
-         * @param itemIds an array of itemIds
-         * @returns the string "Ok" on success
-         */
-        async moveItems(folderId, itemIds) {
-            return this.server.moveItemsInProject(this.name, folderId, itemIds);
-        }
-        /**
-         * Get the TODOs for a project.
-         * @param itemRef if specified, returns all todos linked to an item, regardless of user
-         * @param includeDone - if true, includes done todos
-         * @param includeAllUsers - if true, includes all todos for all users.
-         * @param includeFuture - false by default. If true, includes future todos.
-         * @returns Information on the todos.
-         */
-        getTodos(itemRef, includeDone, includeAllUsers, includeFuture) {
-            return this.server.getProjectTodos(this.name, itemRef, includeDone, includeAllUsers, includeFuture);
-        }
-        getCategory(category) {
-            if (!this.categories.has(category)) {
-                throw new Error(`Cannot find category ${category} in project ${this.name}`);
-            }
-            return this.categories.get(category);
-        }
-        getName() { return this.name; }
-        getItemConfig() { return this.context.getItemConfig(); }
-        getLabelManager() { return this.context.getLabelManager(); }
-        getTestConfig() { return this.context.getTestManagerConfig(); }
-    }
-    exports.Project = Project;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 257:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.TreeFolder = void 0;
-    class TreeFolder {
-        constructor(needs, folder, parent) {
-            this.needs = needs;
-            this.parent = parent;
-            // Decompose folder.
-            this.id = folder.id;
-            this.title = folder.title;
-            this.type = folder.type;
-            this.itemChildren = [];
-            this.folderChildren = [];
-            if (folder.children) {
-                // Some of the children are folders, others items.
-                for (let child of folder.children) {
-                    if (needs.parseRef(child.id).isFolder) {
-                        // Recurse and create TreeFolders.
-                        this.folderChildren.push(new TreeFolder(needs, child, this));
-                    }
-                    else {
-                        this.itemChildren.push({ id: child.id, title: child.title, isFolder: false });
-                    }
-                }
-            }
-        }
-        isRoot() { return this.id == undefined && this.parent == undefined; }
-        getId() {
-            if (this.isRoot())
-                return "ROOT";
-            return this.id;
-        }
-        getTitle() {
-            if (this.isRoot())
-                return "ROOT";
-            return this.title;
-        }
-        getParent() {
-            if (this.isRoot())
-                return null;
-            return this.parent;
-        }
-        /**
-         * Creates a path string including all ancestor folder titles, separated by "/".
-         * @returns the folder path
-         */
-        getPath() {
-            if (this.isRoot())
-                return "";
-            const result = this.getParent().getPath() + "/" + this.getTitle();
-            return result;
-        }
-        /**
-         * Return a TreeFolder if the folderId is valid in the project.
-         * @param folderId
-         * @returns null if folderId cannot be found.
-         */
-        findFolder(folderId) {
-            // Is it one of the children?
-            for (let child of this.folderChildren) {
-                if (child.getId() == folderId) {
-                    return child;
-                }
-                const folder = child.findFolder(folderId);
-                if (folder != null) {
-                    return folder;
-                }
-            }
-            return null;
-        }
-        /**
-         * Find a TreeFolder with the given name in this folder.
-         * @param folderTitle
-         * @returns A valid TreeFolder object or null if not found.
-         */
-        findDirectFolderByTitle(folderTitle) {
-            for (let child of this.folderChildren) {
-                if (child.getTitle() == folderTitle) {
-                    return child;
-                }
-            }
-            return null;
-        }
-        /**
-         * Save an item with this folder as the parent folder.
-         * @param item An item that hasn't yet been saved on the server
-         * @returns An Item object which corresponds to the newly created Item on the server.
-         * @throws throws Error if your item already has an id (was already created on the server).
-         */
-        async saveInFolder(item) {
-            if (item.getId() !== undefined) {
-                throw new Error(`item already exists (id = ${item.getId()})`);
-            }
-            let createdItem = await this.needs.putItem(this.id, item);
-            // Update the folder structure just for this folder.
-            if (!createdItem.getIsFolder()) {
-                this.itemChildren.push({ isFolder: false, id: createdItem.getId(), title: createdItem.getTitle() });
-            }
-            else {
-                // New folders don't have children, so we can get away with adding this folder without a
-                // server call.
-                const folderInfo = {
-                    id: createdItem.getId(),
-                    title: createdItem.getTitle(),
-                    type: createdItem.getType()
-                };
-                this.folderChildren.push(new TreeFolder(this.needs, folderInfo, this));
-            }
-            return createdItem;
-        }
-        /**
-         * Move the given items into this folder. This method does NOT update the list of folder children,
-         * since server-side information is necessary.
-         * @param itemIds an array of itemIds
-         * @returns the string "Ok" on success
-         */
-        async moveItemsToThisFolder(itemIds) {
-            const result = await this.needs.moveItems(this.getId(), itemIds);
-            return result;
-        }
-        /**
-         * Delete a child of this folder.
-         * @param id A valid child id of this folder
-         * @param force If the id points to a non-empty folder, then this must be true to carry out the deletion
-         * @throws Error if the child wasn't found, or if it points to a non-empty folder and {force} is not true
-         * @returns The string "Ok" if successful.
-         */
-        async deleteChildItemOrFolder(id, force) {
-            // The id must be one of our children.
-            for (let i = 0; i < this.itemChildren.length; i++) {
-                if (this.itemChildren[i].id == id) {
-                    let result = await this.needs.deleteItem(id, force);
-                    this.itemChildren.splice(i, 1);
-                    return result;
-                }
-            }
-            for (let i = 0; i < this.folderChildren.length; i++) {
-                if (this.folderChildren[i].getId() == id) {
-                    let result = await this.needs.deleteItem(id, force);
-                    this.folderChildren.splice(i, 1);
-                    return result;
-                }
-            }
-            // Item isn't a child if we reached this point.
-            throw new Error(`Item with id ${id} not found in item or folder children`);
-        }
-        /**
-         * TreeFolder is nice/simple to work with, but sometimes you need the
-         * underlying Item. For example, you might want to set a label on the folder.
-         * Item is the necessary type to do that.
-         * @returns An Item which matches this folder
-         */
-        async getItem() {
-            return this.needs.getItem(this.id);
-        }
-        /**
-         * Returns information on the folders in the folder. May make a request to
-         * the server if children haven't been loaded yet, otherwise, acts on
-         * cached information (which may be out of date. Call refresh() to update
-         * the folder in that case).
-         * @returns an array of TreeFolder objects.
-         */
-        getFolderChildren() {
-            return this.folderChildren;
-        }
-        /**
-         * Returns information on the items in the folder. May make a request to
-         * the server if children haven't been loaded yet, otherwise, acts on
-         * cached information (which may be out of date. Call refresh() to update
-         * the folder in that case).
-         * @returns an array of ITitleAndId objects
-         */
-        getItemChildren() {
-            return this.itemChildren;
-        }
-        /**
-         * Returns both folders and items at this level.
-         * @returns an array of ITitleAndId objects for the folders and items
-         */
-        getAllChildren() {
-            let children = [];
-            children = children.concat(this.getItemChildren());
-            children = children.concat(this.getFolderChildren().map((tf) => {
-                return { isFolder: true, id: tf.id, title: tf.title };
-            }));
-            return children;
-        }
-    }
-    exports.TreeFolder = TreeFolder;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 245:
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -1833,13 +6811,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(247), __webpack_require__(242)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(251), __webpack_require__(246)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DefaultApi = exports.DefaultApiFactory = exports.DefaultApiFp = exports.DefaultApiFetchParamCreator = exports.RequiredError = exports.BaseAPI = exports.COLLECTION_FORMATS = void 0;
     url = __importStar(url);
     isomorphic_fetch_1 = __importDefault(isomorphic_fetch_1);
-    const btoa = __webpack_require__(246);
+    const btoa = __webpack_require__(250);
     const BASE_PATH = "https://demo23.matrixreq.com/rest/1".replace(/\/+$/, "");
     /**
      *
@@ -4577,11 +9555,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Creates a new file - the file should be uploaded as payload (or through the url argument as an alternative). It's mime type should be sent through the HTTP protocol.
              * @param {string} project Project short label
-             * @param {string} [input_url] Optional argument -  the file could also come from an external URL. In this case there will be an error if we can&#x27;t retrieve it on the server
+             * @param {string} [url] Optional argument -  the file could also come from an external URL. In this case there will be an error if we can&#x27;t retrieve it on the server
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectFilePost(project, input_url, options = {}) {
+            projectFilePost(project, urlIn, options = {}) {
                 // verify required parameter 'project' is not null or undefined
                 if (project === null || project === undefined) {
                     throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectFilePost.');
@@ -4604,8 +9582,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 if (configuration && (configuration.username || configuration.password)) {
                     localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
                 }
-                if (input_url !== undefined) {
-                    localVarQueryParameter['url'] = input_url;
+                if (urlIn !== undefined) {
+                    localVarQueryParameter['url'] = urlIn;
                 }
                 localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
@@ -5310,26 +10288,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Modifies an item or a folder. Item has the form CATEG-number, folders -  F-CATEG-number
+             * @param {ItemItemBody} body
              * @param {string} project Project short label
              * @param {string} item Item reference (XXX-nn)
-             * @param {string} reason The reason why the user is doing this
-             * @param {string} [title] Specify new title for the item -- if not there, keep the old title
-             * @param {string} [fxid_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-             * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-             * @param {string} [auditAction] (optional) Specify a new verb for the audit action. Defaults to edit
-             * @param {string} [newFolder] (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
-             * @param {number} [newPosition] (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
-             * @param {string} [filter] (optional) A filter
-             * @param {string} [linksUp] (optional) Comma-delimited (%2C)list of references to up items
-             * @param {string} [linksDown] (optional) Comma-delimited (%2C)list of references to down items
-             * @param {number} [currentVersion] (optional) will not make the change if the current version is not that one
-             * @param {number} [onlyThoseFields] (optional) when set to 1 says that the only fields to change are those passed
-             * @param {number} [onlyThoseLabels] (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
-             * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options = {}) {
+            projectItemItemPut(body, project, item, options = {}) {
+                // verify required parameter 'body' is not null or undefined
+                if (body === null || body === undefined) {
+                    throw new RequiredError('body', 'Required parameter body was null or undefined when calling projectItemItemPut.');
+                }
                 // verify required parameter 'project' is not null or undefined
                 if (project === null || project === undefined) {
                     throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectItemItemPut.');
@@ -5337,10 +10306,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 // verify required parameter 'item' is not null or undefined
                 if (item === null || item === undefined) {
                     throw new RequiredError('item', 'Required parameter item was null or undefined when calling projectItemItemPut.');
-                }
-                // verify required parameter 'reason' is not null or undefined
-                if (reason === null || reason === undefined) {
-                    throw new RequiredError('reason', 'Required parameter reason was null or undefined when calling projectItemItemPut.');
                 }
                 const localVarPath = `/{project}/item/{item}`
                     .replace(`{${"project"}}`, encodeURIComponent(String(project)))
@@ -5361,52 +10326,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 if (configuration && (configuration.username || configuration.password)) {
                     localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
                 }
-                if (title !== undefined) {
-                    localVarQueryParameter['title'] = title;
-                }
-                if (fxid_ !== undefined) {
-                    localVarQueryParameter['fx{id} ...'] = fxid_;
-                }
-                if (labels !== undefined) {
-                    localVarQueryParameter['labels'] = labels;
-                }
-                if (auditAction !== undefined) {
-                    localVarQueryParameter['auditAction'] = auditAction;
-                }
-                if (newFolder !== undefined) {
-                    localVarQueryParameter['newFolder'] = newFolder;
-                }
-                if (newPosition !== undefined) {
-                    localVarQueryParameter['newPosition'] = newPosition;
-                }
-                if (reason !== undefined) {
-                    localVarQueryParameter['reason'] = reason;
-                }
-                if (filter !== undefined) {
-                    localVarQueryParameter['filter'] = filter;
-                }
-                if (linksUp !== undefined) {
-                    localVarQueryParameter['linksUp'] = linksUp;
-                }
-                if (linksDown !== undefined) {
-                    localVarQueryParameter['linksDown'] = linksDown;
-                }
-                if (currentVersion !== undefined) {
-                    localVarQueryParameter['currentVersion'] = currentVersion;
-                }
-                if (onlyThoseFields !== undefined) {
-                    localVarQueryParameter['onlyThoseFields'] = onlyThoseFields;
-                }
-                if (onlyThoseLabels !== undefined) {
-                    localVarQueryParameter['onlyThoseLabels'] = onlyThoseLabels;
-                }
-                if (failOnCleanup !== undefined) {
-                    localVarQueryParameter['failOnCleanup'] = failOnCleanup;
-                }
+                localVarHeaderParameter['Content-Type'] = 'application/json';
                 localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
                 delete localVarUrlObj.search;
                 localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                const needsSerialization = ( true) || 0;
+                localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
                 return {
                     url: url.format(localVarUrlObj),
                     options: localVarRequestOptions,
@@ -5415,43 +10341,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             /**
              * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
              * @summary Adds an item in a folder
+             * @param {ProjectItemBody} body
              * @param {string} project Project short label
-             * @param {string} title Item title
-             * @param {string} folder Reference of the folder (F-categ-serial)
-             * @param {string} reason The reason why the user is doing this
-             * @param {string} linksUp Comma-delimited (%2C)list of references to up items
-             * @param {string} linksDown Comma-delimited (%2C)list of references to down items
-             * @param {string} [fxID_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-             * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-             * @param {string} [author] The author (login name) - only works when superadmin is issuing this
-             * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options = {}) {
+            projectItemPost(body, project, options = {}) {
+                // verify required parameter 'body' is not null or undefined
+                if (body === null || body === undefined) {
+                    throw new RequiredError('body', 'Required parameter body was null or undefined when calling projectItemPost.');
+                }
                 // verify required parameter 'project' is not null or undefined
                 if (project === null || project === undefined) {
                     throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectItemPost.');
-                }
-                // verify required parameter 'title' is not null or undefined
-                if (title === null || title === undefined) {
-                    throw new RequiredError('title', 'Required parameter title was null or undefined when calling projectItemPost.');
-                }
-                // verify required parameter 'folder' is not null or undefined
-                if (folder === null || folder === undefined) {
-                    throw new RequiredError('folder', 'Required parameter folder was null or undefined when calling projectItemPost.');
-                }
-                // verify required parameter 'reason' is not null or undefined
-                if (reason === null || reason === undefined) {
-                    throw new RequiredError('reason', 'Required parameter reason was null or undefined when calling projectItemPost.');
-                }
-                // verify required parameter 'linksUp' is not null or undefined
-                if (linksUp === null || linksUp === undefined) {
-                    throw new RequiredError('linksUp', 'Required parameter linksUp was null or undefined when calling projectItemPost.');
-                }
-                // verify required parameter 'linksDown' is not null or undefined
-                if (linksDown === null || linksDown === undefined) {
-                    throw new RequiredError('linksDown', 'Required parameter linksDown was null or undefined when calling projectItemPost.');
                 }
                 const localVarPath = `/{project}/item`
                     .replace(`{${"project"}}`, encodeURIComponent(String(project)));
@@ -5471,37 +10373,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 if (configuration && (configuration.username || configuration.password)) {
                     localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
                 }
-                if (title !== undefined) {
-                    localVarQueryParameter['title'] = title;
-                }
-                if (folder !== undefined) {
-                    localVarQueryParameter['folder'] = folder;
-                }
-                if (fxID_ !== undefined) {
-                    localVarQueryParameter['fx{ID} ...'] = fxID_;
-                }
-                if (labels !== undefined) {
-                    localVarQueryParameter['labels'] = labels;
-                }
-                if (author !== undefined) {
-                    localVarQueryParameter['author'] = author;
-                }
-                if (reason !== undefined) {
-                    localVarQueryParameter['reason'] = reason;
-                }
-                if (linksUp !== undefined) {
-                    localVarQueryParameter['linksUp'] = linksUp;
-                }
-                if (linksDown !== undefined) {
-                    localVarQueryParameter['linksDown'] = linksDown;
-                }
-                if (failOnCleanup !== undefined) {
-                    localVarQueryParameter['failOnCleanup'] = failOnCleanup;
-                }
+                localVarHeaderParameter['Content-Type'] = 'application/json';
                 localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
                 delete localVarUrlObj.search;
                 localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                const needsSerialization = ( true) || 0;
+                localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
                 return {
                     url: url.format(localVarUrlObj),
                     options: localVarRequestOptions,
@@ -6074,7 +10952,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
-             * @summary Imports some folders from a project to another as a module
+             * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
              * @param {string} project Project short label
              * @param {string} mode Import mode -  can be include or copy
              * @param {string} sourceProject Source project
@@ -6515,7 +11393,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @param {string} newTitle New title for the SIGN- item that is generated (only valid for isSignedReport)
              * @param {string} copyFields List of from-to fields (123,456),(124,457) that we can use to generate the fields in the SIGN record (only valid for isSignedReport)
              * @param {string} [itemList] (optional) list of items to use in the report. By default all categories are used
-             * @param {string} [input_url] (optional) url to generate in the filter
+             * @param {string} [url] (optional) url to generate in the filter
              * @param {string} [resturl] (optional) REST url to generate in the filter
              * @param {string} [format] (optional) format -  html (default), pdf, docx, odt, xml, zipdocx, zippdf or package (from 2.2), or mf (since 2.3)
              * @param {string} [filter] (optional) specify a comma-delimited filter list. Can be negative filters (with minus before)
@@ -6524,7 +11402,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, input_url, resturl, format, filter, useOld, atDate, options = {}) {
+            projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, urlIn, resturl, format, filter, useOld, atDate, options = {}) {
                 // verify required parameter 'project' is not null or undefined
                 if (project === null || project === undefined) {
                     throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectReportReportPost.');
@@ -6571,8 +11449,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 if (itemList !== undefined) {
                     localVarQueryParameter['itemList'] = itemList;
                 }
-                if (input_url !== undefined) {
-                    localVarQueryParameter['url'] = input_url;
+                if (urlIn !== undefined) {
+                    localVarQueryParameter['url'] = urlIn;
                 }
                 if (resturl !== undefined) {
                     localVarQueryParameter['resturl'] = resturl;
@@ -6871,7 +11749,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectSignedreportSIGNNPost(project, input_url, resturl, format, options = {}) {
+            projectSignedreportSIGNNPost(project, urlIn, resturl, format, options = {}) {
                 // verify required parameter 'project' is not null or undefined
                 if (project === null || project === undefined) {
                     throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectSignedreportSIGNNPost.');
@@ -6894,8 +11772,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 if (configuration && (configuration.username || configuration.password)) {
                     localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
                 }
-                if (input_url !== undefined) {
-                    localVarQueryParameter['url'] = input_url;
+                if (urlIn !== undefined) {
+                    localVarQueryParameter['url'] = urlIn;
                 }
                 if (resturl !== undefined) {
                     localVarQueryParameter['resturl'] = resturl;
@@ -10026,27 +14904,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Modifies an item or a folder. Item has the form CATEG-number, folders -  F-CATEG-number
+             * @param {ItemItemBody} body
              * @param {string} project Project short label
              * @param {string} item Item reference (XXX-nn)
-             * @param {string} reason The reason why the user is doing this
-             * @param {string} [title] Specify new title for the item -- if not there, keep the old title
-             * @param {string} [fxid_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-             * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-             * @param {string} [auditAction] (optional) Specify a new verb for the audit action. Defaults to edit
-             * @param {string} [newFolder] (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
-             * @param {number} [newPosition] (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
-             * @param {string} [filter] (optional) A filter
-             * @param {string} [linksUp] (optional) Comma-delimited (%2C)list of references to up items
-             * @param {string} [linksDown] (optional) Comma-delimited (%2C)list of references to down items
-             * @param {number} [currentVersion] (optional) will not make the change if the current version is not that one
-             * @param {number} [onlyThoseFields] (optional) when set to 1 says that the only fields to change are those passed
-             * @param {number} [onlyThoseLabels] (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
-             * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options) {
-                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options);
+            projectItemItemPut(body, project, item, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemItemPut(body, project, item, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -10061,21 +14926,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             /**
              * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
              * @summary Adds an item in a folder
+             * @param {ProjectItemBody} body
              * @param {string} project Project short label
-             * @param {string} title Item title
-             * @param {string} folder Reference of the folder (F-categ-serial)
-             * @param {string} reason The reason why the user is doing this
-             * @param {string} linksUp Comma-delimited (%2C)list of references to up items
-             * @param {string} linksDown Comma-delimited (%2C)list of references to down items
-             * @param {string} [fxID_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-             * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-             * @param {string} [author] The author (login name) - only works when superadmin is issuing this
-             * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options) {
-                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options);
+            projectItemPost(body, project, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectItemPost(body, project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -10334,7 +15191,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
-             * @summary Imports some folders from a project to another as a module
+             * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
              * @param {string} project Project short label
              * @param {string} mode Import mode -  can be include or copy
              * @param {string} sourceProject Source project
@@ -12162,46 +17019,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Modifies an item or a folder. Item has the form CATEG-number, folders -  F-CATEG-number
+             * @param {ItemItemBody} body
              * @param {string} project Project short label
              * @param {string} item Item reference (XXX-nn)
-             * @param {string} reason The reason why the user is doing this
-             * @param {string} [title] Specify new title for the item -- if not there, keep the old title
-             * @param {string} [fxid_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-             * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-             * @param {string} [auditAction] (optional) Specify a new verb for the audit action. Defaults to edit
-             * @param {string} [newFolder] (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
-             * @param {number} [newPosition] (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
-             * @param {string} [filter] (optional) A filter
-             * @param {string} [linksUp] (optional) Comma-delimited (%2C)list of references to up items
-             * @param {string} [linksDown] (optional) Comma-delimited (%2C)list of references to down items
-             * @param {number} [currentVersion] (optional) will not make the change if the current version is not that one
-             * @param {number} [onlyThoseFields] (optional) when set to 1 says that the only fields to change are those passed
-             * @param {number} [onlyThoseLabels] (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
-             * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options) {
-                return (0, exports.DefaultApiFp)(configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options)(fetch, basePath);
+            projectItemItemPut(body, project, item, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectItemItemPut(body, project, item, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
              * @summary Adds an item in a folder
+             * @param {ProjectItemBody} body
              * @param {string} project Project short label
-             * @param {string} title Item title
-             * @param {string} folder Reference of the folder (F-categ-serial)
-             * @param {string} reason The reason why the user is doing this
-             * @param {string} linksUp Comma-delimited (%2C)list of references to up items
-             * @param {string} linksDown Comma-delimited (%2C)list of references to down items
-             * @param {string} [fxID_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-             * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-             * @param {string} [author] The author (login name) - only works when superadmin is issuing this
-             * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options) {
-                return (0, exports.DefaultApiFp)(configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options)(fetch, basePath);
+            projectItemPost(body, project, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectItemPost(body, project, options)(fetch, basePath);
             },
             /**
              * Permissions - ?. Valid from version 2.1
@@ -12340,7 +17176,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
-             * @summary Imports some folders from a project to another as a module
+             * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
              * @param {string} project Project short label
              * @param {string} mode Import mode -  can be include or copy
              * @param {string} sourceProject Source project
@@ -13799,48 +18635,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
          * @summary Modifies an item or a folder. Item has the form CATEG-number, folders -  F-CATEG-number
+         * @param {ItemItemBody} body
          * @param {string} project Project short label
          * @param {string} item Item reference (XXX-nn)
-         * @param {string} reason The reason why the user is doing this
-         * @param {string} [title] Specify new title for the item -- if not there, keep the old title
-         * @param {string} [fxid_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-         * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-         * @param {string} [auditAction] (optional) Specify a new verb for the audit action. Defaults to edit
-         * @param {string} [newFolder] (optional) Name of a new folder to move the item into (exclusive from title and fx arguments)
-         * @param {number} [newPosition] (optional) Indicates a new position within the newfolder. If newFolder is not specified, only changes the position. Exclusive of title and fx arguments. Position is an integer starting at 1
-         * @param {string} [filter] (optional) A filter
-         * @param {string} [linksUp] (optional) Comma-delimited (%2C)list of references to up items
-         * @param {string} [linksDown] (optional) Comma-delimited (%2C)list of references to down items
-         * @param {number} [currentVersion] (optional) will not make the change if the current version is not that one
-         * @param {number} [onlyThoseFields] (optional) when set to 1 says that the only fields to change are those passed
-         * @param {number} [onlyThoseLabels] (optional) when set to 1 says that the only labels to change are those passed. To remove a label in this case, prefix it with minus
-         * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          * @memberof DefaultApi
          */
-        projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options) {
-            return (0, exports.DefaultApiFp)(this.configuration).projectItemItemPut(project, item, reason, title, fxid_, labels, auditAction, newFolder, newPosition, filter, linksUp, linksDown, currentVersion, onlyThoseFields, onlyThoseLabels, failOnCleanup, options)(this.fetch, this.basePath);
+        projectItemItemPut(body, project, item, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemItemPut(body, project, item, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project - admins can impersonate. Valid from version 2.1
          * @summary Adds an item in a folder
+         * @param {ProjectItemBody} body
          * @param {string} project Project short label
-         * @param {string} title Item title
-         * @param {string} folder Reference of the folder (F-categ-serial)
-         * @param {string} reason The reason why the user is doing this
-         * @param {string} linksUp Comma-delimited (%2C)list of references to up items
-         * @param {string} linksDown Comma-delimited (%2C)list of references to down items
-         * @param {string} [fxID_] Values of each field, the URI parameter name is fx followed by the ID of the field (fx501 for example)
-         * @param {string} [labels] (optional) List of labels currently applied to this element. If none is specified, will consider there are none. Should be sent as a comma-delimited list of strings
-         * @param {string} [author] The author (login name) - only works when superadmin is issuing this
-         * @param {number} [failOnCleanup] (optional) when set to 1 (default) says that the call will fail if any HTML cleanup is involved. With 0 it will clean and not fail
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          * @memberof DefaultApi
          */
-        projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options) {
-            return (0, exports.DefaultApiFp)(this.configuration).projectItemPost(project, title, folder, reason, linksUp, linksDown, fxID_, labels, author, failOnCleanup, options)(this.fetch, this.basePath);
+        projectItemPost(body, project, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectItemPost(body, project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - ?. Valid from version 2.1
@@ -13990,7 +18805,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
-         * @summary Imports some folders from a project to another as a module
+         * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
          * @param {string} project Project short label
          * @param {string} mode Import mode -  can be include or copy
          * @param {string} sourceProject Source project
@@ -14599,4314 +19414,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 
 
 /***/ }),
+/* 250 */
+/***/ ((module) => {
 
-/***/ 241:
-/***/ ((module, exports, __webpack_require__) => {
+(function () {
+  "use strict";
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(112), __webpack_require__(244), __webpack_require__(245), __webpack_require__(126), __webpack_require__(125), __webpack_require__(9), __webpack_require__(49), __webpack_require__(116), __webpack_require__(253)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1, TestManagerConfiguration_1, LabelManager_1, Project_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.CreateConsoleAPI = exports.StandaloneMatrixAPI = void 0;
-    // import { isomorphicFetch } from "isomorphic-fetch";
-    let isomorphicFetch = __webpack_require__(242);
-    function CreateConsoleAPI(token, baseRestUrl, baseMatrixUrl) {
-        let config = new configuration_1.Configuration({ apiKey: token });
-        let session = new class {
-            getCsrfCookie() { return ""; }
-            setComment(comment) { this.comment = comment; }
-            getComment() { return this.comment; }
-            setProject(project) { this.project = project; }
-            getProject() { return this.project; }
-            getDefaultProjectContext() { return null; }
-        };
-        const logger = new LoggerTools_1.LoggerTools((d) => d.toString(), (d) => d);
-        const json = new JSONTools_1.JSONTools(logger);
-        const itemTools = new SimpleItemTools_1.SimpleItemTools();
-        const itemConfig = new ItemConfiguration_1.ItemConfiguration(logger, json);
-        return new StandaloneMatrixAPI(config, session, itemConfig, baseRestUrl, baseMatrixUrl, logger, json, itemTools);
+  function btoa(str) {
+    var buffer;
+
+    if (str instanceof Buffer) {
+      buffer = str;
+    } else {
+      buffer = Buffer.from(str.toString(), 'binary');
     }
-    exports.CreateConsoleAPI = CreateConsoleAPI;
-    class IsomorphicFetchWrapper {
-        constructor(oldFetch) {
-            this.oldFetch = oldFetch;
-            this.log = [];
-            let log = this.log;
-            this.myFetch = async (...args) => {
-                let [resource, config] = args;
-                log.push(resource);
-                const response = oldFetch(resource, config);
-                return response;
-            };
-        }
-        getLog() { return this.log; }
-        getFetch() {
-            return this.myFetch;
-        }
-    }
-    class StandaloneMatrixAPI {
-        constructor(config, session, initialItemConfig, baseRestUrl, matrixBaseUrl, logger, json, simpleItemTools) {
-            this.config = config;
-            this.session = session;
-            this.baseRestUrl = baseRestUrl;
-            this.matrixBaseUrl = matrixBaseUrl;
-            this.logger = logger;
-            this.json = json;
-            this.simpleItemTools = simpleItemTools;
-            this.debug = false;
-            this.projectMap = new Map();
-            this.fetchWrapper = new IsomorphicFetchWrapper(isomorphicFetch);
-            this.instance = new rest_api_1.DefaultApi(this.config, this.baseRestUrl, this.fetchWrapper.getFetch());
-            this.setItemConfig(initialItemConfig);
-            this.labelManager = new LabelManager_1.LabelManager(logger, json, () => {
-                return this.getItemConfig();
-            });
-        }
-        getFetchLog() {
-            return this.fetchWrapper.getLog();
-        }
-        createNewItemConfig() {
-            return new ItemConfiguration_1.ItemConfiguration(this.logger, this.json);
-        }
-        getLabelManager() {
-            return this.labelManager;
-        }
-        getItemConfig() {
-            return this.ItemConfig;
-        }
-        setItemConfig(newItemConfig) {
-            this.ItemConfig = newItemConfig;
-        }
-        getHeadersForPost() {
-            let headers = {};
-            headers['x-csrf'] = this.session.getCsrfCookie();
-            return headers;
-        }
-        // Called by setProject on project change.
-        async initializeProject() {
-            const p = await this.instance.projectGet(this.getProject(), 1);
-            this.setItemConfig(this.createNewItemConfig());
-            this.getItemConfig().init(p);
-        }
-        log(arg) {
-            if (this.debug) {
-                this.logger.info(arg);
-            }
-        }
-        setComment(comment) {
-            this.session.setComment(comment);
-        }
-        getComment() { return this.session.getComment(); }
-        async setProject(project) {
-            this.session.setProject(project);
-            if (project) {
-                await this.initializeProject();
-            }
-        }
-        getProject() { return this.session.getProject(); }
-        async getProjects() {
-            let p = this.instance.rootGet(0);
-            return p.then((result) => {
-                let projects = [];
-                if (result.project) {
-                    result.project.forEach((a) => {
-                        projects.push(a.shortLabel);
-                    });
-                }
-                return projects;
-            });
-        }
-        parseRef(itemId) {
-            return this.parseRefForProject(this.getProject(), itemId);
-        }
-        getType(itemId) {
-            var ir = this.parseRef(itemId);
-            if (ir.type !== "") {
-                return ir.type;
-            }
-            // no idea... 
-            return "";
-        }
-        /**
-         * get an item from the database as json object.
-         *
-         * Use: await api.getItem("F-DOC-1")
-         *
-         * @param itemId the id of the item like "REQ-1" or a specific version like "REQ-1-v1"
-         * @throws error in case the itemId is bad.
-         * @returns Promise to json object with all fields, links and labels
-         */
-        async getItem(itemId) {
-            this.log(`get item "${itemId}`);
-            let type = this.parseRef(itemId).type;
-            if (!type || this.getItemConfig().getCategories(true).indexOf(type) == -1) {
-                const msg = `This is not possibly an item in this project: "${itemId}"!`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            return this.appGetItemAsync(this.getProject(), itemId);
-        }
-        parseRefForProject(project, itemRef) {
-            return this.simpleItemTools.parseRef(itemRef, project, this.matrixBaseUrl);
-        }
-        getItemFromProject(project, id) {
-            return this.appGetItemAsync(project, id);
-        }
-        /**
-         * get the initial tree structure from a project. Project must be set first.
-         */
-        async getTree() {
-            return this.getTreeFromProject(this.getProject());
-        }
-        async getFullTreeFromProject(projectName) {
-            const p = await this.instance.projectTreeGet(projectName, "yes");
-            return p;
-        }
-        async getTreeFromProject(projectName) {
-            let p = this.instance.projectTreeGet(projectName, "yes");
-            return p.then((folders) => {
-                let result = [];
-                folders.forEach((v) => {
-                    const hasChildren = v.children && v.children.length > 0;
-                    result.push({ isFolder: hasChildren, title: v.title, id: v.id });
-                });
-                return result;
-            });
-        }
-        /**
-         * get a folder from the database, filling in it's children.
-         * @param folderId  the id of the folder like "F-<type>-<id>"
-         * @throws error if folderId is invalid
-         * @returns Promise to ITitleAndId array
-         */
-        async getFolderChildren(folderId) {
-            this.log(`get folder "${folderId}`);
-            const ref = this.parseRef(folderId);
-            if (!ref.isFolder) {
-                const msg = `This is not a folder: "${folderId}"!`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            let type = ref.type;
-            if (!type || this.getItemConfig().getCategories(true).indexOf(type) == -1) {
-                const msg = `This is not possibly a folder in this project: "${folderId}"!`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            return this.getFolderChildrenFromProject(this.getProject(), folderId);
-        }
-        async getFolderChildrenFromProject(projectName, folderId) {
-            this.log(`get folder ${folderId} from project ${projectName}`);
-            const ref = this.parseRef(folderId);
-            if (!ref.isFolder) {
-                const msg = `This is not a folder: "${folderId}"!`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            const p = this.instance.projectItemFolderGet(projectName, folderId, 0, "", "yes");
-            return p.then((value) => {
-                let result = [];
-                // Harvest the children's IDs.
-                if (value.itemList) {
-                    value.itemList.forEach((v) => {
-                        result.push({ isFolder: v.isFolder > 0, title: v.title, id: v.itemRef });
-                    });
-                }
-                return result;
-            });
-        }
-        parseItemJSON(itemId, result) {
-            var item = {
-                id: itemId,
-                title: result.title,
-                type: this.getType(itemId),
-                downLinks: [],
-                upLinks: [],
-                modDate: result.modDate,
-                isUnselected: result.isUnselected,
-                labels: result.labels ? result.labels : [],
-                maxVersion: result.maxVersion
-            };
-            if (result.isFolder != undefined) {
-                item.isFolder = result.isFolder == 1;
-                item.children = [];
-            }
-            else {
-                item.isFolder = false;
-            }
-            if (result.docHasPackage) {
-                item.docHasPackage = result.docHasPackage;
-            }
-            if (!result.maxVersion) {
-                item.isDeleted = true;
-            }
-            if (result.fieldValList) {
-                for (var fieldVal in result.fieldValList.fieldVal) {
-                    item[result.fieldValList.fieldVal[fieldVal].id.toString()] = result.fieldValList.fieldVal[fieldVal].value;
-                }
-            }
-            for (var idx = 0; result.downLinkList && idx < result.downLinkList.length; idx++) {
-                var tol = result.downLinkList[idx].itemRef;
-                item.downLinks.push({ to: this.parseRef(tol).id, title: result.downLinkList[idx].title, modDate: result.downLinkList[idx].modDate });
-            }
-            for (var idx = 0; result.upLinkList && idx < result.upLinkList.length; idx++) {
-                var tol = result.upLinkList[idx].itemRef;
-                item.upLinks.push({ to: this.parseRef(tol).id, title: result.upLinkList[idx].title, modDate: result.upLinkList[idx].modDate });
-            }
-            // copy original up list
-            item.upLinkList = result.upLinkList;
-            if (result.availableFormats) {
-                item["availableFormats"] = result.availableFormats;
-            }
-            if (result.selectSubTree) {
-                item["selectSubTree"] = result.selectSubTree;
-            }
-            if (result.requireSubTree) {
-                item["requireSubTree"] = result.requireSubTree;
-            }
-            var hoi = [];
-            for (var idx = 0; result.itemHistoryList && idx < result.itemHistoryList.itemHistory.length; idx++) {
-                var theAction = result.itemHistoryList.itemHistory[idx];
-                var historyInfo = {
-                    id: itemId,
-                    user: theAction.createdByUserLogin,
-                    action: theAction.auditAction,
-                    version: theAction.version,
-                    date: theAction.createdAt,
-                    dateUserFormat: theAction.createdAtUserFormat,
-                    title: theAction.title,
-                    comment: theAction.reason
-                };
-                // now use the information that undeleted items have been deleted just before
-                if (theAction.auditAction === "undelete") {
-                    if (result.itemHistoryList.itemHistory.length > idx + 1) {
-                        var theDelete = result.itemHistoryList.itemHistory[idx + 1];
-                        if (theDelete.auditAction !== "delete") {
-                            historyInfo["deletedate"] = theDelete.deletedAtUserFormat;
-                        }
-                    }
-                }
-                hoi.push(historyInfo);
-            }
-            item['history'] = hoi;
-            return item;
-        }
-        async appGetItemAsync(project, itemId) {
-            const p = this.instance.projectItemItemGet(project, itemId, 1);
-            return p.then((value) => {
-                if (value.isFolder) {
-                    value["children"] = [];
-                }
-                const item = this.parseItemJSON(itemId, value);
-                return item;
-            });
-        }
-        async getDownlinks(itemId) {
-            this.log(`get downlinks of item "${itemId}`);
-            const itemPromise = this.getItem(itemId);
-            return itemPromise.then((value) => {
-                return value.downLinks ? value.downLinks : [];
-            });
-        }
-        async getDownlinkIds(itemId) {
-            this.log(`get downlink ids of item "${itemId}`);
-            const links = this.getDownlinks(itemId);
-            return links.then((value) => {
-                return value.map(d => d.to);
-            });
-        }
-        async getUplinks(itemId) {
-            this.log(`get Uplinks of item "${itemId}`);
-            const itemPromise = this.getItem(itemId);
-            return itemPromise.then((value) => {
-                return value.upLinks ? value.upLinks : [];
-            });
-        }
-        async getUplinkIds(itemId) {
-            this.log(`get uplink ids of item "${itemId}`);
-            const links = this.getUplinks(itemId);
-            return links.then((value) => {
-                return value.map(d => d.to);
-            });
-        }
-        /**
-         * search items
-         *
-         * @param term search expression, e.g. mrql:category=REQ
-         * @param includeFields true to include fields
-         * @param includeLinks true to include links
-         * @param includeLabels true to include labels
-         * @returns search results
-         */
-        async search(term, includeFields, includeLinks, includeLabels, filter) {
-            this.log(`Search for "${term}"`);
-            return this.appSearchAsync(this.getProject(), term, filter !== null && filter !== void 0 ? filter : null, true, includeFields ? "*" : null, null, includeLabels !== null && includeLabels !== void 0 ? includeLabels : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false, includeLinks !== null && includeLinks !== void 0 ? includeLinks : false);
-        }
-        /**
-         * Move items to a particular folder.
-         * @param project a valid project on the instance
-         * @param folderId a valid folder id within the project
-         * @param itemIds an array of itemIds
-         * @returns the string "Ok" on success
-         */
-        async moveItemsInProject(project, folderId, itemIds) {
-            this.log(`Move items in ${project} to folder ${folderId}"`);
-            const comment = this.getComment();
-            const itemsString = itemIds.join(",");
-            return this.instance.projectMoveinFolderPost(project, folderId, comment, itemsString);
-        }
-        /**
-         * Execute a search in the given project, returning matching item ids.
-         * @param project
-         * @param term
-         * @returns an array of item ids.
-         */
-        async searchInProject(project, term) {
-            this.log(`Search in ${project} for "${term}"`);
-            const results = await this.instance.projectNeedleminimalGet(project, term);
-            return results;
-        }
-        async complexSearchInProject(project, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder) {
-            return this.appSearchAsync(project, term, filter, true, fieldList, // "*" for all fields
-            null, includeLabels, includeDownlinks, includeUplinks);
-        }
-        async uploadProjectFile(url) {
-            const options = { headers: this.getHeadersForPost() };
-            let result = await this.instance.projectFilePost(this.getProject(), url, options);
-            return result;
-        }
-        async execute(payload) {
-            const options = { headers: this.getHeadersForPost() };
-            let items = await this.instance.projectExecutePost(this.getProject(), payload, options);
-            return items;
-        }
-        /**
-         * The session object contains a string that represents the "current project."
-         * This convenience method calls openProject() with that string.
-         * @returns A valid Project object.
-         */
-        async openCurrentProjectFromSession() {
-            const project = this.session.getProject();
-            return this.openProject(project);
-        }
-        /**
-         * Retrieve or create a Project object for the given project name.  The method is
-         * asynchronous because it may require a trip to the server to retrieve project
-         * configuration.
-         * @param project
-         * @returns A valid Project object
-         */
-        async openProject(project) {
-            if (this.projectMap.has(project)) {
-                return this.projectMap.get(project);
-            }
-            // If we are running in the web application context, and the user asks to open the current
-            // project, provide them with the current web application globals. Otherwise, create a new
-            // context on the fly. That requires a server call to get the item configuration information.
-            let context = null;
-            if (this.session.getProject() == project &&
-                this.session.getDefaultProjectContext() != null) {
-                context = this.session.getDefaultProjectContext();
-            }
-            else {
-                const p = await this.instance.projectGet(project, 1);
-                let config = this.createNewItemConfig();
-                config.init(p);
-                const labelManager = new LabelManager_1.LabelManager(this.logger, this.json, () => config);
-                const testManagerConfig = new TestManagerConfiguration_1.TestManagerConfiguration();
-                testManagerConfig.initialize(config);
-                context = {
-                    getItemConfig: () => { return config; },
-                    getJsonTools: () => { return this.json; },
-                    getLogger: () => { return this.logger; },
-                    getLabelManager: () => { return labelManager; },
-                    getTestManagerConfig: () => { return testManagerConfig; }
-                };
-            }
-            const proj = new Project_1.Project(this, project, context);
-            this.projectMap.set(project, proj);
-            return proj;
-        }
-        parseSearchResult(needle, fieldList) {
-            let fullitem = this.parseRef(needle.itemOrFolderRef);
-            const that = this;
-            let sr = {
-                itemId: fullitem.id, version: fullitem.version, title: needle.title, downlinks: [], uplinks: [], labels: []
-            };
-            if (fieldList && fieldList.length > 0) {
-                sr.fieldVal = needle.fieldVal;
-            }
-            if (needle.downLinkList) {
-                for (let link of needle.downLinkList) {
-                    sr.downlinks.push(that.parseRef(link.itemRef).id);
-                }
-            }
-            if (needle.upLinkList) {
-                for (let link of needle.upLinkList) {
-                    sr.uplinks.push(that.parseRef(link.itemRef).id);
-                }
-            }
-            if (needle.labels) {
-                let labels = needle.labels.split(",");
-                for (let label of labels) {
-                    sr.labels.push(label.substr(1, label.length - 2));
-                }
-            }
-            if (needle.creationDate) {
-                sr["creationDate"] = needle.creationDate;
-            }
-            return sr;
-        }
-        // TODO: crossProject is not handled (it is a server query, not a project query).
-        async appSearchAsync(project, term, filter, ignoreFilters, fieldList, crossProject, labels, down, up, treeOrder) {
-            let linksReq = "";
-            if (down && up) {
-                linksReq = "up,down";
-            }
-            else if (down) {
-                linksReq = "down";
-            }
-            else if (up) {
-                linksReq = "up";
-            }
-            const p = this.instance.projectNeedleGet(project, term, "", filter, fieldList, labels ? 1 : 0, treeOrder ? 1 : 0, linksReq);
-            return p.then((result) => {
-                var hoi = [];
-                for (var idx = 0; idx < result.needles.length; idx++) {
-                    hoi.push(this.parseSearchResult(result.needles[idx], fieldList));
-                }
-                return hoi;
-            });
-        }
-        async getItemIdsInCategory(category) {
-            this.log(`get items of type "${category}"`);
-            let items = await this.search("mrql:category=" + category);
-            return items.map(item => item.itemId);
-        }
-        /**
-         * gets the value of a field of an item from the database
-         *
-         * Use: await getField( "REQ-1", "description")
-         *
-         * @param itemId the id of the item like "REQ-1" or a specific version like "REQ-1-v1"
-         * @param fieldName name of the field
-         * @throws Error in case of invalid item or field
-         * @returns Promise to the value of the field
-         */
-        async getField(itemId, fieldName) {
-            this.log(`get field "${fieldName} of item "${itemId}" `);
-            let type = this.parseRef(itemId).type;
-            if (!type || this.getItemConfig().getCategories(true).indexOf(type) == -1) {
-                const msg = `This is not possibly an item in this project: "${itemId}"!`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            let fieldId = this.getItemConfig().getFieldId(type, fieldName);
-            if (!fieldId) {
-                const msg = `"${fieldName}" is not a field of this item "${itemId}"!`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            let itemPromise = this.appGetItemAsync(this.getProject(), itemId);
-            return itemPromise.then((value) => {
-                return value[fieldId];
-            });
-        }
-        /**
-         * set a field of an item in the database
-         *
-         * Use: await api.setField("PROC-83", "plain english", "x");
-         *
-         * @param itemId itemId the id of the item like "REQ-1"
-         * @param fieldName name of the field
-         * @param value value of the field
-         * @throws Error in case of invalid itemId or fieldName
-         * @returns Promise to the updated item
-         */
-        async setField(itemId, fieldName, value) {
-            this.log(`set field "${fieldName} of item "${itemId}" `);
-            return this.setFields(itemId, [{ fieldName: fieldName, value: value }]);
-        }
-        async setTitle(itemId, value) {
-            this.log(`set title of item "${itemId}" `);
-            let update = {
-                id: itemId,
-                onlyThoseFields: 1,
-                onlyThoseLabels: 1,
-                title: value
-            };
-            let type = this.parseRef(itemId).type;
-            if (!type) {
-                const msg = `This is not possibly an item in this project: "${itemId}"!`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            return this.appUpdateItemInDBAsync(this.getProject(), update, "edit");
-        }
-        appUpdateItemInDBAsync(project, itemJson, auditAction) {
-            const comment = this.getComment();
-            let putIt = { reason: comment };
-            if (typeof itemJson.title !== "undefined") {
-                putIt.title = itemJson.title;
-            }
-            if (auditAction) {
-                putIt["auditAction"] = auditAction;
-            }
-            const regex = /fx[0-9]+/;
-            let fxFields = {};
-            for (var par in itemJson) {
-                if (!itemJson.hasOwnProperty(par))
-                    continue;
-                if (putIt.hasOwnProperty(par))
-                    continue;
-                if (par === "type")
-                    continue;
-                if (par === "category")
-                    continue;
-                if (par === "links")
-                    continue;
-                if (par === "title")
-                    continue;
-                if (par === "id")
-                    continue;
-                if (isNaN(par)) {
-                    // it's attribute other than a field
-                    putIt[par] = itemJson[par];
-                }
-                else {
-                    // it's a number so we assume it's a field
-                    fxFields["fx" + par] = itemJson[par];
-                }
-                // If itemJson already has "fx" fields, we need to put those in the fxFields bucket.
-                if (regex.test(par)) {
-                    fxFields[par] = itemJson[par];
-                }
-            }
-            const options = { query: fxFields, headers: this.getHeadersForPost() };
-            const p = this.instance.projectItemItemPut(project, itemJson.id, putIt.reason, putIt.title, undefined, undefined, putIt["auditAction"], undefined, undefined, undefined, undefined, undefined, undefined, itemJson.onlyThoseFields, itemJson.onlyThoseLabels, undefined, options);
-            return p.then((result) => {
-                var item = this.parseItemJSON(itemJson.id, result);
-                return item;
-            });
-        }
-        async updateItemInProject(project, item) {
-            return (await this.appUpdateItemInDBAsync(project, item, "edit")).id;
-        }
-        async createItemInProject(project, parentFolderId, item) {
-            const newId = await this.createItemFromIItemPut(project, parentFolderId, item);
-            return newId;
-        }
-        /**
-         * sets multiple fields in the database
-         *
-         * Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
-         *
-         * @param itemId itemId itemId the id of the item like "REQ-1"
-         * @param data array of fieldName and value tupels
-         * @throws Error in case of invalid id or fields
-         * @returns the updated item
-         */
-        async setFields(itemId, data) {
-            this.log(`set fields "${JSON.stringify(data)} of item "${itemId}" `);
-            let update = {
-                id: itemId,
-                onlyThoseFields: 1,
-                onlyThoseLabels: 1
-            };
-            let type = this.parseRef(itemId).type;
-            if (!type) {
-                const msg = `This is not possibly an item in this project: "${itemId}"!`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            for (let s of data) {
-                let fieldId = this.getItemConfig().getFieldId(type, s.fieldName);
-                if (!fieldId) {
-                    const msg = `"${s.fieldName}" is not a field of this item "${itemId}"!`;
-                    this.logger.error(msg);
-                    throw new Error(msg);
-                }
-                update["fx" + fieldId] = s.value;
-            }
-            return this.appUpdateItemInDBAsync(this.getProject(), update, "edit");
-        }
-        async addDownLink(fromId, toId) {
-            this.log(`Add downlink from "${fromId} to "${toId}"`);
-            const options = { headers: this.getHeadersForPost() };
-            return this.instance.projectItemlinkUpitemDownitemPost(this.getProject(), fromId, toId, this.getComment(), options);
-        }
-        async deleteItem(itemId, force) {
-            this.log(`Delete Item "${itemId}"`);
-            if (force == undefined) {
-                force = false;
-            }
-            return this.appDeleteItem(this.getProject(), itemId, force);
-        }
-        async deleteItemInProject(project, itemId, force) {
-            this.log(`Delete Item "${itemId}" in project "${project}"`);
-            if (force == undefined) {
-                force = false;
-            }
-            return this.appDeleteItem(project, itemId, force);
-        }
-        async appDeleteItem(project, itemId, force) {
-            return this.appGetItemAsync(project, itemId).then((itemJson) => {
-                const comment = this.getComment();
-                let confirm = "no";
-                if (itemJson.isFolder && itemJson.children && force) {
-                    confirm = "yes";
-                }
-                if (!force && itemJson.children.length > 0) {
-                    throw new Error(`Item "${itemId}" not deleted because it has children`);
-                }
-                return this.instance.projectItemItemDelete(project, itemId, confirm, comment);
-            });
-        }
-        async deleteDownLink(fromId, toId) {
-            this.log(`Delete downlink from "${fromId} to "${toId}"`);
-            return this.instance.projectItemlinkUpitemDownitemDelete(this.getProject(), fromId, toId, this.getComment());
-        }
-        async deleteDownLinks(fromId) {
-            this.log(`Delete all downlinks from "${fromId}"`);
-            let dls = await this.getDownlinkIds(fromId);
-            let results = [];
-            for (let dl of dls) {
-                results.push(await this.deleteDownLink(fromId, dl));
-            }
-            return results;
-        }
-        async deleteUpLinks(fromId) {
-            this.log(`Delete all uplinks from "${fromId}"`);
-            let uls = await this.getUplinkIds(fromId);
-            let results = [];
-            for (let ul of uls) {
-                results.push(await this.deleteDownLink(ul, fromId));
-            }
-            return results;
-        }
-        /**
-         * create a new item in the database
-         *
-         * Use: createItem( "F-REQ-1", "my item", [{fieldName:"description",value:"x"}], ["labelx"], downlinks:["SPEC-1"], uplinks:[] )
-         *
-         * @param folder where to store the item
-         * @param title name of the item
-         * @param data array with fieldNames and values
-         * @param labels list of labels to set
-         * @param downlinks list of downlinks to create
-         * @param uplinks list of uplinks to create
-         * @returns the created item id
-         */
-        createItem(folder, title, data, labels, downlinks, uplinks) {
-            this.log(`Create item ${title} in folder ${folder} with labels: ${labels ? labels.join(",") : ""} downlinks: ${downlinks ? downlinks.join(",") : ""} and uplinks:${uplinks ? uplinks.join(",") : ""} `);
-            let that = this;
-            let category = this.parseRef(folder).type;
-            let update = { title: title, type: category };
-            if (data) {
-                for (let s of data) {
-                    let fieldId = this.getItemConfig().getFieldId(category, s.fieldName);
-                    if (!fieldId) {
-                        const msg = `"${s.fieldName}" is not a field of this category "${category}"!`;
-                        this.logger.error(msg);
-                        throw new Error(msg);
-                    }
-                    update[fieldId] = s.value;
-                }
-            }
-            if (labels && labels.length)
-                update.labels = labels.join(",");
-            const result = that.appCreateItemOfTypeAsync(this.getProject(), category, update, "add", folder);
-            return result.then(async (newItemId) => {
-                let itemId = that.parseRef(newItemId).id;
-                if (downlinks) {
-                    for (let link of downlinks) {
-                        await that.addDownLink(itemId, link);
-                    }
-                }
-                if (uplinks) {
-                    for (let link of uplinks) {
-                        await that.addDownLink(link, itemId);
-                    }
-                }
-                return newItemId;
-            });
-        }
-        async createItemFromIItemPut(project, folder, item) {
-            let that = this;
-            let category = this.parseRef(folder).type;
-            if (category != item.type) {
-                const msg = `Folder category of ${category} does not match item category of ${item.type}`;
-                this.logger.error(msg);
-                throw new Error(msg);
-            }
-            const result = this.appCreateItemOfTypeAsync(project, category, item, "add", folder);
-            return result.then(async (newItemId) => {
-                let itemId = that.parseRef(newItemId).id;
-                // TODO: why can't this be done in the initial call? Seems like more trips to server than
-                // required.
-                if (item.downlinks) {
-                    for (let link of item.downlinks) {
-                        await that.addDownLink(itemId, link);
-                    }
-                }
-                if (item.uplinks) {
-                    for (let link of item.uplinks) {
-                        await that.addDownLink(link, itemId);
-                    }
-                }
-                return newItemId;
-            });
-        }
-        // Returns a promise with the id of the created item.
-        async appCreateItemOfTypeAsync(project, category, itemJson, actions, parentId) {
-            var _a, _b;
-            const comment = this.getComment();
-            if (itemJson.children) {
-                let postItFolder = {
-                    label: itemJson.title,
-                    parent: parentId,
-                    reason: comment
-                };
-                let fxFields = {};
-                for (var par in itemJson) {
-                    if (!itemJson.hasOwnProperty(par))
-                        continue;
-                    if (postItFolder.hasOwnProperty(par))
-                        continue;
-                    if (par === "type" || par === "children" ||
-                        par === "title" || par === "labels" ||
-                        par === "linksUp" || par === "linksDown") {
-                        continue;
-                    }
-                    if (!isNaN(par)) {
-                        fxFields["fx" + par] = itemJson[par];
-                    }
-                }
-                const options = { query: fxFields, headers: this.getHeadersForPost() };
-                let ack = this.instance.projectFolderPost(project, parentId, itemJson.title, comment, undefined, options);
-                return ack.then((result) => {
-                    itemJson.id = "F-" + itemJson.type + "-" + result.serial;
-                    return itemJson.id;
-                });
-            }
-            let fxFields = {};
-            for (var par in itemJson) {
-                if (!itemJson.hasOwnProperty(par))
-                    continue;
-                if (par === "type" || par === "labels" ||
-                    par === "linksUp" || par === "linksDown") {
-                    continue;
-                }
-                if (!isNaN(par)) {
-                    // it's a number so we assume it's a field
-                    fxFields["fx" + par] = itemJson[par];
-                }
-            }
-            let linksUp = (_a = itemJson.linksUp) !== null && _a !== void 0 ? _a : [];
-            let linksDown = (_b = itemJson.linksDown) !== null && _b !== void 0 ? _b : [];
-            const options = { query: fxFields, headers: this.getHeadersForPost() };
-            let ack = this.instance.projectItemPost(project, itemJson.title, parentId, comment, linksUp, linksDown, undefined, itemJson.labels, undefined, 1, options);
-            return ack.then((result) => {
-                itemJson.id = itemJson.type + "-" + result.serial;
-                return itemJson.id;
-            });
-        }
-        /**
-         * Creates a folder
-         *
-         * @param parent where to store the folder
-         * @param title name of the folder
-         * @param data array with fieldNames and values
-         * @throws error in case of input error (bad fields, etc)
-         * @returns Promise to the item id of folder
-         */
-        async createFolder(parent, title, data) {
-            this.log(`Create folder "${title} in folder "${parent}" `);
-            let type = this.parseRef(parent).type;
-            let update = { title: title, children: [], type: type };
-            if (data) {
-                for (let s of data) {
-                    let fieldId = this.getItemConfig().getFieldId("FOLDER", s.fieldName);
-                    if (!fieldId) {
-                        const msg = `"${s.fieldName}" is not a field of a FOLDER"!`;
-                        this.logger.error(msg);
-                        throw new Error(msg);
-                    }
-                    update[fieldId] = s.value;
-                }
-            }
-            // TODO: is XTC really correct here?
-            return this.appCreateItemOfTypeAsync(this.getProject(), "XTC", update, "add", parent);
-        }
-        async getItemIdByTitle(category, title) {
-            this.log(`get item by title "${title}" in category "${category}"`);
-            let that = this;
-            let itemsPromise = this.search("mrql:category=" + category);
-            return itemsPromise.then((items) => {
-                if (!items || items.length == 0) {
-                    that.log(`Warning there's no item with title '${title}' in category '${category}'`);
-                    return null;
-                }
-                const itemsFilteredByName = items.filter(item => item.title == title);
-                if (itemsFilteredByName.length == 0) {
-                    that.log(`Warning there's no item with title '${title}' in category '${category}'`);
-                    return null;
-                }
-                if (itemsFilteredByName.length > 1) {
-                    that.log(`Warning there's more than one match. Returning first item with title '${title}' in category '${category}'`);
-                }
-                that.log(`get item by title "${title}" in category "${category}" => ${itemsFilteredByName[0].itemId}`);
-                return itemsFilteredByName[0].itemId;
-            });
-        }
-        async copyItem(fromProject, fromItem, toProject, toFolder, copyLabels) {
-            this.log(`Copy Item "${fromProject}/${fromItem}" to  "${toProject}/${toFolder}"`);
-            return this.instance.projectCopyItemOrFolderPost(fromProject, fromItem, toFolder, this.getComment(), toProject, copyLabels ? 1 : 0);
-        }
-        /**
-         * Get the TODOs for a project.
-         * @param project project name
-         * @param itemRef if specified, returns all todos linked to an item, regardless of user
-         * @param includeDone - if true, includes done todos
-         * @param includeAllUsers - if true, includes all todos for all users.
-         * @param includeFuture - false by default. If true, includes future todos.
-         * @returns Information on the todos.
-         */
-        async getProjectTodos(project, itemRef, includeDone, includeAllUsers, includeFuture) {
-            return this.instance.projectTodoGet(project, itemRef, includeDone ? 1 : 0, includeAllUsers ? 1 : 0, includeFuture ? 1 : 0);
-        }
-    }
-    exports.StandaloneMatrixAPI = StandaloneMatrixAPI;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+    return buffer.toString('base64');
+  }
+
+  module.exports = btoa;
+}());
 
 
 /***/ }),
-
-/***/ 30:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// example generation of json schema from typescript type
-// 
-//  typescript-json-schema web/ts/ProjectSettings.ts ITestConfig > test.txt
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.ACL_SETTING = exports.defaultNotificationConfig = exports.notificationSetting = exports.autoColumnDefault = exports.autoColumnSetting = exports.smartTextConfigSetting = exports.mailConfigSetting = exports.qmsDefaultConfig = exports.EnumItemPublish = void 0;
-    // *******************************
-    // qms configuration        
-    // *******************************
-    var EnumItemPublish;
-    (function (EnumItemPublish) {
-        EnumItemPublish[EnumItemPublish["IfNotInGroup"] = 0] = "IfNotInGroup";
-        EnumItemPublish[EnumItemPublish["Always"] = 1] = "Always";
-        EnumItemPublish[EnumItemPublish["Never"] = 2] = "Never"; // items cannot be published by itself 
-    })(EnumItemPublish || (EnumItemPublish = {}));
-    exports.EnumItemPublish = EnumItemPublish;
-    const qmsDefaultConfig = {
-        publications: [{
-                rules: [
-                    {
-                        category: "PROC",
-                        readyLabels: ["PROCOK"],
-                        itemRules: EnumItemPublish.IfNotInGroup,
-                        groupName: "SOP",
-                        groupLabelType: "SOPS",
-                        groupDown: ["WI"]
-                    },
-                    {
-                        category: "WI",
-                        readyLabels: ["WIOK"],
-                        itemRules: EnumItemPublish.IfNotInGroup,
-                    }
-                ],
-                toCategory: "PUB",
-                target: "pub",
-                keepFlatList: false,
-                publisher: "_" // comma separated list of publishers _ for legacy: look in category setting for PUB,
-            }
-        ],
-        legacyRoles: false // use user groups 
-    };
-    exports.qmsDefaultConfig = qmsDefaultConfig;
-    // *******************************
-    // mail config
-    // *******************************
-    const mailConfigSetting = "mail_config";
-    exports.mailConfigSetting = mailConfigSetting;
-    // ******************************* 
-    // ACL user access lists
-    // *******************************
-    const ACL_SETTING = "acl";
-    exports.ACL_SETTING = ACL_SETTING;
-    // *******************************
-    // smart text , abbreviations, ....
-    // *******************************
-    const smartTextConfigSetting = "rtf";
-    exports.smartTextConfigSetting = smartTextConfigSetting;
-    let notificationSetting = "";
-    exports.notificationSetting = notificationSetting;
-    let defaultNotificationConfig = {
-        enabled: true,
-        closeAuto: true,
-        manualCreate: true,
-        browserNotificationDisabled: false,
-        browserNotificationAutoCloseAfter: 9000
-    };
-    exports.defaultNotificationConfig = defaultNotificationConfig;
-    // setting can be for customer (e.g. user titles) and project (user roles)
-    const autoColumnSetting = "autoColumn";
-    exports.autoColumnSetting = autoColumnSetting;
-    const autoColumnDefault = { maps: [] };
-    exports.autoColumnDefault = autoColumnDefault;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 10:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.refLinkTooltip = exports.refLinkStyle = void 0;
-    var refLinkStyle;
-    (function (refLinkStyle) {
-        refLinkStyle[refLinkStyle["edit"] = 1] = "edit";
-        refLinkStyle[refLinkStyle["link"] = 2] = "link";
-        refLinkStyle[refLinkStyle["show"] = 3] = "show";
-        refLinkStyle[refLinkStyle["select"] = 4] = "select";
-        refLinkStyle[refLinkStyle["selectTree"] = 5] = "selectTree"; // like link, but selects in tree unless ctrl-was clicked
-    })(refLinkStyle || (refLinkStyle = {}));
-    exports.refLinkStyle = refLinkStyle;
-    var refLinkTooltip;
-    (function (refLinkTooltip) {
-        refLinkTooltip[refLinkTooltip["none"] = 1] = "none";
-        refLinkTooltip[refLinkTooltip["html"] = 2] = "html"; // full html tooltip
-    })(refLinkTooltip || (refLinkTooltip = {}));
-    exports.refLinkTooltip = refLinkTooltip;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 70:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.BasicFunctions = void 0;
-    class BasicFunctions {
-        static isTrue(obj) {
-            if (obj && (obj.toString().toLowerCase() === "true" || obj.toString() === "1")) {
-                return true;
-            }
-            return false;
-        }
-        static isFalse(obj) {
-            if (typeof obj == "undefined") {
-                return false;
-            }
-            if (obj == false || obj == 0 || obj.toString().toLowerCase() === "false" || obj.toString() === "0") {
-                return true;
-            }
-            return false;
-        }
-    }
-    exports.BasicFunctions = BasicFunctions;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 31:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.FieldDescriptions = void 0;
-    class FieldDescriptions {
-        static findById(idToFind) {
-            const result = this.descriptions.filter((description) => description.id === idToFind);
-            return result.length === 1 ? result[0] : undefined;
-        }
-        static appendFieldDescriptions(newFields) {
-            for (let fco of newFields) {
-                if (!this.findById(fco.id)) {
-                    this.descriptions.push(fco);
-                }
-            }
-        }
-        static get() { return FieldDescriptions.descriptions; }
-        static setValidationFunction(fieldId, validator) {
-            let fieldDesc = FieldDescriptions.findById(fieldId);
-            if (!fieldDesc) {
-                throw new Error(`No such field type ${fieldId} registered`);
-            }
-            fieldDesc.capabilities.validationFunction = validator;
-        }
-    }
-    exports.FieldDescriptions = FieldDescriptions;
-    FieldDescriptions.Field_sourceref = "sourceref";
-    FieldDescriptions.Field_markAsTemplate = "markAsTemplate";
-    FieldDescriptions.Field_dhf = "dhf";
-    FieldDescriptions.Field_docFilter = "docFilter";
-    // normal fields
-    FieldDescriptions.Field_richtext = "richtext";
-    FieldDescriptions.Field_text = "text";
-    FieldDescriptions.Field_section = "section";
-    FieldDescriptions.Field_fileManager = "fileManager";
-    FieldDescriptions.Field_tasksControl = "tasksControl";
-    FieldDescriptions.Field_textline = "textline";
-    FieldDescriptions.Field_user = "user";
-    FieldDescriptions.Field_date = "date";
-    FieldDescriptions.Field_dropdown = "dropdown";
-    FieldDescriptions.Field_links = "links";
-    FieldDescriptions.Field_uplinkinfo = "uplinkinfo";
-    FieldDescriptions.Field_crosslinks = "crosslinks";
-    FieldDescriptions.Field_risk2 = "risk2";
-    FieldDescriptions.Field_checkbox = "checkbox";
-    FieldDescriptions.Field_gateControl = "gateControl";
-    FieldDescriptions.Field_colorPicker = "colorPicker";
-    FieldDescriptions.Field_steplist = "steplist";
-    // toolbar
-    FieldDescriptions.Field_labels = "labels";
-    FieldDescriptions.Field_workflow = "workflow";
-    // tests and xtcs
-    FieldDescriptions.Field_test_steps = "test_steps";
-    FieldDescriptions.Field_test_steps_result = "test_steps_result";
-    FieldDescriptions.Field_test_result = "test_result";
-    // agile sync
-    FieldDescriptions.Field_syncStatus = "syncStatus";
-    FieldDescriptions.Field_syncSourceInfo = "syncSourceInfo";
-    // beta should not be used really
-    FieldDescriptions.Field_report = "report";
-    FieldDescriptions.Field_cascadingSelect = "cascadingSelect";
-    FieldDescriptions.Field_hyperlink = "hyperlink";
-    // technical - these need to be added once when creating a new DOC category or something special like this
-    FieldDescriptions.Field_reportId = "reportId";
-    FieldDescriptions.Field_filter_file = "filter_file";
-    FieldDescriptions.Field_signature = "signature";
-    FieldDescriptions.Field_signatureControl = "signatureControl";
-    FieldDescriptions.Field_signCache = "signCache";
-    FieldDescriptions.Field_publishedItemList = "publishedItemList";
-    FieldDescriptions.Field_publishedFilesList = "publishedFilesList";
-    FieldDescriptions.Field_publishedContent = "publishedContent";
-    FieldDescriptions.Field_publishedTitle = "publishedTitle";
-    FieldDescriptions.Field_docTraining = "docTraining";
-    FieldDescriptions.Field_docReview = "docReview";
-    FieldDescriptions.Field_risk = "risk";
-    FieldDescriptions.Field_htmlForm = "htmlForm";
-    FieldDescriptions.Field_hidden = "hidden";
-    FieldDescriptions.Field_dummy = "dummy";
-    FieldDescriptions.Field_guid = "guid";
-    FieldDescriptions.Field_oid = "oid";
-    FieldDescriptions.Field_versionLive = "versionLive";
-    FieldDescriptions.Field_version = "version";
-    FieldDescriptions.Field_currentVersion = "currentVersion";
-    FieldDescriptions.Field_riskFolder = "riskFolder";
-    FieldDescriptions.Field_reviewControl = "reviewControl";
-    // A [fieldId]: JsonValidationFunction map built up at runtime.
-    // We can't build this at compile time because validation functions are high-level entities.
-    FieldDescriptions.validationFunctions = {};
-    FieldDescriptions.descriptions = [
-        // docs and sign
-        { id: FieldDescriptions.Field_sourceref, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Source (Original Document) [sourceref]", class: "docsign", help: "keeps a reference to original document when copying and pasting" },
-        { id: FieldDescriptions.Field_markAsTemplate, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Mark as template [markAsTemplate]", class: "docsign", help: "allows to define DOC templates which can be used in other projects" },
-        { id: FieldDescriptions.Field_dhf, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "DFH field  [dhf]", class: "docs", help: "for documents only: holds a section in a document" },
-        { id: FieldDescriptions.Field_docFilter, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Label Filter in DOCs [docFilter]", class: "docs", help: "a special field for Document categories to filter documents by label" },
-        // normal fields
-        { id: FieldDescriptions.Field_richtext, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Rich Text Control [richtext]", class: "all", help: "a rich text editor field (with formatting)" },
-        { id: FieldDescriptions.Field_text, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Plain Text Control [text]", class: "all", help: "a text editor field (no formatting)" },
-        { id: FieldDescriptions.Field_section, capabilities: { canBeUsedInDocs: false, canHideInDoc: false, canBeXtcPreset: false, canBePublished: true, canBeReadonly: false, canRequireContent: false }, label: "Section with explanation [section]", class: "all", help: "a title with some explanation to separate fields" },
-        { id: FieldDescriptions.Field_fileManager, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "File Manager Control [fileManager]", class: "all", help: "a control which allows to attach files by browsing or drag and drop" },
-        { id: FieldDescriptions.Field_tasksControl, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Tasks Control [tasksControl]", class: "all", help: "a field which shows links to external systems, like JIRA, github etc. (eg extensions folder)" },
-        { id: FieldDescriptions.Field_textline, capabilities: { canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Text Line Control [textline]", class: "all", help: "a field for one line of text" },
-        { id: FieldDescriptions.Field_user, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "User Select Control [user]", class: "all", help: "a drop down to select a user in the project" },
-        { id: FieldDescriptions.Field_date, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Date Select Control [date]", class: "all", help: "a field to select a date" },
-        { id: FieldDescriptions.Field_dropdown, capabilities: { canBeUnsafe: true, needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Drop Down Control [dropdown]", class: "all", help: "a drop-down selection field" },
-        { id: FieldDescriptions.Field_links, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Down Traces Control [links]", class: "all", help: "a field to show and edit down traces as defined in the traceability configuration" },
-        { id: FieldDescriptions.Field_uplinkinfo, capabilities: { schema: "IUpLinkDetails", needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Uplink information [uplinkinfo]", class: "all", help: "a field to show information about up traces in the user interface" },
-        { id: FieldDescriptions.Field_crosslinks, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Cross Project Link Control [crosslinks]", class: "all", help: "a field to add links to other matrix projects" },
-        { id: FieldDescriptions.Field_risk2, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Risk Control [risk2]", class: "all", help: "a field rendering an FMEA-type risk field" },
-        { id: FieldDescriptions.Field_checkbox, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "Checkbox Control [checkbox]", class: "all", help: "a checkbox field" },
-        {
-            id: FieldDescriptions.Field_gateControl,
-            capabilities: {
-                canBeUnsafe: true, needsConfiguration: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: false,
-                canBeReadonly: true, schema: "IGate"
-            },
-            label: "Gate Control [gateControl]", class: "all", help: "a quality gate field"
-        },
-        {
-            id: FieldDescriptions.Field_colorPicker,
-            capabilities: {
-                canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true,
-                canBePublished: true, canBeReadonly: true, canRequireContent: true
-            },
-            label: "Color picker [colorPicker]", class: "super", help: "a color picker field"
-        },
-        {
-            id: "steplist",
-            capabilities: {
-                needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false,
-                canBePublished: true, canBeReadonly: true, canBeUnsafe: true,
-                schema: "IFieldParameter",
-            },
-            label: "Table Control [steplist]",
-            class: "all",
-            help: "a field rendered as a table",
-        },
-        // toolbar
-        { id: FieldDescriptions.Field_labels, capabilities: { onlyOne: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Labels [labels]", class: "toolbar", help: "shows defined labels in the item's tool bar" },
-        { id: FieldDescriptions.Field_workflow, capabilities: { onlyOne: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "One2One Issue Mapping [workflow]", class: "toolbar", help: "a field shown in the item's tool bar showing the status of an external ticket (i.e. jira)" },
-        // tests and xtcs
-        { id: FieldDescriptions.Field_test_steps, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Table [test_steps]", class: "tests", help: "a special table control to define tests (see test configuration)" },
-        { id: FieldDescriptions.Field_test_steps_result, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Result Table [test_steps_result]", class: "xtcs", help: "a special table control to define tests with results (see test configuration)" },
-        { id: FieldDescriptions.Field_test_result, capabilities: { onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Result Summary [test_result]", class: "xtcs", help: "a special field to compute or specify the overall test result" },
-        // agile sync
-        { id: FieldDescriptions.Field_syncStatus, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "SYNC Status [syncStatus]", class: "sync", help: "control to hold the information about synced external items " },
-        { id: FieldDescriptions.Field_syncSourceInfo, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "SYNC Source Info [syncSourceInfo]", class: "sync", help: "a control to show control syncing of external items" },
-        // beta should not be used really
-        { id: FieldDescriptions.Field_report, capabilities: { canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Embedded Report [report]", class: "beta", help: "allows to embed a standard report" },
-        { id: FieldDescriptions.Field_cascadingSelect, capabilities: { canHideInDoc: false, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "Cascading Select [cascadingSelect]", class: "beta", help: "a field to select values from hierachies of drop downs" },
-        { id: FieldDescriptions.Field_hyperlink, capabilities: { canHideInDoc: false, canBeXtcPreset: false, canBePublished: true, canBeReadonly: true }, label: "Hyperlink Control [hyperlink]", class: "beta", help: "a field holding a hyperlink (url)" },
-        // technical - these need to be added once when creating a new DOC category or something special like this
-        { id: FieldDescriptions.Field_reportId, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "report ID [reportId]", class: "super", help: "contains the id of the xslt template for reports" },
-        { id: FieldDescriptions.Field_filter_file, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "filter_file [filter_file]", class: "super", help: "internal field required for documents" },
-        { id: FieldDescriptions.Field_signature, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Signature Table [signature]", class: "super", help: "field showing signature in documents" },
-        { id: FieldDescriptions.Field_signatureControl, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Signature Password Field [signatureControl]", class: "super", help: "field with control for signatures" }
-    ];
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 63:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
-// by the table control.
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.BaseTableFieldHandler = exports.ColumnEditor = void 0;
-    // A steplist has a table with different column types. They are defined here and interpreted in the table
-    // control and field configuration options.
-    var ColumnEditor;
-    (function (ColumnEditor) {
-        ColumnEditor["none"] = "none";
-        ColumnEditor["number"] = "number";
-        ColumnEditor["textline"] = "textline";
-        ColumnEditor["select"] = "select";
-        ColumnEditor["commentlog"] = "commentlog";
-        ColumnEditor["colorPicker"] = "colorPicker";
-        ColumnEditor["category"] = "category";
-        ColumnEditor["readonly"] = "readonly";
-        ColumnEditor["selectIcon"] = "selectIcon";
-        ColumnEditor["text"] = "text";
-        ColumnEditor["date_today"] = "date_today";
-        ColumnEditor["date"] = "date";
-        ColumnEditor["today"] = "today";
-        ColumnEditor["current_version"] = "current_version";
-        ColumnEditor["versionletter"] = "versionletter";
-        ColumnEditor["signaturemeaning"] = "signaturemeaning";
-        ColumnEditor["user"] = "user";
-        ColumnEditor["user_self"] = "user_self";
-        ColumnEditor["self"] = "self";
-        ColumnEditor["group"] = "group";
-        ColumnEditor["revision"] = "revision";
-        ColumnEditor["result"] = "result";
-        ColumnEditor["design"] = "design";
-        ColumnEditor["uprules"] = "uprules";
-        ColumnEditor["downrules"] = "downrules";
-        ColumnEditor["ecocapa"] = "ecocapa";
-        ColumnEditor["eco"] = "eco";
-        ColumnEditor["uid"] = "uid";
-        ColumnEditor["rules"] = "rules";
-    })(ColumnEditor || (ColumnEditor = {}));
-    exports.ColumnEditor = ColumnEditor;
-    class BaseTableFieldHandler {
-        constructor(configIn) {
-            this.data = [];
-            this.dhfFieldConfig = configIn;
-            this.tableConfig = configIn;
-        }
-        getFieldType() {
-            return FieldDescriptions_1.FieldDescriptions.Field_steplist;
-        }
-        getColumnByField(fieldId) {
-            if (this.tableConfig.columns) {
-                const cols = this.tableConfig.columns.filter((col) => col.field == fieldId);
-                if (cols.length >= 1) {
-                    return cols[0];
-                }
-            }
-            return undefined;
-        }
-        columnNumberToFieldId(columnNumber) {
-            if (columnNumber >= this.tableConfig.columns.length) {
-                throw new Error(`${columnNumber} is outside the range [0..${this.tableConfig.columns.length}]`);
-            }
-            return this.tableConfig.columns[columnNumber].field;
-        }
-        validate() {
-            // No validation by default
-        }
-        initData(serializedFieldData) {
-            if (!serializedFieldData) {
-                this.data = [];
-            }
-            else {
-                // This requirement to remove <div> tags comes from the table control implementation.
-                this.data = JSON.parse(serializedFieldData.replace("<div/>", ""));
-            }
-        }
-        getData() {
-            return JSON.stringify(this.data);
-        }
-        getDataRaw() { return this.data; }
-        setData(dataIn, fixData = false) {
-            this.data = dataIn;
-        }
-        getRowCount() {
-            return this.data.length;
-        }
-        deleteRow(rowNumber) {
-            if (rowNumber >= this.data.length) {
-                throw new Error(`Row ${rowNumber} not found`);
-            }
-            this.data.splice(rowNumber, 1);
-            this.validate();
-        }
-        insertRow(rowNumber, columnData) {
-            // Construct a row object from the column data
-            let o = {};
-            columnData.forEach((v, i) => {
-                o[this.columnNumberToFieldId(i)] = v;
-            });
-            this.data.splice(rowNumber, 0, o);
-            this.validate();
-        }
-        clear() {
-            this.data = [];
-        }
-        getColumnCount() {
-            let columnCount = 0;
-            if (this.tableConfig.columns) {
-                columnCount = this.tableConfig.columns.length;
-            }
-            return columnCount;
-        }
-        getCellData(row, col) {
-            const fieldId = this.columnNumberToFieldId(col);
-            // TODO: there should be a switch statement here on type. Complex types may
-            // be JSON objects and should be parsed.
-            return this.data[row][fieldId];
-        }
-        getRowData(row) {
-            let result = [];
-            for (let i = 0; i < this.getColumnCount(); i++) {
-                result[i] = this.getCellData(row, i);
-            }
-            return result;
-        }
-    }
-    exports.BaseTableFieldHandler = BaseTableFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 62:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
-// by the table control.
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BaseTableFieldHandler_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.BaseValidatedTableFieldHandler = void 0;
-    class BaseValidatedTableFieldHandler extends BaseTableFieldHandler_1.BaseTableFieldHandler {
-        constructor(configIn) {
-            super(configIn);
-        }
-        validate() {
-            // Data should be an array.
-            if (typeof this.data.length == 'undefined') {
-                throw new Error("data is not an array of rows");
-            }
-            for (let row of this.data) {
-                // Each row has a property name for each column.
-                for (const fieldId in row) {
-                    let colDetails = this.getColumnByField(fieldId);
-                    if (!colDetails) {
-                        throw new Error(`Unable to find definition for column with field id ${fieldId}`);
-                    }
-                    // TODO: validate the type of the field data.
-                }
-            }
-        }
-        setData(dataIn, fixData = false) {
-            const oldData = this.data;
-            if (fixData) {
-                for (let row of this.data) {
-                    // Each row has a property name for each column.
-                    for (const colId in row) {
-                        let colDetails = this.getColumnByField(colId);
-                        if (!colDetails) {
-                            delete row[colId];
-                        }
-                    }
-                }
-            }
-            this.data = dataIn;
-            this.validate();
-        }
-    }
-    exports.BaseValidatedTableFieldHandler = BaseValidatedTableFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 60:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.CheckboxFieldHandler = void 0;
-    class CheckboxFieldHandler {
-        constructor(configIn) {
-            this.config = configIn;
-        }
-        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_checkbox; }
-        initData(serializedFieldData) {
-            this.data = serializedFieldData;
-        }
-        getData() {
-            return this.data;
-        }
-        getValue() {
-            if (this.data) {
-                if (this.data == "1" || this.data == "true") {
-                    return true;
-                }
-                else if (this.data == "0" || this.data == "false") {
-                    return false;
-                }
-            }
-            return undefined;
-        }
-        setValue(value) {
-            if (value !== undefined) {
-                this.data = value ? "true" : "false";
-            }
-            else {
-                this.data = undefined;
-            }
-        }
-    }
-    exports.CheckboxFieldHandler = CheckboxFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 74:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, ItemSelectionFieldHandler_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.CrosslinksFieldHandler = void 0;
-    class CrosslinksFieldHandler extends ItemSelectionFieldHandler_1.ItemSelectionFieldHandler {
-        static UpdateFieldConfig(params) {
-            params.crossProject = true;
-            if (params.linkTypes == undefined) {
-                params.linkTypes = [];
-            }
-            if (params.prefix == undefined) {
-                params.prefix = "Links";
-            }
-        }
-        constructor(configIn) {
-            super(configIn, FieldDescriptions_1.FieldDescriptions.Field_crosslinks);
-        }
-        /**
-         * Add an item to the list at the given position
-         * @param position
-         * @param item
-         * @returns the field handler
-         * @throws Error in case a projectShortLabel doesn't exist in the item.
-         */
-        insertItem(position, item) {
-            if (!item.projectShortLabel) {
-                throw new Error("item must be a cross project link");
-            }
-            return super.insertItem(position, item);
-        }
-        /**
-         * Append the given item to the end of the list of items.
-         * @param item
-         * @returns the field handler.
-         * @throws Error in case a projectShort label doesn't exist in the item.
-         */
-        appendItem(item) {
-            if (!item.projectShortLabel) {
-                throw new Error("item must be a cross project link");
-            }
-            return super.appendItem(item);
-        }
-    }
-    exports.CrosslinksFieldHandler = CrosslinksFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 71:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.DateFieldHandler = void 0;
-    class DateFieldHandler {
-        constructor(config) {
-            this.date = undefined;
-        }
-        getData() {
-            if (!this.date)
-                return "";
-            return this.date.getFullYear() + "/" + (this.date.getMonth() + 1) + "/" + this.date.getDate();
-        }
-        getFieldType() {
-            return FieldDescriptions_1.FieldDescriptions.Field_date;
-        }
-        initData(serializedFieldData) {
-            if (!serializedFieldData)
-                return;
-            let date = DateFieldHandler.getDateFromString(serializedFieldData);
-            if (date) {
-                this.date = date;
-            }
-            else {
-                this.date = undefined;
-            }
-        }
-        static getDateFromString(dateStr) {
-            if (dateStr) {
-                let split = (dateStr).split("/");
-                if (split.length === 3 && split[0] !== "NaN") {
-                    let date = new Date(parseInt(split[0]), parseInt(split[1]) - 1, parseInt(split[2]));
-                    return date;
-                }
-            }
-            return null;
-        }
-        setDate(date) {
-            this.date = date;
-        }
-        getDate() {
-            return this.date;
-        }
-    }
-    exports.DateFieldHandler = DateFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 65:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.DropdownFieldHandler = void 0;
-    class DropdownFieldHandler {
-        getData() {
-            return this.rawData;
-        }
-        constructor(params, initialValue) {
-            this.rawData = "";
-            this.human = "";
-            this.params = params;
-            this.initData(initialValue);
-        }
-        getFieldType() {
-            return FieldDescriptions_1.FieldDescriptions.Field_dropdown;
-        }
-        initData(serializedFieldData) {
-            this.rawData = serializedFieldData;
-            let that = this;
-            if (typeof serializedFieldData === 'undefined') {
-                serializedFieldData = "";
-            }
-            if (this.params && this.params.splitHuman) {
-                let split = serializedFieldData.split("|");
-                this.rawData = split[0];
-                this.human = split[split.length - 1];
-            }
-            else {
-                this.rawData = serializedFieldData;
-                if (this.params && this.params.options) {
-                    for (let value of this.params.options) {
-                        if (value.id === that.getData()) {
-                            that.human = value.label;
-                        }
-                    }
-                }
-            }
-        }
-        /**
-         * Retrieve the current value of the field, formatted as an array.
-         * If there are N current values, the array will have N items.
-         * @param filterOnOptions true if you only want to get back values that show up
-         *     in the options list.
-         * @returns an array. Empty if there is no current value.
-         */
-        getValues(filterOnOptions = true) {
-            if (this.rawData != undefined || this.rawData != null) {
-                let values = this.rawData.split(",");
-                if (filterOnOptions && this.params && !this.params.create) {
-                    return values.filter((value) => {
-                        return this.params.options.some((option) => {
-                            return option.id === value;
-                        });
-                    });
-                }
-                else {
-                    // When creating new values, we don't want to return empty value like this : [""] but []
-                    if (this.params && this.params.create && this.rawData === "")
-                        return [];
-                    else
-                        return values;
-                }
-            }
-            return [];
-        }
-        getHuman() {
-            return this.human;
-        }
-    }
-    exports.DropdownFieldHandler = DropdownFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 57:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.EmptyFieldHandler = void 0;
-    class EmptyFieldHandler {
-        constructor(fieldTypeIn, configIn) {
-            this.fieldType = fieldTypeIn;
-            this.config = configIn;
-        }
-        getFieldType() { return this.fieldType; }
-        initData(serializedFieldData) { }
-        getData() { return ""; }
-    }
-    exports.EmptyFieldHandler = EmptyFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 72:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.GateFieldHandler = void 0;
-    class GateFieldHandler {
-        constructor(config) {
-            this.defautValue = {
-                passed: false,
-                failed: false,
-                lines: [],
-                search: "",
-            };
-            // TODO: implement
-            this.config = config;
-        }
-        getData() {
-            return JSON.stringify(this.currentValue);
-        }
-        getFieldType() {
-            return FieldDescriptions_1.FieldDescriptions.Field_gateControl;
-        }
-        initData(serializedFieldData) {
-            this.currentValue = this.parseFieldValue(serializedFieldData);
-        }
-        // the field value is saved as json object
-        parseFieldValue(stored) {
-            // default
-            let state = Object.assign({}, this.defautValue);
-            // if something was saved before, use it
-            if (stored) {
-                state = JSON.parse(stored);
-            }
-            // remove lines which do not exist anymore (might happen if config changes)
-            let lineIds = this.config.lines.map((lineDef) => { return lineDef.id; });
-            state.lines = state.lines.filter((line) => { return lineIds.indexOf(line.id) != -1; });
-            // add missing lines
-            let existsIds = state.lines.map((lineValue) => { return lineValue.id; });
-            let newLines = this.config.lines.map((lineDef) => {
-                return {
-                    id: lineDef.id,
-                    passed: false,
-                    failed: false,
-                    user: "",
-                    comment: "",
-                    date: "",
-                    dateUser: ""
-                };
-            }).filter((defaultLine) => {
-                return existsIds.indexOf(defaultLine.id) == -1;
-            });
-            state.lines = state.lines.concat(newLines);
-            // update overall status and text
-            this.updateOverallStatusInternal(state);
-            return state;
-        }
-        updateOverallStatus() {
-            this.updateOverallStatusInternal(this.currentValue);
-        }
-        updateOverallStatusInternal(status) {
-            let that = this;
-            this.allPassed = false;
-            status.passed = false;
-            // if one line is failed, the whole status is failed
-            status.failed = status.lines.filter((line) => { return line.failed; }).length > 0;
-            if (!status.failed) {
-                // if all lines passed, the status is passed
-                status.passed = status.lines.filter((line) => { return line.passed; }).length == status.lines.length;
-            }
-            // build searchable string
-            /*
-                _passed_ (all lines passed)
-                _failed_ (one line failed)
-                _todo_ (needs some action)
-                _pass_userId_ (a user passed it)
-                _fail_userId_ (a user failed it)
-                _todo_userId_ (a user needs to do something)
-            */
-            status.search = "";
-            if (status.passed) {
-                status.search += "_passed_";
-                this.allPassed = true;
-            }
-            else if (status.failed) {
-                status.search += "_failed_";
-            }
-            else {
-                status.search += "_todo_";
-            }
-            for (let state of status.lines) {
-                if (state.passed) {
-                    status.search += "_pass_" + state.user + "_";
-                }
-                else if (state.failed) {
-                    status.search += "_fail_" + state.user + "_";
-                }
-                else {
-                    for (let lineDef of that.config.lines) {
-                        if (lineDef.id == state.id) {
-                            for (let user of lineDef.users) {
-                                status.search += "_todo_" + user + "_";
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        getGateValue() {
-            return this.currentValue;
-        }
-        setGateValue(gateValue) {
-            if (!gateValue)
-                gateValue = Object.assign({}, this.defautValue);
-            this.currentValue = gateValue;
-        }
-    }
-    exports.GateFieldHandler = GateFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 64:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.GenericFieldHandler = void 0;
-    class GenericFieldHandler {
-        constructor(fieldTypeIn, configIn) {
-            this.fieldType = fieldTypeIn;
-            this.config = configIn;
-        }
-        getFieldType() { return this.fieldType; }
-        initData(serializedFieldData) { this.data = serializedFieldData; }
-        getData() { return this.data; }
-    }
-    exports.GenericFieldHandler = GenericFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 73:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.HyperlinkFieldHandler = void 0;
-    class HyperlinkFieldHandler {
-        constructor(configIn) {
-            this.config = configIn;
-        }
-        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_hyperlink; }
-        initData(serializedFieldData) {
-            this.data = serializedFieldData;
-        }
-        getData() {
-            return this.data;
-        }
-        getValue() {
-            if (this.data) {
-                if (this.data == "1" || this.data == "true") {
-                    return true;
-                }
-                else if (this.data == "0" || this.data == "false") {
-                    return false;
-                }
-            }
-            return undefined;
-        }
-        setValue(value) {
-            if (value !== undefined) {
-                this.data = value ? "true" : "false";
-            }
-            else {
-                this.data = undefined;
-            }
-        }
-    }
-    exports.HyperlinkFieldHandler = HyperlinkFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 75:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
-// by the item selection control
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.ItemSelectionFieldHandler = void 0;
-    class ItemSelectionFieldHandler {
-        constructor(configIn, fieldTypeIn) {
-            this.config = configIn;
-            if (fieldTypeIn) {
-                this.fieldType = fieldTypeIn;
-            }
-            else {
-                // Field_links is a kind of default. This field handler is often used
-                // in cases that don't map to an item field, just to a control used
-                // to display a UI. In those cases, no one cares about the field type.
-                this.fieldType = FieldDescriptions_1.FieldDescriptions.Field_links;
-            }
-        }
-        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_crosslinks; }
-        initData(serializedFieldData) {
-            this.data = serializedFieldData;
-            if (serializedFieldData)
-                this.items = JSON.parse(serializedFieldData);
-            else
-                this.items = [];
-        }
-        getData() {
-            return JSON.stringify(this.items);
-        }
-        getItems() {
-            return this.items;
-        }
-        getItemCount() {
-            return this.getItems().length;
-        }
-        hasItems() {
-            return this.getItemCount() > 0;
-        }
-        hasItem(itemId, projectShortLabel) {
-            for (let item of this.getItems()) {
-                if (item.to == itemId && item.projectShortLabel == projectShortLabel) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        insertItem(position, item) {
-            if (this.hasItem(item.to, item.projectShortLabel)) {
-                const label = item.projectShortLabel ? (item.projectShortLabel + "/") : "";
-                throw new Error(`Item ${label}${item.to} is already included`);
-            }
-            let items = this.getItems();
-            items.splice(position, 0, item);
-            this.data = JSON.stringify(items);
-            return this;
-        }
-        appendItem(item) {
-            const position = this.getItemCount();
-            return this.insertItem(position, item);
-        }
-        removeItem(position) {
-            let items = this.getItems();
-            items.splice(position, 1);
-            this.data = JSON.stringify(items);
-            return this;
-        }
-        clear() {
-            let items = [];
-            this.data = JSON.stringify(items);
-            return this;
-        }
-        setItems(selectedItems) {
-            if (!selectedItems)
-                selectedItems = [];
-            this.items = selectedItems;
-        }
-    }
-    exports.ItemSelectionFieldHandler = ItemSelectionFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 76:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.ItemSelectionFieldHandlerFromTo = void 0;
-    class ItemSelectionFieldHandlerFromTo {
-        constructor(configIn, fieldTypeIn) {
-            this.defaultSelection = [];
-            this.config = configIn;
-            this.fieldType = fieldTypeIn;
-            // initialize object
-            this.selectedItems = { from: [], to: [] };
-        }
-        getData() {
-            return JSON.stringify(this.selectedItems);
-        }
-        getFieldType() {
-            return this.fieldType;
-        }
-        initData(serializedFieldData) {
-            this.selectedItems = { from: [], to: [] };
-            if (serializedFieldData && serializedFieldData !== 'undefined' && serializedFieldData !== "") {
-                this.selectedItems = JSON.parse(serializedFieldData);
-            }
-            else if (this.config && this.config.parameter.allTo) {
-                this.selectedItems.to = this.defaultSelection;
-            }
-        }
-        getSelectedItems() {
-            return this.selectedItems;
-        }
-        setSelectedItems(data) {
-            this.selectedItems = data;
-        }
-        setFromSelectiont(newSelection) {
-            this.selectedItems.from = newSelection;
-        }
-        setToSelectiont(newSelection) {
-            this.selectedItems.to = newSelection;
-        }
-        isDefaultSelection() {
-            if (this.defaultSelection.length !== this.selectedItems.to.length) {
-                return false;
-            }
-            const notInDefault = this.selectedItems.to.filter((d) => {
-                return this.defaultSelection.reduce((prev, item) => {
-                    if (item.to === d.to) {
-                        return false;
-                    }
-                    else {
-                        return prev;
-                    }
-                }, true);
-            });
-            return notInDefault.length === 0;
-        }
-        setDefaultSelection(map) {
-            this.defaultSelection = map;
-        }
-        setConfig(config) {
-            this.config = config;
-        }
-    }
-    exports.ItemSelectionFieldHandlerFromTo = ItemSelectionFieldHandlerFromTo;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 58:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.RichtextFieldHandler = void 0;
-    class RichtextFieldHandler {
-        constructor(configIn) {
-            this.data = "";
-            this.config = configIn;
-        }
-        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_richtext; }
-        // TODO: is there more to richtext than just an html string?
-        initData(serializedFieldData) { this.data = serializedFieldData; }
-        getData() { return this.data; }
-        getHtml() { return this.data; }
-        setHtml(str) {
-            this.data = str;
-            return this;
-        }
-    }
-    exports.RichtextFieldHandler = RichtextFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 61:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.SteplistFieldHandler = exports.initialize = void 0;
-    class SteplistFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
-        constructor(configIn) {
-            super(configIn);
-        }
-    }
-    exports.SteplistFieldHandler = SteplistFieldHandler;
-    function validateTableControlParams(json) {
-        return new Promise((resolve) => {
-            if (!json.columns || json.columns.length == 0) {
-                resolve("There are no columns defined. You need at least one column!");
-            }
-            const validXmlRegex = /^([_a-z][\w]?|[a-w_yz][\w]{2,}|[_a-z][a-l_n-z\d][\w]+|[_a-z][\w][a-k_m-z\d][\w]*)$/i;
-            // check for bad column field properties
-            let badFields = [];
-            json.columns.forEach(function (column, idx) {
-                if (!column.field) {
-                    badFields.push("Column " + (idx + 1) + " needs a field property");
-                }
-                else if (!column.field.match(validXmlRegex)) {
-                    badFields.push("The field of column " + (idx + 1) + ": ' " + column.field + "' needs to be a valid XML element name.");
-                }
-                if (column.options) {
-                    for (let option in column.options) {
-                        if (!option.match(validXmlRegex)) {
-                            badFields.push("The option '" + option + "' of field of column " + (idx + 1) + ": ' " + column.field + "' needs to be a valid XML element name.");
-                        }
-                    }
-                }
-            });
-            if (badFields.length) {
-                resolve(badFields.join("<br>"));
-            }
-            resolve(null);
-        });
-    }
-    function initialize() {
-        FieldDescriptions_1.FieldDescriptions.setValidationFunction(FieldDescriptions_1.FieldDescriptions.Field_steplist, validateTableControlParams);
-    }
-    exports.initialize = initialize;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 68:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.TestResultFieldHandler = void 0;
-    // TODO: This is configuring a dropdown control. It should be possible to combine this code
-    // with the DropdownFieldHandler code.
-    class TestResultFieldHandler {
-        static UpdateFieldConfig(params, testConfig) {
-            // There are default params for dropdown for test results
-            params.maxItems = 1; // maxItems which can be selected
-            params.options = [], // options in dropdown  [{id:..., label: ...}]
-                params.create = false, // true if values can be added
-                params.splitHuman = true; // if human values differ from real values (e.g. for XTCs which are passed|ok|p (only the fist part is interesting).
-            // This field handler gets its configuration options from the test manager.
-            params.options = testConfig.getTestRunResultOptions();
-        }
-        constructor(params, initialValue) {
-            this.rawData = "";
-            this.human = "";
-            this.params = params;
-            this.initData(initialValue);
-        }
-        getFieldType() {
-            return FieldDescriptions_1.FieldDescriptions.Field_test_result;
-        }
-        getData() {
-            return this.rawData;
-        }
-        initData(serializedFieldData) {
-            this.rawData = serializedFieldData;
-            let that = this;
-            if (typeof serializedFieldData === 'undefined') {
-                serializedFieldData = "";
-            }
-            if (this.params.splitHuman) {
-                let split = serializedFieldData.split("|");
-                this.rawData = split[0];
-                this.human = split[split.length - 1];
-            }
-            else {
-                this.rawData = serializedFieldData;
-                for (let value of this.params.options) {
-                    if (value.id === that.getData()) {
-                        that.human = value.label;
-                    }
-                }
-            }
-        }
-        getValues(filterOnOptions = true) {
-            if (this.rawData) {
-                let values = this.rawData.split(",");
-                if (filterOnOptions && !this.params.create) {
-                    return values.filter((value) => {
-                        return this.params.options.some((option) => {
-                            return option.id === value;
-                        });
-                    });
-                }
-                else {
-                    return values;
-                }
-            }
-            return [];
-        }
-        getHuman() {
-            return this.human;
-        }
-    }
-    exports.TestResultFieldHandler = TestResultFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 66:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.TestStepsFieldHandler = void 0;
-    class TestStepsFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
-        static UpdateFieldConfig(options, itemType, testConfig) {
-            // This field handler gets it's configuration options from the test manager.
-            // Ignore input options completely.
-            const rconfig = testConfig.getTestStepsConfig(itemType);
-            for (let name in rconfig) {
-                options[name] = rconfig[name];
-            }
-        }
-        constructor(options) {
-            super(options);
-        }
-        getFieldType() {
-            return FieldDescriptions_1.FieldDescriptions.Field_test_steps;
-        }
-    }
-    exports.TestStepsFieldHandler = TestStepsFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 67:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.TestStepsResultFieldHandler = void 0;
-    class TestStepsResultFieldHandler extends BaseValidatedTableFieldHandler_1.BaseValidatedTableFieldHandler {
-        static UpdateFieldConfig(options, testConfig) {
-            // This field handler gets it's configuration options from the test manager.
-            const rconfig = testConfig.getTestStepsResultsConfig();
-            for (let name in rconfig) {
-                options[name] = rconfig[name];
-            }
-        }
-        constructor(options) {
-            super(options);
-        }
-        getFieldType() {
-            return FieldDescriptions_1.FieldDescriptions.Field_test_steps_result;
-        }
-        validate() {
-            // TODO: validation for this kind of table is more difficult.
-            // There is a property "passFailEditorConfig" on the options that needs to
-            // be looked at.
-        }
-    }
-    exports.TestStepsResultFieldHandler = TestStepsResultFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 59:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.TextlineFieldHandler = void 0;
-    class TextlineFieldHandler {
-        constructor(configIn) {
-            this.data = "";
-            this.config = configIn;
-        }
-        getFieldType() { return FieldDescriptions_1.FieldDescriptions.Field_textline; }
-        initData(serializedFieldData) { this.data = serializedFieldData; }
-        getData() { return this.data; }
-        getText() { return this.data; }
-        setText(str) {
-            // make sure there are no newlines.
-            this.data = str.replace("\n", "");
-        }
-    }
-    exports.TextlineFieldHandler = TextlineFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 69:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(70)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BasicFunctions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.UserFieldHandler = void 0;
-    // TODO: UserFieldHandler is a lot like DropdownFieldHandler. Combine them somehow.
-    class UserFieldHandler {
-        // TODO: IDropdownParams is too broad. Use a narrower type
-        static UpdateFieldConfig(params, fieldValue, itemConfig) {
-            let userDropdown = itemConfig.getValidUserOptions(!BasicFunctions_1.BasicFunctions.isFalse(params.showUsers), // by default show users, if not specified
-            BasicFunctions_1.BasicFunctions.isTrue(params.showGroups), // by default do not show groups
-            undefined, fieldValue); // special treatment for deleted users
-            params.create = false;
-            // TODO: WARNING ! ERROR ! BUG ! This is altering the params object stored in the item configuration
-            // where it was originally retrieved from. We need a clone operation by the caller to stop doing this, however,
-            // I'm wondering if we have code that relies on these things being updated.
-            params.options = userDropdown;
-            params.maxItems = params.maxItems ? params.maxItems : 1;
-        }
-        getData() {
-            return this.rawData;
-        }
-        constructor(params, initialValue) {
-            this.rawData = "";
-            this.human = "";
-            this.params = params;
-            this.initData(initialValue);
-        }
-        getFieldType() {
-            return FieldDescriptions_1.FieldDescriptions.Field_user;
-        }
-        initData(serializedFieldData) {
-            if (typeof serializedFieldData === 'undefined') {
-                serializedFieldData = "";
-            }
-            if (this.params.splitHuman) {
-                let split = serializedFieldData.split("|");
-                this.rawData = split[0];
-                this.human = split[split.length - 1];
-            }
-            else {
-                this.rawData = serializedFieldData;
-                for (let value of this.params.options) {
-                    if (value.id === this.getData()) {
-                        // TODO: what to do about "human" when there are multiple values?
-                        this.human = value.label;
-                    }
-                }
-            }
-        }
-        getValues(filterOnOptions = true) {
-            if (this.rawData) {
-                let values = this.rawData.split(",");
-                if (filterOnOptions && !this.params.create) {
-                    return values.filter((value) => {
-                        return this.params.options.some((option) => {
-                            return option.id === value;
-                        });
-                    });
-                }
-                else {
-                    return values;
-                }
-            }
-            return [];
-        }
-        getMaxItems() {
-            if (this.params.maxItems) {
-                return Number(this.params.maxItems);
-            }
-            return undefined;
-        }
-        setValues(values) {
-            const maxItems = this.getMaxItems();
-            if (maxItems && maxItems < values.length) {
-                throw new Error(`The field may only store ${maxItems} items`);
-            }
-            if (!this.params.create) {
-                // Validate against the existing options.
-                // TODO: validation should probably be in a central method checked by
-                // setData().
-                for (let value of values) {
-                    if (!this.params.options.some(o => o.id === value)) {
-                        throw new Error(`Value ${value} not found in accepted options`);
-                    }
-                }
-            }
-            this.initData(values.join());
-        }
-        getHuman() {
-            return this.human;
-        }
-    }
-    exports.UserFieldHandler = UserFieldHandler;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 56:
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(31), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(61), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(69), __webpack_require__(71), __webpack_require__(72), __webpack_require__(73), __webpack_require__(74), __webpack_require__(63), __webpack_require__(61), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(69), __webpack_require__(71), __webpack_require__(75), __webpack_require__(74), __webpack_require__(73), __webpack_require__(76)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, EmptyFieldHandler_1, RichtextFieldHandler_1, TextlineFieldHandler_1, CheckboxFieldHandler_1, SteplistFieldHandler_1, GenericFieldHandler_1, DropdownFieldHandler_1, TestStepsFieldHandler_1, TestStepsResultFieldHandler_1, TestResultFieldHandler_1, UserFieldHandler_1, DateFieldHandler_1, GateFieldHandler_1, HyperlinkFieldHandler_1, CrosslinksFieldHandler_1, BaseTableFieldHandler_1, SteplistFieldHandler_2, TestStepsFieldHandler_2, TestStepsResultFieldHandler_2, TestResultFieldHandler_2, UserFieldHandler_2, DateFieldHandler_2, ItemSelectionFieldHandler_1, CrosslinksFieldHandler_2, HyperlinkFieldHandler_2, ItemSelectionFieldHandlerFromTo_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.ItemSelectionFieldHandlerFromTo = exports.FieldHandlerFactory = exports.InitializeFieldHandlers = void 0;
-    __exportStar(BaseTableFieldHandler_1, exports);
-    __exportStar(SteplistFieldHandler_2, exports);
-    __exportStar(TestStepsFieldHandler_2, exports);
-    __exportStar(TestStepsResultFieldHandler_2, exports);
-    __exportStar(TestResultFieldHandler_2, exports);
-    __exportStar(UserFieldHandler_2, exports);
-    __exportStar(DateFieldHandler_2, exports);
-    __exportStar(ItemSelectionFieldHandler_1, exports);
-    __exportStar(CrosslinksFieldHandler_2, exports);
-    __exportStar(HyperlinkFieldHandler_2, exports);
-    function InitializeFieldHandlers() {
-        (0, SteplistFieldHandler_1.initialize)();
-    }
-    exports.InitializeFieldHandlers = InitializeFieldHandlers;
-    // TODO(modules): At the moment, handling of structured data is spread all over the client
-    // code base. We'd like to get all the data manipulation into these classes, separating
-    // that code from say, UI code.
-    class FieldHandlerFactory {
-        static UpdateFieldConfig(itemConfig, testConfig, fieldType, itemType, fieldValue, config) {
-            switch (fieldType) {
-                case FieldDescriptions_1.FieldDescriptions.Field_test_steps:
-                    TestStepsFieldHandler_1.TestStepsFieldHandler.UpdateFieldConfig(config, itemType, testConfig);
-                    break;
-                case FieldDescriptions_1.FieldDescriptions.Field_test_steps_result:
-                    TestStepsResultFieldHandler_1.TestStepsResultFieldHandler.UpdateFieldConfig(config, testConfig);
-                    break;
-                case FieldDescriptions_1.FieldDescriptions.Field_test_result:
-                    TestResultFieldHandler_1.TestResultFieldHandler.UpdateFieldConfig(config, testConfig);
-                    break;
-                case FieldDescriptions_1.FieldDescriptions.Field_user:
-                    UserFieldHandler_1.UserFieldHandler.UpdateFieldConfig(config, fieldValue, itemConfig);
-                    break;
-                case FieldDescriptions_1.FieldDescriptions.Field_crosslinks:
-                    CrosslinksFieldHandler_1.CrosslinksFieldHandler.UpdateFieldConfig(config);
-                    break;
-                default:
-                    break;
-            }
-        }
-        static CreateHandler(fieldType, config) {
-            const description = FieldDescriptions_1.FieldDescriptions.findById(fieldType);
-            if (!description) {
-                //Do not throw an error here, because this is called for every field on every item...
-                console.warn(`Unable to find handler for fieldType ${fieldType}`);
-                return new EmptyFieldHandler_1.EmptyFieldHandler("notFound", config);
-            }
-            switch (description.id) {
-                case FieldDescriptions_1.FieldDescriptions.Field_tasksControl:
-                case FieldDescriptions_1.FieldDescriptions.Field_section:
-                case FieldDescriptions_1.FieldDescriptions.Field_links:
-                case FieldDescriptions_1.FieldDescriptions.Field_uplinkinfo:
-                case FieldDescriptions_1.FieldDescriptions.Field_labels:
-                case FieldDescriptions_1.FieldDescriptions.Field_workflow:
-                case FieldDescriptions_1.FieldDescriptions.Field_syncStatus:
-                case FieldDescriptions_1.FieldDescriptions.Field_syncSourceInfo:
-                    return new EmptyFieldHandler_1.EmptyFieldHandler(description.id, config);
-                case FieldDescriptions_1.FieldDescriptions.Field_textline:
-                    return new TextlineFieldHandler_1.TextlineFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_richtext:
-                    return new RichtextFieldHandler_1.RichtextFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_checkbox:
-                    return new CheckboxFieldHandler_1.CheckboxFieldHandler(config);
-                // Table-like handlers
-                case FieldDescriptions_1.FieldDescriptions.Field_steplist:
-                    return new SteplistFieldHandler_1.SteplistFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_test_steps:
-                    return new TestStepsFieldHandler_1.TestStepsFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_test_steps_result:
-                    return new TestStepsResultFieldHandler_1.TestStepsResultFieldHandler(config);
-                // Dropdown-like field handlers
-                case FieldDescriptions_1.FieldDescriptions.Field_dropdown:
-                    return new DropdownFieldHandler_1.DropdownFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_user:
-                    return new UserFieldHandler_1.UserFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_test_result:
-                    return new TestResultFieldHandler_1.TestResultFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_date:
-                    return new DateFieldHandler_1.DateFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_gateControl:
-                    return new GateFieldHandler_1.GateFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_crosslinks:
-                    return new CrosslinksFieldHandler_1.CrosslinksFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_hyperlink:
-                    return new HyperlinkFieldHandler_1.HyperlinkFieldHandler(config);
-                case FieldDescriptions_1.FieldDescriptions.Field_dummy:
-                    return new EmptyFieldHandler_1.EmptyFieldHandler(fieldType, config);
-                case FieldDescriptions_1.FieldDescriptions.Field_colorPicker:
-                case FieldDescriptions_1.FieldDescriptions.Field_sourceref:
-                case FieldDescriptions_1.FieldDescriptions.Field_markAsTemplate:
-                case FieldDescriptions_1.FieldDescriptions.Field_docFilter:
-                case FieldDescriptions_1.FieldDescriptions.Field_text:
-                case FieldDescriptions_1.FieldDescriptions.Field_fileManager:
-                case FieldDescriptions_1.FieldDescriptions.Field_risk2:
-                case FieldDescriptions_1.FieldDescriptions.Field_report:
-                case FieldDescriptions_1.FieldDescriptions.Field_cascadingSelect:
-                case FieldDescriptions_1.FieldDescriptions.Field_reportId:
-                case FieldDescriptions_1.FieldDescriptions.Field_filter_file:
-                case FieldDescriptions_1.FieldDescriptions.Field_signature:
-                case FieldDescriptions_1.FieldDescriptions.Field_signatureControl:
-                case FieldDescriptions_1.FieldDescriptions.Field_publishedContent:
-                case FieldDescriptions_1.FieldDescriptions.Field_reviewControl:
-                default:
-                    return new GenericFieldHandler_1.GenericFieldHandler(fieldType, config);
-            }
-        }
-    }
-    exports.FieldHandlerFactory = FieldHandlerFactory;
-    Object.defineProperty(exports, "ItemSelectionFieldHandlerFromTo", ({ enumerable: true, get: function () { return ItemSelectionFieldHandlerFromTo_1.ItemSelectionFieldHandlerFromTo; } }));
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 112:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(31)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ProjectSettings_1, FieldDescriptions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.ItemConfiguration = void 0;
-    class ItemConfiguration {
-        constructor(logger, json) {
-            // TODO: it seems that we have category information in configuration and also in variable
-            // settings, with SLIGHTLY DIFFERENT FIELDS, WHAT THE HECK?
-            // (one has shortLabel, the other doesnt).
-            this.configuration = {};
-            this.settingsString = {};
-            this.settingsJSON = {};
-            this.users = []; // server
-            this.userList = []; // cleaned up
-            this.userGroups = [];
-            this.logger = logger;
-            this.json = json;
-        }
-        isConfigured() {
-            return this.getCategories() && this.getCategories().length > 0;
-        }
-        addUsers(userPermission, groupPermission) {
-            this.userGroups = groupPermission;
-            this.users = userPermission;
-            this.userList = [];
-            if (userPermission) {
-                for (var idx = 0; idx < this.users.length; idx++) {
-                    var ignore = false;
-                    if (this.users[idx].permission === 3) {
-                        // 3 is an admin without write write access
-                        ignore = true;
-                    }
-                    for (var ex = 0; !ignore && ex < this.userList.length; ex++) {
-                        if (this.userList[ex].login.toLowerCase() === this.users[idx].login.toLowerCase() || this.userList[ex].id === this.users[idx].id) {
-                            // somethings wrong here...
-                            this.logger.log("warning", "Ignoring duplicate user... login:" + this.userList[ex].id + " ID:" + this.users[idx].login);
-                            ignore = true;
-                        }
-                    }
-                    if (!ignore) {
-                        this.userList.push({
-                            id: this.users[idx].id,
-                            login: this.users[idx].login.toLowerCase(),
-                            email: this.users[idx].email,
-                            permission: this.users[idx].permission,
-                            firstName: this.users[idx].firstName,
-                            lastName: this.users[idx].lastName
-                        });
-                    }
-                }
-            }
-        }
-        getUserInfo(login) {
-            let theUser = null;
-            for (let user of this.getUserNames()) {
-                if (user.login.toLowerCase() === login.toLowerCase()) {
-                    theUser = user;
-                }
-            }
-            return theUser;
-        }
-        getCombinedName(user) {
-            let name = (user.firstName ? user.firstName : "") + " " + (user.lastName ? user.lastName : "");
-            return user.login + (name == " " ? "" : (" - ") + name);
-        }
-        getFullName(login) {
-            let user = this.getUserInfo(login);
-            if (user === null) {
-                return login;
-            }
-            return this.getCombinedName(user);
-        }
-        groupIdToName(groupId) {
-            return `g_${groupId}_g`;
-        }
-        hasGroupInfo(group) {
-            return this.getUserGroups().findIndex((g) => { return this.groupIdToName(g.groupId) === group.toLowerCase(); }) > -1;
-        }
-        // {login} may have been deleted or doesn't exist.
-        hasUserInfo(login) {
-            return this.getUserInfo(login) !== null;
-        }
-        getUserIds() {
-            return this.getUserNames().map(function (user) { return user.login; });
-        }
-        getEmail(user) {
-            let email = "";
-            for (let otherUser of this.getUserNames()) {
-                if (otherUser.login.toLowerCase() === user.toLowerCase()) {
-                    email = otherUser.email;
-                }
-            }
-            return email;
-        }
-        activateTimewarp(date) {
-            this.timewarpDate = date;
-        }
-        getTimeWarp() {
-            return this.timewarpDate;
-        }
-        isAfterTimeWarp(date) {
-            return this.timewarpDate && new Date(date) > new Date(this.timewarpDate);
-        }
-        hasWriteAccess(user) {
-            if (!user || this.timewarpDate) {
-                return false;
-            }
-            let permission = this.getPermission(user);
-            // -1 super admin, 2 read write, 3 admin
-            return permission == -1 || permission == 2 || permission == 3;
-        }
-        getPermission(user) {
-            let permission = -1; // (in case the user does not exists, it's a super admin)
-            // get permission directly for user
-            for (var idx = 0; idx < this.users.length; idx++) {
-                if (this.users[idx].login.toLowerCase() === user.toLowerCase()) {
-                    permission = this.users[idx].permission;
-                }
-            }
-            // now go through all groups, maybe it's better
-            for (let ug of this.getUserGroups()) {
-                if (ug.membership.map(member => member.login.toLowerCase()).indexOf(user.toLowerCase()) != -1) {
-                    // user is in this group, let's see if we can bump him up
-                    if (ug.permission == 3)
-                        permission = 3;
-                    if (ug.permission == 2 && permission != 3)
-                        permission = 2;
-                    if (ug.permission == 1 && permission <= 0)
-                        permission = 1;
-                }
-            }
-            return permission;
-        }
-        getUserNames(sorted) {
-            let users = this.json.clone(this.userList);
-            // add users from user groups if they are not directly in
-            for (let ug of this.getUserGroups()) {
-                for (let m of ug.membership) {
-                    if (users.map(user => user.login).indexOf(m.login) == -1) {
-                        users.push({
-                            id: -1,
-                            login: m.login,
-                            email: m.email,
-                            permission: -1,
-                            firstName: m.firstName,
-                            lastName: m.lastName
-                        });
-                    }
-                }
-            }
-            if (sorted) {
-                users.sort(function (a, b) { if (a.login < b.login)
-                    return -1;
-                else
-                    return 1; });
-            }
-            return users;
-        }
-        getUserGroups() {
-            return this.userGroups;
-        }
-        /**
-         * getValidUserOptions returns an array of option values that describe
-         * the users and groups available as values for a user field in the
-         * database (fields of type {@link FieldDescriptions.Field_user}).
-         *
-         * @param showUsers - pass true to include users
-         * @param showGroups - pass true to include groups
-         * @param preSelectedUsers - if present, the list of users will be limited
-         *     to this subset and the full user list will not be consulted to
-         *     construct the return value.
-         * @param possiblyDeletedUserGroupNames - if present, a comma-separated
-         *     list of user and group names. The returned options will include
-         *     these values, and mark deleted user and groups as disabled.
-         * @returns An array of {@link IDropdownOptions} configured according to
-         *     the input parameters and the users and groups of the current project.
-         */
-        getValidUserOptions(showUsers, showGroups, preSelectedUsers, possiblyDeletedUserGroupNames) {
-            let that = this;
-            let options = [];
-            let users = preSelectedUsers
-                ? preSelectedUsers
-                : this.getUserNames();
-            let groups = this.getUserGroups().sort((a, b) => {
-                return a.groupName < b.groupName ? -1 : 1;
-            });
-            // if {possiblyDeletedUsernames} are not found in {users}, we want to add them.
-            const isGroup = /g_([0-9])+_g/;
-            let names = possiblyDeletedUserGroupNames ? possiblyDeletedUserGroupNames.split(',') : [];
-            names.forEach(name => {
-                if (!this.hasUserInfo(name)) {
-                    if (!isGroup.test(name)) {
-                        users.push({
-                            id: 0,
-                            login: name,
-                            email: "unknown",
-                            permission: 0,
-                            firstName: "",
-                            lastName: "",
-                            deleted: true
-                        });
-                    }
-                    else if (!this.hasGroupInfo(name)) {
-                        // We know match found a group because isGroup.test(name) returned true.
-                        const groupId = parseInt(name.match(isGroup)[1]);
-                        groups.push({
-                            groupName: name,
-                            permission: 0,
-                            groupId: groupId,
-                            membership: [],
-                            deleted: true
-                        });
-                    }
-                }
-            });
-            if (showUsers) {
-                // sort users alphabetically
-                users = users.sort((a, b) => {
-                    return a.login < b.login ? -1 : 1;
-                });
-                // add to user select
-                users.forEach((user) => {
-                    // Deleted users have strikethrough text, and are disabled from selection.
-                    // We only display their login, not their full name.
-                    const deletedUser = user.deleted === true;
-                    const labelText = deletedUser ? user.login : this.getCombinedName(user);
-                    options.push({
-                        id: user.login, label: labelText, class: "users",
-                        disabled: deletedUser,
-                        strikethrough: deletedUser
-                    });
-                });
-            }
-            if (showGroups) {
-                groups.forEach((group) => {
-                    const deletedGroup = group.deleted === true;
-                    let groupName = group.groupName;
-                    let groupId = deletedGroup ? groupName : that.groupIdToName(group.groupId);
-                    options.push({
-                        id: groupId, label: groupName, class: "groups",
-                        disabled: deletedGroup,
-                        strikethrough: deletedGroup
-                    });
-                });
-            }
-            return options;
-        }
-        // TODO(modules): This is a performance hack. Better if private.
-        addGroupMember(gid, user) {
-            let gs = this.userGroups.filter(g => g.groupId == gid && g.membership.map(u => u.login).indexOf(user) == -1);
-            if (gs.length) {
-                gs[0].membership.push({ login: user });
-            }
-        }
-        // TODO(modules): This is a performance hack. Better if private.
-        removeGroupMember(gid, user) {
-            let gs = this.userGroups.filter(g => g.groupId == gid && g.membership.map(u => u.login).indexOf(user) != -1);
-            if (gs.length) {
-                gs[0].membership = gs[0].membership.filter(m => m.login != user);
-            }
-        }
-        // TODO(modules): This is a performance hack. Better if private.
-        addSettings(s) {
-            let that = this;
-            this.settings = s;
-            this.settingsString = {};
-            this.settingsJSON = {};
-            if (s.settingList) {
-                for (let setting of s.settingList) {
-                    that.settingsString[setting.key] = setting.value;
-                    if (setting.value && setting.value.indexOf('{') !== -1 && setting.value.indexOf('<') !== 0) {
-                        // assume it a json
-                        var val = this.json.fromString(setting.value);
-                        if (val.status === "ok") {
-                            that.settingsJSON[setting.key] = val.value;
-                        }
-                    }
-                }
-            }
-        }
-        getSettings() {
-            return this.settings.settingList;
-        }
-        getSetting(s) {
-            return this.settingsString[s];
-        }
-        getSettingJSON(s, def) {
-            return this.settingsJSON[s] ? this.settingsJSON[s] : def;
-        }
-        getDropDowns(dropdownId) {
-            let that = this;
-            let dropdowns = [];
-            for (let key of Object.keys(this.settingsJSON)) {
-                let setting = that.settingsJSON[key];
-                if (setting.options && (!dropdownId || dropdownId == key)) {
-                    dropdowns.push({
-                        id: key,
-                        label: key,
-                        value: setting
-                    });
-                }
-            }
-            return dropdowns;
-        }
-        getTasksConfig() {
-            return this.getSettingJSON("task_config");
-        }
-        getDHFConfig() {
-            return this.getSettingJSON("dhf_config");
-        }
-        getExtrasConfig() {
-            let extras = this.getSettingJSON("extras");
-            return (extras ? extras : {});
-        }
-        getLabelsConfig() {
-            return this.getSettingJSON("labels");
-        }
-        getIncludeConfig() {
-            let conf = this.getSettingJSON("imports");
-            return (conf ? conf : {
-                copies: {
-                    importMasters: [],
-                    lockLabel: ""
-                }, includes: {
-                    importMasters: [],
-                    lockLabel: ""
-                }
-            });
-        }
-        getQMSConfig() {
-            // get qms config (as project setting, handle 2.1 and earlier setting in category setting)
-            let setting = this.getSettingJSON("qms_config");
-            if (!setting) {
-                setting = ProjectSettings_1.qmsDefaultConfig; // as in 2.1 and earlier
-            }
-            for (let p of setting.publications) {
-                if (p.publisher == "_") {
-                    let legacy = this.getCategorySetting(p.toCategory, "publish");
-                    p.publisher = legacy ? legacy.publisher : "";
-                }
-            }
-            return setting;
-        }
-        getRiskConfig() {
-            return this.getSettingJSON("risk_config");
-        }
-        getCategoryGroupConfig() {
-            return this.getSettingJSON("category_groups");
-        }
-        getACLConfig() {
-            return this.getSettingJSON(ProjectSettings_1.ACL_SETTING);
-        }
-        getTraceConfig() {
-            return this.getSettingJSON("trace_config");
-        }
-        getNavigationBarConfig() {
-            return this.getSettingJSON("nav_config");
-        }
-        getContextPagesConfig() {
-            return this.getSettingJSON("project_help");
-        }
-        getMailConfig() {
-            return this.getSettingJSON(ProjectSettings_1.mailConfigSetting);
-        }
-        getSearchConfig() {
-            return this.getSettingJSON("search_config");
-        }
-        getLabelLockConfig() {
-            return this.getSettingJSON("lockingLabels");
-        }
-        getTestConfig() {
-            return this.getSettingJSON("xtc_config");
-        }
-        setSettingJSON(key, valueJSON) {
-            this.settingsString[key] = JSON.stringify(valueJSON);
-            this.settingsJSON[key] = valueJSON;
-        }
-        getSmartText() {
-            return this.getSettingJSON(ProjectSettings_1.smartTextConfigSetting);
-        }
-        addCategorySetting(categorySetting) {
-            if (!this.settings || !this.settings.categorySettingList) {
-                return;
-            }
-            this.settings.categorySettingList.push(categorySetting);
-        }
-        getCategorySettings(category) {
-            if (!this.settings || !this.settings.categorySettingList) {
-                return [];
-            }
-            for (var idx = 0; idx < this.settings.categorySettingList.length; idx++) {
-                if (this.settings.categorySettingList[idx].categoryShort === category && this.settings.categorySettingList[idx].settingList) {
-                    return this.settings.categorySettingList[idx].settingList;
-                }
-            }
-            return [];
-        }
-        // return the setting for a plugin or null if plugin or setting does not exist
-        // TODO(modules): is this ever called?
-        getPluginSetting(pluginId, setting) {
-            /*
-             * pluginSettingsList: [
-                {
-                    pluginId: 101,
-                    settings: [ {
-                        setting: "serverType",
-                        value: "medical",
-                        encrypted: false
-                    }, {
-                    setting: "baseUrl",
-                        value: "https://matrixtest.atlassian.net",
-                        encrypted: false
-                    } ]
-                }
-            ]
-             */
-            if (!this.settings || !this.settings.pluginSettingsList) {
-                return null;
-            }
-            for (var idx = 0; idx < this.settings.pluginSettingsList.length; idx++) {
-                var ps = this.settings.pluginSettingsList[idx];
-                if (ps.pluginId == pluginId) {
-                    for (var jdx = 0; jdx < ps.settings.length; jdx++) {
-                        if (ps.settings[jdx].setting === setting) {
-                            return ps.settings[jdx].value;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-        getPluginSettings() {
-            return this.settings.pluginSettingsList;
-        }
-        // return tuples {category, field} of all categories which use a type
-        // used for tisk traceability in DHF
-        getFieldsOfType(fieldType, categoryType) {
-            var hits = [];
-            if (!this.settings) {
-                return hits;
-            }
-            for (var idx = 0; idx < this.settings.categorySettingList.length; idx++) {
-                var category = this.settings.categorySettingList[idx].categoryShort;
-                if (!categoryType || categoryType === category) {
-                    var cc = this.getItemConfiguration(category);
-                    if (cc) {
-                        var fields = cc.fieldList;
-                        for (var fdx = 0; fdx < fields.length; fdx++) {
-                            if (fields[fdx].fieldType === fieldType) {
-                                //    var jconfig = this.json.fromString(fields[fdx].parameter);
-                                hits.push({ category: category, field: fields[fdx] });
-                            }
-                        }
-                    }
-                }
-            }
-            return hits;
-        }
-        getCategorySetting(category, setting) {
-            var catSettings = this.getCategorySettings(category);
-            for (var idx = 0; idx < catSettings.length; idx++) {
-                if (catSettings[idx].key === setting) {
-                    var jconfig = this.json.fromString(catSettings[idx].value);
-                    if (jconfig.status === 'ok') {
-                        // apparently parsing went well
-                    }
-                    else if (jconfig.status === 'error') {
-                        this.logger.log("error", "The category setting '" + catSettings[idx].key + "' has an invalid value. Ignoring it.");
-                    }
-                    else {
-                        this.logger.log("warning", "The category setting '" + catSettings[idx].key + "' is empty.");
-                    }
-                    return jconfig.value;
-                }
-            }
-            return null;
-        }
-        getCategories(noFolders) {
-            let catgories = Object.keys(this.configuration);
-            if (noFolders) {
-                catgories.splice(catgories.indexOf("FOLDER"), 1);
-            }
-            return catgories;
-        }
-        getCategoryLabel(category) {
-            if (this.configuration[category]) {
-                return this.configuration[category].label;
-            }
-            return "";
-        }
-        getCategoryId(category) {
-            let cd = this.settings.categoryList.categoryExtended.filter(function (cat) { return cat.category.shortLabel == category; });
-            if (cd.length == 1) {
-                return "" + cd[0].category.id;
-            }
-            return "";
-        }
-        // links for 1.5 and earlier (configured as category setting)
-        getDownLinkTypes(category, required) {
-            if (required) {
-                return this.configuration[category].downLinksRequired;
-            }
-            return this.configuration[category].downLinksOptional;
-        }
-        // links for 1.5 and earlier (configured as category setting)
-        getUpLinkTypes(category, required) {
-            var up = [];
-            for (var key in this.configuration) {
-                if (key && key != category && this.configuration[key]) {
-                    if (required && this.configuration[key].downLinksRequired.indexOf(category) != -1) {
-                        up.push(key);
-                    }
-                    if (!required && this.configuration[key].downLinksOptional.indexOf(category) != -1) {
-                        up.push(key);
-                    }
-                }
-            }
-            return up;
-        }
-        addCategories(config) {
-            for (var idx = 0; config.categoryList.categoryExtended != undefined && idx < config.categoryList.categoryExtended.length; idx++) {
-                this.addCategory(config.categoryList.categoryExtended[idx]);
-            }
-        }
-        init(config) {
-            this.addCategories(config);
-            this.addSettings(config);
-            this.addUsers(config.userPermission, config.groupPermission);
-        }
-        canEdit(category) {
-            return this.canDo(category, "edit");
-        }
-        canEditTitle(category) {
-            return this.canDo(category, "rename");
-        }
-        canMove(category) {
-            return this.canDo(category, "move");
-        }
-        canCreate(category) {
-            return this.canDo(category, "create");
-        }
-        canDelete(category) {
-            return this.canDo(category, "delete");
-        }
-        canModifyLabels(category) {
-            return this.canDo(category, "label");
-        }
-        canSign(category) {
-            return this.canDo(category, "sign");
-        }
-        canReport(category) {
-            return this.canDo(category, "report");
-        }
-        canDo(category, task) {
-            if (!this.configuration[category])
-                return false;
-            if (!this.configuration[category].enable)
-                return true; // no limitation specified for this user
-            if (this.configuration[category].enable.indexOf(task) != -1)
-                return true;
-            return false;
-        }
-        addCategory(config) {
-            this.configuration[config.category.shortLabel] = {
-                fieldList: [],
-                label: config.category.label,
-                downLinksRequired: [],
-                downLinksOptional: [],
-                enable: config.enable
-            };
-            var fieldList = config.fieldList.field;
-            if (!fieldList) {
-                fieldList = [];
-            }
-            for (var idx = 0; idx < fieldList.length; idx++) {
-                var jconfig = this.json.fromString(fieldList[idx].parameter);
-                if (jconfig.status === 'ok') {
-                    // apparently parsing went well
-                }
-                else if (jconfig.status === 'error') {
-                    this.logger.log("error", "The field with id '" + fieldList[idx].id + "' has an invalid value. Ignoring it.");
-                }
-                else {
-                    // quite normal
-                }
-                fieldList[idx].parameterJson = jconfig.value;
-                this.configuration[config.category.shortLabel].fieldList.push(fieldList[idx]);
-                if (fieldList[idx].fieldType === FieldDescriptions_1.FieldDescriptions.Field_links) {
-                    if (fieldList[idx].parameterJson && fieldList[idx].parameterJson.linkTypes) {
-                        for (var l = 0; l < fieldList[idx].parameterJson.linkTypes.length; l++) {
-                            var dl = fieldList[idx].parameterJson.linkTypes[l];
-                            if (this.json.isTrue(dl.required)) {
-                                this.configuration[config.category.shortLabel].downLinksRequired.push(dl.type);
-                            }
-                            else {
-                                this.configuration[config.category.shortLabel].downLinksOptional.push(dl.type);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        getItemConfiguration(category) {
-            return this.configuration[category];
-        }
-        getFieldId(category, fieldLabel) {
-            var cc = this.getItemConfiguration(category);
-            if (!cc) {
-                return 0;
-            }
-            var fields = cc.fieldList;
-            for (var idx = 0; idx < fields.length; idx++) {
-                if (fields[idx].label.toLowerCase() === fieldLabel.toLowerCase()) {
-                    return fields[idx].id;
-                }
-            }
-            return 0;
-        }
-        getFields(category) {
-            var cc = this.getItemConfiguration(category);
-            if (!cc) {
-                return null;
-            }
-            return cc.fieldList;
-        }
-        getFieldByName(category, name) {
-            let fields = this.getFields(category).filter(function (field) { return field.label && field.label.toLowerCase() == name.toLowerCase(); });
-            if (fields.length == 1)
-                return fields[0];
-            return undefined;
-        }
-        getFieldById(category, fieldId) {
-            var cc = this.getItemConfiguration(category);
-            if (!cc) {
-                return null;
-            }
-            let fields = cc.fieldList.filter(function (field) { return field.id == fieldId; });
-            return fields.length ? fields[0] : null;
-        }
-        getFieldConfig(fieldId) {
-            // The fieldId is unique across categories, therefore this code works properly.
-            for (let category of this.getCategories()) {
-                let field = this.getFieldById(category, fieldId);
-                if (field) {
-                    return field.parameterJson;
-                }
-            }
-            return null;
-        }
-        getFieldName(fieldId) {
-            for (let category of this.getCategories()) {
-                let field = this.getFieldById(category, fieldId);
-                if (field) {
-                    return field.label;
-                }
-            }
-            return "";
-        }
-        getFieldType(category, fieldId) {
-            var cc = this.getItemConfiguration(category);
-            if (!cc) {
-                return null;
-            }
-            var fields = cc.fieldList;
-            for (var idx = 0; idx < fields.length; idx++) {
-                // note this is ==: sometimes it is an int sometimes a string 
-                if (fields[idx].id == fieldId) {
-                    return fields[idx].fieldType;
-                }
-            }
-            return null;
-        }
-        // gets required or optional up or downlink categories for a given category
-        // it uses the project setting for the trace configuration if existing,
-        // the category setting (1.5 and earlier) otherwise
-        getLinkTypes(category, down, required) {
-            var tc = this.getTraceConfig();
-            if (!tc) {
-                // use 1.5 and before rules
-                if (down) {
-                    return this.getDownLinkTypes(category, required);
-                }
-                else {
-                    return this.getUpLinkTypes(category, required);
-                }
-            }
-            // get the up/down rule from project setting
-            var updown;
-            for (let rule of tc.rules) {
-                if (rule.category === category) {
-                    updown = down ? rule.down_rules : rule.up_rules;
-                }
-            }
-            if (!updown) {
-                // no rules.. 
-                return [];
-            }
-            var result = [];
-            // rules exist get all required or option links
-            for (let updownRule of updown) {
-                if (updownRule.rule === "must_have" && updownRule.any_of && required) {
-                    for (let any of updownRule.any_of) {
-                        // add to must have
-                        if (result.indexOf(any) === -1) {
-                            result.push(any);
-                        }
-                    }
-                }
-                else if (updownRule.rule === "can_have" && updownRule.any_of && !required) {
-                    for (let any of updownRule.any_of) {
-                        // add to can have
-                        if (result.indexOf(any) === -1) {
-                            result.push(any);
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-        // gets required or optional up or downlink categories for a given category
-        // including reason why they should / could exist
-        // it uses the project setting for the trace configuration if existing,
-        // the category setting (1.5 and earlier) otherwise
-        getLinkInfo(category, down, required, groupByRule) {
-            var tc = this.getTraceConfig();
-            if (!tc) {
-                var links = [];
-                // use 1.5 and before rules
-                if (down) {
-                    links = this.getDownLinkTypes(category, required);
-                }
-                else {
-                    links = this.getUpLinkTypes(category, required);
-                }
-                var result = [];
-                for (var idx = 0; idx < links.length; idx++) {
-                    result.push({ category: links[idx], reason: (required ? "required" : "optional") });
-                }
-                return result;
-            }
-            // get the up/down rule from project setting
-            var updown;
-            for (let rule of tc.rules) {
-                if (rule.category === category) {
-                    updown = down ? rule.down_rules : rule.up_rules;
-                }
-            }
-            if (!updown) {
-                // no rules.. 
-                return [];
-            }
-            var linkInfo = [];
-            // rules exist get all required or optional links
-            for (let updownRule of updown) {
-                if (updownRule.rule === "must_have" && updownRule.any_of && required) {
-                    if (groupByRule) {
-                        linkInfo.push({ category: updownRule.any_of, reason: updownRule.name });
-                    }
-                    else {
-                        for (let anys of updownRule.any_of) {
-                            // add to must have
-                            linkInfo.push({ category: anys, reason: updownRule.name });
-                        }
-                    }
-                }
-                else if (updownRule.rule === "can_have" && updownRule.any_of && !required) {
-                    if (groupByRule) {
-                        linkInfo.push({ category: updownRule.any_of, reason: updownRule.name });
-                    }
-                    else {
-                        for (let anys of updownRule.any_of) {
-                            // add to can have
-                            linkInfo.push({ category: anys, reason: updownRule.name });
-                        }
-                    }
-                }
-            }
-            return linkInfo;
-        }
-        getMitigations() {
-            let risk_config = this.getRiskConfig();
-            // get the mitigations from the project setting
-            let global = [];
-            if (risk_config && risk_config.mitigationTypes) {
-                global = risk_config.mitigationTypes.map(function (mt) { return mt.type; });
-            }
-            // for each field, check if there's a field setting, if not use the global setting
-            let mitCats = {};
-            for (let riskFieldInfo of this.getFieldsOfType("risk2")) {
-                mitCats[riskFieldInfo.category] = [];
-                let fieldConfig = riskFieldInfo.field.parameterJson;
-                if (fieldConfig && fieldConfig.riskConfig) {
-                    mitCats[riskFieldInfo.category] =
-                        fieldConfig.riskConfig.mitigationTypes.map(mt => mt.type);
-                }
-                else {
-                    mitCats[riskFieldInfo.category] = global;
-                }
-            }
-            return mitCats;
-        }
-        /** return cleanup rules, if there's a project setting that wins, if there's no rules or it's disabled it returns -1 */
-        getCleanupRules() {
-            return this.getSettingJSON("htmlCleanup");
-        }
-    }
-    exports.ItemConfiguration = ItemConfiguration;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 49:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.TestManagerConfiguration = void 0;
-    class TestManagerConfiguration {
-        constructor() {
-            this.XTCconfig = {};
-        }
-        initialize(itemConfig) {
-            this.XTCconfig = itemConfig.getTestConfig();
-            if (!this.XTCconfig) {
-                // default until 1.3
-                this.XTCconfig = {
-                    "xtcType": "XTC",
-                    "cloneSources": ["TC", "UC"],
-                    "columnsSteps": [{ "name": "Action", "field": "action", "editor": "text" },
-                        { "name": "Expected Result", "field": "expected", "editor": "text" }],
-                    "columnsStepsResult": [{ "name": "Action", "field": "action", "editor": "none" },
-                        { "name": "Expected Result", "field": "expected", "editor": "none" },
-                        { "name": "Passed/Failed", "field": "result", "editor": "result" },
-                        { "name": "Comment", "field": "comment", "editor": "text" }],
-                    "automatic": [],
-                    "manual": [
-                        { "human": "passed", "command": "passed", "render": "ok", "code": "p" },
-                        { "human": "failed", "command": "failed", "render": "error", "code": "f" },
-                        { "human": "", "command": "not executed", "render": "warning", "code": "" }
-                    ],
-                    "perStep": [
-                        { "human": "passed", "command": "passed", "render": "ok", "code": "p", "key": "p", "image": "success.png" },
-                        { "human": "failed", "command": "failed", "render": "error", "code": "f", "key": "f", "image": "fail.png" },
-                        { "human": "", "command": "not executed", "render": "warning", "code": "", "key": "r", "image": "" }
-                    ]
-                };
-            }
-        }
-        // returns possible values for the drop down of the completed test case
-        getTestRunResultOptions() {
-            var opts = [];
-            if (this.XTCconfig.automatic && this.XTCconfig.automatic.length > 0) {
-                opts.push({ id: "a", label: "automatic" });
-            }
-            for (var idx = 0; idx < this.XTCconfig.manual.length; idx++) {
-                opts.push({ id: this.XTCconfig.manual[idx].code, label: this.XTCconfig.manual[idx].command });
-            }
-            return opts;
-        }
-        // get the configuration for a test definition table (e.g. test actions and expected results)
-        getTestStepsConfig(category) {
-            if (this.XTCconfig.render && this.XTCconfig.render[category]) {
-                return this.XTCconfig.render[category];
-            }
-            // this is actually a fallback for project created with version 1.5 or before
-            // these project can be upgraded by just replacing the xtc_config with the latest version
-            // UNLESS column names have been changed (which never happend)....
-            return {
-                columns: (category === this.XTCconfig.xtcType) ? this.XTCconfig.columnsStepsResult : this.XTCconfig.columnsSteps
-            };
-        }
-        // get definition for a test execution table (e.g. including columns with results/comments)
-        getTestStepsResultsConfig() {
-            return {
-                canBeModified: false,
-                columns: this.getTestStepsConfig(this.XTCconfig.xtcType).columns,
-                passFailEditorConfig: this.XTCconfig.perStep
-            };
-        }
-        // check if the category is an executed test case (usually this will mean category type XTC)
-        isXTC(type) {
-            return this.XTCconfig.xtcType && this.XTCconfig.xtcType.toLowerCase() === type.toLowerCase();
-        }
-        // check if this is a test case, use case, or something else which can be converted to a TC
-        isTC(type) {
-            return this.isCloneSource(type);
-        }
-        // return the executed test case category type, (usually this will mean type XTC)
-        getXTCType() {
-            return this.XTCconfig.xtcType;
-        }
-        // return a simple array of all categories which can be converted to XTC
-        getCloneSources() {
-            return this.XTCconfig.cloneSources;
-        }
-        // returns place holder text if no value is selected
-        getTestRunResultPlaceholder(value) {
-            var code = value ? (value.split("|")[0]) : "";
-            if (this.XTCconfig.automatic && this.XTCconfig.automatic.length > 0) {
-                for (var idx = 0; idx < this.XTCconfig.automatic.length; idx++) {
-                    if (this.XTCconfig.automatic[idx].code === code) {
-                        return "automatic - was '" + this.XTCconfig.automatic[idx].human + "' when last saved";
-                    }
-                }
-            }
-            return "select test result";
-        }
-        isCloneSource(category) {
-            if (!this.XTCconfig.cloneSources) {
-                return false;
-            }
-            for (var csi = 0; csi < this.XTCconfig.cloneSources.length; csi++) {
-                if (this.XTCconfig.cloneSources[csi] === category) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-    exports.TestManagerConfiguration = TestManagerConfiguration;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 89:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.extend = void 0;
-    // This is ported from the JQuery 3.5.1 codebase. It is tough to get a recursive extend function
-    // exactly right. Safest option is to keep the implementation we've used for years, and eliminate
-    // the JQuery dependency.
-    function isFunction(obj) {
-        // Support: Chrome <=57, Firefox <=52
-        // In some browsers, typeof returns "function" for HTML <object> elements
-        // (i.e., `typeof document.createElement( "object" ) === "function"`).
-        // We don't want to classify *any* DOM node as a function.
-        return typeof obj === "function" && typeof obj.nodeType !== "number";
-    }
-    var class2type = {};
-    const hasOwn = class2type.hasOwnProperty;
-    const fnToString = hasOwn.toString;
-    const ObjectFunctionString = fnToString.call(Object);
-    function isPlainObject(obj) {
-        var proto, Ctor;
-        // Detect obvious negatives
-        // Use toString instead of jQuery.type to catch host objects
-        if (!obj || toString.call(obj) !== "[object Object]") {
-            return false;
-        }
-        proto = Object.getPrototypeOf(obj);
-        // Objects with no prototype (e.g., `Object.create( null )`) are plain
-        if (!proto) {
-            return true;
-        }
-        // Objects with prototype are plain iff they were constructed by a global Object function
-        Ctor = hasOwn.call(proto, "constructor") && proto.constructor;
-        return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
-    }
-    function extend(...args) {
-        var options, name, src, copy, copyIsArray, clone, target = arguments[0] || {}, i = 1, length = arguments.length, deep = false;
-        // Handle a deep copy situation
-        if (typeof target === "boolean") {
-            deep = target;
-            // Skip the boolean and the target
-            target = arguments[i] || {};
-            i++;
-        }
-        // Handle case when target is a string or something (possible in deep copy)
-        if (typeof target !== "object" && !isFunction(target)) {
-            target = {};
-        }
-        // Extend jQuery itself if only one argument is passed
-        if (i === length) {
-            target = this;
-            i--;
-        }
-        for (; i < length; i++) {
-            // Only deal with non-null/undefined values
-            if ((options = arguments[i]) != null) {
-                // Extend the base object
-                for (name in options) {
-                    copy = options[name];
-                    // Prevent Object.prototype pollution
-                    // Prevent never-ending loop
-                    if (name === "__proto__" || target === copy) {
-                        continue;
-                    }
-                    // Recurse if we're merging plain objects or arrays
-                    if (deep && copy && (isPlainObject(copy) ||
-                        (copyIsArray = Array.isArray(copy)))) {
-                        src = target[name];
-                        // Ensure proper type for the source value
-                        if (copyIsArray && !Array.isArray(src)) {
-                            clone = [];
-                        }
-                        else if (!copyIsArray && !isPlainObject(src)) {
-                            clone = {};
-                        }
-                        else {
-                            clone = src;
-                        }
-                        copyIsArray = false;
-                        // Never move original objects, clone them
-                        target[name] = extend(deep, clone, copy);
-                        // Don't bring in undefined values
-                    }
-                    else if (copy !== undefined) {
-                        target[name] = copy;
-                    }
-                }
-            }
-        }
-        // Return the modified object
-        return target;
-    }
-    exports.extend = extend;
-    var initCalled = false;
-    function init() {
-        if (initCalled)
-            return;
-        initCalled = true;
-        const typeStrings = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
-        typeStrings.forEach((t) => {
-            class2type["[object " + t + "]"] = t.toLowerCase();
-        });
-    }
-    init();
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 125:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(70), __webpack_require__(89)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BasicFunctions_1, JQueryExtendReplacement_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.JSONTools = void 0;
-    class JSONTools {
-        constructor(logger) {
-            this.logger = logger;
-        }
-        cloner2(src) {
-            return (0, JQueryExtendReplacement_1.extend)(true, {}, { x: src }).x;
-        }
-        mergeOptions(defaultOptions, options) {
-            let newOptions = this.clone(defaultOptions);
-            // make sure there is a parameter object
-            if (!newOptions.parameter) {
-                newOptions['parameter'] = {};
-            }
-            // copy parameters one by one
-            if (options.parameter) {
-                for (var name in options.parameter) {
-                    newOptions.parameter[name] = options.parameter[name];
-                }
-            }
-            // copy other values
-            for (var name in options) {
-                if (name != 'parameter') {
-                    newOptions[name] = options[name];
-                }
-            }
-            // use parameters to overwrite some default values
-            if (this.isTrue(newOptions.parameter.readonly)) {
-                newOptions.canEdit = false;
-            }
-            return newOptions;
-        }
-        // overwrite default options
-        setOptions(newOptions, options) {
-            // make sure there is a parameter object
-            if (!newOptions.parameter) {
-                newOptions['parameter'] = {};
-            }
-            // copy parameters one by one
-            if (options.parameter) {
-                for (var name in options.parameter) {
-                    newOptions.parameter[name] = options.parameter[name];
-                }
-            }
-            // copy other values
-            for (var name in options) {
-                if (name != 'parameter') {
-                    newOptions[name] = options[name];
-                }
-            }
-            // use parameters to overwrite some default values
-            if (this.isTrue(newOptions.parameter.readonly)) {
-                newOptions.canEdit = false;
-            }
-            // handle readonly for ACLs
-            if (this.isTrue(newOptions.parameter.readonlyACL)) {
-                newOptions.canEdit = false;
-            }
-            return newOptions;
-        }
-        isTrue(obj) {
-            return BasicFunctions_1.BasicFunctions.isTrue(obj);
-        }
-        isFalse(obj) {
-            return BasicFunctions_1.BasicFunctions.isFalse(obj);
-        }
-        fromString(str) {
-            var result = { status: 'empty', value: {} };
-            if (str && str !== "") {
-                // first replace all single quotes outside of double quotes with "
-                var strp = str.replace(/(')(?=(?:[^"]|"[^"]*")*$)/g, '"').replace(/(\r\n|\n|\r)/gm, "");
-                try {
-                    result.value = JSON.parse(strp);
-                    result.status = 'ok';
-                }
-                catch (err) {
-                    try {
-                        result.value = JSON.parse(str);
-                        result.status = 'ok';
-                    }
-                    catch (err) {
-                        this.logger.log("error", "Error trying to parse configuration parameter: " + str);
-                        this.logger.log("error", "Error was:" + err);
-                        result.status = 'error';
-                    }
-                }
-            }
-            return result;
-        }
-        clone(src) {
-            var b = this.cloner2(src);
-            return b;
-        }
-    }
-    exports.JSONTools = JSONTools;
-    ;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 116:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.LabelManager = void 0;
-    class LabelManager {
-        constructor(logger, json, getConfig) {
-            this.logger = logger;
-            this.json = json;
-            this.getConfig = getConfig;
-            this.ignoreProjectFilter = false;
-            this.activeFilter = "";
-        }
-        getFilterColor() {
-            var labels = this.getConfig().getLabelsConfig();
-            if (!labels || !labels.filterBackgroundColor) {
-                return null;
-            }
-            return labels.filterBackgroundColor;
-        }
-        ;
-        // return list of selected filters as , separated list
-        getFilter() {
-            if (this.ignoreProjectFilter) {
-                return "";
-            }
-            var filters = [];
-            var labelsAll = this.getLabelNames();
-            if (labelsAll.length === 0) {
-                return "";
-            }
-            var stored = this.activeFilter;
-            if (!stored || stored === "") {
-                return "";
-            }
-            // only return filters which (still) exist 
-            var cs = stored.split(",");
-            for (let sf of cs) {
-                if (labelsAll.indexOf(sf.replace("!", "")) > -1) {
-                    filters.push(sf);
-                }
-            }
-            return filters.length > 0 ? filters.join(",") : "";
-        }
-        ;
-        getDisplayName(labelId) {
-            let labels = this.getLabelList();
-            let displayName = "";
-            for (let label of labels) {
-                if (label.label == labelId) {
-                    displayName = label.displayName;
-                    if (label.style.label.on.displayName) {
-                        displayName = label.style.label.on.displayName;
-                    }
-                }
-            }
-            return displayName;
-        }
-        getFilterName(labelId) {
-            let labels = this.getLabelList();
-            let displayName = "";
-            for (let label of labels) {
-                if (label.label == labelId) {
-                    displayName = label.displayName;
-                    if (label.style && label.style.filter && label.style && label.style.filter.on && label.style.filter.on.displayName) {
-                        displayName = label.style.filter.on.displayName;
-                    }
-                }
-            }
-            return displayName;
-        }
-        // return the existing labels for the passed types (or all labels if no type is passed)
-        getLabelDefinitions(categories) {
-            var all = this.getLabelList();
-            if (!categories || categories.length === 0) {
-                return all;
-            }
-            let relevant = [];
-            let relevantLabel = [];
-            for (let label of all) {
-                for (let category of label.categories) {
-                    if (categories.indexOf(category) > -1 && relevant.indexOf(label.label) === -1) {
-                        relevant.push(label.label);
-                        relevantLabel.push(label);
-                    }
-                }
-            }
-            return relevantLabel;
-        }
-        ;
-        setFilter(filter) {
-            this.activeFilter = filter.join(",");
-        }
-        ;
-        /* clean up the set labels: in case a set label is in review or design review group,
-            it is possible that the label is removed from the list of set labels / replaced by another label in the group.
-    
-            This depends on the groups's setting.
-    
-            @param addXor If no label is set in a xor group, the default can be automatically set.
-        
-            @return the list of labels after the review groups have been reset
-        
-         */
-        resetReviewLabels(labelIds, category, addXor) {
-            let that = this;
-            let cleaned = [];
-            // get label groups
-            let groups = this.getLabelGroups();
-            let labelList = this.getLabelList();
-            // copy all lables besides the review labels
-            for (let label of labelIds) {
-                let isReviewLabel = false;
-                for (var gid = 0; gid < groups.length; gid++) {
-                    if (((groups[gid].selection === "review" && this.json.isTrue(groups[gid].reset)) ||
-                        (groups[gid].selection === "design_review" && !this.json.isFalse(groups[gid].reset))) &&
-                        groups[gid].labels.indexOf(label) !== -1) {
-                        isReviewLabel = true;
-                    }
-                }
-                if (!isReviewLabel) {
-                    cleaned.push(label);
-                }
-            }
-            // add all default review states - if no other label is set in the review group
-            for (var gid = 0; gid < groups.length; gid++) {
-                if ((groups[gid].selection === "review" ||
-                    (addXor && groups[gid].selection === "xor")) &&
-                    groups[gid].default) {
-                    var groupIsSet = false;
-                    for (let cleanLabel of cleaned) {
-                        if (groups[gid].labels.indexOf(cleanLabel) !== -1) {
-                            groupIsSet = true;
-                        }
-                    }
-                    if (!groupIsSet) {
-                        // verify if label actually is defined for group...
-                        var defaultIsForType = false;
-                        for (let label of labelList) {
-                            if (groups[gid].default === label.label && label.categories.indexOf(category) !== -1) {
-                                defaultIsForType = true;
-                            }
-                        }
-                        if (defaultIsForType) {
-                            cleaned.push(groups[gid].default);
-                        }
-                    }
-                }
-            }
-            return cleaned;
-        }
-        ;
-        /* return the list of default labels for a category */
-        getDefaultLabels(category) {
-            let that = this;
-            // get current positive filters
-            let currentFilter = this.getFilter();
-            let posFilter = [];
-            const filterItems = currentFilter.split(",");
-            for (let f of filterItems) {
-                if (f.indexOf("!") !== 0) {
-                    posFilter.push(f);
-                }
-            }
-            // each label which is not in a xor/review group can be default
-            let defaultLabels = [];
-            let labelList = this.getLabelList();
-            for (let label of labelList) {
-                let group = that.getGroupOfLabel(label.label);
-                if (group && label.categories.indexOf(category) !== -1 && // label must exist for cateogry type
-                    (group.selection !== 'xor' && group.selection !== 'review') && // it must not be in a xor or review group
-                    (this.json.isTrue(label.default) || // the default value must be set to on OR 
-                        (label.default === "filter" && posFilter.indexOf(label.label) !== -1))) { // the default must be filter and it must be set in the current filter
-                    defaultLabels.push(label.label);
-                }
-            }
-            return this.resetReviewLabels(defaultLabels, category, true);
-        }
-        ;
-        hasLabels() {
-            return (this.getLabelList().length > 0);
-        }
-        ;
-        // implement logic to set labels. 
-        setLabels(oldLabelIds, labels) {
-            let that = this;
-            let old = oldLabelIds ? oldLabelIds.split(",") : [];
-            for (let label of labels) {
-                old = that.setLabel(old, label);
-            }
-            return old.join(",");
-        }
-        // implement logic to set a label. 
-        // This depends on the type of group: for xor / review labels other group members must be reset
-        setLabel(oldLabelIds, label) {
-            let labelIds = this.json.clone(oldLabelIds);
-            if (labelIds.indexOf(label) !== -1) {
-                // label already set - ignore
-                return labelIds;
-            }
-            let group = this.getGroupOfLabel(label);
-            if (!group || group.selection == "or") {
-                // simple label without group / or group: just set it
-                labelIds.push(label);
-            }
-            else if (group.selection == "xor" || group.selection == "review") {
-                // remove all labels from group
-                for (let otherLabel of group.labels) {
-                    labelIds = labelIds.filter(function (existingLabel) {
-                        return existingLabel != otherLabel;
-                    });
-                }
-                // set the label
-                labelIds.push(label);
-            }
-            else {
-                this.logger.log("warn", "setLabel: unkown group type of label: '" + label + "'");
-            }
-            return labelIds;
-        }
-        ;
-        // return the last time a label was set on a given item before a revision (=0 if any)
-        decipherLastTimeLabelWasSet(labelHistory, itemId, label, beforeRevision) {
-            let itemHistory = labelHistory.entries.filter(entry => entry.itemRef == itemId);
-            if (itemHistory.length > 0) {
-                let history = itemHistory[0].labels.filter(l => l.label == label);
-                if (history.length > 0 && history[0].set.length > 0) {
-                    // ignore all sets after the beforeRevision  (unless 0 is passed)
-                    let sets = history[0].set.filter(set => !beforeRevision || set.version < beforeRevision);
-                    return sets[sets.length - 1].version;
-                }
-            }
-            // label was never set all good
-            return 0;
-        }
-        // implement logic to reset a label. 
-        // This depends on the type of group: for xor / review labels a default label might need to be set
-        unsetLabel(oldLabelIds, label) {
-            let labelIds = this.json.clone(oldLabelIds);
-            if (labelIds.indexOf(label) === -1) {
-                // label is not actually set - ignore
-                return labelIds;
-            }
-            let group = this.getGroupOfLabel(label);
-            // remove the label
-            labelIds = labelIds.filter(function (existingLabel) {
-                return existingLabel != label;
-            });
-            if (!group || group.selection == "or") {
-                // simple label without group / or group - nothing else to do
-            }
-            else if (group.selection == "xor" || group.selection == "review") {
-                if (group.default) {
-                    labelIds.push(group.default);
-                }
-            }
-            else {
-                this.logger.log("warn", "unsetLabel: unkown group type of label: '" + label + "'");
-            }
-            return labelIds;
-        }
-        ;
-        compareLabels(before, after) {
-            let result = {
-                changed: false,
-                added: [],
-                removed: [],
-                delta: ""
-            };
-            before = before || [];
-            after = after || [];
-            let delta = [];
-            for (var idx = 0; idx < after.length; idx++) {
-                if (before.indexOf(after[idx]) === -1) {
-                    result.added.push(after[idx]);
-                    delta.push(after[idx]);
-                }
-            }
-            for (var idx = 0; idx < before.length; idx++) {
-                if (after.indexOf(before[idx]) === -1) {
-                    result.removed.push(before[idx]);
-                    delta.push("-" + before[idx]);
-                }
-            }
-            result.delta = delta.join(",");
-            result.changed = result.added.length + result.removed.length > 0;
-            return result;
-        }
-        getLabelList() {
-            let labelsAll = this.getConfig().getSetting("labels");
-            if (!labelsAll) {
-                return [];
-            }
-            let labelsJson = this.json.fromString(labelsAll);
-            if (labelsJson.status !== "ok" || !labelsJson.value.labels) {
-                return [];
-            }
-            return labelsJson.value.labels;
-        }
-        getLabelNames() {
-            let labelList = this.getLabelList();
-            let allLabels = [];
-            for (let label of labelList) {
-                allLabels.push(label.label);
-            }
-            return allLabels;
-        }
-        getDesignReviews() {
-            let labelsAll = this.getConfig().getSetting("labels");
-            if (!labelsAll) {
-                return [];
-            }
-            var labelsJson = this.json.fromString(labelsAll);
-            if (labelsJson.status !== "ok") {
-                return [];
-            }
-            return labelsJson.value.design_reviews ? labelsJson.value.design_reviews : [];
-        }
-        getDesignReview(labelId) {
-            var dr = this.getDesignReviews();
-            for (var idx = 0; idx < dr.length; idx++) {
-                if (dr[idx].label === labelId) {
-                    return dr[idx];
-                }
-            }
-            return null;
-        }
-        isFiltered(category, labels) {
-            let filters = this.getFilter();
-            if (!filters)
-                return false; // no filters -> not filtered out 
-            let isFilteredOut = false;
-            // there are some filters so lets check
-            let labelsSet = labels ? labels.split(",") : [];
-            let labelsForItem = this.getLabelDefinitions([category]).map(function (labelDef) { return labelDef.label; });
-            const filtersArray = filters.split(",");
-            filtersArray.forEach((filter) => {
-                let label = filter.replace("!", ""); // to get rid of negation of filters
-                if (labelsForItem.indexOf(label) == -1)
-                    return; // irrelevant, try next filter
-                if (label != filter) { // negative filter
-                    isFilteredOut = isFilteredOut || labelsSet.indexOf(label) != -1;
-                }
-                else {
-                    isFilteredOut = isFilteredOut || labelsSet.indexOf(label) == -1;
-                }
-            });
-            return isFilteredOut;
-        }
-        getLabelsOfLabelGroupsType(labelGroupType) {
-            if (!labelGroupType) {
-                return [];
-            }
-            let labels = [];
-            for (let lg of this.getLabelGroups()) {
-                if (lg.groupType == labelGroupType) {
-                    labels = labels.concat(lg.labels);
-                }
-            }
-            for (let lg of this.getDesignReviews()) {
-                if (lg.groupType == labelGroupType) {
-                    labels.push(lg.label);
-                }
-            }
-            return labels;
-        }
-        getLabelGroups(category) {
-            let labelsAll = this.getConfig().getSetting("labels");
-            if (!labelsAll) {
-                return [];
-            }
-            let labelsJson = this.json.fromString(labelsAll);
-            if (labelsJson.status !== "ok") {
-                return [];
-            }
-            let labelList = this.getLabelList();
-            let groups = labelsJson.value.groups ? labelsJson.value.groups : [];
-            let design_reviews = this.getDesignReviews();
-            // by default all labels end up in the last group
-            for (var gid = 0; gid < groups.length; gid++) {
-                // prepare to add label definitions of actual labels to display
-                groups[gid].labelDef = [];
-                // by default all filters are in "or" mode
-                if (!groups[gid].filterSelection) {
-                    groups[gid].filterSelection = "or";
-                }
-            }
-            // now add actual labels to display to each group, any label should be displayed at most once
-            labelList.forEach((label) => {
-                if (category && label.categories.indexOf(category) === -1) {
-                    // this is an item, and label does not exist for item
-                    return;
-                }
-                // check if label is in group
-                for (var gid = 0; gid < groups.length; gid++) {
-                    for (var lid = 0; lid < groups[gid].labels.length; lid++) {
-                        if (groups[gid].labels[lid] === label.label) {
-                            groups[gid].labelDef.push(label);
-                            return;
-                        }
-                    }
-                }
-                // check if label is in review
-                for (var gid = 0; gid < design_reviews.length; gid++) {
-                    if (design_reviews[gid].label === label.label) {
-                        groups.push({
-                            selection: "design_review", labels: [label.label], filterSelection: "or", labelDef: [label], reset: design_reviews[gid].reset,
-                            filterMenu: design_reviews[gid].filterMenu
-                        });
-                        return;
-                    }
-                }
-                // create a new group
-                groups.push({ virtualGroup: true, selection: "or", labels: [label.label], filterSelection: "or", labelDef: [label] });
-            });
-            return groups;
-        }
-        // returns the group of a label
-        getGroupOfLabel(labelID) {
-            let groups = this.getLabelGroups();
-            for (var gid = 0; gid < groups.length; gid++) {
-                if (groups[gid].labels.indexOf(labelID) !== -1) {
-                    return groups[gid];
-                }
-            }
-            return null;
-        }
-    }
-    exports.LabelManager = LabelManager;
-    LabelManager.timeWarpLabel = "_timewarp_";
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 126:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.LoggerTools = exports.SERVER_LOG_LEVEL = void 0;
-    var SERVER_LOG_LEVEL;
-    (function (SERVER_LOG_LEVEL) {
-        SERVER_LOG_LEVEL["WEIRD_STATE"] = "WEIRD_STATE";
-        SERVER_LOG_LEVEL["BROKEN_STATE"] = "BROKEN_STATE";
-    })(SERVER_LOG_LEVEL || (SERVER_LOG_LEVEL = {}));
-    exports.SERVER_LOG_LEVEL = SERVER_LOG_LEVEL;
-    class LoggerTools {
-        constructor(functionRenderHumanDate, sanitize) {
-            this.verbose = false;
-            this.lastLogMsg = "none";
-            this.logData = [];
-            this.logIdx = 0;
-            this.logSize = 50;
-            this.functionRenderHumanDate = functionRenderHumanDate;
-            this.functionSanitize = (sanitize) ? sanitize : (d) => { return DOMPurify.sanitize(d); };
-        }
-        log(id, msg) {
-            if (!this.verbose && id === "debug") {
-                return;
-            }
-            msg = this.functionSanitize(msg) + '';
-            if (!msg) {
-                return;
-            }
-            console.log(id + ":" + msg);
-            if (this.lastLogMsg === msg) {
-                this.logData[this.logIdx] = this.logData[this.logIdx] + ".";
-            }
-            else {
-                this.logIdx++;
-                if (this.logIdx === this.logSize) {
-                    this.logIdx = 0;
-                }
-                // this.logData[this.logIdx] = ml.UI.DateTime.renderHumanDate(new Date()) + " [" + id + "]: " + msg;
-                this.logData[this.logIdx] = this.functionRenderHumanDate(new Date()) + " [" + id + "]: " + msg;
-                this.lastLogMsg = msg;
-            }
-        }
-        debug(message) {
-            this.log("debug", message);
-        }
-        info(message) {
-            this.log("info", message);
-        }
-        warning(message) {
-            this.log("warning", message);
-        }
-        error(message) {
-            this.log("error", message);
-        }
-        getLog() {
-            var msg = "";
-            for (var idx = this.logIdx + 1; idx < this.logIdx + this.logSize + 1; idx++) {
-                if (this.logData[idx % this.logSize]) {
-                    msg += this.logData[idx % this.logSize] + "\n";
-                }
-            }
-            return msg;
-        }
-    }
-    exports.LoggerTools = LoggerTools;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 9:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, RefLinkDefines_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.SimpleItemTools = void 0;
-    // Implements ItemTools functionality with minimal dependencies
-    class SimpleItemTools {
-        // extract different parts from item ids, like version, category, ...
-        parseRef(itemRef, project, matrixBaseUrl) {
-            let ref = itemRef; // e.g. F-REQ-13-v12
-            var result = {
-                id: "",
-                number: 0,
-                version: 0,
-                type: "",
-                isFolder: false,
-                url: "",
-                link: "",
-                linkv: "" // <a href=url>url</a>
-            };
-            var vp = ref.indexOf("-v");
-            if (vp !== -1) {
-                result.version = parseInt(ref.substr(vp + 2));
-                ref = ref.substr(0, vp);
-            }
-            result.id = ref;
-            if (ref.indexOf("F-") === 0) {
-                result.isFolder = true;
-                ref = ref.substr(2);
-            }
-            var parts = ref.split("-");
-            if (parts.length > 1) {
-                result.type = parts[0];
-                result.number = Number(parts[1]);
-            }
-            result.url = matrixBaseUrl + "/" + project + "/" + itemRef;
-            result.link = "<a style='color:blue !important' href='" + result.url + "'>" + itemRef + "</a>";
-            result.linkv = "<a style='color:blue !important' href='" + result.url + "'>" + result.url + "</a>";
-            return result;
-        }
-        ;
-        getCreator(item) {
-            return item.history[item.history.length - 1].user;
-        }
-        getLastEditor(item) {
-            return item.history.length > 0 ? item.history[0].user : "";
-        }
-        // render a list of item ids, to show up as <b>ID</b> name, <b>ID</b> name, 
-        refListToDisplayString(inputItems, prefix, getTitleFunction, shorten) {
-            function makeLink(itemobj, shorten) {
-                if (!itemobj.projectShortLabel) {
-                    return "<b>" + itemobj.to + "</b>" + (shorten ? "" : (" " + getTitleFunction(itemobj.to)));
-                }
-                var label = itemobj.projectShortLabel + ":" + itemobj.to;
-                return "#" + itemobj.projectShortLabel + "/" + itemobj.to + "#";
-                //return "<a class='crossProjectLink' title='" + itemobj.title + "' href='" + matrixBaseUrl + "/" + itemobj.projectShortLabel + "/" + itemobj.to + "' target='_blank'>" + label + "</a> ";
-            }
-            if (inputItems) {
-                // build the list ItemId Title can take a long time, e.g. if there's dozens of search results and the list should be a short list. In that case only show names if there's less than 5 items 
-                let refs = inputItems.map(function (inputItem) { return makeLink(inputItem, shorten && inputItems.length > 4 ? true : false); });
-                let list = refs.join(", ");
-                if (shorten && list.replace(/<b>/g, "").replace(/<\/b>/g, "").length > shorten) {
-                    refs = inputItems.map(function (inputItem) { return makeLink(inputItem, true); });
-                    list = refs.join(", ");
-                }
-                if (shorten && list.replace(/<b>/g, "").replace(/<\/b>/g, "").length > shorten) {
-                    list = "<b>" + list.replace(/<b>/g, "").replace(/<\/b>/g, "").substr(0, shorten - 4) + " ...</b>";
-                }
-                if (prefix) {
-                    list = prefix + " " + list;
-                }
-                return list;
-            }
-            else {
-                return "";
-            }
-        }
-        ;
-        renderLink(itemId, itemTitle, newWindow) {
-            let dbt = itemTitle;
-            return $("<div>").refLink({
-                id: itemId,
-                folder: false,
-                title: dbt ? dbt : "(deleted)",
-                style: newWindow ? RefLinkDefines_1.refLinkStyle.link : RefLinkDefines_1.refLinkStyle.selectTree,
-                tooltip: RefLinkDefines_1.refLinkTooltip.html
-            });
-        }
-        // update and changes to reference lists
-        updateReferences(oldReferences, newReferences, fromId, toId) {
-            var changeList = [];
-            // find links to add
-            for (var idx = 0; idx < newReferences.length; idx++) {
-                var found = false;
-                for (var jdx = 0; jdx < oldReferences.length; jdx++) {
-                    if (newReferences[idx].to === oldReferences[jdx].to) {
-                        found = true;
-                        continue;
-                    }
-                }
-                if (!found) {
-                    if (fromId) {
-                        changeList.push({ action: 'addLink', fromId: fromId, toId: newReferences[idx].to });
-                    }
-                    else if (toId) {
-                        changeList.push({ action: 'addLink', fromId: newReferences[idx].to, toId: toId });
-                    }
-                }
-            }
-            // find links to remove
-            for (var jdx = 0; jdx < oldReferences.length; jdx++) {
-                var found = false;
-                for (var idx = 0; idx < newReferences.length; idx++) {
-                    if (newReferences[idx].to === oldReferences[jdx].to) {
-                        found = true;
-                        continue;
-                    }
-                }
-                if (!found) {
-                    if (fromId) {
-                        changeList.push({ action: 'removeLink', fromId: fromId, toId: oldReferences[jdx].to });
-                    }
-                    else if (toId) {
-                        changeList.push({ action: 'removeLink', fromId: oldReferences[jdx].to, toId: toId });
-                    }
-                }
-            }
-            return changeList;
-        }
-        ;
-        // clone item from IItemGet to IItemPut
-        clone(item, copyLabels) {
-            var newItem = {};
-            $.each(item, function (idx, val) {
-                if (idx !== "maxVersion" && idx !== "labels" && idx !== "labels" && idx !== "downLinks" && idx !== "upLinks" && idx !== "type" && idx !== "children" && idx !== "hide" && idx !== "history" && idx !== "isUnselected" && idx !== "modDate" && idx !== "restricted" && idx !== "upLinkList" && idx !== "userRights") {
-                    newItem[idx] = val;
-                }
-            });
-            if (copyLabels) {
-                newItem.labels = item.labels.join(",");
-            }
-            else {
-                newItem.labels = "";
-            }
-            return newItem;
-        }
-        sort(a, b, project, matrixBaseUrl) {
-            let at = this.parseRef(a, project, matrixBaseUrl);
-            let bt = this.parseRef(b, project, matrixBaseUrl);
-            if (at.type == bt.type) {
-                if (at.isFolder && !bt.isFolder)
-                    return -1;
-                if (bt.isFolder && !at.isFolder)
-                    return 1;
-                return at.number - bt.number;
-            }
-            return a < b ? -1 : 1;
-        }
-    }
-    exports.SimpleItemTools = SimpleItemTools;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
-/***/ 247:
+/* 251 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -18933,8 +19464,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 
-var punycode = __webpack_require__(248);
-var util = __webpack_require__(249);
+var punycode = __webpack_require__(252);
+var util = __webpack_require__(253);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -19009,7 +19540,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
       'gopher:': true,
       'file:': true
     },
-    querystring = __webpack_require__(250);
+    querystring = __webpack_require__(254);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && util.isObject(url) && url instanceof Url) return url;
@@ -19645,8 +20176,533 @@ Url.prototype.parseHost = function() {
 
 
 /***/ }),
+/* 252 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ 249:
+/* module decorator */ module = __webpack_require__.nmd(module);
+var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.3.2 by @mathias */
+;(function(root) {
+
+	/** Detect free variables */
+	var freeExports =  true && exports &&
+		!exports.nodeType && exports;
+	var freeModule =  true && module &&
+		!module.nodeType && module;
+	var freeGlobal = typeof __webpack_require__.g == 'object' && __webpack_require__.g;
+	if (
+		freeGlobal.global === freeGlobal ||
+		freeGlobal.window === freeGlobal ||
+		freeGlobal.self === freeGlobal
+	) {
+		root = freeGlobal;
+	}
+
+	/**
+	 * The `punycode` object.
+	 * @name punycode
+	 * @type Object
+	 */
+	var punycode,
+
+	/** Highest positive signed 32-bit float value */
+	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+
+	/** Bootstring parameters */
+	base = 36,
+	tMin = 1,
+	tMax = 26,
+	skew = 38,
+	damp = 700,
+	initialBias = 72,
+	initialN = 128, // 0x80
+	delimiter = '-', // '\x2D'
+
+	/** Regular expressions */
+	regexPunycode = /^xn--/,
+	regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+	regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
+
+	/** Error messages */
+	errors = {
+		'overflow': 'Overflow: input needs wider integers to process',
+		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+		'invalid-input': 'Invalid input'
+	},
+
+	/** Convenience shortcuts */
+	baseMinusTMin = base - tMin,
+	floor = Math.floor,
+	stringFromCharCode = String.fromCharCode,
+
+	/** Temporary variable */
+	key;
+
+	/*--------------------------------------------------------------------------*/
+
+	/**
+	 * A generic error utility function.
+	 * @private
+	 * @param {String} type The error type.
+	 * @returns {Error} Throws a `RangeError` with the applicable error message.
+	 */
+	function error(type) {
+		throw RangeError(errors[type]);
+	}
+
+	/**
+	 * A generic `Array#map` utility function.
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} callback The function that gets called for every array
+	 * item.
+	 * @returns {Array} A new array of values returned by the callback function.
+	 */
+	function map(array, fn) {
+		var length = array.length;
+		var result = [];
+		while (length--) {
+			result[length] = fn(array[length]);
+		}
+		return result;
+	}
+
+	/**
+	 * A simple `Array#map`-like wrapper to work with domain name strings or email
+	 * addresses.
+	 * @private
+	 * @param {String} domain The domain name or email address.
+	 * @param {Function} callback The function that gets called for every
+	 * character.
+	 * @returns {Array} A new string of characters returned by the callback
+	 * function.
+	 */
+	function mapDomain(string, fn) {
+		var parts = string.split('@');
+		var result = '';
+		if (parts.length > 1) {
+			// In email addresses, only the domain name should be punycoded. Leave
+			// the local part (i.e. everything up to `@`) intact.
+			result = parts[0] + '@';
+			string = parts[1];
+		}
+		// Avoid `split(regex)` for IE8 compatibility. See #17.
+		string = string.replace(regexSeparators, '\x2E');
+		var labels = string.split('.');
+		var encoded = map(labels, fn).join('.');
+		return result + encoded;
+	}
+
+	/**
+	 * Creates an array containing the numeric code points of each Unicode
+	 * character in the string. While JavaScript uses UCS-2 internally,
+	 * this function will convert a pair of surrogate halves (each of which
+	 * UCS-2 exposes as separate characters) into a single code point,
+	 * matching UTF-16.
+	 * @see `punycode.ucs2.encode`
+	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+	 * @memberOf punycode.ucs2
+	 * @name decode
+	 * @param {String} string The Unicode input string (UCS-2).
+	 * @returns {Array} The new array of code points.
+	 */
+	function ucs2decode(string) {
+		var output = [],
+		    counter = 0,
+		    length = string.length,
+		    value,
+		    extra;
+		while (counter < length) {
+			value = string.charCodeAt(counter++);
+			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+				// high surrogate, and there is a next character
+				extra = string.charCodeAt(counter++);
+				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+				} else {
+					// unmatched surrogate; only append this code unit, in case the next
+					// code unit is the high surrogate of a surrogate pair
+					output.push(value);
+					counter--;
+				}
+			} else {
+				output.push(value);
+			}
+		}
+		return output;
+	}
+
+	/**
+	 * Creates a string based on an array of numeric code points.
+	 * @see `punycode.ucs2.decode`
+	 * @memberOf punycode.ucs2
+	 * @name encode
+	 * @param {Array} codePoints The array of numeric code points.
+	 * @returns {String} The new Unicode string (UCS-2).
+	 */
+	function ucs2encode(array) {
+		return map(array, function(value) {
+			var output = '';
+			if (value > 0xFFFF) {
+				value -= 0x10000;
+				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+				value = 0xDC00 | value & 0x3FF;
+			}
+			output += stringFromCharCode(value);
+			return output;
+		}).join('');
+	}
+
+	/**
+	 * Converts a basic code point into a digit/integer.
+	 * @see `digitToBasic()`
+	 * @private
+	 * @param {Number} codePoint The basic numeric code point value.
+	 * @returns {Number} The numeric value of a basic code point (for use in
+	 * representing integers) in the range `0` to `base - 1`, or `base` if
+	 * the code point does not represent a value.
+	 */
+	function basicToDigit(codePoint) {
+		if (codePoint - 48 < 10) {
+			return codePoint - 22;
+		}
+		if (codePoint - 65 < 26) {
+			return codePoint - 65;
+		}
+		if (codePoint - 97 < 26) {
+			return codePoint - 97;
+		}
+		return base;
+	}
+
+	/**
+	 * Converts a digit/integer into a basic code point.
+	 * @see `basicToDigit()`
+	 * @private
+	 * @param {Number} digit The numeric value of a basic code point.
+	 * @returns {Number} The basic code point whose value (when used for
+	 * representing integers) is `digit`, which needs to be in the range
+	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+	 * used; else, the lowercase form is used. The behavior is undefined
+	 * if `flag` is non-zero and `digit` has no uppercase form.
+	 */
+	function digitToBasic(digit, flag) {
+		//  0..25 map to ASCII a..z or A..Z
+		// 26..35 map to ASCII 0..9
+		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+	}
+
+	/**
+	 * Bias adaptation function as per section 3.4 of RFC 3492.
+	 * http://tools.ietf.org/html/rfc3492#section-3.4
+	 * @private
+	 */
+	function adapt(delta, numPoints, firstTime) {
+		var k = 0;
+		delta = firstTime ? floor(delta / damp) : delta >> 1;
+		delta += floor(delta / numPoints);
+		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+			delta = floor(delta / baseMinusTMin);
+		}
+		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+	}
+
+	/**
+	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The Punycode string of ASCII-only symbols.
+	 * @returns {String} The resulting string of Unicode symbols.
+	 */
+	function decode(input) {
+		// Don't use UCS-2
+		var output = [],
+		    inputLength = input.length,
+		    out,
+		    i = 0,
+		    n = initialN,
+		    bias = initialBias,
+		    basic,
+		    j,
+		    index,
+		    oldi,
+		    w,
+		    k,
+		    digit,
+		    t,
+		    /** Cached calculation results */
+		    baseMinusT;
+
+		// Handle the basic code points: let `basic` be the number of input code
+		// points before the last delimiter, or `0` if there is none, then copy
+		// the first basic code points to the output.
+
+		basic = input.lastIndexOf(delimiter);
+		if (basic < 0) {
+			basic = 0;
+		}
+
+		for (j = 0; j < basic; ++j) {
+			// if it's not a basic code point
+			if (input.charCodeAt(j) >= 0x80) {
+				error('not-basic');
+			}
+			output.push(input.charCodeAt(j));
+		}
+
+		// Main decoding loop: start just after the last delimiter if any basic code
+		// points were copied; start at the beginning otherwise.
+
+		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+
+			// `index` is the index of the next character to be consumed.
+			// Decode a generalized variable-length integer into `delta`,
+			// which gets added to `i`. The overflow checking is easier
+			// if we increase `i` as we go, then subtract off its starting
+			// value at the end to obtain `delta`.
+			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+
+				if (index >= inputLength) {
+					error('invalid-input');
+				}
+
+				digit = basicToDigit(input.charCodeAt(index++));
+
+				if (digit >= base || digit > floor((maxInt - i) / w)) {
+					error('overflow');
+				}
+
+				i += digit * w;
+				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+
+				if (digit < t) {
+					break;
+				}
+
+				baseMinusT = base - t;
+				if (w > floor(maxInt / baseMinusT)) {
+					error('overflow');
+				}
+
+				w *= baseMinusT;
+
+			}
+
+			out = output.length + 1;
+			bias = adapt(i - oldi, out, oldi == 0);
+
+			// `i` was supposed to wrap around from `out` to `0`,
+			// incrementing `n` each time, so we'll fix that now:
+			if (floor(i / out) > maxInt - n) {
+				error('overflow');
+			}
+
+			n += floor(i / out);
+			i %= out;
+
+			// Insert `n` at position `i` of the output
+			output.splice(i++, 0, n);
+
+		}
+
+		return ucs2encode(output);
+	}
+
+	/**
+	 * Converts a string of Unicode symbols (e.g. a domain name label) to a
+	 * Punycode string of ASCII-only symbols.
+	 * @memberOf punycode
+	 * @param {String} input The string of Unicode symbols.
+	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
+	 */
+	function encode(input) {
+		var n,
+		    delta,
+		    handledCPCount,
+		    basicLength,
+		    bias,
+		    j,
+		    m,
+		    q,
+		    k,
+		    t,
+		    currentValue,
+		    output = [],
+		    /** `inputLength` will hold the number of code points in `input`. */
+		    inputLength,
+		    /** Cached calculation results */
+		    handledCPCountPlusOne,
+		    baseMinusT,
+		    qMinusT;
+
+		// Convert the input in UCS-2 to Unicode
+		input = ucs2decode(input);
+
+		// Cache the length
+		inputLength = input.length;
+
+		// Initialize the state
+		n = initialN;
+		delta = 0;
+		bias = initialBias;
+
+		// Handle the basic code points
+		for (j = 0; j < inputLength; ++j) {
+			currentValue = input[j];
+			if (currentValue < 0x80) {
+				output.push(stringFromCharCode(currentValue));
+			}
+		}
+
+		handledCPCount = basicLength = output.length;
+
+		// `handledCPCount` is the number of code points that have been handled;
+		// `basicLength` is the number of basic code points.
+
+		// Finish the basic string - if it is not empty - with a delimiter
+		if (basicLength) {
+			output.push(delimiter);
+		}
+
+		// Main encoding loop:
+		while (handledCPCount < inputLength) {
+
+			// All non-basic code points < n have been handled already. Find the next
+			// larger one:
+			for (m = maxInt, j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+				if (currentValue >= n && currentValue < m) {
+					m = currentValue;
+				}
+			}
+
+			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+			// but guard against overflow
+			handledCPCountPlusOne = handledCPCount + 1;
+			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+				error('overflow');
+			}
+
+			delta += (m - n) * handledCPCountPlusOne;
+			n = m;
+
+			for (j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+
+				if (currentValue < n && ++delta > maxInt) {
+					error('overflow');
+				}
+
+				if (currentValue == n) {
+					// Represent delta as a generalized variable-length integer
+					for (q = delta, k = base; /* no condition */; k += base) {
+						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+						if (q < t) {
+							break;
+						}
+						qMinusT = q - t;
+						baseMinusT = base - t;
+						output.push(
+							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+						);
+						q = floor(qMinusT / baseMinusT);
+					}
+
+					output.push(stringFromCharCode(digitToBasic(q, 0)));
+					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+					delta = 0;
+					++handledCPCount;
+				}
+			}
+
+			++delta;
+			++n;
+
+		}
+		return output.join('');
+	}
+
+	/**
+	 * Converts a Punycode string representing a domain name or an email address
+	 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+	 * it doesn't matter if you call it on a string that has already been
+	 * converted to Unicode.
+	 * @memberOf punycode
+	 * @param {String} input The Punycoded domain name or email address to
+	 * convert to Unicode.
+	 * @returns {String} The Unicode representation of the given Punycode
+	 * string.
+	 */
+	function toUnicode(input) {
+		return mapDomain(input, function(string) {
+			return regexPunycode.test(string)
+				? decode(string.slice(4).toLowerCase())
+				: string;
+		});
+	}
+
+	/**
+	 * Converts a Unicode string representing a domain name or an email address to
+	 * Punycode. Only the non-ASCII parts of the domain name will be converted,
+	 * i.e. it doesn't matter if you call it with a domain that's already in
+	 * ASCII.
+	 * @memberOf punycode
+	 * @param {String} input The domain name or email address to convert, as a
+	 * Unicode string.
+	 * @returns {String} The Punycode representation of the given domain name or
+	 * email address.
+	 */
+	function toASCII(input) {
+		return mapDomain(input, function(string) {
+			return regexNonASCII.test(string)
+				? 'xn--' + encode(string)
+				: string;
+		});
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	/** Define the public API */
+	punycode = {
+		/**
+		 * A string representing the current Punycode.js version number.
+		 * @memberOf punycode
+		 * @type String
+		 */
+		'version': '1.3.2',
+		/**
+		 * An object of methods to convert from JavaScript's internal character
+		 * representation (UCS-2) to Unicode code points, and back.
+		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+		 * @memberOf punycode
+		 * @type Object
+		 */
+		'ucs2': {
+			'decode': ucs2decode,
+			'encode': ucs2encode
+		},
+		'decode': decode,
+		'encode': encode,
+		'toASCII': toASCII,
+		'toUnicode': toUnicode
+	};
+
+	/** Expose `punycode` */
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	if (
+		true
+	) {
+		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
+			return punycode;
+		}).call(exports, __webpack_require__, exports, module),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+
+}(this));
+
+
+/***/ }),
+/* 253 */
 /***/ ((module) => {
 
 "use strict";
@@ -19669,629 +20725,1440 @@ module.exports = {
 
 
 /***/ }),
-
-/***/ 243:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/* 254 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DOMException": () => (/* binding */ DOMException),
-/* harmony export */   "Headers": () => (/* binding */ Headers),
-/* harmony export */   "Request": () => (/* binding */ Request),
-/* harmony export */   "Response": () => (/* binding */ Response),
-/* harmony export */   "fetch": () => (/* binding */ fetch)
-/* harmony export */ });
-var global =
-  (typeof globalThis !== 'undefined' && globalThis) ||
-  (typeof self !== 'undefined' && self) ||
-  (typeof global !== 'undefined' && global)
 
-var support = {
-  searchParams: 'URLSearchParams' in global,
-  iterable: 'Symbol' in global && 'iterator' in Symbol,
-  blob:
-    'FileReader' in global &&
-    'Blob' in global &&
-    (function() {
-      try {
-        new Blob()
-        return true
-      } catch (e) {
-        return false
-      }
-    })(),
-  formData: 'FormData' in global,
-  arrayBuffer: 'ArrayBuffer' in global
+
+exports.decode = exports.parse = __webpack_require__(255);
+exports.encode = exports.stringify = __webpack_require__(256);
+
+
+/***/ }),
+/* 255 */
+/***/ ((module) => {
+
+"use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+// If obj.hasOwnProperty has been overridden, then calling
+// obj.hasOwnProperty(prop) will break.
+// See: https://github.com/joyent/node/issues/1707
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-function isDataView(obj) {
-  return obj && DataView.prototype.isPrototypeOf(obj)
-}
+module.exports = function(qs, sep, eq, options) {
+  sep = sep || '&';
+  eq = eq || '=';
+  var obj = {};
 
-if (support.arrayBuffer) {
-  var viewClasses = [
-    '[object Int8Array]',
-    '[object Uint8Array]',
-    '[object Uint8ClampedArray]',
-    '[object Int16Array]',
-    '[object Uint16Array]',
-    '[object Int32Array]',
-    '[object Uint32Array]',
-    '[object Float32Array]',
-    '[object Float64Array]'
-  ]
-
-  var isArrayBufferView =
-    ArrayBuffer.isView ||
-    function(obj) {
-      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
-    }
-}
-
-function normalizeName(name) {
-  if (typeof name !== 'string') {
-    name = String(name)
-  }
-  if (/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(name) || name === '') {
-    throw new TypeError('Invalid character in header field name: "' + name + '"')
-  }
-  return name.toLowerCase()
-}
-
-function normalizeValue(value) {
-  if (typeof value !== 'string') {
-    value = String(value)
-  }
-  return value
-}
-
-// Build a destructive iterator for the value list
-function iteratorFor(items) {
-  var iterator = {
-    next: function() {
-      var value = items.shift()
-      return {done: value === undefined, value: value}
-    }
+  if (typeof qs !== 'string' || qs.length === 0) {
+    return obj;
   }
 
-  if (support.iterable) {
-    iterator[Symbol.iterator] = function() {
-      return iterator
-    }
+  var regexp = /\+/g;
+  qs = qs.split(sep);
+
+  var maxKeys = 1000;
+  if (options && typeof options.maxKeys === 'number') {
+    maxKeys = options.maxKeys;
   }
 
-  return iterator
-}
-
-function Headers(headers) {
-  this.map = {}
-
-  if (headers instanceof Headers) {
-    headers.forEach(function(value, name) {
-      this.append(name, value)
-    }, this)
-  } else if (Array.isArray(headers)) {
-    headers.forEach(function(header) {
-      this.append(header[0], header[1])
-    }, this)
-  } else if (headers) {
-    Object.getOwnPropertyNames(headers).forEach(function(name) {
-      this.append(name, headers[name])
-    }, this)
+  var len = qs.length;
+  // maxKeys <= 0 means that we should not limit keys count
+  if (maxKeys > 0 && len > maxKeys) {
+    len = maxKeys;
   }
-}
 
-Headers.prototype.append = function(name, value) {
-  name = normalizeName(name)
-  value = normalizeValue(value)
-  var oldValue = this.map[name]
-  this.map[name] = oldValue ? oldValue + ', ' + value : value
-}
+  for (var i = 0; i < len; ++i) {
+    var x = qs[i].replace(regexp, '%20'),
+        idx = x.indexOf(eq),
+        kstr, vstr, k, v;
 
-Headers.prototype['delete'] = function(name) {
-  delete this.map[normalizeName(name)]
-}
-
-Headers.prototype.get = function(name) {
-  name = normalizeName(name)
-  return this.has(name) ? this.map[name] : null
-}
-
-Headers.prototype.has = function(name) {
-  return this.map.hasOwnProperty(normalizeName(name))
-}
-
-Headers.prototype.set = function(name, value) {
-  this.map[normalizeName(name)] = normalizeValue(value)
-}
-
-Headers.prototype.forEach = function(callback, thisArg) {
-  for (var name in this.map) {
-    if (this.map.hasOwnProperty(name)) {
-      callback.call(thisArg, this.map[name], name, this)
-    }
-  }
-}
-
-Headers.prototype.keys = function() {
-  var items = []
-  this.forEach(function(value, name) {
-    items.push(name)
-  })
-  return iteratorFor(items)
-}
-
-Headers.prototype.values = function() {
-  var items = []
-  this.forEach(function(value) {
-    items.push(value)
-  })
-  return iteratorFor(items)
-}
-
-Headers.prototype.entries = function() {
-  var items = []
-  this.forEach(function(value, name) {
-    items.push([name, value])
-  })
-  return iteratorFor(items)
-}
-
-if (support.iterable) {
-  Headers.prototype[Symbol.iterator] = Headers.prototype.entries
-}
-
-function consumed(body) {
-  if (body.bodyUsed) {
-    return Promise.reject(new TypeError('Already read'))
-  }
-  body.bodyUsed = true
-}
-
-function fileReaderReady(reader) {
-  return new Promise(function(resolve, reject) {
-    reader.onload = function() {
-      resolve(reader.result)
-    }
-    reader.onerror = function() {
-      reject(reader.error)
-    }
-  })
-}
-
-function readBlobAsArrayBuffer(blob) {
-  var reader = new FileReader()
-  var promise = fileReaderReady(reader)
-  reader.readAsArrayBuffer(blob)
-  return promise
-}
-
-function readBlobAsText(blob) {
-  var reader = new FileReader()
-  var promise = fileReaderReady(reader)
-  reader.readAsText(blob)
-  return promise
-}
-
-function readArrayBufferAsText(buf) {
-  var view = new Uint8Array(buf)
-  var chars = new Array(view.length)
-
-  for (var i = 0; i < view.length; i++) {
-    chars[i] = String.fromCharCode(view[i])
-  }
-  return chars.join('')
-}
-
-function bufferClone(buf) {
-  if (buf.slice) {
-    return buf.slice(0)
-  } else {
-    var view = new Uint8Array(buf.byteLength)
-    view.set(new Uint8Array(buf))
-    return view.buffer
-  }
-}
-
-function Body() {
-  this.bodyUsed = false
-
-  this._initBody = function(body) {
-    /*
-      fetch-mock wraps the Response object in an ES6 Proxy to
-      provide useful test harness features such as flush. However, on
-      ES5 browsers without fetch or Proxy support pollyfills must be used;
-      the proxy-pollyfill is unable to proxy an attribute unless it exists
-      on the object before the Proxy is created. This change ensures
-      Response.bodyUsed exists on the instance, while maintaining the
-      semantic of setting Request.bodyUsed in the constructor before
-      _initBody is called.
-    */
-    this.bodyUsed = this.bodyUsed
-    this._bodyInit = body
-    if (!body) {
-      this._bodyText = ''
-    } else if (typeof body === 'string') {
-      this._bodyText = body
-    } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
-      this._bodyBlob = body
-    } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
-      this._bodyFormData = body
-    } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
-      this._bodyText = body.toString()
-    } else if (support.arrayBuffer && support.blob && isDataView(body)) {
-      this._bodyArrayBuffer = bufferClone(body.buffer)
-      // IE 10-11 can't handle a DataView body.
-      this._bodyInit = new Blob([this._bodyArrayBuffer])
-    } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
-      this._bodyArrayBuffer = bufferClone(body)
+    if (idx >= 0) {
+      kstr = x.substr(0, idx);
+      vstr = x.substr(idx + 1);
     } else {
-      this._bodyText = body = Object.prototype.toString.call(body)
+      kstr = x;
+      vstr = '';
     }
 
-    if (!this.headers.get('content-type')) {
-      if (typeof body === 'string') {
-        this.headers.set('content-type', 'text/plain;charset=UTF-8')
-      } else if (this._bodyBlob && this._bodyBlob.type) {
-        this.headers.set('content-type', this._bodyBlob.type)
-      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
-        this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
-      }
-    }
-  }
+    k = decodeURIComponent(kstr);
+    v = decodeURIComponent(vstr);
 
-  if (support.blob) {
-    this.blob = function() {
-      var rejected = consumed(this)
-      if (rejected) {
-        return rejected
-      }
-
-      if (this._bodyBlob) {
-        return Promise.resolve(this._bodyBlob)
-      } else if (this._bodyArrayBuffer) {
-        return Promise.resolve(new Blob([this._bodyArrayBuffer]))
-      } else if (this._bodyFormData) {
-        throw new Error('could not read FormData body as blob')
-      } else {
-        return Promise.resolve(new Blob([this._bodyText]))
-      }
-    }
-
-    this.arrayBuffer = function() {
-      if (this._bodyArrayBuffer) {
-        var isConsumed = consumed(this)
-        if (isConsumed) {
-          return isConsumed
-        }
-        if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
-          return Promise.resolve(
-            this._bodyArrayBuffer.buffer.slice(
-              this._bodyArrayBuffer.byteOffset,
-              this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
-            )
-          )
-        } else {
-          return Promise.resolve(this._bodyArrayBuffer)
-        }
-      } else {
-        return this.blob().then(readBlobAsArrayBuffer)
-      }
-    }
-  }
-
-  this.text = function() {
-    var rejected = consumed(this)
-    if (rejected) {
-      return rejected
-    }
-
-    if (this._bodyBlob) {
-      return readBlobAsText(this._bodyBlob)
-    } else if (this._bodyArrayBuffer) {
-      return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer))
-    } else if (this._bodyFormData) {
-      throw new Error('could not read FormData body as text')
+    if (!hasOwnProperty(obj, k)) {
+      obj[k] = v;
+    } else if (Array.isArray(obj[k])) {
+      obj[k].push(v);
     } else {
-      return Promise.resolve(this._bodyText)
+      obj[k] = [obj[k], v];
     }
   }
 
-  if (support.formData) {
-    this.formData = function() {
-      return this.text().then(decode)
-    }
+  return obj;
+};
+
+
+/***/ }),
+/* 256 */
+/***/ ((module) => {
+
+"use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+var stringifyPrimitive = function(v) {
+  switch (typeof v) {
+    case 'string':
+      return v;
+
+    case 'boolean':
+      return v ? 'true' : 'false';
+
+    case 'number':
+      return isFinite(v) ? v : '';
+
+    default:
+      return '';
+  }
+};
+
+module.exports = function(obj, sep, eq, name) {
+  sep = sep || '&';
+  eq = eq || '=';
+  if (obj === null) {
+    obj = undefined;
   }
 
-  this.json = function() {
-    return this.text().then(JSON.parse)
-  }
-
-  return this
-}
-
-// HTTP methods whose capitalization should be normalized
-var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
-
-function normalizeMethod(method) {
-  var upcased = method.toUpperCase()
-  return methods.indexOf(upcased) > -1 ? upcased : method
-}
-
-function Request(input, options) {
-  if (!(this instanceof Request)) {
-    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
-  }
-
-  options = options || {}
-  var body = options.body
-
-  if (input instanceof Request) {
-    if (input.bodyUsed) {
-      throw new TypeError('Already read')
-    }
-    this.url = input.url
-    this.credentials = input.credentials
-    if (!options.headers) {
-      this.headers = new Headers(input.headers)
-    }
-    this.method = input.method
-    this.mode = input.mode
-    this.signal = input.signal
-    if (!body && input._bodyInit != null) {
-      body = input._bodyInit
-      input.bodyUsed = true
-    }
-  } else {
-    this.url = String(input)
-  }
-
-  this.credentials = options.credentials || this.credentials || 'same-origin'
-  if (options.headers || !this.headers) {
-    this.headers = new Headers(options.headers)
-  }
-  this.method = normalizeMethod(options.method || this.method || 'GET')
-  this.mode = options.mode || this.mode || null
-  this.signal = options.signal || this.signal
-  this.referrer = null
-
-  if ((this.method === 'GET' || this.method === 'HEAD') && body) {
-    throw new TypeError('Body not allowed for GET or HEAD requests')
-  }
-  this._initBody(body)
-
-  if (this.method === 'GET' || this.method === 'HEAD') {
-    if (options.cache === 'no-store' || options.cache === 'no-cache') {
-      // Search for a '_' parameter in the query string
-      var reParamSearch = /([?&])_=[^&]*/
-      if (reParamSearch.test(this.url)) {
-        // If it already exists then set the value with the current time
-        this.url = this.url.replace(reParamSearch, '$1_=' + new Date().getTime())
+  if (typeof obj === 'object') {
+    return Object.keys(obj).map(function(k) {
+      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+      if (Array.isArray(obj[k])) {
+        return obj[k].map(function(v) {
+          return ks + encodeURIComponent(stringifyPrimitive(v));
+        }).join(sep);
       } else {
-        // Otherwise add a new '_' parameter to the end with the current time
-        var reQueryString = /\?/
-        this.url += (reQueryString.test(this.url) ? '&' : '?') + '_=' + new Date().getTime()
+        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
       }
-    }
-  }
-}
+    }).join(sep);
 
-Request.prototype.clone = function() {
-  return new Request(this, {body: this._bodyInit})
-}
-
-function decode(body) {
-  var form = new FormData()
-  body
-    .trim()
-    .split('&')
-    .forEach(function(bytes) {
-      if (bytes) {
-        var split = bytes.split('=')
-        var name = split.shift().replace(/\+/g, ' ')
-        var value = split.join('=').replace(/\+/g, ' ')
-        form.append(decodeURIComponent(name), decodeURIComponent(value))
-      }
-    })
-  return form
-}
-
-function parseHeaders(rawHeaders) {
-  var headers = new Headers()
-  // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
-  // https://tools.ietf.org/html/rfc7230#section-3.2
-  var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ')
-  // Avoiding split via regex to work around a common IE11 bug with the core-js 3.6.0 regex polyfill
-  // https://github.com/github/fetch/issues/748
-  // https://github.com/zloirock/core-js/issues/751
-  preProcessedHeaders
-    .split('\r')
-    .map(function(header) {
-      return header.indexOf('\n') === 0 ? header.substr(1, header.length) : header
-    })
-    .forEach(function(line) {
-      var parts = line.split(':')
-      var key = parts.shift().trim()
-      if (key) {
-        var value = parts.join(':').trim()
-        headers.append(key, value)
-      }
-    })
-  return headers
-}
-
-Body.call(Request.prototype)
-
-function Response(bodyInit, options) {
-  if (!(this instanceof Response)) {
-    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
-  }
-  if (!options) {
-    options = {}
   }
 
-  this.type = 'default'
-  this.status = options.status === undefined ? 200 : options.status
-  this.ok = this.status >= 200 && this.status < 300
-  this.statusText = options.statusText === undefined ? '' : '' + options.statusText
-  this.headers = new Headers(options.headers)
-  this.url = options.url || ''
-  this._initBody(bodyInit)
-}
+  if (!name) return '';
+  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+         encodeURIComponent(stringifyPrimitive(obj));
+};
 
-Body.call(Response.prototype)
 
-Response.prototype.clone = function() {
-  return new Response(this._bodyInit, {
-    status: this.status,
-    statusText: this.statusText,
-    headers: new Headers(this.headers),
-    url: this.url
-  })
-}
+/***/ }),
+/* 257 */
+/***/ ((module, exports, __webpack_require__) => {
 
-Response.error = function() {
-  var response = new Response(null, {status: 0, statusText: ''})
-  response.type = 'error'
-  return response
-}
-
-var redirectStatuses = [301, 302, 303, 307, 308]
-
-Response.redirect = function(url, status) {
-  if (redirectStatuses.indexOf(status) === -1) {
-    throw new RangeError('Invalid status code')
-  }
-
-  return new Response(null, {status: status, headers: {location: url}})
-}
-
-var DOMException = global.DOMException
-try {
-  new DOMException()
-} catch (err) {
-  DOMException = function(message, name) {
-    this.message = message
-    this.name = name
-    var error = Error(message)
-    this.stack = error.stack
-  }
-  DOMException.prototype = Object.create(Error.prototype)
-  DOMException.prototype.constructor = DOMException
-}
-
-function fetch(input, init) {
-  return new Promise(function(resolve, reject) {
-    var request = new Request(input, init)
-
-    if (request.signal && request.signal.aborted) {
-      return reject(new DOMException('Aborted', 'AbortError'))
-    }
-
-    var xhr = new XMLHttpRequest()
-
-    function abortXhr() {
-      xhr.abort()
-    }
-
-    xhr.onload = function() {
-      var options = {
-        status: xhr.status,
-        statusText: xhr.statusText,
-        headers: parseHeaders(xhr.getAllResponseHeaders() || '')
-      }
-      options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
-      var body = 'response' in xhr ? xhr.response : xhr.responseText
-      setTimeout(function() {
-        resolve(new Response(body, options))
-      }, 0)
-    }
-
-    xhr.onerror = function() {
-      setTimeout(function() {
-        reject(new TypeError('Network request failed'))
-      }, 0)
-    }
-
-    xhr.ontimeout = function() {
-      setTimeout(function() {
-        reject(new TypeError('Network request failed'))
-      }, 0)
-    }
-
-    xhr.onabort = function() {
-      setTimeout(function() {
-        reject(new DOMException('Aborted', 'AbortError'))
-      }, 0)
-    }
-
-    function fixUrl(url) {
-      try {
-        return url === '' && global.location.href ? global.location.href : url
-      } catch (e) {
-        return url
-      }
-    }
-
-    xhr.open(request.method, fixUrl(request.url), true)
-
-    if (request.credentials === 'include') {
-      xhr.withCredentials = true
-    } else if (request.credentials === 'omit') {
-      xhr.withCredentials = false
-    }
-
-    if ('responseType' in xhr) {
-      if (support.blob) {
-        xhr.responseType = 'blob'
-      } else if (
-        support.arrayBuffer &&
-        request.headers.get('Content-Type') &&
-        request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1
-      ) {
-        xhr.responseType = 'arraybuffer'
-      }
-    }
-
-    if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers)) {
-      Object.getOwnPropertyNames(init.headers).forEach(function(name) {
-        xhr.setRequestHeader(name, normalizeValue(init.headers[name]))
-      })
-    } else {
-      request.headers.forEach(function(value, name) {
-        xhr.setRequestHeader(name, value)
-      })
-    }
-
-    if (request.signal) {
-      request.signal.addEventListener('abort', abortXhr)
-
-      xhr.onreadystatechange = function() {
-        // DONE (success or failure)
-        if (xhr.readyState === 4) {
-          request.signal.removeEventListener('abort', abortXhr)
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(258), __webpack_require__(259), __webpack_require__(261)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Category_1, Item_1, TreeFolder_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.Project = void 0;
+    ;
+    class Project {
+        constructor(server, name, context) {
+            this.server = server;
+            this.name = name;
+            this.context = context;
+            // Create category objects.
+            this.categories = new Map();
+            for (let c of context.getItemConfig().getCategories(false)) {
+                this.categories.set(c, new Category_1.Category(c, this));
+            }
         }
-      }
+        async getProjectTree() {
+            const that = this;
+            const folders = await that.server.getFullTreeFromProject(that.name);
+            // The top level folder has to be created here synthetically.
+            const f = {
+                id: undefined,
+                title: undefined,
+                children: folders
+            };
+            return new TreeFolder_1.TreeFolder(that, f);
+        }
+        async search(term) {
+            return this.server.searchInProject(this.name, term);
+        }
+        /**
+         * Execute a more complex search, where the fields in the results can be limited.
+         * @param project
+         * @param term
+         * @param filter default empty string
+         * @param fieldList empty string to mean no fields, * to mean all, or comma-seperated list of
+         *   field ids from the various categories from which items will be returned. The default
+         *   value is *.
+         * @param includeLabels default true
+         * @param includeDownlinks default false
+         * @param includeUplinks default false
+         * @param treeOrder default false
+         */
+        async complexSearchInProject(term, filter = "", fieldList = "*", includeLabels = true, includeDownlinks = false, includeUplinks = false, treeOrder = false) {
+            return this.server.complexSearchInProject(this.name, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder);
+        }
+        async complexSearch(term, filter = "", treeOrder = false, mask) {
+            let includeLabels = true;
+            let includeDownlinks = false;
+            let includeUplinks = false;
+            let fieldList = "*";
+            if (mask) {
+                includeLabels = mask.getIncludeLabels();
+                includeDownlinks = mask.getIncludeDownlinks();
+                includeUplinks = mask.getIncludeUplinks();
+                fieldList = mask.getFieldMaskString();
+            }
+            const results = await this.complexSearchInProject(term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder);
+            let items = [];
+            // Turn the results into Items.
+            // ItemFieldMasks are unique per category. This cache allows us to avoid creating
+            // a new mask for each item, a waste of memory.
+            let maskCache = new Map();
+            for (let oneResult of results) {
+                const catName = this.parseRef(oneResult.itemId).type;
+                const cat = this.getCategory(catName);
+                let catMask = maskCache.get(catName);
+                if (!catMask) {
+                    if (mask) {
+                        if (mask.getCategoryMask(catName) != null) {
+                            catMask = mask.getCategoryMask(catName);
+                        }
+                        else {
+                            // Create a field mask that allows all or no fields, depending on
+                            // whether fields are included.
+                            catMask = mask.getIncludeFields() ? cat.createFieldMask() : cat.createFieldMask([]);
+                        }
+                    }
+                    else {
+                        // If no mask was specified for the search, then we get all category fields in the
+                        // item mask.
+                        catMask = cat.createFieldMask();
+                    }
+                    maskCache.set(catName, catMask);
+                }
+                let iitemGet = {
+                    id: oneResult.itemId,
+                    type: catName,
+                    title: oneResult.title,
+                    labels: includeLabels ? oneResult.labels : undefined,
+                    version: oneResult.version
+                };
+                // Deal with labels.
+                if (includeLabels) {
+                    iitemGet.labels = oneResult.labels;
+                }
+                // Deal with the links.
+                if (includeDownlinks) {
+                    iitemGet.downLinks = [];
+                    if (oneResult.downlinks) {
+                        // TODO: We don't have link titles.
+                        iitemGet.downLinks = oneResult.downlinks.map((linkId) => { return { to: linkId, title: "" }; });
+                    }
+                }
+                if (includeUplinks) {
+                    iitemGet.upLinks = [];
+                    if (oneResult.uplinks) {
+                        // TODO: We don't have link titles.
+                        iitemGet.upLinks = oneResult.uplinks.map((linkId) => { return { to: linkId, title: "" }; });
+                    }
+                }
+                // Deal with fields.
+                for (let fieldId of catMask.getFieldIds()) {
+                    let value = undefined;
+                    if (oneResult.fieldVal) {
+                        const values = oneResult.fieldVal.filter((r) => r.id == fieldId);
+                        if (values.length > 0) {
+                            value = values[0].value;
+                        }
+                    }
+                    iitemGet[fieldId] = value;
+                }
+                // creationDate is a synthetic field, but if it is available we can pass it through iitemGet
+                // into Item, which knows to look for the field.
+                if (oneResult["creationDate"]) {
+                    iitemGet["creationDate"] = oneResult["creationDate"];
+                }
+                // Finally, we have a filled-in iitemGet.
+                // TODO: the item should probably take the master mask, so it knows if labels and up/downlinks are included.
+                items.push(new Item_1.Item(cat, iitemGet, catMask));
+            }
+            return items;
+        }
+        constructSearchFieldMask(includeFields = true, includeLabels = true, includeDownlinks = false, includeUplinks = false) {
+            return new Category_1.ItemsFieldMask(includeFields, includeLabels, includeDownlinks, includeUplinks);
+        }
+        /**
+         * Returns information about an item from an id in a given project.
+         * @param itemId A valid item id in the project
+         * @returns The itemId decomposed into parts
+         */
+        parseRef(itemId) {
+            return this.server.parseRefForProject(this.name, itemId);
+        }
+        createItem(category) {
+            if (category == "FOLDER") {
+                throw new Error(`Folders should be created with method createFolder`);
+            }
+            return new Item_1.Item(this.getCategory(category));
+        }
+        /**
+         * Create a folder. Every folder must contain only items of a particular type.
+         * @param type
+         * @returns a new Folder item of the given type.
+         */
+        createFolder(type) {
+            let item = { isFolder: true, type: type, children: [] };
+            return new Item_1.Item(this.getCategory("FOLDER"), item);
+        }
+        async getItem(id) {
+            const iitem = await this.server.getItemFromProject(this.name, id);
+            const category = iitem.isFolder ? this.getCategory("FOLDER") : this.getCategory(iitem.type);
+            return new Item_1.Item(category, iitem);
+        }
+        /**
+         * Save an item into a given folder.
+         * @param parentFolderId
+         * @param item
+         * @returns A fresh copy of the Item from the server
+         */
+        async putItem(parentFolderId, item) {
+            let iitem = item.extractData();
+            let newId;
+            if (iitem.id) {
+                // this is an update.
+                // TODO(sdk): be able to query item field mask and update only requested fields.
+                newId = await this.server.updateItemInProject(this.name, iitem, item.getMaxVersion());
+            }
+            else {
+                // this is creation.
+                newId = await this.server.createItemInProject(this.name, parentFolderId, iitem);
+            }
+            // For now, go back to the server and get a fresh item.
+            return await this.getItem(newId);
+        }
+        /**
+         * Update an item on the server.
+         * @param item
+         * @returns A fresh copy of the Item from the server.
+         */
+        async updateItem(item) {
+            let iitem = item.extractData();
+            if (!iitem.id) {
+                throw new Error(`updateItem requires an item with an existing ID`);
+            }
+            // TODO(sdk): be able to query item field mask and update only requested fields.
+            await this.server.updateItemInProject(this.name, iitem, item.getMaxVersion());
+            return await this.getItem(iitem.id);
+        }
+        /**
+         * Delete an Item from the project. If the Item is a folder with children, then parameter
+         * {force} must be true.
+         * @param itemId A valid item
+         * @param force
+         * @throws Error if the item is a non-empty folder and force was not specified as true.
+         * @returns A promise with the string "Ok" on success.
+         */
+        async deleteItem(itemId, force) {
+            return this.server.deleteItemInProject(this.name, itemId, force);
+        }
+        /**
+         * Move items in the project to a particular folder.
+         * @param folderId a valid folder id within the project
+         * @param itemIds an array of itemIds
+         * @returns the string "Ok" on success
+         */
+        async moveItems(folderId, itemIds) {
+            return this.server.moveItemsInProject(this.name, folderId, itemIds);
+        }
+        /**
+         * set a field of an item in the database
+         *
+         * Use: await project.setField("PROC-83", "plain english", "x");
+         *
+         * @param itemId itemId the id of the item like "REQ-1"
+         * @param fieldName name of the field
+         * @param value value of the field
+         * @throws Error in case of invalid itemId or fieldName
+         * @returns Promise to the updated item
+         */
+        async setField(itemId, fieldName, value) {
+            return this.setFields(itemId, [{ fieldName: fieldName, value: value }]);
+        }
+        /**
+         * sets multiple fields in the database
+         *
+         * Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
+         *
+         * @param itemId itemId itemId the id of the item like "REQ-1"
+         * @param data array of fieldName and value tupels
+         * @throws Error in case of invalid id or fields
+         * @returns the updated item
+         */
+        async setFields(itemId, data) {
+            return this.server.setFieldsInProject(this.name, this.getItemConfig(), itemId, data);
+        }
+        /**
+         * Get the TODOs for a project.
+         * @param itemRef if specified, returns all todos linked to an item, regardless of user
+         * @param includeDone - if true, includes done todos
+         * @param includeAllUsers - if true, includes all todos for all users.
+         * @param includeFuture - false by default. If true, includes future todos.
+         * @returns Information on the todos.
+         */
+        getTodos(itemRef, includeDone, includeAllUsers, includeFuture) {
+            return this.server.getProjectTodos(this.name, itemRef, includeDone, includeAllUsers, includeFuture);
+        }
+        getCategory(category) {
+            if (!this.categories.has(category)) {
+                throw new Error(`Cannot find category ${category} in project ${this.name}`);
+            }
+            return this.categories.get(category);
+        }
+        getName() { return this.name; }
+        getItemConfig() { return this.context.getItemConfig(); }
+        getLabelManager() { return this.context.getLabelManager(); }
+        getTestConfig() { return this.context.getTestManagerConfig(); }
     }
+    exports.Project = Project;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-    xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
-  })
-}
 
-fetch.polyfill = true
+/***/ }),
+/* 258 */
+/***/ ((module, exports, __webpack_require__) => {
 
-if (!global.fetch) {
-  global.fetch = fetch
-  global.Headers = Headers
-  global.Request = Request
-  global.Response = Response
-}
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.ItemsFieldMask = exports.ItemFieldMask = exports.Category = void 0;
+    /**
+     * An ItemFieldMask contains a list of field ids valid within a particular
+     * category. It should be created via the Category method createFieldMask().
+     */
+    class ItemFieldMask {
+        constructor(fieldIds) {
+            this.fieldIds = fieldIds;
+        }
+        hasFieldId(fieldId) {
+            return this.fieldIds.filter((id) => id == fieldId).length > 0;
+        }
+        getFieldIds() { return this.fieldIds; }
+        /**
+         * Combine the other ItemFieldMask with this one.
+         * @param other an ItemFieldMask
+         */
+        union(other) {
+            for (let i of other.getFieldIds()) {
+                if (!this.hasFieldId(i)) {
+                    this.fieldIds.push(i);
+                }
+            }
+        }
+        toString() {
+            return this.fieldIds.join(",");
+        }
+    }
+    exports.ItemFieldMask = ItemFieldMask;
+    /**
+     * An ItemsFieldMask keeps track of fields masked by category, as well as some globally
+     * masked Item fields (currently labels, uplinks and downlinks). This class is used
+     * by the user of the SDK to narrow the set of fields brought down in a search query,
+     * and then to allow the SDK to safely construct partial items from those results.
+     */
+    class ItemsFieldMask {
+        constructor(includeFields = true, includeLabels = true, includeDownlinks = false, includeUplinks = false) {
+            this.includeFields = includeFields;
+            this.includeLabels = includeLabels;
+            this.includeDownlinks = includeDownlinks;
+            this.includeUplinks = includeUplinks;
+            this.masks = new Map();
+        }
+        getIncludeFields() { return this.includeFields; }
+        getIncludeLabels() { return this.includeLabels; }
+        getIncludeDownlinks() { return this.includeDownlinks; }
+        getIncludeUplinks() { return this.includeUplinks; }
+        /**
+         * Add fields to the mask for the given Category. If there is already a field mask for the
+         * Category, its values will be combined with the new information via set union.
+         * @param category
+         * @param fieldIdsOrItemFieldMask either an ItemFieldMask object or an array of Category field ids
+         * @throws Error if getIncludeFields() is false.
+         * @returns this
+         */
+        addMask(category, fieldIdsOrItemFieldMask) {
+            if (!this.includeFields) {
+                throw new Error(`This ItemsFieldMask is not configured to care about fields.`);
+            }
+            let newMask;
+            if (fieldIdsOrItemFieldMask instanceof ItemFieldMask) {
+                newMask = fieldIdsOrItemFieldMask;
+            }
+            else {
+                newMask = category.createFieldMask(fieldIdsOrItemFieldMask);
+            }
+            if (this.masks.has(category.getId())) {
+                let cat = this.masks.get(category.getId());
+                cat.union(newMask);
+            }
+            else {
+                this.masks.set(category.getId(), newMask);
+            }
+            return this;
+        }
+        /**
+         * Adds fields to the Category mask by name. If the name doesn't exist or if there are more
+         * than one fields with the name, an Error is thrown.
+         * @param category
+         * @param fieldNames
+         * @throws Error if a field name exists more than once in the given Category or not at all.
+         *         Also throws Error if getIncludeFields() is false.
+         * @returns this
+         */
+        addMaskByNames(category, fieldNames) {
+            if (!this.includeFields) {
+                throw new Error(`This ItemsFieldMask is not configured to care about fields.`);
+            }
+            let fieldIds = [];
+            const fields = category.getFields();
+            for (let name of fieldNames) {
+                const catFieldIds = category.getFieldIdFromLabel(name);
+                if (catFieldIds.length == 0) {
+                    throw new Error(`Unable to find field name ${name} in category ${category.getId()}`);
+                }
+                if (catFieldIds.length > 1) {
+                    throw new Error(`Multiple fields with name ${name} in category ${category.getId()}`);
+                }
+                fieldIds.push(catFieldIds[0]);
+            }
+            return this.addMask(category, fieldIds);
+        }
+        /**
+         * Returns an ItemFieldMask for the given Category if it exists
+         * @param categoryId
+         * @returns null if there is no mask for the given Category.
+         */
+        getCategoryMask(categoryId) {
+            if (!this.masks.has(categoryId))
+                return null;
+            return this.masks.get(categoryId);
+        }
+        /**
+         * Suitable to send to the server for a search query.
+         * @returns A comma-seperated string of ids or "*" (which means all fields accepted)
+         */
+        getFieldMaskString() {
+            if (this.masks.size == 0) {
+                // If we have no masks, but fields are included, then return all fields.
+                // Otherwise, no fields (empty string).
+                return this.includeFields ? "*" : "";
+            }
+            let result = "";
+            let firstKey = true;
+            for (let key of this.masks.keys()) {
+                if (!firstKey) {
+                    result += ",";
+                }
+                result += this.masks.get(key).toString();
+                firstKey = false;
+            }
+            return result;
+        }
+    }
+    exports.ItemsFieldMask = ItemsFieldMask;
+    /**
+     * A Category represents a category within a project. It has various configuration
+     * settings. It also has a list of fields for that category.
+     */
+    class Category {
+        constructor(category, project) {
+            this.category = category;
+            this.project = project;
+            // Cache a mask for all fields since it may be created often.
+            this.allFieldsFieldMask = new ItemFieldMask(this.getFields().map((c) => c.id));
+        }
+        getProject() { return this.project; }
+        getItemConfig() { return this.project.getItemConfig(); }
+        getTestConfig() { return this.project.getTestConfig(); }
+        getId() {
+            return this.category;
+        }
+        getConfig() {
+            return this.project.getItemConfig().getItemConfiguration(this.category);
+        }
+        getFields() {
+            return this.project.getItemConfig().getFields(this.category);
+        }
+        /**
+         * Return field ids from the Category which match the given label.
+         * These labels are searched in a case-insensitive way.
+         * @param label
+         * @returns a non-empty array of field ids if the label is present in the Category.
+         */
+        getFieldIdFromLabel(label) {
+            let results = [];
+            for (let field of this.getFields()) {
+                if (field.label.toLowerCase() == label.toLowerCase()) {
+                    results.push(field.id);
+                }
+            }
+            return results;
+        }
+        isFolderCategory() { return this.getId() == "FOLDER"; }
+        /**
+         * An ItemFieldMask allows you to specify which fields out of the Category
+         * fields of an Item should be considered valid.
+         * @param fieldIds If specified, a valid set of field ids for this Category. Otherwise,
+         *        the returned ItemFieldMask expresses that all fields in the Item are to be
+         *        considered valid.
+         * @throws throws an Error if any of the field ids specified in fieldIds do not exist in the Category.
+         * @returns an ItemFieldMask.
+         */
+        createFieldMask(fieldIds) {
+            const fields = this.getFields();
+            if (fieldIds) {
+                // Validate that we have these fields.
+                for (let f of fieldIds) {
+                    if (fields.filter(c => c.id == f).length == 0) {
+                        throw new Error(`Field id ${f} not found in category ${this.category}`);
+                    }
+                }
+                return new ItemFieldMask(fieldIds);
+            }
+            return this.allFieldsFieldMask;
+        }
+    }
+    exports.Category = Category;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 259 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(260), __webpack_require__(56)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Field_1, index_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.Item = void 0;
+    function assert(result, msg) {
+        if (!result) {
+            throw new Error("assertion failed: " + msg ? msg : 0);
+        }
+    }
+    /**
+     * An Item represents a database item. Every Item must have at least a category.
+     * If it has an id, then it was retrieved from the database and may be altered and later
+     * saved (use needsSave() to determine if the Item needs saving). If it doesn't have
+     * an id, it needs to be saved. When an item is saved, it's data is re-initialized from
+     * the database.
+     */
+    class Item {
+        constructor(category, item, fieldMask) {
+            this.category = category;
+            this.dirty = false;
+            this.fieldMap = new Map();
+            this.isFolder = category.isFolderCategory();
+            if (this.isFolder) {
+                if (!item) {
+                    throw new Error(`A folder requires an item`);
+                }
+                if (!item.type) {
+                    throw new Error(`A folder requires item.type`);
+                }
+            }
+            if (fieldMask) {
+                this.fieldMask = fieldMask;
+            }
+            else {
+                // Create a field mask that includes all fields.
+                this.fieldMask = this.category.createFieldMask();
+            }
+            this.setData(item);
+        }
+        // TODO: also, what about labels? Are these in toBeIntegrated right now?
+        setDirty() { this.dirty = true; }
+        getFieldMask() { return this.fieldMask; }
+        /**
+         * Read-only.
+         * @returns
+         */
+        getMaxVersion() {
+            return this.maxVersion;
+        }
+        /**
+         * Return the history for an item, if present.
+         * @returns an IItemHistory array
+         */
+        getHistory() {
+            if (this.history) {
+                return this.history;
+            }
+            return [];
+        }
+        hasLink(array, id) {
+            if (array) {
+                return array.filter(l => l.to == id).length > 0;
+            }
+            return false;
+        }
+        addLink(array, id, title) {
+            let newRef = { to: id, title: title };
+            if (array == undefined) {
+                array = [];
+            }
+            assert(!this.hasLink(array, id));
+            array.push(newRef);
+            return array;
+        }
+        removeLink(array, id) {
+            assert(this.hasLink(array, id));
+            for (let i = 0; i < array.length; i++) {
+                if (array[i].to == id) {
+                    array.splice(i, 1);
+                    break;
+                }
+            }
+            return array;
+        }
+        /**
+         * Return any downlinks.
+         * @returns An array of downlinks (may be undefined)
+         */
+        getDownlinks() {
+            return this.downLinks ? this.downLinks : [];
+        }
+        /**
+         * Check if there is a downlink to another item
+         * @param id
+         * @returns true if this item links to the item given by {id}
+         */
+        hasDownlink(id) {
+            return this.hasLink(this.downLinks, id);
+        }
+        /**
+         * Replace the current array of downlinks with a new one.
+         * @param downLinks
+         * @returns the Item itself
+         */
+        setDownlinks(downLinks) {
+            if (downLinks.length == 0) {
+                this.downLinks = undefined;
+            }
+            else {
+                this.downLinks = downLinks;
+            }
+            this.setDirty();
+            return this;
+        }
+        /**
+         * Add a new downlink to the item. Does nothing if the item is
+         * already represented
+         * @param id - the id of the item to add.
+         * @param title - optional. The title is just for convenience.
+         *     It is neither saved nor representative of the actual title of the item.
+         * @throws Error if the passed id matches the id of the current item.
+         * @returns the Item
+         */
+        addDownlink(id, title) {
+            // prevent self-own
+            if (id == this.id) {
+                throw new Error(`An Item may not refer to itself`);
+            }
+            if (!this.hasLink(this.downLinks, id)) {
+                this.downLinks = this.addLink(this.downLinks, id, title);
+                this.setDirty();
+            }
+            return this;
+        }
+        /**
+         * Remove a link given by {id} if it exists.
+         * @param id  the id of the downlinked item to remove
+         * @returns the current Item
+         */
+        removeDownlink(id) {
+            if (this.hasLink(this.downLinks, id)) {
+                this.downLinks = this.removeLink(this.downLinks, id);
+                this.setDirty();
+            }
+            return this;
+        }
+        /**
+         * Return any uplinks.
+         * @returns An array of uplinks (may be undefined)
+         */
+        getUplinks() {
+            return this.upLinks ? this.upLinks : [];
+        }
+        /**
+         * Check if there is an uplink to another item
+         * @param id
+         * @returns true if this item links to the item given by {id}
+         */
+        hasUplink(id) {
+            return this.hasLink(this.upLinks, id);
+        }
+        /**
+         * Replace the current array of uplinks with a new one.
+         * @param upLinks
+         * @returns the Item itself
+         */
+        setUplinks(upLinks) {
+            if (upLinks.length == 0) {
+                this.upLinks = undefined;
+            }
+            else {
+                this.upLinks = upLinks;
+            }
+            this.setDirty();
+            return this;
+        }
+        /**
+         * Add a new uplink to the item. Does nothing if the item is
+         * already represented
+         * @param id - the id of the item to add.
+         * @param title - optional. The title is just for convenience.
+         *     It is neither saved nor representative of the actual title of the item.
+         * @throws Error if the passed id matches the id of the current item.
+         * @returns the Item
+         */
+        addUplink(id, title) {
+            // prevent self-own
+            if (id == this.id) {
+                throw new Error(`An Item may not refer to itself`);
+            }
+            if (!this.hasLink(this.upLinks, id)) {
+                this.upLinks = this.addLink(this.upLinks, id, title);
+                this.setDirty();
+            }
+            return this;
+        }
+        /**
+         * Remove a link given by {id} if it exists.
+         * @param id  the id of the uplinked item to remove
+         * @returns the current Item
+         */
+        removeUplink(id) {
+            if (this.hasLink(this.upLinks, id)) {
+                this.upLinks = this.removeLink(this.upLinks, id);
+                this.setDirty();
+            }
+            return this;
+        }
+        /**
+         * Helper method to test if a field id is valid within the Item Category, irrespective of
+         * whether or not it is specified in the mask.
+         * @param fieldId
+         * @returns true if fieldId is valid within the Category.
+         */
+        isValidFieldId(fieldId) {
+            return this.getCategory().getFields().filter(c => c.id == fieldId).length > 0;
+        }
+        /**
+         * Initializes the data fields for the item from an IItemGet structure
+         * @param item
+         */
+        setData(item) {
+            this.dirty = false;
+            // toBeIntegrated contains standard item fields I just haven't gotten around to
+            // exposing and validating yet.
+            if (item) {
+                this.toBeIntegrated = item;
+                this.id = item.id;
+                this.type = item.type;
+                this.title = item.title;
+                this.labels = item.labels;
+                this.isFolder = item.isFolder;
+                this.downLinks = item.downLinks;
+                this.upLinks = item.upLinks;
+                this.maxVersion = item.maxVersion;
+                this.history = item.history;
+                if (item["creationDate"]) {
+                    this.creationDate = item["creationDate"];
+                }
+                assert((this.type == this.category.getId()) ||
+                    (this.isFolder && this.category.isFolderCategory()), `the item type ${this.type} does not match category type ${this.category.getId()}`);
+            }
+            else {
+                // We can assert that we don't have a folder, because the constructor, which
+                // calls this method doesn't allow an undefined item parameter for folders.
+                assert(!this.category.isFolderCategory(), "A folder requires a valid item parameter");
+                this.toBeIntegrated = {};
+                // This is a new item.
+                this.id = undefined;
+                // Category
+                this.type = this.category.getId();
+                this.title = undefined;
+                this.isFolder = false;
+                this.history = [];
+            }
+            // Now deal with the category fields.
+            for (let field of this.category.getFields()) {
+                // The mask influences whether we actually have this field data or not.
+                if (this.fieldMask.hasFieldId(field.id)) {
+                    let value = undefined;
+                    if (item && item[field.id]) {
+                        value = item[field.id];
+                    }
+                    index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
+                    let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
+                    handler.initData(value);
+                    this.fieldMap.set(field.id, new Field_1.Field(field, handler));
+                }
+            }
+            // TODO: deal with labels. They show up as a pseudo field, but are really not.
+        }
+        /**
+         * Sometimes you've been given an Item with a restrictive ItemFieldMask, however, you'd
+         * like to set a value for a field that was not in the mask. With this method, you can
+         * expand the field mask to include the field given by the fieldId (easily obtained
+         * from the Category object).
+         *
+         * This field will be added to the mask, and the associated Field object will be returned
+         * with an empty value, which you could set. The object will be marked as "dirty" at this point,
+         * because we don't know if the server has an empty value for this field or not, so we assume
+         * the pessimistic case.
+         * @param fieldId a valid fieldId from the Category of the item.
+         * @throws if the fieldId is already in the ItemFieldMask, or if the fieldId is not valid for the Category.
+         * @returns the Field object
+         */
+        expandFieldMaskWithEmptyField(fieldId) {
+            if (this.fieldMask.hasFieldId(fieldId)) {
+                throw new Error(`Field ${fieldId} is already specified in the field mask`);
+            }
+            const foundFields = this.getCategory().getFields().filter(c => c.id == fieldId);
+            if (foundFields.length == 0) {
+                throw new Error(`Field ${fieldId} does not exist in category ${this.getCategory().getId()}`);
+            }
+            // Update the mask.
+            let fieldIds = this.fieldMask.getFieldIds();
+            fieldIds.push(fieldId);
+            this.fieldMask = this.category.createFieldMask(fieldIds);
+            // Create the Field.
+            const field = foundFields[0];
+            const value = undefined; // empty field.
+            index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
+            let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
+            handler.initData(value);
+            this.fieldMap.set(field.id, new Field_1.Field(field, handler));
+            assert(field.id == fieldId);
+            this.setDirty();
+            return this.getFieldById(field.id);
+        }
+        /**
+         * Export the data from this item into an IItemPut structure
+         * @returns
+         */
+        extractData() {
+            let item = {
+                upLinks: this.upLinks,
+                upLinkList: this.toBeIntegrated.upLinkList,
+                downLinks: this.downLinks,
+                children: this.toBeIntegrated.children,
+                history: this.history,
+                modDate: this.toBeIntegrated.modDate,
+                isUnselected: this.toBeIntegrated.isUnselected,
+                availableFormats: this.toBeIntegrated.availableFormats,
+                selectSubTree: this.toBeIntegrated.selectSubTree,
+                requireSubTree: this.toBeIntegrated.requireSubTree,
+                icon: this.toBeIntegrated.icon,
+                type: this.type,
+                id: this.toBeIntegrated.id,
+                title: this.title,
+                linksUp: this.upLinks ? this.upLinks.map(u => u.to).join(",") : "",
+                linksDown: this.downLinks ? this.downLinks.map(u => u.to).join(",") : "",
+                isFolder: this.isFolder,
+                isDeleted: this.toBeIntegrated.isDeleted,
+                maxVersion: this.maxVersion,
+                docHasPackage: this.toBeIntegrated.docHasPackage,
+                // TODO: where is parent in IItemGet? Doesn't every item have a parent?
+                labels: this.labels ? this.labels.join(",") : ""
+                // TODO: where is crossLinks in IItemPut?
+            };
+            // Now deal with the category fields.
+            for (let field of this.category.getFields()) {
+                // The mask influences what we send out.
+                if (this.fieldMask.hasFieldId(field.id)) {
+                    const myField = this.fieldMap.get(field.id);
+                    item[field.id] = myField.getHandlerRaw().getData();
+                    // TODO: do we need to do this?
+                    item[`fx${field.id.toString()}`] = myField.getHandlerRaw().getData();
+                }
+            }
+            // Note that "creationDate" was ignored.
+            return item;
+        }
+        getId() {
+            return this.id;
+        }
+        getIsFolder() {
+            return this.isFolder;
+        }
+        getType() {
+            assert((this.type == this.category.getId()) ||
+                (this.isFolder && this.category.isFolderCategory()), `Item type ${this.type} does not match category type ${this.category.getId()}`);
+            return this.type;
+        }
+        getCreationDate() {
+            return this.creationDate;
+        }
+        setCreationDate(creationDate) {
+            this.creationDate = creationDate;
+            // Not setting this as dirty because creationDate doesn't "really" change.
+            // It is just an expensive piece of information from the server that needs a
+            // home.
+            return this;
+        }
+        getTitle() {
+            return this.title;
+        }
+        setTitle(title) {
+            if (title !== this.title) {
+                this.title = title;
+                this.setDirty();
+            }
+            return this;
+        }
+        /**
+         * Returns an array of labels set for the Item.
+         * @returns array of strings
+         */
+        getLabels() {
+            return this.labels ? this.labels : [];
+        }
+        labelsToString() {
+            if (this.labels) {
+                return this.labels.join(",");
+            }
+            return "";
+        }
+        stringToLabels(input) { return input.split(","); }
+        verifyLabelsAllowed(labels) {
+            // Are labels allowed for our category?
+            const labelDefs = this.category.getProject().getLabelManager().getLabelDefinitions([this.type]);
+            if (labelDefs.length == 0 && labels.length > 0) {
+                // Forgive empty strings.
+                const foundNonEmpty = labels.some((l) => l != undefined && l != "");
+                if (foundNonEmpty) {
+                    throw new Error(`Category ${this.type} doesn't allow labels`);
+                }
+            }
+        }
+        /**
+         * Sets the labels for an Item, overwriting any previous labels
+         * @param newLabels
+         * @returns Item
+         * @throws throws error if the Item category doesn't allow labels
+         */
+        setLabels(newLabels) {
+            this.verifyLabelsAllowed(newLabels);
+            this.labels = this.stringToLabels(this.category.getProject().getLabelManager().setLabels("", newLabels));
+            return this;
+        }
+        /**
+         * Adds one label to the item if it isn't already set. Note that if the
+         * label is in an XOR group with another set label, that label will be
+         * removed.
+         * @param labelToSet
+         * @returns Item
+         * @throws throws error if the Item category doesn't allow labels
+         */
+        setLabel(labelToSet) {
+            this.verifyLabelsAllowed([labelToSet]);
+            const labelsAsString = this.labelsToString();
+            this.labels = this.stringToLabels(this.category.getProject().getLabelManager().setLabels(labelsAsString, [labelToSet]));
+            return this;
+        }
+        /**
+         * Unsets one label if it exists.
+         * @param labelToUnset
+         * @returns Item
+         * @throws throws error if the Item category doesn't allow labels
+         */
+        unsetLabel(labelToUnset) {
+            this.verifyLabelsAllowed([labelToUnset]);
+            this.labels = this.category.getProject().getLabelManager().unsetLabel(this.getLabels(), labelToUnset);
+            return this;
+        }
+        /**
+         * Return the Category for the current item
+         * @returns Category
+         */
+        getCategory() { return this.category; }
+        needsSave() {
+            // Are any fields dirty?
+            for (let field of this.fieldMap.values()) {
+                if (field.needsSave()) {
+                    this.dirty = true;
+                    break;
+                }
+            }
+            return this.dirty;
+        }
+        /**
+         * An Item can be complete or partial, based on the ItemFieldMask passed in
+         * at construction.
+         * @returns true if the item has all of its Category fields.
+         */
+        hasAllFields() {
+            return this.fieldMask.getFieldIds().length == this.getCategory().getFields().length;
+        }
+        /**
+         * In case the Item is masked (hasAllFields() returns false), one or more Fields may
+         * not be tracked. hasFieldId() allows you to check if the field is present.
+         * @param fieldId a valid field id within the Category
+         * @throws Error if fieldId is not valid within the Category
+         * @returns true if the Item's mask allows for this field.
+         */
+        hasFieldId(fieldId) {
+            if (!this.isValidFieldId(fieldId)) {
+                throw new Error(`Field id ${fieldId} is not valid within Category ${this.getCategory().getId()}`);
+            }
+            return this.fieldMask.hasFieldId(fieldId);
+        }
+        getFieldById(fieldId) {
+            // Is it in our mask?
+            if (!this.hasFieldId(fieldId)) {
+                throw new Error(`Field id ${fieldId} is not in the ItemFieldMask for this Item.`);
+            }
+            // We should definitely have the field at this point.
+            assert(this.fieldMap.has(fieldId));
+            return this.fieldMap.get(fieldId);
+        }
+        /**
+         * Returns all fields within the mask which match the fieldName.
+         * @param fieldName
+         * @returns an array of Fields. Note that if the mask has limited the set of fields from
+         *     the Category which are tracked for this particular item, the number of returned Field
+         *     objects may be less than you expect.
+         */
+        getFieldByName(fieldName) {
+            let results = [];
+            for (let field of this.fieldMap.values()) {
+                if (field.getFieldName() == fieldName) {
+                    results.push(field);
+                }
+            }
+            return results;
+        }
+        /**
+         * Returns a Field matching the field name. The field should exist and be within the mask.
+         * @param fieldName
+         * @throws Error if there is no such field, either because the name is invalid or it is not within
+         *     the mask for the Item.
+         * @returns a valid Field.
+         */
+        getSingleFieldByName(fieldName) {
+            const fields = this.getFieldByName(fieldName);
+            assert(fields.length == 1, `There are ${fields.length} fields with name ${fieldName}`);
+            return fields[0];
+        }
+        /**
+         * Returns all fields within the mask which match the fieldType.
+         * @param fieldType
+         * @returns an array of Fields. Note that if the mask has limited the set of fields from
+         *     the Category which are tracked for this particular item, the number of returned Field
+         *     objects may be less than you expect.
+         */
+        getFieldsByType(fieldType) {
+            let results = [];
+            for (let field of this.fieldMap.values()) {
+                if (field.getFieldType() == fieldType) {
+                    results.push(field);
+                }
+            }
+            return results;
+        }
+    }
+    exports.Item = Item;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 260 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.Field = void 0;
+    class Field {
+        constructor(config, handler) {
+            this.config = config;
+            this.handler = handler;
+            if (this.config.fieldType != this.handler.getFieldType()) {
+                throw new Error(`Field type ${this.config.fieldType} doesn't match handler field type ${this.handler.getFieldType()}`);
+            }
+            this.oldData = handler.getData();
+        }
+        getHandlerRaw() { return this.handler; }
+        getHandler() {
+            // return the handler cast appropriately given the type of the field.
+            // TODO: check this somehow.
+            return this.handler;
+        }
+        getFieldType() { return this.config.fieldType; }
+        getFieldId() { return this.config.id; }
+        getFieldName() { return this.config.label; }
+        getFieldConfigParameter(name) {
+            return this.config.parameterJson[name];
+        }
+        needsSave() {
+            return this.handler.getData() !== this.oldData;
+        }
+    }
+    exports.Field = Field;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 261 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.TreeFolder = void 0;
+    class TreeFolder {
+        constructor(needs, folder, parent) {
+            this.needs = needs;
+            this.parent = parent;
+            // Decompose folder.
+            this.id = folder.id;
+            this.title = folder.title;
+            this.type = folder.type;
+            this.itemChildren = [];
+            this.folderChildren = [];
+            if (folder.children) {
+                // Some of the children are folders, others items.
+                for (let child of folder.children) {
+                    if (needs.parseRef(child.id).isFolder) {
+                        // Recurse and create TreeFolders.
+                        this.folderChildren.push(new TreeFolder(needs, child, this));
+                    }
+                    else {
+                        this.itemChildren.push({ id: child.id, title: child.title, isFolder: false });
+                    }
+                }
+            }
+        }
+        isRoot() { return this.id == undefined && this.parent == undefined; }
+        getId() {
+            if (this.isRoot())
+                return "ROOT";
+            return this.id;
+        }
+        getTitle() {
+            if (this.isRoot())
+                return "ROOT";
+            return this.title;
+        }
+        getParent() {
+            if (this.isRoot())
+                return null;
+            return this.parent;
+        }
+        /**
+         * Creates a path string including all ancestor folder titles, separated by "/".
+         * @returns the folder path
+         */
+        getPath() {
+            if (this.isRoot())
+                return "";
+            const result = this.getParent().getPath() + "/" + this.getTitle();
+            return result;
+        }
+        /**
+         * Return a TreeFolder if the folderId is valid in the project.
+         * @param folderId
+         * @returns null if folderId cannot be found.
+         */
+        findFolder(folderId) {
+            // Is it one of the children?
+            for (let child of this.folderChildren) {
+                if (child.getId() == folderId) {
+                    return child;
+                }
+                const folder = child.findFolder(folderId);
+                if (folder != null) {
+                    return folder;
+                }
+            }
+            return null;
+        }
+        /**
+         * Find a TreeFolder with the given name in this folder.
+         * @param folderTitle
+         * @returns A valid TreeFolder object or null if not found.
+         */
+        findDirectFolderByTitle(folderTitle) {
+            for (let child of this.folderChildren) {
+                if (child.getTitle() == folderTitle) {
+                    return child;
+                }
+            }
+            return null;
+        }
+        /**
+         * Save an item with this folder as the parent folder.
+         * @param item An item that hasn't yet been saved on the server
+         * @returns An Item object which corresponds to the newly created Item on the server.
+         * @throws throws Error if your item already has an id (was already created on the server).
+         */
+        async saveInFolder(item) {
+            if (item.getId() !== undefined) {
+                throw new Error(`item already exists (id = ${item.getId()})`);
+            }
+            let createdItem = await this.needs.putItem(this.id, item);
+            // Update the folder structure just for this folder.
+            if (!createdItem.getIsFolder()) {
+                this.itemChildren.push({ isFolder: false, id: createdItem.getId(), title: createdItem.getTitle() });
+            }
+            else {
+                // New folders don't have children, so we can get away with adding this folder without a
+                // server call.
+                const folderInfo = {
+                    id: createdItem.getId(),
+                    title: createdItem.getTitle(),
+                    type: createdItem.getType()
+                };
+                this.folderChildren.push(new TreeFolder(this.needs, folderInfo, this));
+            }
+            return createdItem;
+        }
+        /**
+         * Move the given items into this folder. This method does NOT update the list of folder children,
+         * since server-side information is necessary.
+         * @param itemIds an array of itemIds
+         * @returns the string "Ok" on success
+         */
+        async moveItemsToThisFolder(itemIds) {
+            const result = await this.needs.moveItems(this.getId(), itemIds);
+            return result;
+        }
+        /**
+         * Delete a child of this folder.
+         * @param id A valid child id of this folder
+         * @param force If the id points to a non-empty folder, then this must be true to carry out the deletion
+         * @throws Error if the child wasn't found, or if it points to a non-empty folder and {force} is not true
+         * @returns The string "Ok" if successful.
+         */
+        async deleteChildItemOrFolder(id, force) {
+            // The id must be one of our children.
+            for (let i = 0; i < this.itemChildren.length; i++) {
+                if (this.itemChildren[i].id == id) {
+                    let result = await this.needs.deleteItem(id, force);
+                    this.itemChildren.splice(i, 1);
+                    return result;
+                }
+            }
+            for (let i = 0; i < this.folderChildren.length; i++) {
+                if (this.folderChildren[i].getId() == id) {
+                    let result = await this.needs.deleteItem(id, force);
+                    this.folderChildren.splice(i, 1);
+                    return result;
+                }
+            }
+            // Item isn't a child if we reached this point.
+            throw new Error(`Item with id ${id} not found in item or folder children`);
+        }
+        /**
+         * TreeFolder is nice/simple to work with, but sometimes you need the
+         * underlying Item. For example, you might want to set a label on the folder.
+         * Item is the necessary type to do that.
+         * @returns An Item which matches this folder
+         */
+        async getItem() {
+            return this.needs.getItem(this.id);
+        }
+        /**
+         * Returns information on the folders in the folder. May make a request to
+         * the server if children haven't been loaded yet, otherwise, acts on
+         * cached information (which may be out of date. Call refresh() to update
+         * the folder in that case).
+         * @returns an array of TreeFolder objects.
+         */
+        getFolderChildren() {
+            return this.folderChildren;
+        }
+        /**
+         * Returns information on the items in the folder. May make a request to
+         * the server if children haven't been loaded yet, otherwise, acts on
+         * cached information (which may be out of date. Call refresh() to update
+         * the folder in that case).
+         * @returns an array of ITitleAndId objects
+         */
+        getItemChildren() {
+            return this.itemChildren;
+        }
+        /**
+         * Returns both folders and items at this level.
+         * @returns an array of ITitleAndId objects for the folders and items
+         */
+        getAllChildren() {
+            let children = [];
+            children = children.concat(this.getItemChildren());
+            children = children.concat(this.getFolderChildren().map((tf) => {
+                return { isFolder: true, id: tf.id, title: tf.title };
+            }));
+            return children;
+        }
+    }
+    exports.TreeFolder = TreeFolder;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ })
-
-/******/ 	});
+/******/ 	]);
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
@@ -20375,7 +22242,7 @@ if (!global.fetch) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(241);
+/******/ 	var __webpack_exports__ = __webpack_require__(245);
 /******/ 	
 /******/ 	return __webpack_exports__;
 /******/ })()
