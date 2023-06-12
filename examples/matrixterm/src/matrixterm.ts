@@ -15,14 +15,13 @@ export {};
 //   -- cat
 //   -- find (?)
 class Directory {
-    public project?: string;
-    public childrenIds: string[];
-    public childrenNames: string[];
+    // public project?: string;
+    public project: matrixApi.Project;
+    public currentFolder: matrixApi.TreeFolder;
 
     private reset() {
         this.project = undefined;
-        this.childrenIds = [];
-        this.childrenNames = [];
+        this.currentFolder = undefined;
     }
 
     constructor() {
@@ -31,37 +30,33 @@ class Directory {
 
     private async initFromPath(fullpath: string, mmapi) {
         const parts: string[] = fullpath.split('/');
-        this.project = undefined;
+        this.reset();
         if (parts.length > 1) {
             const maybeProject = parts[1];
-            const projects: string[] = await mmapi.getProjects();
-            if (projects.filter(p => p == maybeProject).length != 1) {
-                throw new Error('invalid project name');
-            }
-            this.project = maybeProject;
-            this.childrenNames = [];
-            this.childrenIds = [];
-            await mmapi.setProject(this.project);
-            for (const p of parts.slice(2)) {
+            if (maybeProject.length > 0) {
+                const projects: string[] = await mmapi.getProjects();
+                if (projects.filter(p => p == maybeProject).length != 1) {
+                    throw new Error('invalid project name');
+                }
+                this.project = await mmapi.openProject(maybeProject);
+                this.currentFolder = await this.project.getProjectTree();
                 // is p a valid child in the current directory?
-                let titleAndIds: matrixApi.ITitleAndId[];
-                if (this.topId()) {
-                    titleAndIds = await mmapi.getFolderChildren(this.topId());
-                } else {
-                    titleAndIds = await mmapi.getTree();
+                for (const p of parts.slice(2)) {
+                    if (p == '..' && this.currentFolder) {
+                        if (!this.currentFolder.isRoot()) {
+                            this.currentFolder = this.currentFolder.getParent();
+                        } else {
+                            this.currentFolder = undefined;
+                            this.project = undefined;
+                        }
+                    } else {
+                        this.currentFolder = this.currentFolder.findDirectFolderByTitle(p);
+                        if (this.currentFolder == null) {
+                            this.reset();
+                            throw new Error(`${p} is not a valid folder`);
+                        }
+                    }
                 }
-                const filteredItems = titleAndIds.filter((v: matrixApi.ITitleAndId) => v.title == p);
-                if (filteredItems.length === 0) {
-                    this.reset();
-                    throw new Error(`${p} is not a valid folder`);
-                }
-                // Make sure it's a folder.
-                if (!filteredItems[0].isFolder) {
-                    this.reset();
-                    throw new Error(`${p} is not a valid folder`);
-                }
-                this.childrenNames.push(filteredItems[0].title);
-                this.childrenIds.push(filteredItems[0].id);
             }
         }
     }
@@ -78,76 +73,53 @@ class Directory {
             for (const i in parts) {
                 const p: string = parts[i];
                 if (p === '..') {
-                    if (that.childrenNames.length == 0) {
-                        if (that.project) {
+                    if (that.currentFolder) {
+                        if (that.currentFolder.isRoot()) {
+                    // TODO: isn't this the same as reset()?
                             that.project = undefined;
-                            await mmapi.setProject(undefined);
+                            that.currentFolder = undefined;
                         } else {
-                            this.reset();
-                            throw new Error('Invalid path');
+                            that.currentFolder = that.currentFolder.getParent();
                         }
-                    } else {
-                        that.childrenNames.pop();
-                        that.childrenIds.pop();
                     }
                 } else {
                     if (that.project == undefined) {
                         // First part of the path is a project name.
-                        that.project = p;
-                        await mmapi.setProject(p);
-                        return;
-                    }
-                    if (that.childrenIds.length === 0) {
-                        // The first directories.
-                        const folders: matrixApi.ITitleAndId[] = await mmapi.getTree();
-                        // Verify that {p} is in this list.
-                        const filteredFolders = folders.filter(v => v.title == p);
-                        if (filteredFolders.length < 1) {
-                            that.reset();
-                            throw new Error(`${p} is not a valid folder in ${that.project}`);
+                        that.project = await mmapi.openProject(p);
+                        that.currentFolder = await that.project.getProjectTree();
+                    } else {
+                        // Does the current directory have this folder?
+                        if (that.currentFolder.findDirectFolderByTitle(p) == null) {
+                            this.reset();
+                            throw new Error(`${p} is not a valid folder in ${that.project.getName()}`);
                         }
-                        that.childrenNames.push(filteredFolders[0].title);
-                        that.childrenIds.push(filteredFolders[0].id);
-                        return;
+                        that.currentFolder = that.currentFolder.findDirectFolderByTitle(p);
                     }
-                    // Does the current directory have this folder?
-                    const titleAndIds: matrixApi.ITitleAndId[] = await mmapi.getFolderChildren(that.topId());
-                    const filteredItems = titleAndIds.filter((v: matrixApi.ITitleAndId) => v.title == p);
-                    if (filteredItems.length === 0) {
-                        this.reset();
-                        throw new Error(`${p} is not a valid folder`);
-                    }
-                    // Make sure it's a folder.
-                    if (!filteredItems[0].isFolder) {
-                        this.reset();
-                        throw new Error(`${p} is not a valid folder`);
-                    }
-                    this.childrenNames.push(filteredItems[0].title);
-                    this.childrenIds.push(filteredItems[0].id);
                 }
             }
         }
     }
 
     public pop() {
-        if (this.childrenNames.length > 0) {
-            this.childrenNames.pop();
-            this.childrenIds.pop();
+        if (!this.currentFolder.isRoot()) {
+            this.currentFolder = this.currentFolder.getParent();
         }
     }
 
     public topName(): string {
-        if (this.childrenNames.length > 0) {
-            return this.childrenNames[this.childrenNames.length - 1];
-        } else if (this.project) {
-            return this.project;
+        if (this.currentFolder) {
+            return this.currentFolder.getTitle();
         }
         return undefined;
     }
 
+    /**
+     * If the current folder is the leaf folder. 
+     * @returns 
+     */
     public topId(): string {
-        if (this.childrenIds.length > 0) {
-            return this.childrenIds[this.childrenIds.length - 1];
+        if (this.currentFolder) {
+            return this.currentFolder.getId();
         }
         return undefined;
     }
@@ -155,8 +127,8 @@ class Directory {
     public getFullPath(): string {
         let result: string = "/";
         if (this.project) {
-            result += this.project;
-            this.childrenNames.forEach(n => { result += ('/' + n); });
+            result += this.project.getName();
+            result += this.currentFolder.getPath();
         }
         return result;
     }
@@ -179,13 +151,8 @@ async function handleLs(args: string) {
         projects.forEach(p => {
             print('> ' + p);
         });
-    } else if (currentDir.childrenIds.length == 0) {
-        const folders: matrixApi.ITitleAndId[] = await mmapi.getTree();
-        folders.forEach((f: matrixApi.ITitleAndId) => {
-            print((f.isFolder ? '> ' : '') + f.title);
-        });
     } else {
-        const children: matrixApi.ITitleAndId[] = await mmapi.getFolderChildren(currentDir.topId());
+        const children: matrixApi.ITitleAndId[] = currentDir.currentFolder.getAllChildren();
         children.forEach(child => {
             print((child.isFolder ? '> ' : '') + child.title);
         });
@@ -204,20 +171,11 @@ async function handleCat(args: string) {
         } else {
             print("Sorry, no special info");
         }
-    } else if (currentDir.childrenIds.length == 0) {
-        const folders: matrixApi.ITitleAndId[] = await mmapi.getTree();
-        const filteredFolders = folders.filter((p) => p.title == args);
-        if (filteredFolders.length < 1) {
-            print(`Sorry, folder ${args} not found`);
-        } else {
-            // Get and display the item.
-            itemId = filteredFolders[0].id;
-        }
     } else {
-        const children: matrixApi.ITitleAndId[] = await mmapi.getFolderChildren(currentDir.topId());
+        const children: matrixApi.ITitleAndId[] = await currentDir.currentFolder.getAllChildren();
         const filteredFolders = children.filter((p) => p.title == args);
         if (filteredFolders.length < 1) {
-            print(`Sorry, folder ${args} not found`);
+            print(`Sorry, item ${args} not found`);
         } else {
             // Get and display the item.
             itemId = filteredFolders[0].id;
@@ -225,8 +183,9 @@ async function handleCat(args: string) {
     }
     if (itemId) {
         // Get the item
-        const item: matrixApi.IItem = await mmapi.getItem(itemId);
-        console.dir(item, { depth: null, colors: true });
+        const item: matrixApi.Item = await currentDir.project.getItem(itemId);
+        const iitem = item.extractData();
+        console.dir(iitem, { depth: null, colors: true });
         // print(JSON.stringify(item));
     }
 }
@@ -283,15 +242,9 @@ async function completer(line, callback) {
         const hits = projects.filter((c) => c.startsWith(line));
         callback(null, [hits.length ? hits : projects, line]);
         return;
-    } else if (currentDir.childrenIds.length == 0) {
-        const folders: matrixApi.ITitleAndId[] = await mmapi.getTree();
-        const completions = folders.map((v) => v.title);
-        const hits = completions.filter((c) => c.startsWith(line));
-        callback(null, [hits.length ? hits : completions, line]);
-        return;
     }
 
-    const children: matrixApi.ITitleAndId[] = await mmapi.getFolderChildren(currentDir.topId());
+    const children: matrixApi.ITitleAndId[] = currentDir.currentFolder.getAllChildren();
     const completions = children.map((v) => v.title);
     const hits = completions.filter((c) => c.startsWith(line));
     callback(null, [hits.length ? hits : completions, line]);
