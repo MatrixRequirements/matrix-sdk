@@ -819,9 +819,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
                     return new HyperlinkFieldHandler_1.HyperlinkFieldHandler(config);
                 case FieldDescriptions_1.FieldDescriptions.Field_dummy:
                     return new EmptyFieldHandler_1.EmptyFieldHandler(fieldType, config);
-                case FieldDescriptions_1.FieldDescriptions.Field_colorPicker:
                 case FieldDescriptions_1.FieldDescriptions.Field_dhf:
                     return new DHFFieldHandler_1.DHFFieldHandler(config);
+                case FieldDescriptions_1.FieldDescriptions.Field_colorPicker:
                 case FieldDescriptions_1.FieldDescriptions.Field_sourceref:
                 case FieldDescriptions_1.FieldDescriptions.Field_markAsTemplate:
                 case FieldDescriptions_1.FieldDescriptions.Field_docFilter:
@@ -1187,32 +1187,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handl
             }
             return columnCount;
         }
+        /**
+         * Set data for a particular cell in the table given by a row number and
+         * a column name.
+         * @param row the zero-based row number.
+         * @param columnId the column name.
+         * @param data
+         */
         setColumnData(row, columnId, data) {
+            // Create rows if necessary.
+            if (this.data.length <= row) {
+                for (let i = this.data.length; i <= row; i++) {
+                    this.data.push({});
+                }
+            }
             // TODO: there should be a switch statement here on type. Complex types may
             // be JSON objects and should be parsed.
             this.data[row][columnId] = data;
-        }
-        setCellData(row, col, data) {
-            const fieldId = this.columnNumberToFieldId(col);
-            // TODO: there should be a switch statement here on type. Complex types may
-            // be JSON objects and should be parsed.
-            this.data[row][fieldId] = data;
         }
         getColumnData(row, columnId) {
             // TODO: there should be a switch statement here on type. Complex types may
             // be JSON objects and should be parsed.
             return this.data[row][columnId];
         }
-        getCellData(row, col) {
-            const fieldId = this.columnNumberToFieldId(col);
-            // TODO: there should be a switch statement here on type. Complex types may
-            // be JSON objects and should be parsed.
-            return this.data[row][fieldId];
-        }
         getRowData(row) {
             let result = [];
             for (let i = 0; i < this.getColumnCount(); i++) {
-                result[i] = this.getCellData(row, i);
+                const columnId = this.columnNumberToFieldId(i);
+                result[i] = this.getColumnData(row, columnId);
             }
             return result;
         }
@@ -5595,8 +5597,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             null, includeLabels, includeDownlinks, includeUplinks);
         }
         async uploadProjectFile(url) {
+            return this.uploadFileToProject(this.getProject(), url);
+        }
+        async uploadFileToProject(project, url) {
             const options = { headers: this.getHeadersForPost() };
-            let result = await this.instance.projectFilePost(this.getProject(), url, options);
+            let result = await this.instance.projectFilePost(project, url, options);
             return result;
         }
         async execute(payload) {
@@ -5607,7 +5612,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         /**
          * The session object contains a string that represents the "current project."
          * This convenience method calls openProject() with that string.
-         * @returns A valid Project object.
+         * @returns A valid Project object, or null if the session has no project.
          */
         async openCurrentProjectFromSession() {
             const project = this.session.getProject();
@@ -5617,12 +5622,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * Retrieve or create a Project object for the given project name.  The method is
          * asynchronous because it may require a trip to the server to retrieve project
          * configuration.
-         * @param project
-         * @returns A valid Project object
+         * @param project a valid string.
+         * @returns A valid Project object, or null if the project name is undefined.
          */
         async openProject(project) {
+            if (!project) {
+                return null;
+            }
             if (this.projectMap.has(project)) {
-                return this.projectMap.get(project);
+                let proj = this.projectMap.get(project);
+                return proj;
             }
             // If we are running in the web application context, and the user asks to open the current
             // project, provide them with the current web application globals. Otherwise, create a new
@@ -5631,6 +5640,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (this.session.getProject() == project &&
                 this.session.getDefaultProjectContext() != null) {
                 context = this.session.getDefaultProjectContext();
+                // The default context, although it may have the name of the project the user
+                // is asking for, may not really be "loaded". Check for that case.
+                if (context.getItemConfig().getCategories().length == 0) {
+                    const p = await this.instance.projectGet(project, 1);
+                    context.getItemConfig().init(p);
+                    context.getTestManagerConfig().initialize(context.getItemConfig());
+                }
             }
             else {
                 const p = await this.instance.projectGet(project, 1);
@@ -21032,6 +21048,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         constructSearchFieldMask(includeFields = true, includeLabels = true, includeDownlinks = false, includeUplinks = false) {
             return new Category_1.ItemsFieldMask(includeFields, includeLabels, includeDownlinks, includeUplinks);
+        }
+        /**
+         * Upload a file given by the url into the project.
+         * @param url
+         * @returns an AddFileAck structure.
+         */
+        uploadFile(url) {
+            return this.server.uploadFileToProject(this.name, url);
         }
         /**
          * Returns information about an item from an id in a given project.
