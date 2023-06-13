@@ -24,7 +24,7 @@ export interface IBulkSettings {
     * This you can use to save setting on an instance level (for all projects)
     * The user can edit these in the admin through the Server Setting Page
 */
-export interface IServerSettings {
+export interface IServerSettings extends matrixApi.IServerSettingsBase {
     /** Server Setting example */
     myServerSetting: IBulkSettings;
 }      

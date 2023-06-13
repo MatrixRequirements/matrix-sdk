@@ -3,6 +3,7 @@ import { Plugin } from "./Main";
 import { textGenerator } from "./lorem-ipsum";
 
 // TODO: get this into the API, it is currently "magic"
+/*
 declare global {
     interface JQuery {
         mxDropdown(a: any): JQuery;
@@ -10,6 +11,7 @@ declare global {
         getController(): any;
     }
 }
+*/
 
 // eslint-disable-next-line no-unused-vars
 /* server Setting page closure*/
@@ -103,13 +105,13 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
     }
 
     private isTestCategory(category: string): boolean {
-        const testConfig = matrixApi.globalMatrix.ItemConfig.getTestConfig();
+        const testConfig = this.project.getItemConfig().getTestConfig();
         // Find the XTC category and look in the set of uplinks.
         return testConfig.cloneSources.filter(c => c == category).length == 1;
     }
 
     private isXTCCategory(category: string): boolean {
-        const testConfig = matrixApi.globalMatrix.ItemConfig.getTestConfig();
+        const testConfig = this.project.getItemConfig().getTestConfig();
         return testConfig.xtcType == category;
     }
 
@@ -131,16 +133,14 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
     }
 
     private async getCategoryCount(category: string) {
-        const results: matrixApi.ISearchResult[] = await matrixApi.matrixapi.search(
-            "mrql:category=" + category, false, false, false);
+        const results: string[] = await this.project.search(
+            "mrql:category=" + category);
         return results.length;
     }
 
-    private async getCategoryWithoutImages(category: string, keyword: string): Promise<matrixApi.ISearchResult[]> {
+    private async getCategoryWithoutImages(category: string, keyword: string): Promise<string[]> {
         const search = `mrql:category=${category} and "test case steps" !~ "${keyword}"`;
-        const results: matrixApi.ISearchResult[] = await matrixApi.matrixapi.search(
-            search, false, false, false);
-        return results;
+        return await this.project.search(search);
     }
 
 
@@ -158,15 +158,13 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
 
     private async getCategoryWithUplinkItems(category: string, uplinkedCategory: string,
-        without: boolean): Promise<matrixApi.ISearchResult[]> {
+        without: boolean): Promise<string[]> {
         let not = "";
         if (without) {
             not = "!"
         }
         const search = `mrql:category=${category} and uplink ${not}= ${uplinkedCategory}`;
-        const results: matrixApi.ISearchResult[] = await matrixApi.matrixapi.search(
-            search, false, false, false);
-        return results;
+        return await this.project.search(search);
     }
 
     private async getCategoryWithUplinkCount(category: string, uplinkedCategory: string,
@@ -174,20 +172,15 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
         return (await this.getCategoryWithUplinkItems(category, uplinkedCategory, without)).length;
     }
 
-    private createStepsArray(stepCount: number) {
-        let arr = [];
+    private createStepsArray(handler: matrixApi.TestStepsFieldHandler, stepCount: number): void {
         for (let i = 0; i < stepCount; i++) {
-            let obj = {
-                action: `Test Action ${i}`,
-                expected: `A good result`
-            };
-            arr.push(obj);
+            handler.setColumnData(i, "action", `Test Action ${i}`);
+            handler.setColumnData(i, "expected", `A good result`);
         }
-        return arr;
     }
 
     private findFieldOfCategoryAndType(category: string, type: string): string | undefined {
-        const catConfig = matrixApi.matrixapi.getItemConfig().getItemConfiguration(category);
+        const catConfig = this.project.getItemConfig().getItemConfiguration(category);
         // We need the first field of type {type}.
         const a = catConfig.fieldList.filter((item) => item.fieldType == type);
         if (a.length > 0) {
@@ -218,8 +211,8 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
     // We have to add a field ourselves to a doc to fill with text.
     private async createDoc(folderId: string, cat: CategoryInstruction, title: string): Promise<boolean> {
-        const fieldDhf00 = matrixApi.matrixapi.getItemConfig().getFieldId("DOC", "dhf00");
-        const fieldDhf01 = matrixApi.matrixapi.getItemConfig().getFieldId("DOC", "dhf01");
+        const fieldDhf00 = this.project.getItemConfig().getFieldId("DOC", "dhf00");
+        const fieldDhf01 = this.project.getItemConfig().getFieldId("DOC", "dhf01");
 
         let data: matrixApi.ISetField[] = [];
         // Copied from the main project. TODO: bring order to this somehow.
@@ -252,7 +245,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
     }
 
     private async createObject(folderId: string, cat: CategoryInstruction, i: number): Promise<boolean> {
-        const config = matrixApi.matrixapi.getItemConfig();
+        const config = this.project.getItemConfig();
         const title = `Bulk_${cat.category}_${i}`;
         let data: matrixApi.ISetField[] = [];
 
@@ -264,35 +257,43 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
         }
 
         const itemConfig = config.getItemConfiguration(cat.category);
+        let newItem = this.project.createItem(cat.category);
+        newItem.setTitle(title);
         for (let field of itemConfig.fieldList) {
             if (field.fieldType == "richtext") {
-                data.push({ fieldName: field.label, value: textGenerator(2) });
+                let f = newItem.getFieldById(field.id);
+                let handler = f.getHandler<matrixApi.RichtextFieldHandler>();
+                handler.setHtml(textGenerator(2));
+            }
+        }
+
+        if (this.isTestCategory(cat.category)) {
+            // We need to fill in 10 steps for the test. First, find the field name.
+            const fieldName = this.findTestStepsField(cat.category);
+            if (fieldName) {
+                let field = newItem.getFieldByName(fieldName)[0];
+                let handler = field.getHandler<matrixApi.TestStepsFieldHandler>();
+                this.createStepsArray(handler, 10);
             }
         }
 
         try {
-            const id: string = await matrixApi.matrixapi.createItem(folderId, title, data);
-            this.log(`Document ${title} created`);
-            if (this.isTestCategory(cat.category)) {
-                // We need to fill in 10 steps for the test. First, find the field name.
-                const fieldName = this.findTestStepsField(cat.category);
-                if (fieldName) {
-                    let item: matrixApi.IItem = await matrixApi.matrixapi.getItem(id);
-                    item[fieldName] = this.createStepsArray(10);
-                    await matrixApi.matrixapi.setField(id, fieldName, JSON.stringify(item[fieldName]));
-                }
-            }
+            newItem = await this.project.putItem(folderId, newItem);
+            this.log(`Document ${title} created, id = ${newItem.getId()}`);
             return true;
         } catch (e) {
-            this.log("Something went wrong");
+            this.log(`Something went wrong, ${e.toString()}`);
         }
         return false;
     }
 
-    private async createFolderForDocs(parentName: string, i: number) {
-            const parentFolderId = `F-${parentName}-1`;
-            const folderId = `S-${parentName}-${i}`;
-            return await matrixApi.matrixapi.createFolder(parentFolderId, folderId);
+    private async createFolderForDocs(category: string, i: number) {
+        const parentFolderId = `F-${category}-1`;
+        const folderTitle = `S-${category}-${i}`;
+        let folderItem = this.project.createFolder(category);
+        folderItem.setTitle(folderTitle);
+        folderItem = await this.project.putItem(parentFolderId, folderItem);
+        return folderItem.getId();
     }
 
     private async createObjects() {
@@ -376,19 +377,21 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
     private async uploadImage(): Promise<string> {
         const settings = this.getSettings();
+        // TODO: replace this with project.uploadFile().
         let result = await (<any>matrixApi.matrixapi).uploadProjectFile(settings.imageToAttachURL);
         return result;
     }
 
     // TODO: put a type on imgInfo.
     private getImageUrl(imgInfo: any) {
-        const projectId = matrixApi.matrixapi.getProject();
+        const projectId = this.project.getName();
         const imageUrl =
             `${matrixApi.globalMatrix.matrixRestUrl}/${projectId}/file/${imgInfo.fileId}?key=${imgInfo.key}`;
         return imageUrl;
     }
 
     private async createExecutedTests(testCategory: string, executedTestCategory: string) {
+        const that = this;
         const settings = this.getSettings();
         let tcInfo = settings.categoryInstructions.filter((cat) => cat.category == testCategory)[0];
         let xtcInfo = settings.categoryInstructions.filter((cat) => cat.category == executedTestCategory)[0];
@@ -408,7 +411,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
                 exeParams.reason = `For bulk creation run ${run}`;
                 // TODO: update the API in npm to include this execute method.
                 try {
-                    await (<any>matrixApi.matrixapi).execute(exeParams);
+                    await (<any>that.project).execute(exeParams);
                 } catch (e) {
                     this.log("There was an error creating the XTC items. Aborting.");
                     this.running = false;
@@ -424,35 +427,37 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
                 this.log("User canceled during executed test image attachment.");
                 return;
             }
-            this.log(`Uploading ${xtcInfo.attachmentCount} images to ${xtc.itemId}...`);
+            this.log(`Uploading ${xtcInfo.attachmentCount} images to ${xtc}...`);
             let imageLinks = [];
             for (let j = 0; j < xtcInfo.attachmentCount; j++) {
                 // Create this many images
                 imageLinks.push(await this.uploadImage());
             }
             // Now make the XTC include the images
-            let xtcItem = await matrixApi.matrixapi.getItem(xtc.itemId);
+            let xtcItem: matrixApi.Item = await this.project.getItem(xtc);
             // Get the table of steps.
-            const fieldName = this.findTestStepsResultField(xtcInfo.category);
-            if (!fieldName) {
-                this.log("Unable to find test case steps field to attach images. Aborting");
+            let fields: matrixApi.Field[] = xtcItem.getFieldsByType("test_steps_result");
+            if (fields.length != 1) {
+                this.log("Unable to find test_steps_result field to attach images. Aborting");
                 this.running = false;
                 return;
             }
-            const fieldId = matrixApi.globalMatrix.ItemConfig.getFieldId(xtcInfo.category, fieldName);
-            let steps = xtcItem[fieldId];
-            let stepsObj = JSON.parse(steps);
-            for (let action of stepsObj) {
+            const field = fields[0];
+            let handler: matrixApi.TestStepsResultFieldHandler =
+                field.getHandler<matrixApi.TestStepsResultFieldHandler>();
+
+            // Insert an image at each row.
+            for (let row = 0; row < handler.getRowCount(); row++) {
                 if (imageLinks.length > 0) {
                     const imgInfo = imageLinks.pop();
                     const currentImageUrl = this.getImageUrl(imgInfo);
-                    const existingText = action["comment"] ?? "";
-                    action["comment"] = existingText +
+                    const existingText = handler.getColumnData(row, "comment") ?? "";
+                    const newText = existingText + 
                         `<br><p>I have a BULK IMAGE at <img src="${currentImageUrl}"></p>`;
+                    handler.setColumnData(row, "comment", newText);
                 }
             }
-            steps = JSON.stringify(stepsObj);
-            await matrixApi.matrixapi.setField(xtc.itemId, fieldName, steps);
+            await that.project.updateItem(xtcItem);
         }
     }
 
@@ -496,7 +501,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
                             for (let j = 0; j < countPerCategory; j++) {
                                 if (currentItemToLink < itemsToLink.length) {
                                     const itemToLink = itemsToLink[currentItemToLink];
-                                    await matrixApi.matrixapi.addDownLink(source.itemId, itemToLink.itemId);
+                                    await matrixApi.matrixapi.addDownLink(source.itemId, itemToLink);
                                 }
                                 currentItemToLink++;
                             }
@@ -507,33 +512,30 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
         }
     }
 
+    private project: matrixApi.Project;
+
     async initializeProject(project: string) {
         const that = this;
-        matrixApi.matrixapi.setProject(project);
+
+        // TODO: get rid of this call once we can call this.project.uploadFile() elsewhere.
+        await matrixApi.matrixapi.setProject(project);
+
+        this.project = await matrixApi.matrixapi.openProject(project);
         that.log("Project successfully found");
 
-        const config = matrixApi.matrixapi.createNewItemConfig();
-        matrixApi.matrixapi.setItemConfig(config);
-
-        matrixApi.matrixapi.getRestServer(project + "/cat").done((catDetails: matrixApi.XRGetProject_CategoryList_GetProjectStructAck) => {
-            config.addCategories(catDetails);
-            matrixApi.matrixapi.getRestServer(project + "/setting").done(async (settings: matrixApi.XRGetProject_ProjectSettingAll_GetSettingAck) => {
-                config.addSettings(settings);
-                if (that.validateCategories(matrixApi.matrixapi.getItemConfig().getCategories(true))) {
-                    // Kick off the next step.
-                    that.log("Validation complete. Now checking to see how many items we already have.");
-                    await that.createObjects();
-                    if (this.running) {
-                        await that.linkObjects();
-                        that.log("Finished with bulk project creation.");
-                        this.running = false;
-                    }
-                }
-            });
-        });
+        if (that.validateCategories(that.project.getItemConfig().getCategories(true))) {
+            // Kick off the next step.
+            that.log("Validation complete. Now checking to see how many items we already have.");
+            await that.createObjects();
+            if (this.running) {
+                await that.linkObjects();
+                that.log("Finished with bulk project creation.");
+                this.running = false;
+            }
+        }
     }
 
-    private kickoff() {
+    private async kickoff() {
         const that = this;
         if (this.running) return;
         this.running = true;
@@ -541,14 +543,14 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
         // Step 1, is the project valid?
         let settings = this.getSettings();
-        matrixApi.matrixapi.setProject(settings.project).then(() => {
+        const projectList = await matrixApi.matrixapi.getProjects();
+        if (projectList.filter(p => p == settings.project).length < 1) {
+            that.log("Project is invalid. Aborting");
+            that.running = false;
+        } else {
             that.log("Project successfully found");
-            this.initializeProject(settings.project);
-        },
-            () => {
-                that.log("Project is invalid. Aborting");
-                that.running = false;
-            });
+            that.initializeProject(settings.project);
+        }
     }
 
     private stop() {

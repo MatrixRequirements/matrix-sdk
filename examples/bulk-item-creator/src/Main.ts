@@ -2,7 +2,7 @@
 /// <reference types="matrix-requirements-api" />
 
 import { ServerSettingsPage } from "./ServerSettingsPage";
-import { IBulkSettings } from "./Interfaces";
+import { IBulkSettings, IServerSettings } from "./Interfaces";
 
 let bulkDefaultSettings: IBulkSettings = {
     project: "BLAH",
@@ -22,7 +22,7 @@ let bulkDefaultSettings: IBulkSettings = {
  *  You can also implement functions to into the plugin (at start in the constructor, when loading a project, when loading an item)
  * 
      */
-export class Plugin implements matrixApi.IExternalPlugin {
+export class Plugin implements matrixApi.IExternalPlugin<IServerSettings, matrixApi.IProjectSettingsBase> {
 
     core: matrixApi.PluginCore;
 
@@ -31,7 +31,7 @@ export class Plugin implements matrixApi.IExternalPlugin {
      * See IPluginConfig interface for explanation of parameters
     */
     
-    static config: matrixApi.IPluginConfig = {
+    static config: matrixApi.IPluginConfig<IServerSettings, matrixApi.IProjectSettingsBase> = {
         /*  Page in admin client to configure settings across all projects - set enabled to false if not needed. 
             The page itself is implemented in the _ServerSettingsPage.ts 
         */
@@ -118,25 +118,25 @@ export class Plugin implements matrixApi.IExternalPlugin {
 
     PLUGIN_VERSION: string;
     PLUGIN_NAME: string;
-    getDashboard(): matrixApi.IDashboardPage {
+    async getDashboard(): Promise<matrixApi.IDashboardPage> {
         return null;
     }
-    getProjectSettingsPage(): matrixApi.IPluginSettingPage<matrixApi.IProjectSettingsBase> {
+    async getProjectSettingsPage(): Promise<matrixApi.IPluginSettingPage<matrixApi.IProjectSettingsBase>> {
         return null;
     }
-    getServerSettingsPage(): matrixApi.IPluginSettingPage<matrixApi.IServerSettingsBase> {
+    async getServerSettingsPage(): Promise<matrixApi.IPluginSettingPage<IServerSettings>> {
         if (matrixApi.app.isConfigApp()) {
             return new ServerSettingsPage(<matrixApi.IConfigApp><unknown>matrixApi.app);
         }
         return null;
     }
-    getControl(ctrlObj: JQuery): matrixApi.ControlCoreBase {
+    async getControl(ctrlObj: JQuery): Promise<matrixApi.ControlCoreBase> {
         return null;
     }
-    getTool(): matrixApi.ITool {
+    async getTool(): Promise<matrixApi.ITool> {
         return null;
     }
-    getConfig(): matrixApi.IPluginConfig {
+    getConfig(): matrixApi.IPluginConfig<IServerSettings, matrixApi.IProjectSettingsBase> {
         return Plugin.config;
     }
     enableToolMenu(ul: JQuery, _hook: number): boolean {
