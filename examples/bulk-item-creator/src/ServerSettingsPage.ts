@@ -2,16 +2,6 @@ import { CategoryInstruction, IBulkSettings, IServerSettings } from "./Interface
 import { Plugin } from "./Main";
 import { textGenerator } from "./lorem-ipsum";
 
-// TODO: get this into the API, it is currently "magic"
-/*
-declare global {
-    interface JQuery {
-        mxDropdown(a: any): JQuery;
-        tableCtrl(a: any): JQuery;
-        getController(): any;
-    }
-}
-*/
 
 // eslint-disable-next-line no-unused-vars
 /* server Setting page closure*/
@@ -145,14 +135,14 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
 
     private async getCategoryWithDownlinkItems(category: string, downlinkedCategory: string,
-        without: boolean): Promise<matrixApi.ISearchResult[]> {
+        without: boolean): Promise<matrixApi.Item[]> {
         let not = "";
         if (without) {
             not = "!"
         }
         const search = `mrql:category=${category} and downlink ${not}= ${downlinkedCategory}`;
-        const results: matrixApi.ISearchResult[] = await matrixApi.matrixapi.search(
-            search, false, false, false);
+        let mask = this.project.constructSearchFieldMask(false, false, true, true);
+        const results: matrixApi.Item[] = await this.project.complexSearch(search, "", false, mask);
         return results;
     }
 
@@ -334,56 +324,12 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
         }
     }
 
-    private lookup;
-    private XTCconfig: matrixApi.ITestConfig;
-
-    // This is copied from the Clouds source.
-    private prepareMapping(): matrixApi.IGenericMap {
-
-        this.XTCconfig = matrixApi.globalMatrix.ItemConfig.getTestConfig();
-
-        let fieldList = matrixApi.globalMatrix.ItemConfig.getItemConfiguration(this.XTCconfig.xtcType).fieldList;
-        this.lookup = {};
-
-        for (let csi = 0; csi < this.XTCconfig.cloneSources.length; csi++) {
-            let cs = matrixApi.globalMatrix.ItemConfig.getItemConfiguration(this.XTCconfig.cloneSources[csi]).fieldList;
-            for (let csfi = 0; csfi < cs.length; csfi++) {
-                let csf = cs[csfi];
-                for (let tfi = 0; tfi < fieldList.length; tfi++) {
-                    let tf = fieldList[tfi];
-                    if (tf.label.toLowerCase() !== "jira") {
-                        if ((tf.fieldType === "test_steps_result" && csf.fieldType === "test_steps") ||
-                            (tf.label === csf.label)) {
-                            this.lookup[csf.id] = tf.id;
-                        }
-                    }
-                }
-            }
-        }
-        return this.lookup;
-    }
-
-    public getMappingItems(): matrixApi.IFieldMapping[] {
-        this.prepareMapping();
-        let mapping: matrixApi.IFieldMapping[] = [];
-        const entries = Object.entries(this.lookup);
-        entries.forEach((entry) => {
-            const key = parseInt(entry[0]);
-            const value = parseInt(<string>entry[1]);
-            mapping.push({ fromId: key, toId: value });
-        });
-        return mapping;
-    }
-
-    private async uploadImage(): Promise<string> {
+    private async uploadImage(): Promise<matrixApi.AddFileAck> {
         const settings = this.getSettings();
-        // TODO: replace this with project.uploadFile().
-        let result = await (<any>matrixApi.matrixapi).uploadProjectFile(settings.imageToAttachURL);
-        return result;
+        return await this.project.uploadFile(settings.imageToAttachURL);
     }
 
-    // TODO: put a type on imgInfo.
-    private getImageUrl(imgInfo: any) {
+    private getImageUrl(imgInfo: matrixApi.AddFileAck) {
         const projectId = this.project.getName();
         const imageUrl =
             `${matrixApi.globalMatrix.matrixRestUrl}/${projectId}/file/${imgInfo.fileId}?key=${imgInfo.key}`;
@@ -402,16 +348,12 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
             // Every time we create a run, we get {tcInfo.count} new XTCs.
             const numberOfRuns = Math.floor(xtcCountToCreate / tcInfo.count);
 
-            let exeParams: matrixApi.ITestWizardParams = {
-                itemFieldMapping: this.getMappingItems(),
-                input: [`F-${testCategory}-1`],
-                output: executedTestCategory
-            };
             for (let run = 0; run < numberOfRuns; run++) {
-                exeParams.reason = `For bulk creation run ${run}`;
-                // TODO: update the API in npm to include this execute method.
+                let exeParams: matrixApi.ExecuteParam =
+                    that.project.createExecuteParamWithDefaults([`F-${testCategory}-1`], executedTestCategory,
+                        `For bulk creation run ${run}`);
                 try {
-                    await (<any>that.project).execute(exeParams);
+                    await that.project.execute(exeParams);
                 } catch (e) {
                     this.log("There was an error creating the XTC items. Aborting.");
                     this.running = false;
@@ -428,7 +370,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
                 return;
             }
             this.log(`Uploading ${xtcInfo.attachmentCount} images to ${xtc}...`);
-            let imageLinks = [];
+            let imageLinks: matrixApi.AddFileAck[] = [];
             for (let j = 0; j < xtcInfo.attachmentCount; j++) {
                 // Create this many images
                 imageLinks.push(await this.uploadImage());
@@ -501,7 +443,8 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
                             for (let j = 0; j < countPerCategory; j++) {
                                 if (currentItemToLink < itemsToLink.length) {
                                     const itemToLink = itemsToLink[currentItemToLink];
-                                    await matrixApi.matrixapi.addDownLink(source.itemId, itemToLink);
+                                    source.addDownlink(itemToLink);
+                                    await this.project.updateItem(source);
                                 }
                                 currentItemToLink++;
                             }
@@ -516,9 +459,6 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
     async initializeProject(project: string) {
         const that = this;
-
-        // TODO: get rid of this call once we can call this.project.uploadFile() elsewhere.
-        await matrixApi.matrixapi.setProject(project);
 
         this.project = await matrixApi.matrixapi.openProject(project);
         that.log("Project successfully found");

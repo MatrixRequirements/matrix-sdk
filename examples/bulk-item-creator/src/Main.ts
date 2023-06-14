@@ -172,18 +172,13 @@ export class Plugin implements matrixApi.IExternalPlugin<IServerSettings, matrix
 }
 
 declare global {
-    
     // eslint-disable-next-line no-unused-vars
     interface Window {
         plugins: unknown;
     }
 }
 
-$(() => {
-    // Register the plugin
-    $(function () {
-        if (matrixApi.plugins["register"] != undefined) {
-            matrixApi.plugins.register(new Plugin().core);
-        }
-    });
-});
+// Register the plugin
+if (matrixApi.plugins["register"] != undefined) {
+    matrixApi.plugins.register(new Plugin().core);
+}
