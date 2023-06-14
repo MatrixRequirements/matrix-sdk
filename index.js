@@ -5233,7 +5233,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(115), __webpack_require__(248), __webpack_require__(249), __webpack_require__(129), __webpack_require__(128), __webpack_require__(9), __webpack_require__(49), __webpack_require__(119), __webpack_require__(257)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1, TestManagerConfiguration_1, LabelManager_1, Project_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.CreateConsoleAPI = exports.StandaloneMatrixAPI = void 0;
+    exports.CreateFrom23Environment = exports.CreateConsoleAPI = exports.StandaloneMatrixAPI = void 0;
     // import { isomorphicFetch } from "isomorphic-fetch";
     let isomorphicFetch = __webpack_require__(246);
     function CreateConsoleAPI(token, baseRestUrl, baseMatrixUrl) {
@@ -5253,6 +5253,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         return new StandaloneMatrixAPI(config, session, itemConfig, baseRestUrl, baseMatrixUrl, logger, json, itemTools);
     }
     exports.CreateConsoleAPI = CreateConsoleAPI;
+    /**
+     * If this file is loaded in a 2.3 environment, then this function provides an easy way
+     * to sniff context from globals and create an sdk object.
+     * @throws an Error if some of the environment variables can't be found.
+     * @returns A StandaloneMatrixAPI
+     */
+    function CreateFrom23Environment() {
+        let matrixSession = globalThis["matrixSession"];
+        let IC = globalThis["IC"];
+        let ml = globalThis["ml"];
+        let matrixBaseUrl = globalThis["matrixBaseUrl"];
+        let baseRestUrl = globalThis["matrixRestUrl"];
+        if (!matrixSession || !IC || !ml || !matrixBaseUrl || !baseRestUrl) {
+            throw new Error("some global variables are missing");
+        }
+        // We create our own TestManager, because the 2.3 version operated differently to
+        // our needs.
+        const testManagerConfig = new TestManagerConfiguration_1.TestManagerConfiguration();
+        testManagerConfig.initialize(IC);
+        let config = new configuration_1.Configuration();
+        let adaptor = new class {
+            getCsrfCookie() { return matrixSession.getCsrfCookie(); }
+            setComment(comment) { matrixSession.setComment(comment); }
+            getComment() { return matrixSession.getComment(); }
+            setProject(project) { matrixSession.setProject(project); }
+            getProject() { return matrixSession.getProject(); }
+            getDefaultProjectContext() {
+                const context = {
+                    getItemConfig: () => { return IC; },
+                    getJsonTools: () => { return ml.JSON; },
+                    getLogger: () => { return ml.Logger; },
+                    getLabelManager: () => { return ml.LabelTools; },
+                    getTestManagerConfig: () => {
+                        testManagerConfig.initialize(IC);
+                        return testManagerConfig;
+                    }
+                };
+                return context;
+            }
+        };
+        let standalone = new StandaloneMatrixAPI(config, adaptor, IC, baseRestUrl, matrixBaseUrl, ml.Logger, ml.JSON, new SimpleItemTools_1.SimpleItemTools());
+        return standalone;
+    }
+    exports.CreateFrom23Environment = CreateFrom23Environment;
     class IsomorphicFetchWrapper {
         constructor(oldFetch) {
             this.oldFetch = oldFetch;
@@ -5604,10 +5648,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             let result = await this.instance.projectFilePost(project, url, options);
             return result;
         }
-        async execute(payload) {
+        async executeInProject(project, payload) {
             const options = { headers: this.getHeadersForPost() };
-            let items = await this.instance.projectExecutePost(this.getProject(), payload, options);
+            let items = await this.instance.projectExecutePost(project, payload, options);
             return items;
+        }
+        async execute(payload) {
+            return this.executeInProject(this.getProject(), payload);
         }
         /**
          * The session object contains a string that represents the "current project."
@@ -20942,6 +20989,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         async search(term) {
             return this.server.searchInProject(this.name, term);
+        }
+        /**
+         * Run a server execute command with the given payload
+         * @param payload a valid ExecuteParam object
+         * @returns A FolderAnswer object
+         */
+        async execute(payload) {
+            return this.server.executeInProject(this.name, payload);
+        }
+        /**
+         * Used to populate the rather complex ExecuteParam type. We need a mapping from clone source
+         * field ids to the output category field ids.
+         * @param inputFolderIds
+         * @param outputCategory
+         * @param reason
+         * @returns A populated ExecuteParam suitable for use with the execute method.
+         */
+        createExecuteParamWithDefaults(inputFolderIds, outputCategory, reason) {
+            const config = this.getItemConfig();
+            const XTCconfig = config.getTestConfig();
+            const outputFieldList = config.getItemConfiguration(outputCategory).fieldList;
+            let fromTo = [];
+            // For each clone source to the output category, create a mapping.
+            for (let cloneSource of XTCconfig.cloneSources) {
+                const cloneSourceFields = config.getItemConfiguration(cloneSource).fieldList;
+                for (let cloneSourceField of cloneSourceFields) {
+                    for (let outputField of outputFieldList) {
+                        if (outputField.label.toLowerCase() !== "jira") {
+                            if ((outputField.fieldType === "test_steps_result" &&
+                                cloneSourceField.fieldType == "test_steps") ||
+                                outputField.label === cloneSourceField.label) {
+                                fromTo.push({ fromId: cloneSourceField.id, toId: outputField.id });
+                            }
+                        }
+                    }
+                }
+            }
+            let executeParam = {
+                input: inputFolderIds,
+                output: outputCategory,
+                reason: reason,
+                itemFieldMapping: fromTo
+            };
+            return executeParam;
         }
         /**
          * Execute a more complex search, where the fields in the results can be limited.
