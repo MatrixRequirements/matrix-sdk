@@ -2022,10 +2022,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (fieldValue && fieldValue.length > 0 && this.itemConfig) {
                 this.fieldConfig.dhfValue = JSON.parse(fieldValue);
                 this.fieldConfig.dhfValue.ctrlConfig = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.itemConfig, this.fieldConfig.dhfValue.type, this.fieldConfig.dhfValue.ctrlConfig);
-                this.innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.itemConfig, this.fieldConfig.dhfValue);
+                this.setInnerFieldHandler(Document_1.DocFieldHandlerFactory.createHandler(this.itemConfig, this.fieldConfig.dhfValue));
             }
         }
-        setFieldHandler(docFieldHandler) {
+        setInnerFieldHandler(docFieldHandler) {
             this.innerDataHandler = docFieldHandler;
         }
     }
@@ -6171,6 +6171,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          */
         async getProjectTodos(project, itemRef, includeDone, includeAllUsers, includeFuture) {
             return this.instance.projectTodoGet(project, itemRef, includeDone ? 1 : 0, includeAllUsers ? 1 : 0, includeFuture ? 1 : 0);
+        }
+        async postProjectReport(project, item, format) {
+            //rest url and baseUrl should be provided.
+            let baseUrl = this.matrixBaseUrl;
+            let restUrl = this.baseRestUrl;
+            return this.instance.projectReportReportPost(project, item, "false", "false", item, "none", undefined, baseUrl, restUrl, format);
+        }
+        async getJobStatus(project, jobId, options) {
+            return this.instance.projectJobJobGet(project, jobId, options);
         }
     }
     exports.StandaloneMatrixAPI = StandaloneMatrixAPI;
@@ -20960,7 +20969,7 @@ module.exports = function(obj, sep, eq, name) {
 /* 257 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(258), __webpack_require__(259), __webpack_require__(261)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Category_1, Item_1, TreeFolder_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(258), __webpack_require__(259), __webpack_require__(261), __webpack_require__(262)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Category_1, Item_1, TreeFolder_1, DocItem_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.Project = void 0;
@@ -21176,6 +21185,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             const category = iitem.isFolder ? this.getCategory("FOLDER") : this.getCategory(iitem.type);
             return new Item_1.Item(category, iitem);
         }
+        /** Return a DocItem from an id.
+         * @param {id} id The id of the DOC */
+        async getItemAsDoc(id) {
+            const iitem = await this.server.getItemFromProject(this.name, id);
+            return new DocItem_1.DocItem(this, iitem);
+        }
         /**
          * Save an item into a given folder.
          * @param parentFolderId
@@ -21279,6 +21294,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         getItemConfig() { return this.context.getItemConfig(); }
         getLabelManager() { return this.context.getLabelManager(); }
         getTestConfig() { return this.context.getTestManagerConfig(); }
+        async generateDocument(type, docId, progressReporter) {
+            let reportJob = await this.server.postProjectReport(this.name, docId, type);
+            let generatedFiles = [];
+            let jobFinished = false;
+            while (!jobFinished) {
+                let job = await this.server.getJobStatus(this.name, reportJob.jobId);
+                if (progressReporter) {
+                    progressReporter(reportJob.jobId, job.progress);
+                }
+                if (job.status === "Error" || (job.progress > 100)) {
+                    throw new Error(`Error generating report : ${job.status}`);
+                }
+                else if (job.status !== "Done" || job.progress < 100) {
+                    await this.sleep(500);
+                }
+                else if (job.progress == 100 && job.status === "Done") {
+                    jobFinished = true;
+                    generatedFiles = job.jobFile;
+                }
+            }
+            return generatedFiles;
+        }
+        async sleep(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
     }
     exports.Project = Project;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -22268,6 +22308,222 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
     }
     exports.TreeFolder = TreeFolder;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 262 */
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(259), __webpack_require__(31), __webpack_require__(79), __webpack_require__(80)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Item_1, FieldDescriptions_1, SectionDescriptions_1, Document_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", ({ value: true }));
+    exports.DocItem = void 0;
+    class DocItem extends Item_1.Item {
+        constructor(project, item, fieldMask) {
+            super(project.getCategory("DOC"), item, fieldMask);
+            this.project = project;
+            // Verify that either fieldMask is not set or contains all fieds of the category
+            if (fieldMask) {
+                for (let field of this.getCategory().getFields()) {
+                    if (fieldMask.hasFieldId(field.id)) {
+                        throw new Error("Fieldmask does not contain all fields of the category");
+                    }
+                }
+            }
+            this.initDHFFields(item, project.getItemConfig());
+        }
+        /**
+         * add a section to the end of a document
+         * @param {title} Title of the section
+         * @param {sectionType} Type of the section
+         */
+        addSection(title, sectionType) {
+            let documentOptionIndex = this.getDHFSections().findIndex((section) => section.getHandler().innerDataHandler.getFieldType() == SectionDescriptions_1.SectionDescriptions.section_document_options);
+            let handler = null;
+            if (documentOptionIndex > -1) {
+                handler = this.insertSection(documentOptionIndex, title, sectionType);
+            }
+            else {
+                this.addDocumentOptions();
+                handler = this.insertSection(0, title, sectionType);
+            }
+            return handler;
+        }
+        /**
+         * Get the next section that needs to be filled
+         * */
+        getNextDHFFieldName() {
+            let nextFieldToFill = "";
+            let dhfSections = this.getDHFSections();
+            for (let field of dhfSections) {
+                let type = field.getHandler().innerDataHandler.getFieldType();
+                if (type == SectionDescriptions_1.SectionDescriptions.section_hidden) {
+                    nextFieldToFill = field.getFieldName();
+                    break;
+                }
+            }
+            return nextFieldToFill;
+        }
+        /** Get the list of DHF fields */
+        getDHFSections() {
+            return this.getFieldsByType(FieldDescriptions_1.FieldDescriptions.Field_dhf).sort((a, b) => a.getFieldName().localeCompare(b.getFieldName()));
+        }
+        /** insert a section at a given position
+         * @param {number} number Position of the section
+         * @param {sectionName} sectionName Name of the section
+         * @param {sectionType} sectionType Type of the section
+         * */
+        insertSection(number, sectionName, sectionType) {
+            // Create the section
+            let sections = this.getDHFSections();
+            if (number < 0) {
+                // Negative numbers are counted from the end
+                number = sections.length + number;
+            }
+            if (number >= sections.length || number < 0)
+                throw new Error("Cannot insert section at position " + number + " because there are only " + sections.length + " sections");
+            // Get the count of non hidden sections
+            let nonHiddenSectionsCount = sections.filter((section) => section.getHandler().innerDataHandler.getFieldType() != SectionDescriptions_1.SectionDescriptions.section_hidden).length;
+            if (nonHiddenSectionsCount == sections.length)
+                throw new Error("Cannot insert section at position " + number + " because there are no section left");
+            if (number > nonHiddenSectionsCount + 1)
+                throw new Error("Cannot insert section at position " + number + " because there will be a hidden section in between");
+            for (let i = sections.length - 1; i > number; i--) {
+                let section = sections[i];
+                let previous = sections[i - 1];
+                section.getHandler().setInnerFieldHandler(previous.getHandler().innerDataHandler);
+            }
+            let section = sections[number];
+            let config = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.project.getItemConfig(), sectionType, {});
+            let innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
+                type: sectionType,
+                ctrlConfig: config
+            });
+            innerDataHandler.setFieldName(sectionName);
+            section.getHandler().setInnerFieldHandler(innerDataHandler);
+            let fieldName = section.getFieldName();
+            this.addMandatoryFields();
+            return this.getSingleFieldByName(fieldName).getHandler();
+        }
+        /** Remove a section at a given position
+         * @param {number} number The position of the element to remove */
+        removeSection(number) {
+            let sections = this.getDHFSections();
+            if (number < 0) {
+                // Negative numbers are counted from the end
+                number = sections.length + number;
+            }
+            if (number >= sections.length || number < 0)
+                throw new Error("Cannot insert remove at position " + number + " because there are only " + sections.length + " sections");
+            let lastField = -1;
+            for (let i = number; i < sections.length - 1; i++) {
+                let currentSection = sections[i];
+                let nextSection = sections[i + 1];
+                currentSection.getHandler().setInnerFieldHandler(nextSection.getHandler().innerDataHandler);
+                if (nextSection.getHandler().innerDataHandler.getFieldType() != SectionDescriptions_1.SectionDescriptions.section_hidden) {
+                    nextSection.getHandler().setInnerFieldHandler(Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
+                        type: SectionDescriptions_1.SectionDescriptions.section_hidden,
+                        ctrlConfig: {}
+                    }));
+                }
+            }
+            // Make sure that we still have a document options section
+            this.addMandatoryFields();
+        }
+        async exportTo(type, progressReporter) {
+            let jobFiles = await this.project.generateDocument(type, this.getId(), progressReporter);
+            for (let jobFile of jobFiles) {
+                if (jobFile.visibleName.endsWith(type)) {
+                    return jobFile.restUrl;
+                }
+            }
+            return "not found";
+        }
+        /** Generate a html document
+         * @return {url} the URL of the generated document */
+        async toHTML(progressReporter) {
+            return this.exportTo("html", progressReporter);
+        }
+        /** Generate a pdf document
+         * @return {url} the URL of the generated document */ async toPDF(progressReporter) {
+            return this.exportTo("pdf", progressReporter);
+        }
+        /** Generate a docx  document
+         * @return {url} the URL of the generated document */
+        async toDOCx(progressReporter) {
+            return this.exportTo("docx", progressReporter);
+        }
+        addMandatoryFields() {
+            let hasDocumentOptions = false;
+            for (let field of this.getCategory().getFields()) {
+                // The mask influences what we send out.
+                if (this.getFieldMask().hasFieldId(field.id)) {
+                    const myField = this.getFieldById(field.id);
+                    if (field.fieldType == FieldDescriptions_1.FieldDescriptions.Field_reportId) {
+                        myField.getHandlerRaw().initData("dhf_generic");
+                    }
+                }
+            }
+            // Document options should be the last field
+            let sections = this.getDHFSections();
+            let foundDocumentOptions = sections.find((section) => section.getHandler().innerDataHandler.getFieldType() == SectionDescriptions_1.SectionDescriptions.section_document_options);
+            if (foundDocumentOptions == undefined) {
+                // Document options is something we need to add
+                //get the last field
+                this.addDocumentOptions();
+            }
+            else {
+                let documenOptionsInnerHandlerIndex = sections.indexOf(foundDocumentOptions);
+                let documenOptionsInnerHandler = foundDocumentOptions.getHandler().innerDataHandler;
+                let lastField = documenOptionsInnerHandlerIndex;
+                for (let i = documenOptionsInnerHandlerIndex; i < sections.length - 2; i++) {
+                    let field = sections[i];
+                    let nextField = sections[i + 1];
+                    if (field.getHandler().innerDataHandler.getFieldType() != SectionDescriptions_1.SectionDescriptions.section_hidden) {
+                        field.getHandler().setInnerFieldHandler(nextField.getHandler().innerDataHandler);
+                    }
+                    else {
+                        lastField = i - 1;
+                        break;
+                    }
+                }
+                if (lastField != -1)
+                    sections[lastField].getHandler().setInnerFieldHandler(documenOptionsInnerHandler);
+            }
+        }
+        initDHFFields(item, itemConfig) {
+            let dhfSections = this.getDHFSections();
+            for (let field of dhfSections) {
+                let h = field.getFieldId();
+                let value = undefined;
+                if (item) {
+                    // Always set the item config. This is needed for the field handlers
+                    field.getHandler().setItemConfig(itemConfig);
+                    value = item[field.getFieldId()];
+                    let handler = field.getHandler();
+                    if (value && handler) {
+                        handler.initData(value);
+                    }
+                }
+            }
+        }
+        addDocumentOptions() {
+            let field = this.getSingleFieldByName(this.getNextDHFFieldName());
+            if (!field) {
+                throw new Error("Cannot insert section because there are no section left");
+            }
+            let handler = field.getHandler();
+            let config = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.project.getItemConfig(), SectionDescriptions_1.SectionDescriptions.section_document_options, {});
+            let innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
+                type: SectionDescriptions_1.SectionDescriptions.section_document_options,
+                ctrlConfig: config
+            });
+            handler.setInnerFieldHandler(innerDataHandler);
+        }
+    }
+    exports.DocItem = DocItem;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
