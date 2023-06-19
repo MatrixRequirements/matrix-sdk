@@ -1,6 +1,7 @@
 import { CategoryInstruction, IBulkSettings, IServerSettings } from "./Interfaces";
 import { Plugin } from "./Main";
 import { textGenerator } from "./lorem-ipsum";
+import SectionDescriptions = matrixApi.SectionDescriptions;
 
 
 // eslint-disable-next-line no-unused-vars
@@ -201,36 +202,13 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
     // We have to add a field ourselves to a doc to fill with text.
     private async createDoc(folderId: string, cat: CategoryInstruction, title: string): Promise<boolean> {
-        const fieldDhf00 = this.project.getItemConfig().getFieldId("DOC", "dhf00");
-        const fieldDhf01 = this.project.getItemConfig().getFieldId("DOC", "dhf01");
 
-        let data: matrixApi.ISetField[] = [];
-        // Copied from the main project. TODO: bring order to this somehow.
-        const dhf00String = JSON.stringify({
-            "type": "document_options", "name": "Document Options",
-            "fieldValue": "", "ctrlConfig": { "auto_number": false, "omit_title": false }
-        });
-        data.push({ fieldName: "dhf00", value: dhf00String });
-        const id: string = await matrixApi.matrixapi.createItem(folderId, title, data);
-        let item: matrixApi.IItem = await matrixApi.matrixapi.getItem(id);
+        let doc = this.project.createDOC();
+        doc.setTitle(title);
+        let section = doc.addSection("Description", SectionDescriptions.section_richtext);
+        section.innerDataHandler.initData( "<p>" + textGenerator(2) + "</p>",)
+        let result = await this.project.putItem(folderId, doc);
 
-        // await matrixApi.matrixapi.instance.projecdtIte
-
-        // the item will have a field of type dhf, named dhf<number>, where the largest number
-        // contains a meta-object that marks the last of the current fields. Since we're creating a
-        // new document, we know that dhf00 will contain this object. Our goal is to replace this
-        // field with a "real" rich_text field, and move the marker up to dhf01.
-        data = [];
-        let fieldValue = {
-            type: "richtext",
-            name: "description",
-            fieldValue: "<p>" + textGenerator(2) + "</p>",
-            fieldValueXML: JSON.stringify([{ "globalOptions": true }])
-        };
-        data.push({ fieldName: "dhf01", value: item[fieldDhf00] });
-        data.push({ fieldName: "dhf00", value: JSON.stringify(fieldValue) });
-        data.push({ fieldName: "reportId", value: "dhf_generic" });
-        await matrixApi.matrixapi.setFields(id, data);
         return true;
     }
 

@@ -21171,6 +21171,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return new Item_1.Item(this.getCategory(category));
         }
+        createDOC() {
+            return new DocItem_1.DocItem(this);
+        }
         /**
          * Create a folder. Every folder must contain only items of a particular type.
          * @param type

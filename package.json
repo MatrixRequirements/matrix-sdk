@@ -1,6 +1,6 @@
 {
   "name": "matrix-requirements-api",
-  "version": "1.0.17",
+  "version": "1.0.19",
   "description": "An API for manipulating MatrixRequirements projects",
   "main": "index.js",
   "types": "matrixApi.d.ts",
