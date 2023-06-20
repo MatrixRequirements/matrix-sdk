@@ -3990,7 +3990,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.getSettingJSON("labels");
         }
         getIncludeConfig() {
-            let conf = this.getSettingJSON("imports");
+            let conf = this.getSettingJSON("compose");
             return (conf ? conf : {
                 copies: {
                     importMasters: [],
@@ -5314,6 +5314,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.myFetch;
         }
     }
+    /**
+     * StandaloneMatrixAPI is a connection to a Matrix Instance. It offers services to interact
+     * with the Instance. A primary purpose beyond authenticating on the server is to provide access
+     * to Project objects through openProject() or openCurrentProjectFromSession().
+     */
     class StandaloneMatrixAPI {
         constructor(config, session, initialItemConfig, baseRestUrl, matrixBaseUrl, logger, json, simpleItemTools) {
             this.config = config;
@@ -20974,6 +20979,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.Project = void 0;
     ;
+    /**
+     * The Project class offers methods to manipulate a Matrix Project on a Matrix Instance.
+     * It is not meant to be created by the end user, rather the openProject() method is used on
+     * a StandaloneMatrixAPI object which represents the Matrix Instance.
+     */
     class Project {
         constructor(server, name, context) {
             this.server = server;
@@ -20985,6 +20995,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 this.categories.set(c, new Category_1.Category(c, this));
             }
         }
+        /**
+         * Get the root TreeFolder for a Project.
+         * @returns A valid TreeFolder.
+         */
         async getProjectTree() {
             const that = this;
             const folders = await that.server.getFullTreeFromProject(that.name);
@@ -20996,6 +21010,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             };
             return new TreeFolder_1.TreeFolder(that, f);
         }
+        /**
+         * Perform a search, returning IDs of Items that match.
+         * @param term - a search term. Consult documentation for valid searches, including
+         *     "mrql" searches.
+         * @returns An array of matching item IDs.
+         */
         async search(term) {
             return this.server.searchInProject(this.name, term);
         }
@@ -21055,10 +21075,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param includeDownlinks default false
          * @param includeUplinks default false
          * @param treeOrder default false
+         * @return returns an array of ISearchResult objects.
          */
         async complexSearchInProject(term, filter = "", fieldList = "*", includeLabels = true, includeDownlinks = false, includeUplinks = false, treeOrder = false) {
             return this.server.complexSearchInProject(this.name, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder);
         }
+        /**
+         * Perform a search and return items that are initialized according to the provided mask
+         * settings. This allows you to efficiently gather data from the server with only the fields
+         * you need brought down.
+         *
+         * @param term
+         * @param filter
+         * @param treeOrder
+         * @param mask
+         * @returns an array of filled-in Item objects.
+         */
         async complexSearch(term, filter = "", treeOrder = false, mask) {
             let includeLabels = true;
             let includeDownlinks = false;
@@ -21146,6 +21178,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return items;
         }
+        /**
+         * Create an ItemsFieldMask for use with search functions.
+         *
+         * @param includeFields true by default. If false, no fields will be retrieved from the server.
+         * @param includeLabels true by default. If false, no label information will be retrieved from the server.
+         * @param includeDownlinks false by default. If false, no information about downlinks will come from the server.
+         * @param includeUplinks false by default. If false, no information about uplinks will come from the server.
+         * @returns an initialized ItemsFieldMask object which can be further customized.
+         */
         constructSearchFieldMask(includeFields = true, includeLabels = true, includeDownlinks = false, includeUplinks = false) {
             return new Category_1.ItemsFieldMask(includeFields, includeLabels, includeDownlinks, includeUplinks);
         }
@@ -21585,7 +21626,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         getFieldMask() { return this.fieldMask; }
         /**
          * Read-only.
-         * @returns
+         * @returns The highest version reached for this item, or undefined if the
+         *     item hasn't yet been saved on the server.
          */
         getMaxVersion() {
             return this.maxVersion;
@@ -21851,7 +21893,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         /**
          * Export the data from this item into an IItemPut structure
-         * @returns
+         * @returns An IItemPut structure, filled in from the current state of the Item.
          */
         extractData() {
             let item = {
@@ -22087,6 +22129,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.Field = void 0;
+    /**
+     * A Field represents a field in an Item in a Project on a Matrix Instance. The Field contains
+     * the data for a given field, along with knowledge about the configuration of that field, as
+     * given by the Category settings for Items of that particular category.
+     *
+     * The end user reads and changes the data in a field through a Field Handler. There is a
+     * unique field handler for each field type. Consult documentation for a table mapping field
+     * types to field handlers.
+     */
     class Field {
         constructor(config, handler) {
             this.config = config;
@@ -22125,6 +22176,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TreeFolder = void 0;
+    /**
+     * A TreeFolder represents a folder in the Matrix application. It can answer queries about
+     * folder and item children. A Folder is also an Item.
+     */
     class TreeFolder {
         constructor(needs, folder, parent) {
             this.needs = needs;
