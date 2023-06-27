@@ -2010,6 +2010,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             options.push(global);
             // update the xml dump
             dhfValue.fieldValueXML = JSON.stringify(options);
+            dhfValue['ctrlConfig'] = controllerConfig;
             //MATRIX-5714 : Dompurify in SDK... Should we make it available ?
             //
             // sanitize the name
