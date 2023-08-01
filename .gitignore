@@ -3,3 +3,4 @@ node_modules
 examples/bulk-item-creator/.idea/
 examples/bulk-item-creator/build/
 examples/bulk-item-creator/dist/
+.idea
