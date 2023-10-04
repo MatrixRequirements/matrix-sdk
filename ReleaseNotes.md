@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.0.24
+
+More renaming.
+
 ## 1.0.23
 
 Renamed npm project to reflect the sdk.

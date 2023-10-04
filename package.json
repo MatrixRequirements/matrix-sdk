@@ -1,6 +1,6 @@
 {
   "name": "matrix-requirements-sdk",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "An SDK for manipulating MatrixRequirements projects",
   "main": "index.js",
   "types": "matrixApi.d.ts",
