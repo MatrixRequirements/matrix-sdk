@@ -1,10 +1,10 @@
 /// <reference types="matrixrequirements-type-declarations" />
-/// <reference types="matrix-requirements-api" />
+/// <reference types="matrix-requirements-sdk" />
 import readline from 'readline';
 // import { exit } from "process";
 import { Command } from 'commander';
 require('node-self');
-let matrix = require('matrix-requirements-api');
+let matrix = require('matrix-requirements-sdk');
 export {};
 
 // let token = "Token api_6k95hig76a2u4mdkn2vr5i15jo.v6dm6rrukfe929c5ujjsg6pe5t";
@@ -199,7 +199,7 @@ async function handleCat(args: string) {
     if (itemId) {
         // Get the item
         const item: matrixApi.Item = await currentDir.project.getItem(itemId);
-        const iitem = item.extractData();
+        const iitem = await item.extractDataAsync();
         console.dir(iitem, { depth: null, colors: true });
         // print(JSON.stringify(item));
     }

@@ -1,5 +1,5 @@
 /* Setting interfaces */
-/// <reference types="matrix-requirements-api" />
+/// <reference types="matrix-requirements-sdk" />
 
 /**
  * This file defines all the data structures which might be shared between UI components and printing
