@@ -1,7 +1,7 @@
 {
   "name": "matrix-requirements-api",
-  "version": "1.0.21",
-  "description": "An API for manipulating MatrixRequirements projects",
+  "version": "1.0.22",
+  "description": "An SDK for manipulating MatrixRequirements projects",
   "main": "index.js",
   "types": "matrixApi.d.ts",
   "scripts": {
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MatrixRequirements/matrix-api.git"
+    "url": "git+https://github.com/MatrixRequirements/matrix-sdk.git"
   },
   "author": "mike@matrixreq.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MatrixRequirements/matrix-api/issues"
+    "url": "https://github.com/MatrixRequirements/matrix-sdk/issues"
   },
-  "homepage": "https://github.com/MatrixRequirements/matrix-api#readme",
+  "homepage": "https://github.com/MatrixRequirements/matrix-sdk#readme",
   "devDependencies": {
     "matrixrequirements-type-declarations": "^1.0.3",
     "typedoc": "^0.24.0-beta.2"
