@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.0.23
+
+Renamed npm project to reflect the sdk.
+
 ## 1.0.22
 
 Renamed repository to matrix-sdk from matrix-api, as it is
