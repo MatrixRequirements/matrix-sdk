@@ -1,6 +1,6 @@
 {
   "name": "matrix-requirements-sdk",
-  "version": "1.0.24",
+  "version": "2.4.0-alpha.1",
   "description": "An SDK for manipulating MatrixRequirements projects",
   "main": "index.js",
   "types": "matrixApi.d.ts",
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/MatrixRequirements/matrix-sdk#readme",
   "devDependencies": {
-    "matrixrequirements-type-declarations": "^1.0.3",
+    "matrixrequirements-type-declarations": "^2.4.0-alpha.0",
     "typedoc": "^0.24.0-beta.2"
   }
 }

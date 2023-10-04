@@ -1,13 +1,8 @@
 # Release Notes
 
-## 1.0.24
+## 2.4.0-alpha.1
 
-More renaming.
-
-## 1.0.23
-
-Renamed npm project to reflect the sdk.
-
+Updated version number to match Matrix Requirements shipping version.
 ## 1.0.22
 
 Renamed repository to matrix-sdk from matrix-api, as it is
