@@ -1,4 +1,4 @@
-# matrix-api
+# matrix-sdk
 
 [Matrix Requirements](https://matrixreq.com/) offers Quality Management Systems,
 Requirements, Risk & Test Management for Medical Devices.
@@ -10,6 +10,6 @@ by a Matrix instance at runtime.
 
 ## How to get it
 
-The api is available as an npm package at https://www.npmjs.com/package/matrix-requirements-api.
+The SDK is available as an npm package at https://www.npmjs.com/package/matrix-requirements-api.
 You can also clone this repository and refer to the files locally.
 
