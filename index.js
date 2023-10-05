@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["matrixConsoleApi"] = factory();
+		exports["matrixConsoleSdk"] = factory();
 	else
-		root["matrixConsoleApi"] = factory();
+		root["matrixConsoleSdk"] = factory();
 })(this, () => {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ([
@@ -21,7 +21,7 @@ return /******/ (() => { // webpackBootstrap
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.InstallLegacyAdaptor = exports.setApp = exports.setMatrixApplicationUI = exports.setRestConnection = exports.setMatrixSession = exports.setIC = exports.matrixApplicationUI = exports.app = exports.restConnection = exports.matrixSession = exports.globalMatrix = exports.ControlState = void 0;
+    exports.applyResponsiveView = exports.InstallLegacyAdaptor = exports.setApp = exports.setMatrixApplicationUI = exports.setRestConnection = exports.setMatrixSession = exports.setIC = exports.matrixApplicationUI = exports.app = exports.restConnection = exports.matrixSession = exports.globalMatrix = exports.ControlState = void 0;
     ;
     class GlobalMatrix {
         constructor() {
@@ -51,7 +51,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     var globalMatrix = new GlobalMatrix();
     exports.globalMatrix = globalMatrix;
     function setIC(newIC) {
-        globalMatrix.ItemConfig = newIC; // To use in matrixApi
+        globalMatrix.ItemConfig = newIC; // To use in matrixSdk
         globalThis.IC = newIC; // legacy support
     }
     exports.setIC = setIC;
@@ -74,7 +74,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
     // assigned to a variable of type businesslogic/UI/MatrixReq. We just opt out of typing for
     // this variable and ideally we should fix that with a real interface. I changed the type to
     // any to make the true situation easier to see.
-    var app; // main application 
+    var app; // main application
     function setApp(newApp) {
         exports.app = app = newApp;
     }
@@ -89,7 +89,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         ControlState[ControlState["Tooltip"] = 4] = "Tooltip";
         ControlState[ControlState["Print"] = 5] = "Print";
         ControlState[ControlState["Report"] = 6] = "Report";
-        ControlState[ControlState["DialogEdit"] = 7] = "DialogEdit"; // between FormEdit and DialogCreate to edit an item in popup
+        ControlState[ControlState["DialogEdit"] = 7] = "DialogEdit";
+        ControlState[ControlState["Review"] = 8] = "Review"; // special mode for design reviews
     })(ControlState || (exports.ControlState = ControlState = {}));
     ;
     // This is so that old legacy scripts can "just work" to a degree.
@@ -101,8 +102,40 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         globalThis.app = app;
         globalThis.matrixApplicationUI = matrixApplicationUI;
         globalMatrix.installLegacyAdaptor();
+        globalThis.applyResponsiveView = applyResponsiveView;
     }
     exports.InstallLegacyAdaptor = InstallLegacyAdaptor;
+    function applyResponsiveView() {
+        let mobileView = localStorage.getItem("mobileLayout");
+        let x = $(window).width();
+        if (mobileView) {
+            $('#contextframesizer').css("display", "none");
+            $('#dragbar').css("display", "none");
+        }
+        if (mobileView == "0") { // see item
+            $('#sidebar').css("display", "none");
+            $("#navLeft").css("display", "none");
+            $('#main').css("left", 0).css("display", "block");
+        }
+        else if (mobileView == "1") { // see navigation tree
+            $('#sidebar').css("width", x).css("display", "block");
+            $('#main').css("display", "none");
+            $("#navLeft").css("display", "");
+        }
+        else if (mobileView == "2") { // see both
+            $('#sidebar').css("width", (x / 2) + "px");
+            $("#navLeft").css("display", "");
+            $('#main').css("left", (x / 2) + "px").css("display", "block");
+        }
+        else { // not mobile
+            $('#dragbar').css("display", "block");
+            $('#contextframesizer').css("display", "block");
+            $("#navLeft").css("display", "");
+            $('#main').css("display", "block");
+        }
+        app.resizeItem(true);
+    }
+    exports.applyResponsiveView = applyResponsiveView;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -391,9 +424,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         getFieldConfigOptions() {
             let fco = [];
-            for (var idx = 0; idx < this._plugins.length; idx++) {
-                if (this._plugins[idx].getFieldConfigOptions) {
-                    fco = fco.concat(this._plugins[idx].getFieldConfigOptions());
+            for (let idx = 0; idx < this._plugins.length; idx++) {
+                if (this._plugins[idx].getFieldConfigOptions && this._plugins[idx].supportsControl) {
+                    const fieldConfig = this._plugins[idx].getFieldConfigOptions();
+                    for (let i = 0; i < fieldConfig.length; i++) {
+                        if (this._plugins[idx].supportsControl(fieldConfig[i].id)) {
+                            fco.push(fieldConfig[i]);
+                        }
+                    }
                 }
             }
             return fco;
@@ -683,7 +721,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// example gener
 
 
 /***/ }),
-/* 30 */
+/* 30 */,
+/* 31 */,
+/* 32 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, PluginManager_1) {
@@ -705,7 +745,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         static appendFieldDescriptions(newFields) {
             for (let fco of newFields) {
-                if (!this.findById(fco.id)) {
+                let result = this.descriptions.filter((description) => description.id === fco.id);
+                if (result.length == 0) {
                     this.descriptions.push(fco);
                 }
             }
@@ -858,8 +899,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 31 */,
-/* 32 */,
 /* 33 */,
 /* 34 */,
 /* 35 */,
@@ -875,7 +914,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 45 */,
 /* 46 */,
 /* 47 */,
-/* 48 */
+/* 48 */,
+/* 49 */,
+/* 50 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -990,13 +1031,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 49 */,
-/* 50 */,
 /* 51 */,
 /* 52 */,
 /* 53 */,
 /* 54 */,
-/* 55 */
+/* 55 */,
+/* 56 */,
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -1013,7 +1054,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBind
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(63), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(70), __webpack_require__(71), __webpack_require__(72), __webpack_require__(73), __webpack_require__(75), __webpack_require__(62), __webpack_require__(60), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(70), __webpack_require__(74), __webpack_require__(73), __webpack_require__(72), __webpack_require__(85)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, EmptyFieldHandler_1, RichtextFieldHandler_1, TextlineFieldHandler_1, CheckboxFieldHandler_1, SteplistFieldHandler_1, GenericFieldHandler_1, DropdownFieldHandler_1, TestStepsFieldHandler_1, TestStepsResultFieldHandler_1, TestResultFieldHandler_1, UserFieldHandler_1, DateFieldHandler_1, GateFieldHandler_1, HyperlinkFieldHandler_1, CrosslinksFieldHandler_1, DHFFieldHandler_1, BaseTableFieldHandler_1, SteplistFieldHandler_2, TestStepsFieldHandler_2, TestStepsResultFieldHandler_2, TestResultFieldHandler_2, UserFieldHandler_2, DateFieldHandler_2, ItemSelectionFieldHandler_1, CrosslinksFieldHandler_2, HyperlinkFieldHandler_2, ItemSelectionFieldHandlerFromTo_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(61), __webpack_require__(62), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(69), __webpack_require__(70), __webpack_require__(72), __webpack_require__(73), __webpack_require__(74), __webpack_require__(75), __webpack_require__(77), __webpack_require__(64), __webpack_require__(62), __webpack_require__(67), __webpack_require__(68), __webpack_require__(69), __webpack_require__(70), __webpack_require__(72), __webpack_require__(76), __webpack_require__(75), __webpack_require__(74), __webpack_require__(87)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, EmptyFieldHandler_1, RichtextFieldHandler_1, TextlineFieldHandler_1, CheckboxFieldHandler_1, SteplistFieldHandler_1, GenericFieldHandler_1, DropdownFieldHandler_1, TestStepsFieldHandler_1, TestStepsResultFieldHandler_1, TestResultFieldHandler_1, UserFieldHandler_1, DateFieldHandler_1, GateFieldHandler_1, HyperlinkFieldHandler_1, CrosslinksFieldHandler_1, DHFFieldHandler_1, BaseTableFieldHandler_1, SteplistFieldHandler_2, TestStepsFieldHandler_2, TestStepsResultFieldHandler_2, TestResultFieldHandler_2, UserFieldHandler_2, DateFieldHandler_2, ItemSelectionFieldHandler_1, CrosslinksFieldHandler_2, HyperlinkFieldHandler_2, ItemSelectionFieldHandlerFromTo_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemSelectionFieldHandlerFromTo = exports.FieldHandlerFactory = exports.InitializeFieldHandlers = void 0;
@@ -1132,7 +1173,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1157,10 +1198,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.RichtextFieldHandler = void 0;
@@ -1186,10 +1227,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TextlineFieldHandler = void 0;
@@ -1216,10 +1257,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.CheckboxFieldHandler = void 0;
@@ -1263,10 +1304,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32), __webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.SteplistFieldHandler = exports.initialize = void 0;
@@ -1314,12 +1355,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
 // by the table control.
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BaseTableFieldHandler_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(64)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BaseTableFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.BaseValidatedTableFieldHandler = void 0;
@@ -1366,12 +1407,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handl
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
 // by the table control.
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.BaseTableFieldHandler = exports.ColumnEditor = void 0;
@@ -1521,7 +1562,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handl
 
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1546,10 +1587,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DropdownFieldHandler = void 0;
@@ -1630,10 +1671,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32), __webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TestStepsFieldHandler = void 0;
@@ -1659,10 +1700,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32), __webpack_require__(63)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BaseValidatedTableFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TestStepsResultFieldHandler = void 0;
@@ -1692,10 +1733,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TestResultFieldHandler = void 0;
@@ -1774,10 +1815,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(69)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BasicFunctions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32), __webpack_require__(71)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, BasicFunctions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.UserFieldHandler = void 0;
@@ -1878,7 +1919,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -1908,10 +1949,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DateFieldHandler = void 0;
@@ -1964,10 +2005,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.GateFieldHandler = void 0;
@@ -2091,10 +2132,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.HyperlinkFieldHandler = void 0;
@@ -2138,10 +2179,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30), __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, ItemSelectionFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32), __webpack_require__(76)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1, ItemSelectionFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.CrosslinksFieldHandler = void 0;
@@ -2190,12 +2231,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handler base implementation for field types that ultimately are displayed
 // by the item selection control
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemSelectionFieldHandler = void 0;
@@ -2290,10 +2331,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// A field handl
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(63), __webpack_require__(5), __webpack_require__(30), __webpack_require__(76), __webpack_require__(78), __webpack_require__(79), __webpack_require__(90)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericFieldHandler_1, globals_1, FieldDescriptions_1, GenericDocFieldHandler_1, SectionDescriptions_1, Document_1, JQueryExtendReplacement_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(65), __webpack_require__(5), __webpack_require__(32), __webpack_require__(78), __webpack_require__(80), __webpack_require__(81), __webpack_require__(92)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericFieldHandler_1, globals_1, FieldDescriptions_1, GenericDocFieldHandler_1, SectionDescriptions_1, Document_1, JQueryExtendReplacement_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DHFFieldHandler = void 0;
@@ -2372,10 +2413,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.GenericDocFieldHandler = void 0;
@@ -2397,7 +2438,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -2443,7 +2484,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -2494,10 +2535,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78), __webpack_require__(76), __webpack_require__(80), __webpack_require__(81), __webpack_require__(83), __webpack_require__(86), __webpack_require__(88), __webpack_require__(89), __webpack_require__(91), __webpack_require__(92), __webpack_require__(94), __webpack_require__(95), __webpack_require__(96), __webpack_require__(97), __webpack_require__(98), __webpack_require__(99), __webpack_require__(100), __webpack_require__(101), __webpack_require__(102), __webpack_require__(103), __webpack_require__(104), __webpack_require__(106), __webpack_require__(107), __webpack_require__(108), __webpack_require__(105), __webpack_require__(109)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, SectionDescriptions_1, GenericDocFieldHandler_1, GenericTableDocHandler_1, DateDocHandler_1, CustomDocFieldHandler_1, RemarksDocFieldHandler_1, CheckBoxDocFieldHandler_1, DesignReviewDocFieldHandler_1, ItemIndexDocFieldHander_1, ItemListDocFieldHandler_1, LinkListDocFieldHandler_1, ItemTableDocFieldHandler_1, RiskStatsDocFieldHandler_1, ItemRefDocFieldHandler_1, ListOfFiguresDocFieldHandler_1, SmartTextDocFieldHandler_1, TableOfContentDocFieldHandler_1, testResultsDocFieldHandler_1, DerivedFromDocFieldHandler_1, DocumentOptionsFieldHandler_1, TextLineDocFieldHandler_1, TraceMatrixDocFieldHandler_1, TraceDocFieldHandler_1, DropdownDocFieldHandler_1, RichTextDocFieldHandler_1, DashboardDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(80), __webpack_require__(78), __webpack_require__(82), __webpack_require__(83), __webpack_require__(85), __webpack_require__(88), __webpack_require__(90), __webpack_require__(91), __webpack_require__(93), __webpack_require__(94), __webpack_require__(96), __webpack_require__(97), __webpack_require__(98), __webpack_require__(99), __webpack_require__(100), __webpack_require__(101), __webpack_require__(102), __webpack_require__(103), __webpack_require__(104), __webpack_require__(105), __webpack_require__(106), __webpack_require__(108), __webpack_require__(109), __webpack_require__(110), __webpack_require__(107), __webpack_require__(111)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, SectionDescriptions_1, GenericDocFieldHandler_1, GenericTableDocHandler_1, DateDocHandler_1, CustomDocFieldHandler_1, RemarksDocFieldHandler_1, CheckBoxDocFieldHandler_1, DesignReviewDocFieldHandler_1, ItemIndexDocFieldHander_1, ItemListDocFieldHandler_1, LinkListDocFieldHandler_1, ItemTableDocFieldHandler_1, RiskStatsDocFieldHandler_1, ItemRefDocFieldHandler_1, ListOfFiguresDocFieldHandler_1, SmartTextDocFieldHandler_1, TableOfContentDocFieldHandler_1, testResultsDocFieldHandler_1, DerivedFromDocFieldHandler_1, DocumentOptionsFieldHandler_1, TextLineDocFieldHandler_1, TraceMatrixDocFieldHandler_1, TraceDocFieldHandler_1, DropdownDocFieldHandler_1, RichTextDocFieldHandler_1, DashboardDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DocFieldHandlerFactory = void 0;
@@ -2616,10 +2657,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(62)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BaseTableFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(64)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BaseTableFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.GenericTableDocHandler = void 0;
@@ -2746,10 +2787,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(70), __webpack_require__(82)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DateFieldHandler_1, DateTimeBL_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(72), __webpack_require__(84)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DateFieldHandler_1, DateTimeBL_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DateDocHandler = void 0;
@@ -2799,7 +2840,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, globals_1) {
@@ -2937,10 +2978,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(84)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.CustomDocFieldHandler = void 0;
@@ -2987,10 +3028,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(85)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandlerFromTo_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(87)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandlerFromTo_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemSelectionFromToAbstractDocFieldHandler = void 0;
@@ -3022,7 +3063,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -3096,10 +3137,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(87)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(89)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.RemarksDocFieldHandler = void 0;
@@ -3122,10 +3163,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(64)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(66)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DropdownAbstractDocFieldHandler = void 0;
@@ -3161,10 +3202,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(59)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, CheckboxFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(61)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, CheckboxFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.CheckBoxDocFieldHandler = void 0;
@@ -3212,10 +3253,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(74), __webpack_require__(90)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandler_1, JQueryExtendReplacement_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(76), __webpack_require__(92)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandler_1, JQueryExtendReplacement_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DesignReviewDocFieldHandler = void 0;
@@ -3265,7 +3306,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -3376,10 +3417,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemIndexDocFieldHander = void 0;
@@ -3402,10 +3443,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(90), __webpack_require__(93)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, JQueryExtendReplacement_1, ItemSelectionAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(92), __webpack_require__(95)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, JQueryExtendReplacement_1, ItemSelectionAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemListDocFieldHandler = void 0;
@@ -3452,10 +3493,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(76)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemSelectionAbstractDocFieldHandler = void 0;
@@ -3480,10 +3521,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(93)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(95)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.LinkListDocFieldHandler = void 0;
@@ -3507,10 +3548,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(93)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(95)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemTableDocFieldHandler = void 0;
@@ -3538,10 +3579,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(90), __webpack_require__(93)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, JQueryExtendReplacement_1, ItemSelectionAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(92), __webpack_require__(95)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, JQueryExtendReplacement_1, ItemSelectionAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.RiskStatsDocFieldHandler = void 0;
@@ -3579,10 +3620,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(78), __webpack_require__(93)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, SectionDescriptions_1, ItemSelectionAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(80), __webpack_require__(95)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, SectionDescriptions_1, ItemSelectionAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemRefDocFieldHandler = void 0;
@@ -3640,10 +3681,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ListOfFiguresDocFieldHandler = void 0;
@@ -3666,10 +3707,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.SmartTextDocFieldHandler = void 0;
@@ -3702,10 +3743,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TableOfContentDocFieldHandler = void 0;
@@ -3725,10 +3766,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(84)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TestResultsDocFieldHandler = void 0;
@@ -3768,10 +3809,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(84)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DerivedFromDocFieldHandler = void 0;
@@ -3812,10 +3853,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DocumentOptionsFieldHandler = void 0;
@@ -3846,10 +3887,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77), __webpack_require__(105)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1, RichTextDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79), __webpack_require__(107)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1, RichTextDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TextLineDocFieldHandler = void 0;
@@ -3870,10 +3911,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.RichTextDocFieldHandler = void 0;
@@ -3894,10 +3935,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(84)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemSelectionFromToAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TraceMatrixDocFieldHandler = void 0;
@@ -3940,10 +3981,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(87)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(89)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.TraceDocFieldHandler = void 0;
@@ -3974,10 +4015,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(87)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(89)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, DropdownAbstractDocFieldHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.MultiSelectDocFieldHandler = void 0;
@@ -4014,10 +4055,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(77), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1, PluginManager_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(79), __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, GenericDocAbstractFieldHandler_1, PluginManager_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DashboardDocFieldHandler = void 0;
@@ -4094,15 +4135,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 110 */,
-/* 111 */,
 /* 112 */,
 /* 113 */,
 /* 114 */,
-/* 115 */
+/* 115 */,
+/* 116 */,
+/* 117 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(29), __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ProjectSettings_1, FieldDescriptions_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(29), __webpack_require__(32)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ProjectSettings_1, FieldDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ItemConfiguration = void 0;
@@ -4914,10 +4955,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 116 */,
-/* 117 */,
 /* 118 */,
-/* 119 */
+/* 119 */,
+/* 120 */,
+/* 121 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -5354,18 +5395,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 120 */,
-/* 121 */,
 /* 122 */,
 /* 123 */,
 /* 124 */,
 /* 125 */,
 /* 126 */,
 /* 127 */,
-/* 128 */
+/* 128 */,
+/* 129 */,
+/* 130 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(69), __webpack_require__(90)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BasicFunctions_1, JQueryExtendReplacement_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(71), __webpack_require__(92)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, BasicFunctions_1, JQueryExtendReplacement_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.JSONTools = void 0;
@@ -5461,6 +5502,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             var b = this.cloner2(src);
             return b;
         }
+        /** json lint and JSON.parse( ) don't handle backslashes ( "a":"\s" )*/
+        escapeJson(code) {
+            return code.replace(/\\/g, "\\\\");
+        }
+        /** json lint and JSON.parse( ) don't handle backslashes ( "a":"\s" )*/
+        unEscapeJson(code) {
+            return code.replace(/\\\\/g, "\\");
+        }
     }
     exports.JSONTools = JSONTools;
     ;
@@ -5469,7 +5518,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -5541,8 +5590,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 130 */,
-/* 131 */,
 /* 132 */,
 /* 133 */,
 /* 134 */,
@@ -5657,37 +5704,51 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /* 243 */,
 /* 244 */,
 /* 245 */,
-/* 246 */
+/* 246 */,
+/* 247 */,
+/* 248 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(115), __webpack_require__(249), __webpack_require__(250), __webpack_require__(129), __webpack_require__(128), __webpack_require__(8), __webpack_require__(48), __webpack_require__(119), __webpack_require__(271)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1, TestManagerConfiguration_1, LabelManager_1, Project_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(117), __webpack_require__(251), __webpack_require__(252), __webpack_require__(131), __webpack_require__(130), __webpack_require__(8), __webpack_require__(50), __webpack_require__(121), __webpack_require__(273)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ItemConfiguration_1, configuration_1, rest_api_1, LoggerTools_1, JSONTools_1, SimpleItemTools_1, TestManagerConfiguration_1, LabelManager_1, Project_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.CreateFrom23Environment = exports.CreateConsoleAPI = exports.StandaloneMatrixAPI = void 0;
-    // import { isomorphicFetch } from "isomorphic-fetch";
-    let isomorphicFetch = __webpack_require__(247);
+    exports.CreateFrom23Environment = exports.CreateConsoleAPI = exports.StandaloneMatrixSDK = void 0;
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    let isomorphicFetch = __webpack_require__(249);
     function CreateConsoleAPI(token, baseRestUrl, baseMatrixUrl) {
         let config = new configuration_1.Configuration({ apiKey: token });
-        let session = new class {
-            getCsrfCookie() { return ""; }
-            setComment(comment) { this.comment = comment; }
-            getComment() { return this.comment; }
-            setProject(project) { this.project = project; }
-            getProject() { return this.project; }
-            getDefaultProjectContext() { return null; }
-        };
+        let session = new (class {
+            getCsrfCookie() {
+                return "";
+            }
+            setComment(comment) {
+                this.comment = comment;
+            }
+            getComment() {
+                return this.comment;
+            }
+            setProject(project) {
+                this.project = project;
+            }
+            getProject() {
+                return this.project;
+            }
+            getDefaultProjectContext() {
+                return null;
+            }
+        })();
         const logger = new LoggerTools_1.LoggerTools((d) => d.toString(), (d) => d);
         const json = new JSONTools_1.JSONTools(logger);
         const itemTools = new SimpleItemTools_1.SimpleItemTools();
         const itemConfig = new ItemConfiguration_1.ItemConfiguration(logger, json);
-        return new StandaloneMatrixAPI(config, session, itemConfig, baseRestUrl, baseMatrixUrl, logger, json, itemTools);
+        return new StandaloneMatrixSDK(config, session, itemConfig, baseRestUrl, baseMatrixUrl, logger, json, itemTools);
     }
     exports.CreateConsoleAPI = CreateConsoleAPI;
     /**
      * If this file is loaded in a 2.3 environment, then this function provides an easy way
      * to sniff context from globals and create an sdk object.
      * @throws an Error if some of the environment variables can't be found.
-     * @returns A StandaloneMatrixAPI
+     * @returns A StandaloneMatrixSDK
      */
     function CreateFrom23Environment() {
         let matrixSession = globalThis["matrixSession"];
@@ -5703,31 +5764,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         const testManagerConfig = new TestManagerConfiguration_1.TestManagerConfiguration();
         testManagerConfig.initialize(IC);
         let config = new configuration_1.Configuration();
-        let adaptor = new class {
-            getCsrfCookie() { return matrixSession.getCsrfCookie(); }
-            setComment(comment) { matrixSession.setComment(comment); }
-            getComment() { return matrixSession.getComment(); }
-            setProject(project) { matrixSession.setProject(project); }
-            getProject() { return matrixSession.getProject(); }
+        let adaptor = new (class {
+            getCsrfCookie() {
+                return matrixSession.getCsrfCookie();
+            }
+            setComment(comment) {
+                matrixSession.setComment(comment);
+            }
+            getComment() {
+                return matrixSession.getComment();
+            }
+            setProject(project) {
+                matrixSession.setProject(project);
+            }
+            getProject() {
+                return matrixSession.getProject();
+            }
             getDefaultProjectContext() {
                 const context = {
-                    getItemConfig: () => { return IC; },
-                    getJsonTools: () => { return ml.JSON; },
-                    getLogger: () => { return ml.Logger; },
-                    getLabelManager: () => { return ml.LabelTools; },
+                    getItemConfig: () => {
+                        return IC;
+                    },
+                    getJsonTools: () => {
+                        return ml.JSON;
+                    },
+                    getLogger: () => {
+                        return ml.Logger;
+                    },
+                    getLabelManager: () => {
+                        return ml.LabelTools;
+                    },
                     getTestManagerConfig: () => {
                         testManagerConfig.initialize(IC);
                         return testManagerConfig;
-                    }
+                    },
                 };
                 return context;
             }
-        };
-        let standalone = new StandaloneMatrixAPI(config, adaptor, IC, baseRestUrl, matrixBaseUrl, ml.Logger, ml.JSON, new SimpleItemTools_1.SimpleItemTools());
+        })();
+        let standalone = new StandaloneMatrixSDK(config, adaptor, IC, baseRestUrl, matrixBaseUrl, ml.Logger, ml.JSON, new SimpleItemTools_1.SimpleItemTools());
         return standalone;
     }
     exports.CreateFrom23Environment = CreateFrom23Environment;
     class IsomorphicFetchWrapper {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         constructor(oldFetch) {
             this.oldFetch = oldFetch;
             this.log = [];
@@ -5739,17 +5819,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 return response;
             };
         }
-        getLog() { return this.log; }
+        getLog() {
+            return this.log;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         getFetch() {
             return this.myFetch;
         }
     }
     /**
-     * StandaloneMatrixAPI is a connection to a Matrix Instance. It offers services to interact
+     * StandaloneMatrixSDK is a connection to a Matrix Instance. It offers services to interact
      * with the Instance. A primary purpose beyond authenticating on the server is to provide access
      * to Project objects through openProject() or openCurrentProjectFromSession().
      */
-    class StandaloneMatrixAPI {
+    class StandaloneMatrixSDK {
         constructor(config, session, initialItemConfig, baseRestUrl, matrixBaseUrl, logger, json, simpleItemTools) {
             this.config = config;
             this.session = session;
@@ -5784,7 +5867,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         getHeadersForPost() {
             let headers = {};
-            headers['x-csrf'] = this.session.getCsrfCookie();
+            headers["x-csrf"] = this.session.getCsrfCookie();
             return headers;
         }
         // Called by setProject on project change.
@@ -5793,6 +5876,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.setItemConfig(this.createNewItemConfig());
             this.getItemConfig().init(p);
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         log(arg) {
             if (this.debug) {
                 this.logger.info(arg);
@@ -5801,14 +5885,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         setComment(comment) {
             this.session.setComment(comment);
         }
-        getComment() { return this.session.getComment(); }
+        getComment() {
+            return this.session.getComment();
+        }
         async setProject(project) {
             this.session.setProject(project);
             if (project) {
                 await this.initializeProject();
             }
         }
-        getProject() { return this.session.getProject(); }
+        getProject() {
+            return this.session.getProject();
+        }
         async getProjects() {
             let p = this.instance.rootGet(0);
             return p.then((result) => {
@@ -5825,11 +5913,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.parseRefForProject(this.getProject(), itemId);
         }
         getType(itemId) {
-            var ir = this.parseRef(itemId);
+            let ir = this.parseRef(itemId);
             if (ir.type !== "") {
                 return ir.type;
             }
-            // no idea... 
+            // no idea...
             return "";
         }
         /**
@@ -5921,7 +6009,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             });
         }
         parseItemJSON(itemId, result) {
-            var item = {
+            let item = {
                 id: itemId,
                 title: result.title,
                 type: this.getType(itemId),
@@ -5930,7 +6018,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 modDate: result.modDate,
                 isUnselected: result.isUnselected,
                 labels: result.labels ? result.labels : [],
-                maxVersion: result.maxVersion
+                maxVersion: result.maxVersion,
             };
             if (result.isFolder != undefined) {
                 item.isFolder = result.isFolder == 1;
@@ -5946,17 +6034,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 item.isDeleted = true;
             }
             if (result.fieldValList) {
-                for (var fieldVal in result.fieldValList.fieldVal) {
-                    item[result.fieldValList.fieldVal[fieldVal].id.toString()] = result.fieldValList.fieldVal[fieldVal].value;
+                for (let fieldVal in result.fieldValList.fieldVal) {
+                    item[result.fieldValList.fieldVal[fieldVal].id.toString()] =
+                        result.fieldValList.fieldVal[fieldVal].value;
                 }
             }
-            for (var idx = 0; result.downLinkList && idx < result.downLinkList.length; idx++) {
-                var tol = result.downLinkList[idx].itemRef;
-                item.downLinks.push({ to: this.parseRef(tol).id, title: result.downLinkList[idx].title, modDate: result.downLinkList[idx].modDate });
+            for (let idx = 0; result.downLinkList && idx < result.downLinkList.length; idx++) {
+                const tol = result.downLinkList[idx].itemRef;
+                item.downLinks.push({
+                    to: this.parseRef(tol).id,
+                    title: result.downLinkList[idx].title,
+                    modDate: result.downLinkList[idx].modDate,
+                });
             }
-            for (var idx = 0; result.upLinkList && idx < result.upLinkList.length; idx++) {
-                var tol = result.upLinkList[idx].itemRef;
-                item.upLinks.push({ to: this.parseRef(tol).id, title: result.upLinkList[idx].title, modDate: result.upLinkList[idx].modDate });
+            for (let idx = 0; result.upLinkList && idx < result.upLinkList.length; idx++) {
+                const tol = result.upLinkList[idx].itemRef;
+                item.upLinks.push({
+                    to: this.parseRef(tol).id,
+                    title: result.upLinkList[idx].title,
+                    modDate: result.upLinkList[idx].modDate,
+                });
             }
             // copy original up list
             item.upLinkList = result.upLinkList;
@@ -5969,10 +6066,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (result.requireSubTree) {
                 item["requireSubTree"] = result.requireSubTree;
             }
-            var hoi = [];
-            for (var idx = 0; result.itemHistoryList && idx < result.itemHistoryList.itemHistory.length; idx++) {
-                var theAction = result.itemHistoryList.itemHistory[idx];
-                var historyInfo = {
+            let hoi = [];
+            for (let idx = 0; result.itemHistoryList && idx < result.itemHistoryList.itemHistory.length; idx++) {
+                let theAction = result.itemHistoryList.itemHistory[idx];
+                let historyInfo = {
                     id: itemId,
                     user: theAction.createdByUserLogin,
                     action: theAction.auditAction,
@@ -5980,12 +6077,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     date: theAction.createdAt,
                     dateUserFormat: theAction.createdAtUserFormat,
                     title: theAction.title,
-                    comment: theAction.reason
+                    comment: theAction.reason,
                 };
                 // now use the information that undeleted items have been deleted just before
                 if (theAction.auditAction === "undelete") {
                     if (result.itemHistoryList.itemHistory.length > idx + 1) {
-                        var theDelete = result.itemHistoryList.itemHistory[idx + 1];
+                        let theDelete = result.itemHistoryList.itemHistory[idx + 1];
                         if (theDelete.auditAction !== "delete") {
                             historyInfo["deletedate"] = theDelete.deletedAtUserFormat;
                         }
@@ -5993,7 +6090,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
                 hoi.push(historyInfo);
             }
-            item['history'] = hoi;
+            item["history"] = hoi;
             return item;
         }
         async appGetItemAsync(project, itemId) {
@@ -6017,7 +6114,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.log(`get downlink ids of item "${itemId}`);
             const links = this.getDownlinks(itemId);
             return links.then((value) => {
-                return value.map(d => d.to);
+                return value.map((d) => d.to);
             });
         }
         async getUplinks(itemId) {
@@ -6031,7 +6128,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.log(`get uplink ids of item "${itemId}`);
             const links = this.getUplinks(itemId);
             return links.then((value) => {
-                return value.map(d => d.to);
+                return value.map((d) => d.to);
             });
         }
         /**
@@ -6068,7 +6165,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          */
         async searchInProject(project, term) {
             this.log(`Search in ${project} for "${term}"`);
-            const results = await this.instance.projectNeedleminimalGet(project, term);
+            let params = { search: term };
+            const options = { headers: this.getHeadersForPost() };
+            const results = await this.instance.projectNeedleminimalPost(params, project, options);
             return results;
         }
         async complexSearchInProject(project, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder) {
@@ -6119,8 +6218,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             // project, provide them with the current web application globals. Otherwise, create a new
             // context on the fly. That requires a server call to get the item configuration information.
             let context = null;
-            if (this.session.getProject() == project &&
-                this.session.getDefaultProjectContext() != null) {
+            if (this.session.getProject() == project && this.session.getDefaultProjectContext() != null) {
                 context = this.session.getDefaultProjectContext();
                 // The default context, although it may have the name of the project the user
                 // is asking for, may not really be "loaded". Check for that case.
@@ -6138,11 +6236,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 const testManagerConfig = new TestManagerConfiguration_1.TestManagerConfiguration();
                 testManagerConfig.initialize(config);
                 context = {
-                    getItemConfig: () => { return config; },
-                    getJsonTools: () => { return this.json; },
-                    getLogger: () => { return this.logger; },
-                    getLabelManager: () => { return labelManager; },
-                    getTestManagerConfig: () => { return testManagerConfig; }
+                    getItemConfig: () => {
+                        return config;
+                    },
+                    getJsonTools: () => {
+                        return this.json;
+                    },
+                    getLogger: () => {
+                        return this.logger;
+                    },
+                    getLabelManager: () => {
+                        return labelManager;
+                    },
+                    getTestManagerConfig: () => {
+                        return testManagerConfig;
+                    },
                 };
             }
             const proj = new Project_1.Project(this, project, context);
@@ -6153,7 +6261,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             let fullitem = this.parseRef(needle.itemOrFolderRef);
             const that = this;
             let sr = {
-                itemId: fullitem.id, version: fullitem.version, title: needle.title, downlinks: [], uplinks: [], labels: []
+                itemId: fullitem.id,
+                version: fullitem.version,
+                title: needle.title,
+                downlinks: [],
+                uplinks: [],
+                labels: [],
             };
             if (fieldList && fieldList.length > 0) {
                 sr.fieldVal = needle.fieldVal;
@@ -6191,10 +6304,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             else if (up) {
                 linksReq = "up";
             }
-            const p = this.instance.projectNeedleGet(project, term, "", filter, fieldList, labels ? 1 : 0, treeOrder ? 1 : 0, linksReq);
+            const options = { headers: this.getHeadersForPost() };
+            const p = this.instance.projectNeedlePost({
+                id: "",
+                search: term,
+                filter: filter,
+                fieldsOut: fieldList,
+                labels: labels ? 1 : 0,
+                links: linksReq,
+                treeOrder: treeOrder ? 1 : 0,
+            }, project, options);
             return p.then((result) => {
-                var hoi = [];
-                for (var idx = 0; idx < result.needles.length; idx++) {
+                let hoi = [];
+                for (let idx = 0; idx < result.needles.length; idx++) {
                     hoi.push(this.parseSearchResult(result.needles[idx], fieldList));
                 }
                 return hoi;
@@ -6203,7 +6325,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         async getItemIdsInCategory(category) {
             this.log(`get items of type "${category}"`);
             let items = await this.search("mrql:category=" + category);
-            return items.map(item => item.itemId);
+            return items.map((item) => item.itemId);
         }
         /**
          * gets the value of a field of an item from the database
@@ -6255,7 +6377,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 id: itemId,
                 onlyThoseFields: 1,
                 onlyThoseLabels: 1,
-                title: value
+                title: value,
             };
             let type = this.parseRef(itemId).type;
             if (!type) {
@@ -6271,13 +6393,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 reason: comment,
                 currentVersion: currentVersion,
                 linksAreComplete: 1,
-                itemProperties: {}
+                itemProperties: {},
             };
             if (auditAction) {
                 body["auditAction"] = auditAction;
             }
             const regex = /fx[0-9]+/;
-            for (var par in itemJson) {
+            for (let par in itemJson) {
                 if (!itemJson.hasOwnProperty(par))
                     continue;
                 if (body.hasOwnProperty(par))
@@ -6294,7 +6416,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     // These are sent in fields linksDown and linksUp.
                     continue;
                 }
-                if (isNaN(par)) {
+                if (isNaN(Number(par))) {
                     // it's attribute other than a field
                     body[par] = itemJson[par];
                 }
@@ -6310,7 +6432,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             const options = { headers: this.getHeadersForPost() };
             const p = this.instance.projectItemItemPut(body, project, itemJson.id, options);
             return p.then((result) => {
-                var item = this.parseItemJSON(itemJson.id, result);
+                let item = this.parseItemJSON(itemJson.id, result);
                 return item;
             });
         }
@@ -6339,7 +6461,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             let update = {
                 id: itemId,
                 onlyThoseFields: 1,
-                onlyThoseLabels: 1
+                onlyThoseLabels: 1,
             };
             let type = this.parseRefForProject(project, itemId).type;
             if (!type) {
@@ -6494,26 +6616,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 linksUp: itemJson.linksUp,
                 linksDown: itemJson.linksDown,
                 folder: parentId,
-                itemProperties: {}
+                itemProperties: {},
             };
             if (itemJson.children) {
                 let postItFolder = {
                     label: itemJson.title,
                     parent: parentId,
-                    reason: comment
+                    reason: comment,
                 };
                 let fxFields = {};
-                for (var par in itemJson) {
+                for (let par in itemJson) {
                     if (!itemJson.hasOwnProperty(par))
                         continue;
                     if (postItFolder.hasOwnProperty(par))
                         continue;
-                    if (par === "type" || par === "children" ||
-                        par === "title" || par === "labels" ||
-                        par === "linksUp" || par === "linksDown") {
+                    if (par === "type" ||
+                        par === "children" ||
+                        par === "title" ||
+                        par === "labels" ||
+                        par === "linksUp" ||
+                        par === "linksDown") {
                         continue;
                     }
-                    if (!isNaN(par)) {
+                    if (!isNaN(Number(par))) {
                         fxFields["fx" + par] = itemJson[par];
                     }
                 }
@@ -6524,14 +6649,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     return itemJson.id;
                 });
             }
-            for (var par in itemJson) {
+            for (let par in itemJson) {
                 if (!itemJson.hasOwnProperty(par))
                     continue;
-                if (par === "type" || par === "labels" ||
-                    par === "linksUp" || par === "linksDown") {
+                if (par === "type" || par === "labels" || par === "linksUp" || par === "linksDown") {
                     continue;
                 }
-                if (!isNaN(par)) {
+                if (!isNaN(Number(par))) {
                     // it's a number so we assume it's a field
                     body.itemProperties["fx" + par] = itemJson[par];
                 }
@@ -6579,7 +6703,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     that.log(`Warning there's no item with title '${title}' in category '${category}'`);
                     return null;
                 }
-                const itemsFilteredByName = items.filter(item => item.title == title);
+                const itemsFilteredByName = items.filter((item) => item.title == title);
                 if (itemsFilteredByName.length == 0) {
                     that.log(`Warning there's no item with title '${title}' in category '${category}'`);
                     return null;
@@ -6616,26 +6740,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         async getJobStatus(project, jobId, options) {
             return this.instance.projectJobJobGet(project, jobId, options);
         }
+        createTodo(project, users, type, text, itemId, fieldId, atDate) {
+            return this.instance.projectTodoItemPost(project, itemId, text, fieldId, users.join(","), type, atDate.toISOString());
+        }
     }
-    exports.StandaloneMatrixAPI = StandaloneMatrixAPI;
+    exports.StandaloneMatrixSDK = StandaloneMatrixSDK;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ }),
-/* 247 */
+/* 249 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
 // Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(248);
+__webpack_require__(250);
 module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-/* 248 */
+/* 250 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -7255,7 +7382,7 @@ if (!global.fetch) {
 
 
 /***/ }),
-/* 249 */
+/* 251 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disable
@@ -7289,7 +7416,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disabl
 
 
 /***/ }),
-/* 250 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -7318,13 +7445,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(252), __webpack_require__(247)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(254), __webpack_require__(249)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DefaultApi = exports.DefaultApiFactory = exports.DefaultApiFp = exports.DefaultApiFetchParamCreator = exports.RequiredError = exports.BaseAPI = exports.COLLECTION_FORMATS = void 0;
     url = __importStar(url);
     isomorphic_fetch_1 = __importDefault(isomorphic_fetch_1);
-    const btoa = __webpack_require__(251);
+    const btoa = __webpack_require__(253);
     const BASE_PATH = "https://demo23.matrixreq.com/rest/1".replace(/\/+$/, "");
     /**
      *
@@ -7705,116 +7832,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 // http basic authentication required
                 if (configuration && (configuration.username || configuration.password)) {
                     localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
-                }
-                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
-                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-                delete localVarUrlObj.search;
-                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
-                return {
-                    url: url.format(localVarUrlObj),
-                    options: localVarRequestOptions,
-                };
-            },
-            /**
-             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find items based on a search string in all projects
-             * @param {string} search search term
-             * @param {string} id search id. Used by MatrixJira js to match queries with answers. Is returned in the output structure
-             * @param {string} [filter] (optional) applies a filter, can be negative
-             * @param {string} [fieldsOut] (optional) comma-delimited list of fields to return -  101,102 - or * for all
-             * @param {number} [labels] (optional) set to 1 to return labels in the output
-             * @param {string} [links] (optional) set to up,down to return up and down items, or only up or only down
-             * @param {*} [options] Override http request option.
-             * @throws {RequiredError}
-             */
-            allNeedleGet(search, id, filter, fieldsOut, labels, links, options = {}) {
-                // verify required parameter 'search' is not null or undefined
-                if (search === null || search === undefined) {
-                    throw new RequiredError('search', 'Required parameter search was null or undefined when calling allNeedleGet.');
-                }
-                // verify required parameter 'id' is not null or undefined
-                if (id === null || id === undefined) {
-                    throw new RequiredError('id', 'Required parameter id was null or undefined when calling allNeedleGet.');
-                }
-                const localVarPath = `/all/needle`;
-                const localVarUrlObj = url.parse(localVarPath, true);
-                const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
-                const localVarHeaderParameter = {};
-                const localVarQueryParameter = {};
-                // authentication ApiKeyAuth required
-                if (configuration && configuration.apiKey) {
-                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-                        ? configuration.apiKey("Authorization")
-                        : configuration.apiKey;
-                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
-                }
-                // authentication BasicAuth required
-                // http basic authentication required
-                if (configuration && (configuration.username || configuration.password)) {
-                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
-                }
-                if (search !== undefined) {
-                    localVarQueryParameter['search'] = search;
-                }
-                if (id !== undefined) {
-                    localVarQueryParameter['id'] = id;
-                }
-                if (filter !== undefined) {
-                    localVarQueryParameter['filter'] = filter;
-                }
-                if (fieldsOut !== undefined) {
-                    localVarQueryParameter['fieldsOut'] = fieldsOut;
-                }
-                if (labels !== undefined) {
-                    localVarQueryParameter['labels'] = labels;
-                }
-                if (links !== undefined) {
-                    localVarQueryParameter['links'] = links;
-                }
-                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
-                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-                delete localVarUrlObj.search;
-                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
-                return {
-                    url: url.format(localVarUrlObj),
-                    options: localVarRequestOptions,
-                };
-            },
-            /**
-             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find item ids based on a search string in all projects
-             * @param {string} search search term
-             * @param {string} [filter] (optional) applies a filter, can be negative
-             * @param {*} [options] Override http request option.
-             * @throws {RequiredError}
-             */
-            allNeedleminimalGet(search, filter, options = {}) {
-                // verify required parameter 'search' is not null or undefined
-                if (search === null || search === undefined) {
-                    throw new RequiredError('search', 'Required parameter search was null or undefined when calling allNeedleminimalGet.');
-                }
-                const localVarPath = `/all/needleminimal`;
-                const localVarUrlObj = url.parse(localVarPath, true);
-                const localVarRequestOptions = Object.assign({ method: 'GET' }, options);
-                const localVarHeaderParameter = {};
-                const localVarQueryParameter = {};
-                // authentication ApiKeyAuth required
-                if (configuration && configuration.apiKey) {
-                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-                        ? configuration.apiKey("Authorization")
-                        : configuration.apiKey;
-                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
-                }
-                // authentication BasicAuth required
-                // http basic authentication required
-                if (configuration && (configuration.username || configuration.password)) {
-                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
-                }
-                if (search !== undefined) {
-                    localVarQueryParameter['search'] = search;
-                }
-                if (filter !== undefined) {
-                    localVarQueryParameter['filter'] = filter;
                 }
                 localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
@@ -10062,7 +10079,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Creates a new file - the file should be uploaded as payload (or through the url argument as an alternative). It's mime type should be sent through the HTTP protocol.
              * @param {string} project Project short label
-             * @param {string} [url] Optional argument -  the file could also come from an external URL. In this case there will be an error if we can&#x27;t retrieve it on the server
+             * @param {string} [urlIn] Optional argument -  the file could also come from an external URL. In this case there will be an error if we can&#x27;t retrieve it on the server
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
@@ -11459,7 +11476,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
-             * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
+             * @summary Imports some folders from a project to another as a module. Only available is you have the compose module licensed and the unique_serial setting
              * @param {string} project Project short label
              * @param {string} mode Import mode -  can be include or copy
              * @param {string} sourceProject Source project
@@ -11599,10 +11616,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find items based on a search string in one project
+             * @summary Use POST verb instead. Find items based on a search string in one project
              * @param {string} project Project short label
-             * @param {string} search search term
              * @param {string} id search id. Used by MatrixJira js to match queries with answers. Is returned in the output structure
+             * @param {string} [search] search term
              * @param {string} [filter] (optional) applies a filter, can be negative
              * @param {string} [fieldsOut] (optional) comma-delimited list of fields to return -  101,102 - or * for all
              * @param {number} [labels] (optional) set to 1 to return labels in the output
@@ -11611,14 +11628,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options = {}) {
+            projectNeedleGet(project, id, search, filter, fieldsOut, labels, treeOrder, links, options = {}) {
                 // verify required parameter 'project' is not null or undefined
                 if (project === null || project === undefined) {
                     throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectNeedleGet.');
-                }
-                // verify required parameter 'search' is not null or undefined
-                if (search === null || search === undefined) {
-                    throw new RequiredError('search', 'Required parameter search was null or undefined when calling projectNeedleGet.');
                 }
                 // verify required parameter 'id' is not null or undefined
                 if (id === null || id === undefined) {
@@ -11673,6 +11686,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 };
             },
             /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Find items based on a search string in one project
+             * @param {ProjectNeedleBody} body
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectNeedlePost(body, project, options = {}) {
+                // verify required parameter 'body' is not null or undefined
+                if (body === null || body === undefined) {
+                    throw new RequiredError('body', 'Required parameter body was null or undefined when calling projectNeedlePost.');
+                }
+                // verify required parameter 'project' is not null or undefined
+                if (project === null || project === undefined) {
+                    throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectNeedlePost.');
+                }
+                const localVarPath = `/{project}/needle`
+                    .replace(`{${"project"}}`, encodeURIComponent(String(project)));
+                const localVarUrlObj = url.parse(localVarPath, true);
+                const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
+                const localVarHeaderParameter = {};
+                const localVarQueryParameter = {};
+                // authentication ApiKeyAuth required
+                if (configuration && configuration.apiKey) {
+                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                        ? configuration.apiKey("Authorization")
+                        : configuration.apiKey;
+                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                }
+                // authentication BasicAuth required
+                // http basic authentication required
+                if (configuration && (configuration.username || configuration.password)) {
+                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
+                }
+                localVarHeaderParameter['Content-Type'] = 'application/json';
+                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+                delete localVarUrlObj.search;
+                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                const needsSerialization = ( true) || 0;
+                localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
+                return {
+                    url: url.format(localVarUrlObj),
+                    options: localVarRequestOptions,
+                };
+            },
+            /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
              * @summary Find item ids based on a search string in one project
              * @param {string} project Project short label
@@ -11718,6 +11778,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
                 delete localVarUrlObj.search;
                 localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                return {
+                    url: url.format(localVarUrlObj),
+                    options: localVarRequestOptions,
+                };
+            },
+            /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Find item ids based on a search string in one project
+             * @param {ProjectNeedleminimalBody} body
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectNeedleminimalPost(body, project, options = {}) {
+                // verify required parameter 'body' is not null or undefined
+                if (body === null || body === undefined) {
+                    throw new RequiredError('body', 'Required parameter body was null or undefined when calling projectNeedleminimalPost.');
+                }
+                // verify required parameter 'project' is not null or undefined
+                if (project === null || project === undefined) {
+                    throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectNeedleminimalPost.');
+                }
+                const localVarPath = `/{project}/needleminimal`
+                    .replace(`{${"project"}}`, encodeURIComponent(String(project)));
+                const localVarUrlObj = url.parse(localVarPath, true);
+                const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
+                const localVarHeaderParameter = {};
+                const localVarQueryParameter = {};
+                // authentication ApiKeyAuth required
+                if (configuration && configuration.apiKey) {
+                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                        ? configuration.apiKey("Authorization")
+                        : configuration.apiKey;
+                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                }
+                // authentication BasicAuth required
+                // http basic authentication required
+                if (configuration && (configuration.username || configuration.password)) {
+                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
+                }
+                localVarHeaderParameter['Content-Type'] = 'application/json';
+                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+                delete localVarUrlObj.search;
+                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                const needsSerialization = ( true) || 0;
+                localVarRequestOptions.body = needsSerialization ? JSON.stringify(body || {}) : (body || "");
                 return {
                     url: url.format(localVarUrlObj),
                     options: localVarRequestOptions,
@@ -11900,7 +12007,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @param {string} newTitle New title for the SIGN- item that is generated (only valid for isSignedReport)
              * @param {string} copyFields List of from-to fields (123,456),(124,457) that we can use to generate the fields in the SIGN record (only valid for isSignedReport)
              * @param {string} [itemList] (optional) list of items to use in the report. By default all categories are used
-             * @param {string} [url] (optional) url to generate in the filter
+             * @param {string} [urlIn] (optional) url to generate in the filter
              * @param {string} [resturl] (optional) REST url to generate in the filter
              * @param {string} [format] (optional) format -  html (default), pdf, docx, odt, xml, zipdocx, zippdf or package (from 2.2), or mf (since 2.3)
              * @param {string} [filter] (optional) specify a comma-delimited filter list. Can be negative filters (with minus before)
@@ -12250,7 +12357,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
              * @summary Asks for a new report. The job ID is returned as answer
              * @param {string} project Project short label
-             * @param {string} [url] (optional) url to generate in the filter
+             * @param {string} [urlIn] (optional) url to generate in the filter
              * @param {string} [resturl] (optional) REST url to generate in the filter
              * @param {string} [format] (optional) format -  html (default), pdf, docx, odt, xml, zipdocx or zippdf
              * @param {*} [options] Override http request option.
@@ -14071,52 +14178,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 };
             },
             /**
-             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find items based on a search string in all projects
-             * @param {string} search search term
-             * @param {string} id search id. Used by MatrixJira js to match queries with answers. Is returned in the output structure
-             * @param {string} [filter] (optional) applies a filter, can be negative
-             * @param {string} [fieldsOut] (optional) comma-delimited list of fields to return -  101,102 - or * for all
-             * @param {number} [labels] (optional) set to 1 to return labels in the output
-             * @param {string} [links] (optional) set to up,down to return up and down items, or only up or only down
-             * @param {*} [options] Override http request option.
-             * @throws {RequiredError}
-             */
-            allNeedleGet(search, id, filter, fieldsOut, labels, links, options) {
-                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options);
-                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
-                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
-                        if (response.status >= 200 && response.status < 300) {
-                            return response.json();
-                        }
-                        else {
-                            throw response;
-                        }
-                    });
-                };
-            },
-            /**
-             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find item ids based on a search string in all projects
-             * @param {string} search search term
-             * @param {string} [filter] (optional) applies a filter, can be negative
-             * @param {*} [options] Override http request option.
-             * @throws {RequiredError}
-             */
-            allNeedleminimalGet(search, filter, options) {
-                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).allNeedleminimalGet(search, filter, options);
-                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
-                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
-                        if (response.status >= 200 && response.status < 300) {
-                            return response.json();
-                        }
-                        else {
-                            throw response;
-                        }
-                    });
-                };
-            },
-            /**
              * Permissions - No permissions needed. Valid from version 2.2
              * @summary The OpenAPI 3.0 definition of our REST API
              * @param {*} [options] Override http request option.
@@ -15698,7 +15759,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
-             * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
+             * @summary Imports some folders from a project to another as a module. Only available is you have the compose module licensed and the unique_serial setting
              * @param {string} project Project short label
              * @param {string} mode Import mode -  can be include or copy
              * @param {string} sourceProject Source project
@@ -15748,10 +15809,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find items based on a search string in one project
+             * @summary Use POST verb instead. Find items based on a search string in one project
              * @param {string} project Project short label
-             * @param {string} search search term
              * @param {string} id search id. Used by MatrixJira js to match queries with answers. Is returned in the output structure
+             * @param {string} [search] search term
              * @param {string} [filter] (optional) applies a filter, can be negative
              * @param {string} [fieldsOut] (optional) comma-delimited list of fields to return -  101,102 - or * for all
              * @param {number} [labels] (optional) set to 1 to return labels in the output
@@ -15760,8 +15821,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options) {
-                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options);
+            projectNeedleGet(project, id, search, filter, fieldsOut, labels, treeOrder, links, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectNeedleGet(project, id, search, filter, fieldsOut, labels, treeOrder, links, options);
+                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
+                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            return response.json();
+                        }
+                        else {
+                            throw response;
+                        }
+                    });
+                };
+            },
+            /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Find items based on a search string in one project
+             * @param {ProjectNeedleBody} body
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectNeedlePost(body, project, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectNeedlePost(body, project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -15784,6 +15866,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              */
             projectNeedleminimalGet(project, search, filter, options) {
                 const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectNeedleminimalGet(project, search, filter, options);
+                return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
+                    return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            return response.json();
+                        }
+                        else {
+                            throw response;
+                        }
+                    });
+                };
+            },
+            /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Find item ids based on a search string in one project
+             * @param {ProjectNeedleminimalBody} body
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectNeedleminimalPost(body, project, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectNeedleminimalPost(body, project, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 && response.status < 300) {
@@ -16796,32 +16899,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 return (0, exports.DefaultApiFp)(configuration).allMonitorGet(options)(fetch, basePath);
             },
             /**
-             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find items based on a search string in all projects
-             * @param {string} search search term
-             * @param {string} id search id. Used by MatrixJira js to match queries with answers. Is returned in the output structure
-             * @param {string} [filter] (optional) applies a filter, can be negative
-             * @param {string} [fieldsOut] (optional) comma-delimited list of fields to return -  101,102 - or * for all
-             * @param {number} [labels] (optional) set to 1 to return labels in the output
-             * @param {string} [links] (optional) set to up,down to return up and down items, or only up or only down
-             * @param {*} [options] Override http request option.
-             * @throws {RequiredError}
-             */
-            allNeedleGet(search, id, filter, fieldsOut, labels, links, options) {
-                return (0, exports.DefaultApiFp)(configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options)(fetch, basePath);
-            },
-            /**
-             * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find item ids based on a search string in all projects
-             * @param {string} search search term
-             * @param {string} [filter] (optional) applies a filter, can be negative
-             * @param {*} [options] Override http request option.
-             * @throws {RequiredError}
-             */
-            allNeedleminimalGet(search, filter, options) {
-                return (0, exports.DefaultApiFp)(configuration).allNeedleminimalGet(search, filter, options)(fetch, basePath);
-            },
-            /**
              * Permissions - No permissions needed. Valid from version 2.2
              * @summary The OpenAPI 3.0 definition of our REST API
              * @param {*} [options] Override http request option.
@@ -17683,7 +17760,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.1
-             * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
+             * @summary Imports some folders from a project to another as a module. Only available is you have the compose module licensed and the unique_serial setting
              * @param {string} project Project short label
              * @param {string} mode Import mode -  can be include or copy
              * @param {string} sourceProject Source project
@@ -17713,10 +17790,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-             * @summary Find items based on a search string in one project
+             * @summary Use POST verb instead. Find items based on a search string in one project
              * @param {string} project Project short label
-             * @param {string} search search term
              * @param {string} id search id. Used by MatrixJira js to match queries with answers. Is returned in the output structure
+             * @param {string} [search] search term
              * @param {string} [filter] (optional) applies a filter, can be negative
              * @param {string} [fieldsOut] (optional) comma-delimited list of fields to return -  101,102 - or * for all
              * @param {number} [labels] (optional) set to 1 to return labels in the output
@@ -17725,8 +17802,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options) {
-                return (0, exports.DefaultApiFp)(configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options)(fetch, basePath);
+            projectNeedleGet(project, id, search, filter, fieldsOut, labels, treeOrder, links, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectNeedleGet(project, id, search, filter, fieldsOut, labels, treeOrder, links, options)(fetch, basePath);
+            },
+            /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Find items based on a search string in one project
+             * @param {ProjectNeedleBody} body
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectNeedlePost(body, project, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectNeedlePost(body, project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -17739,6 +17827,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
              */
             projectNeedleminimalGet(project, search, filter, options) {
                 return (0, exports.DefaultApiFp)(configuration).projectNeedleminimalGet(project, search, filter, options)(fetch, basePath);
+            },
+            /**
+             * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+             * @summary Find item ids based on a search string in one project
+             * @param {ProjectNeedleminimalBody} body
+             * @param {string} project Project short label
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            projectNeedleminimalPost(body, project, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectNeedleminimalPost(body, project, options)(fetch, basePath);
             },
             /**
              * Permissions - Must be admin. Valid from version 2.1
@@ -18349,34 +18448,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          */
         allMonitorGet(options) {
             return (0, exports.DefaultApiFp)(this.configuration).allMonitorGet(options)(this.fetch, this.basePath);
-        }
-        /**
-         * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-         * @summary Find items based on a search string in all projects
-         * @param {string} search search term
-         * @param {string} id search id. Used by MatrixJira js to match queries with answers. Is returned in the output structure
-         * @param {string} [filter] (optional) applies a filter, can be negative
-         * @param {string} [fieldsOut] (optional) comma-delimited list of fields to return -  101,102 - or * for all
-         * @param {number} [labels] (optional) set to 1 to return labels in the output
-         * @param {string} [links] (optional) set to up,down to return up and down items, or only up or only down
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         * @memberof DefaultApi
-         */
-        allNeedleGet(search, id, filter, fieldsOut, labels, links, options) {
-            return (0, exports.DefaultApiFp)(this.configuration).allNeedleGet(search, id, filter, fieldsOut, labels, links, options)(this.fetch, this.basePath);
-        }
-        /**
-         * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-         * @summary Find item ids based on a search string in all projects
-         * @param {string} search search term
-         * @param {string} [filter] (optional) applies a filter, can be negative
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         * @memberof DefaultApi
-         */
-        allNeedleminimalGet(search, filter, options) {
-            return (0, exports.DefaultApiFp)(this.configuration).allNeedleminimalGet(search, filter, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - No permissions needed. Valid from version 2.2
@@ -19312,7 +19383,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.1
-         * @summary Imports some folders from a project to another as a module. Only available is you have the resync module licensed and the unique_serial setting
+         * @summary Imports some folders from a project to another as a module. Only available is you have the compose module licensed and the unique_serial setting
          * @param {string} project Project short label
          * @param {string} mode Import mode -  can be include or copy
          * @param {string} sourceProject Source project
@@ -19344,10 +19415,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
-         * @summary Find items based on a search string in one project
+         * @summary Use POST verb instead. Find items based on a search string in one project
          * @param {string} project Project short label
-         * @param {string} search search term
          * @param {string} id search id. Used by MatrixJira js to match queries with answers. Is returned in the output structure
+         * @param {string} [search] search term
          * @param {string} [filter] (optional) applies a filter, can be negative
          * @param {string} [fieldsOut] (optional) comma-delimited list of fields to return -  101,102 - or * for all
          * @param {number} [labels] (optional) set to 1 to return labels in the output
@@ -19357,8 +19428,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          * @throws {RequiredError}
          * @memberof DefaultApi
          */
-        projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options) {
-            return (0, exports.DefaultApiFp)(this.configuration).projectNeedleGet(project, search, id, filter, fieldsOut, labels, treeOrder, links, options)(this.fetch, this.basePath);
+        projectNeedleGet(project, id, search, filter, fieldsOut, labels, treeOrder, links, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectNeedleGet(project, id, search, filter, fieldsOut, labels, treeOrder, links, options)(this.fetch, this.basePath);
+        }
+        /**
+         * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+         * @summary Find items based on a search string in one project
+         * @param {ProjectNeedleBody} body
+         * @param {string} project Project short label
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         * @memberof DefaultApi
+         */
+        projectNeedlePost(body, project, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectNeedlePost(body, project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -19372,6 +19455,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
          */
         projectNeedleminimalGet(project, search, filter, options) {
             return (0, exports.DefaultApiFp)(this.configuration).projectNeedleminimalGet(project, search, filter, options)(this.fetch, this.basePath);
+        }
+        /**
+         * Permissions - Must have read access (or higher) to the project. Valid from version 2.4
+         * @summary Find item ids based on a search string in one project
+         * @param {ProjectNeedleminimalBody} body
+         * @param {string} project Project short label
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         * @memberof DefaultApi
+         */
+        projectNeedleminimalPost(body, project, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectNeedleminimalPost(body, project, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must be admin. Valid from version 2.1
@@ -19921,7 +20016,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 
 
 /***/ }),
-/* 251 */
+/* 253 */
 /***/ ((module) => {
 
 (function () {
@@ -19944,7 +20039,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 
 
 /***/ }),
-/* 252 */
+/* 254 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -19973,7 +20068,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 
 
 
-var punycode = __webpack_require__(253);
+var punycode = __webpack_require__(255);
 
 function Url() {
   this.protocol = null;
@@ -20055,7 +20150,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     'gopher:': true,
     'file:': true
   },
-  querystring = __webpack_require__(254);
+  querystring = __webpack_require__(256);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && typeof url === 'object' && url instanceof Url) { return url; }
@@ -20724,7 +20819,7 @@ exports.Url = Url;
 
 
 /***/ }),
-/* 253 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* module decorator */ module = __webpack_require__.nmd(module);
@@ -21250,15 +21345,15 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathia
 
 
 /***/ }),
-/* 254 */
+/* 256 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var stringify = __webpack_require__(255);
-var parse = __webpack_require__(270);
-var formats = __webpack_require__(269);
+var stringify = __webpack_require__(257);
+var parse = __webpack_require__(272);
+var formats = __webpack_require__(271);
 
 module.exports = {
     formats: formats,
@@ -21268,15 +21363,15 @@ module.exports = {
 
 
 /***/ }),
-/* 255 */
+/* 257 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var getSideChannel = __webpack_require__(256);
-var utils = __webpack_require__(268);
-var formats = __webpack_require__(269);
+var getSideChannel = __webpack_require__(258);
+var utils = __webpack_require__(270);
+var formats = __webpack_require__(271);
 var has = Object.prototype.hasOwnProperty;
 
 var arrayPrefixGenerators = {
@@ -21595,15 +21690,15 @@ module.exports = function (object, opts) {
 
 
 /***/ }),
-/* 256 */
+/* 258 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(257);
-var callBound = __webpack_require__(264);
-var inspect = __webpack_require__(266);
+var GetIntrinsic = __webpack_require__(259);
+var callBound = __webpack_require__(266);
+var inspect = __webpack_require__(268);
 
 var $TypeError = GetIntrinsic('%TypeError%');
 var $WeakMap = GetIntrinsic('%WeakMap%', true);
@@ -21726,7 +21821,7 @@ module.exports = function getSideChannel() {
 
 
 /***/ }),
-/* 257 */
+/* 259 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -21774,8 +21869,8 @@ var ThrowTypeError = $gOPD
 	}())
 	: throwTypeError;
 
-var hasSymbols = __webpack_require__(258)();
-var hasProto = __webpack_require__(260)();
+var hasSymbols = __webpack_require__(260)();
+var hasProto = __webpack_require__(262)();
 
 var getProto = Object.getPrototypeOf || (
 	hasProto
@@ -21945,8 +22040,8 @@ var LEGACY_ALIASES = {
 	'%WeakSetPrototype%': ['WeakSet', 'prototype']
 };
 
-var bind = __webpack_require__(261);
-var hasOwn = __webpack_require__(263);
+var bind = __webpack_require__(263);
+var hasOwn = __webpack_require__(265);
 var $concat = bind.call(Function.call, Array.prototype.concat);
 var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
 var $replace = bind.call(Function.call, String.prototype.replace);
@@ -22084,14 +22179,14 @@ module.exports = function GetIntrinsic(name, allowMissing) {
 
 
 /***/ }),
-/* 258 */
+/* 260 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 var origSymbol = typeof Symbol !== 'undefined' && Symbol;
-var hasSymbolSham = __webpack_require__(259);
+var hasSymbolSham = __webpack_require__(261);
 
 module.exports = function hasNativeSymbols() {
 	if (typeof origSymbol !== 'function') { return false; }
@@ -22104,7 +22199,7 @@ module.exports = function hasNativeSymbols() {
 
 
 /***/ }),
-/* 259 */
+/* 261 */
 /***/ ((module) => {
 
 "use strict";
@@ -22153,7 +22248,7 @@ module.exports = function hasSymbols() {
 
 
 /***/ }),
-/* 260 */
+/* 262 */
 /***/ ((module) => {
 
 "use strict";
@@ -22171,19 +22266,19 @@ module.exports = function hasProto() {
 
 
 /***/ }),
-/* 261 */
+/* 263 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var implementation = __webpack_require__(262);
+var implementation = __webpack_require__(264);
 
 module.exports = Function.prototype.bind || implementation;
 
 
 /***/ }),
-/* 262 */
+/* 264 */
 /***/ ((module) => {
 
 "use strict";
@@ -22242,27 +22337,27 @@ module.exports = function bind(that) {
 
 
 /***/ }),
-/* 263 */
+/* 265 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var bind = __webpack_require__(261);
+var bind = __webpack_require__(263);
 
 module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 
 
 /***/ }),
-/* 264 */
+/* 266 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(257);
+var GetIntrinsic = __webpack_require__(259);
 
-var callBind = __webpack_require__(265);
+var callBind = __webpack_require__(267);
 
 var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
 
@@ -22276,14 +22371,14 @@ module.exports = function callBoundIntrinsic(name, allowMissing) {
 
 
 /***/ }),
-/* 265 */
+/* 267 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var bind = __webpack_require__(261);
-var GetIntrinsic = __webpack_require__(257);
+var bind = __webpack_require__(263);
+var GetIntrinsic = __webpack_require__(259);
 
 var $apply = GetIntrinsic('%Function.prototype.apply%');
 var $call = GetIntrinsic('%Function.prototype.call%');
@@ -22330,7 +22425,7 @@ if ($defineProperty) {
 
 
 /***/ }),
-/* 266 */
+/* 268 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var hasMap = typeof Map === 'function' && Map.prototype;
@@ -22400,7 +22495,7 @@ function addNumericSeparator(num, str) {
     return $replace.call(str, sepRegex, '$&_');
 }
 
-var utilInspect = __webpack_require__(267);
+var utilInspect = __webpack_require__(269);
 var inspectCustom = utilInspect.custom;
 var inspectSymbol = isSymbol(inspectCustom) ? inspectCustom : null;
 
@@ -22852,19 +22947,19 @@ function arrObjKeys(obj, inspect) {
 
 
 /***/ }),
-/* 267 */
+/* 269 */
 /***/ (() => {
 
 /* (ignored) */
 
 /***/ }),
-/* 268 */
+/* 270 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var formats = __webpack_require__(269);
+var formats = __webpack_require__(271);
 
 var has = Object.prototype.hasOwnProperty;
 var isArray = Array.isArray;
@@ -23117,7 +23212,7 @@ module.exports = {
 
 
 /***/ }),
-/* 269 */
+/* 271 */
 /***/ ((module) => {
 
 "use strict";
@@ -23147,13 +23242,13 @@ module.exports = {
 
 
 /***/ }),
-/* 270 */
+/* 272 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var utils = __webpack_require__(268);
+var utils = __webpack_require__(270);
 
 var has = Object.prototype.hasOwnProperty;
 var isArray = Array.isArray;
@@ -23418,18 +23513,17 @@ module.exports = function (str, opts) {
 
 
 /***/ }),
-/* 271 */
+/* 273 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(272), __webpack_require__(273), __webpack_require__(275), __webpack_require__(276)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Category_1, Item_1, TreeFolder_1, DocItem_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(274), __webpack_require__(275), __webpack_require__(277), __webpack_require__(278)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Category_1, Item_1, TreeFolder_1, DocItem_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.Project = void 0;
-    ;
     /**
      * The Project class offers methods to manipulate a Matrix Project on a Matrix Instance.
      * It is not meant to be created by the end user, rather the openProject() method is used on
-     * a StandaloneMatrixAPI object which represents the Matrix Instance.
+     * a StandaloneMatrixSDK object which represents the Matrix Instance.
      */
     class Project {
         constructor(server, name, context) {
@@ -23453,7 +23547,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             const f = {
                 id: undefined,
                 title: undefined,
-                children: folders
+                children: folders,
             };
             return new TreeFolder_1.TreeFolder(that, f);
         }
@@ -23506,7 +23600,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 input: inputFolderIds,
                 output: outputCategory,
                 reason: reason,
-                itemFieldMapping: fromTo
+                itemFieldMapping: fromTo,
             };
             return executeParam;
         }
@@ -23582,7 +23676,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     type: catName,
                     title: oneResult.title,
                     labels: includeLabels ? oneResult.labels : undefined,
-                    version: oneResult.version
+                    version: oneResult.version,
                 };
                 // Deal with labels.
                 if (includeLabels) {
@@ -23593,14 +23687,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     iitemGet.downLinks = [];
                     if (oneResult.downlinks) {
                         // TODO: We don't have link titles.
-                        iitemGet.downLinks = oneResult.downlinks.map((linkId) => { return { to: linkId, title: "" }; });
+                        iitemGet.downLinks = oneResult.downlinks.map((linkId) => {
+                            return { to: linkId, title: "" };
+                        });
                     }
                 }
                 if (includeUplinks) {
                     iitemGet.upLinks = [];
                     if (oneResult.uplinks) {
                         // TODO: We don't have link titles.
-                        iitemGet.upLinks = oneResult.uplinks.map((linkId) => { return { to: linkId, title: "" }; });
+                        iitemGet.upLinks = oneResult.uplinks.map((linkId) => {
+                            return { to: linkId, title: "" };
+                        });
                     }
                 }
                 // Deal with fields.
@@ -23781,10 +23879,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return this.categories.get(category);
         }
-        getName() { return this.name; }
-        getItemConfig() { return this.context.getItemConfig(); }
-        getLabelManager() { return this.context.getLabelManager(); }
-        getTestConfig() { return this.context.getTestManagerConfig(); }
+        getName() {
+            return this.name;
+        }
+        getItemConfig() {
+            return this.context.getItemConfig();
+        }
+        getLabelManager() {
+            return this.context.getLabelManager();
+        }
+        getTestConfig() {
+            return this.context.getTestManagerConfig();
+        }
         async generateDocument(type, docId, progressReporter) {
             let reportJob = await this.server.postProjectReport(this.name, docId, type);
             let generatedFiles = [];
@@ -23794,7 +23900,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 if (progressReporter) {
                     progressReporter(reportJob.jobId, job.progress);
                 }
-                if (job.status === "Error" || (job.progress > 100)) {
+                if (job.status === "Error" || job.progress > 100) {
                     throw new Error(`Error generating report : ${job.status}`);
                 }
                 else if (job.status !== "Done" || job.progress < 100) {
@@ -23810,6 +23916,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         async sleep(ms) {
             return new Promise((resolve) => setTimeout(resolve, ms));
         }
+        createTodo(users, type, text, itemId, fieldId, atDate) {
+            return this.server.createTodo(this.name, users, type, text, itemId, fieldId, atDate);
+        }
     }
     exports.Project = Project;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -23817,7 +23926,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 272 */
+/* 274 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -23835,7 +23944,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         hasFieldId(fieldId) {
             return this.fieldIds.filter((id) => id == fieldId).length > 0;
         }
-        getFieldIds() { return this.fieldIds; }
+        getFieldIds() {
+            return this.fieldIds;
+        }
         /**
          * Combine the other ItemFieldMask with this one.
          * @param other an ItemFieldMask
@@ -23866,10 +23977,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.includeUplinks = includeUplinks;
             this.masks = new Map();
         }
-        getIncludeFields() { return this.includeFields; }
-        getIncludeLabels() { return this.includeLabels; }
-        getIncludeDownlinks() { return this.includeDownlinks; }
-        getIncludeUplinks() { return this.includeUplinks; }
+        getIncludeFields() {
+            return this.includeFields;
+        }
+        getIncludeLabels() {
+            return this.includeLabels;
+        }
+        getIncludeDownlinks() {
+            return this.includeDownlinks;
+        }
+        getIncludeUplinks() {
+            return this.includeUplinks;
+        }
         /**
          * Add fields to the mask for the given Category. If there is already a field mask for the
          * Category, its values will be combined with the new information via set union.
@@ -23969,9 +24088,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             // Cache a mask for all fields since it may be created often.
             this.allFieldsFieldMask = new ItemFieldMask(this.getFields().map((c) => c.id));
         }
-        getProject() { return this.project; }
-        getItemConfig() { return this.project.getItemConfig(); }
-        getTestConfig() { return this.project.getTestConfig(); }
+        getProject() {
+            return this.project;
+        }
+        getItemConfig() {
+            return this.project.getItemConfig();
+        }
+        getTestConfig() {
+            return this.project.getTestConfig();
+        }
         getId() {
             return this.category;
         }
@@ -23996,7 +24121,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return results;
         }
-        isFolderCategory() { return this.getId() == "FOLDER"; }
+        isFolderCategory() {
+            return this.getId() == "FOLDER";
+        }
         /**
          * An ItemFieldMask allows you to specify which fields out of the Category
          * fields of an Item should be considered valid.
@@ -24011,7 +24138,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (fieldIds) {
                 // Validate that we have these fields.
                 for (let f of fieldIds) {
-                    if (fields.filter(c => c.id == f).length == 0) {
+                    if (fields.filter((c) => c.id == f).length == 0) {
                         throw new Error(`Field id ${f} not found in category ${this.category}`);
                     }
                 }
@@ -24026,10 +24153,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 273 */
+/* 275 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(274), __webpack_require__(55)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Field_1, index_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(276), __webpack_require__(57)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Field_1, index_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.Item = void 0;
@@ -24069,8 +24196,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.setData(item);
         }
         // TODO: also, what about labels? Are these in toBeIntegrated right now?
-        setDirty() { this.dirty = true; }
-        getFieldMask() { return this.fieldMask; }
+        setDirty() {
+            this.dirty = true;
+        }
+        getFieldMask() {
+            return this.fieldMask;
+        }
         /**
          * Read-only.
          * @returns The highest version reached for this item, or undefined if the
@@ -24091,7 +24222,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         hasLink(array, id) {
             if (array) {
-                return array.filter(l => l.to == id).length > 0;
+                return array.filter((l) => l.to == id).length > 0;
             }
             return false;
         }
@@ -24245,7 +24376,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @returns true if fieldId is valid within the Category.
          */
         isValidFieldId(fieldId) {
-            return this.getCategory().getFields().filter(c => c.id == fieldId).length > 0;
+            return (this.getCategory()
+                .getFields()
+                .filter((c) => c.id == fieldId).length > 0);
         }
         /**
          * Initializes the data fields for the item from an IItemGet structure
@@ -24269,8 +24402,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 if (item["creationDate"]) {
                     this.creationDate = item["creationDate"];
                 }
-                assert((this.type == this.category.getId()) ||
-                    (this.isFolder && this.category.isFolderCategory()), `the item type ${this.type} does not match category type ${this.category.getId()}`);
+                assert(this.type == this.category.getId() || (this.isFolder && this.category.isFolderCategory()), `the item type ${this.type} does not match category type ${this.category.getId()}`);
             }
             else {
                 // We can assert that we don't have a folder, because the constructor, which
@@ -24319,7 +24451,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (this.fieldMask.hasFieldId(fieldId)) {
                 throw new Error(`Field ${fieldId} is already specified in the field mask`);
             }
-            const foundFields = this.getCategory().getFields().filter(c => c.id == fieldId);
+            const foundFields = this.getCategory()
+                .getFields()
+                .filter((c) => c.id == fieldId);
             if (foundFields.length == 0) {
                 throw new Error(`Field ${fieldId} does not exist in category ${this.getCategory().getId()}`);
             }
@@ -24358,14 +24492,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 type: this.type,
                 id: this.toBeIntegrated.id,
                 title: this.title,
-                linksUp: this.upLinks ? this.upLinks.map(u => u.to).join(",") : "",
-                linksDown: this.downLinks ? this.downLinks.map(u => u.to).join(",") : "",
+                linksUp: this.upLinks ? this.upLinks.map((u) => u.to).join(",") : "",
+                linksDown: this.downLinks ? this.downLinks.map((u) => u.to).join(",") : "",
                 isFolder: this.isFolder,
                 isDeleted: this.toBeIntegrated.isDeleted,
                 maxVersion: this.maxVersion,
                 docHasPackage: this.toBeIntegrated.docHasPackage,
                 // TODO: where is parent in IItemGet? Doesn't every item have a parent?
-                labels: this.labels ? this.labels.join(",") : ""
+                labels: this.labels ? this.labels.join(",") : "",
                 // TODO: where is crossLinks in IItemPut?
             };
             // Now deal with the category fields.
@@ -24388,8 +24522,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.isFolder;
         }
         getType() {
-            assert((this.type == this.category.getId()) ||
-                (this.isFolder && this.category.isFolderCategory()), `Item type ${this.type} does not match category type ${this.category.getId()}`);
+            assert(this.type == this.category.getId() || (this.isFolder && this.category.isFolderCategory()), `Item type ${this.type} does not match category type ${this.category.getId()}`);
             return this.type;
         }
         getCreationDate() {
@@ -24425,7 +24558,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return "";
         }
-        stringToLabels(input) { return input.split(","); }
+        stringToLabels(input) {
+            return input.split(",");
+        }
         verifyLabelsAllowed(labels) {
             // Are labels allowed for our category?
             const labelDefs = this.category.getProject().getLabelManager().getLabelDefinitions([this.type]);
@@ -24477,7 +24612,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * Return the Category for the current item
          * @returns Category
          */
-        getCategory() { return this.category; }
+        getCategory() {
+            return this.category;
+        }
         async needsSaveAsync() {
             // Are any fields dirty?
             for (let field of this.fieldMap.values()) {
@@ -24562,6 +24699,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return results;
         }
+        async createTodo(users, type, text, atDate) {
+            return this.category.getProject().createTodo(users, type, text, this.id, null, atDate);
+        }
     }
     exports.Item = Item;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -24569,7 +24709,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 274 */
+/* 276 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -24593,22 +24733,32 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 throw new Error(`Field type ${this.config.fieldType} doesn't match handler field type ${this.handler.getFieldType()}`);
             }
             this.oldData = handler.getRawData(); // Not fully implemented for dhfFieldHandler and dashboardFieldHandler as it requires a async call.
-            handler.getDataAsync().then((data) => { this.oldData = data; });
+            handler.getDataAsync().then((data) => {
+                this.oldData = data;
+            });
         }
-        getHandlerRaw() { return this.handler; }
+        getHandlerRaw() {
+            return this.handler;
+        }
         getHandler() {
             // return the handler cast appropriately given the type of the field.
             // TODO: check this somehow.
             return this.handler;
         }
-        getFieldType() { return this.config.fieldType; }
-        getFieldId() { return this.config.id; }
-        getFieldName() { return this.config.label; }
+        getFieldType() {
+            return this.config.fieldType;
+        }
+        getFieldId() {
+            return this.config.id;
+        }
+        getFieldName() {
+            return this.config.label;
+        }
         getFieldConfigParameter(name) {
             return this.config.parameterJson[name];
         }
         async needsSaveAsync() {
-            return await this.handler.getDataAsync() !== this.oldData;
+            return (await this.handler.getDataAsync()) !== this.oldData;
         }
     }
     exports.Field = Field;
@@ -24617,7 +24767,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 275 */
+/* 277 */
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -24651,7 +24801,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             }
         }
-        isRoot() { return this.id == undefined && this.parent == undefined; }
+        isRoot() {
+            return this.id == undefined && this.parent == undefined;
+        }
         getId() {
             if (this.isRoot())
                 return "ROOT";
@@ -24729,7 +24881,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 const folderInfo = {
                     id: createdItem.getId(),
                     title: createdItem.getTitle(),
-                    type: createdItem.getType()
+                    type: createdItem.getType(),
                 };
                 this.folderChildren.push(new TreeFolder(this.needs, folderInfo, this));
             }
@@ -24819,10 +24971,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 
 /***/ }),
-/* 276 */
+/* 278 */
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(273), __webpack_require__(30), __webpack_require__(78), __webpack_require__(79)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Item_1, FieldDescriptions_1, SectionDescriptions_1, Document_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(275), __webpack_require__(32), __webpack_require__(80), __webpack_require__(81)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Item_1, FieldDescriptions_1, SectionDescriptions_1, Document_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DocItem = void 0;
@@ -24846,7 +24998,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param {sectionType} Type of the section
          */
         addSection(title, sectionType) {
-            let documentOptionIndex = this.getDHFSections().findIndex((section) => section.getHandler().innerDataHandler.getFieldType() == SectionDescriptions_1.SectionDescriptions.section_document_options);
+            let documentOptionIndex = this.getDHFSections().findIndex((section) => section.getHandler().innerDataHandler.getFieldType() ==
+                SectionDescriptions_1.SectionDescriptions.section_document_options);
             let handler = null;
             if (documentOptionIndex > -1) {
                 handler = this.insertSection(documentOptionIndex, title, sectionType);
@@ -24889,9 +25042,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 number = sections.length + number;
             }
             if (number >= sections.length || number < 0)
-                throw new Error("Cannot insert section at position " + number + " because there are only " + sections.length + " sections");
+                throw new Error("Cannot insert section at position " +
+                    number +
+                    " because there are only " +
+                    sections.length +
+                    " sections");
             // Get the count of non hidden sections
-            let nonHiddenSectionsCount = sections.filter((section) => section.getHandler().innerDataHandler.getFieldType() != SectionDescriptions_1.SectionDescriptions.section_hidden).length;
+            let nonHiddenSectionsCount = sections.filter((section) => section.getHandler().innerDataHandler.getFieldType() !=
+                SectionDescriptions_1.SectionDescriptions.section_hidden).length;
             if (nonHiddenSectionsCount == sections.length)
                 throw new Error("Cannot insert section at position " + number + " because there are no section left");
             if (number > nonHiddenSectionsCount + 1)
@@ -24899,13 +25057,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             for (let i = sections.length - 1; i > number; i--) {
                 let section = sections[i];
                 let previous = sections[i - 1];
-                section.getHandler().setInnerFieldHandler(previous.getHandler().innerDataHandler);
+                section
+                    .getHandler()
+                    .setInnerFieldHandler(previous.getHandler().innerDataHandler);
             }
             let section = sections[number];
             let config = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.project.getItemConfig(), sectionType, {});
             let innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
                 type: sectionType,
-                ctrlConfig: config
+                ctrlConfig: config,
             });
             innerDataHandler.setFieldName(sectionName);
             section.getHandler().setInnerFieldHandler(innerDataHandler);
@@ -24922,16 +25082,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 number = sections.length + number;
             }
             if (number >= sections.length || number < 0)
-                throw new Error("Cannot insert remove at position " + number + " because there are only " + sections.length + " sections");
+                throw new Error("Cannot insert remove at position " +
+                    number +
+                    " because there are only " +
+                    sections.length +
+                    " sections");
             let lastField = -1;
             for (let i = number; i < sections.length - 1; i++) {
                 let currentSection = sections[i];
                 let nextSection = sections[i + 1];
-                currentSection.getHandler().setInnerFieldHandler(nextSection.getHandler().innerDataHandler);
-                if (nextSection.getHandler().innerDataHandler.getFieldType() != SectionDescriptions_1.SectionDescriptions.section_hidden) {
+                currentSection
+                    .getHandler()
+                    .setInnerFieldHandler(nextSection.getHandler().innerDataHandler);
+                if (nextSection.getHandler().innerDataHandler.getFieldType() !=
+                    SectionDescriptions_1.SectionDescriptions.section_hidden) {
                     nextSection.getHandler().setInnerFieldHandler(Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
                         type: SectionDescriptions_1.SectionDescriptions.section_hidden,
-                        ctrlConfig: {}
+                        ctrlConfig: {},
                     }));
                 }
             }
@@ -24974,7 +25141,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             // Document options should be the last field
             let sections = this.getDHFSections();
-            let foundDocumentOptions = sections.find((section) => section.getHandler().innerDataHandler.getFieldType() == SectionDescriptions_1.SectionDescriptions.section_document_options);
+            let foundDocumentOptions = sections.find((section) => section.getHandler().innerDataHandler.getFieldType() ==
+                SectionDescriptions_1.SectionDescriptions.section_document_options);
             if (foundDocumentOptions == undefined) {
                 // Document options is something we need to add
                 //get the last field
@@ -24987,8 +25155,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 for (let i = documenOptionsInnerHandlerIndex; i < sections.length - 2; i++) {
                     let field = sections[i];
                     let nextField = sections[i + 1];
-                    if (field.getHandler().innerDataHandler.getFieldType() != SectionDescriptions_1.SectionDescriptions.section_hidden) {
-                        field.getHandler().setInnerFieldHandler(nextField.getHandler().innerDataHandler);
+                    if (field.getHandler().innerDataHandler.getFieldType() !=
+                        SectionDescriptions_1.SectionDescriptions.section_hidden) {
+                        field
+                            .getHandler()
+                            .setInnerFieldHandler(nextField.getHandler().innerDataHandler);
                     }
                     else {
                         lastField = i - 1;
@@ -25024,7 +25195,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             let config = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.project.getItemConfig(), SectionDescriptions_1.SectionDescriptions.section_document_options, {});
             let innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
                 type: SectionDescriptions_1.SectionDescriptions.section_document_options,
-                ctrlConfig: config
+                ctrlConfig: config,
             });
             handler.setInnerFieldHandler(innerDataHandler);
         }
@@ -25119,10 +25290,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(246);
+/******/ 	var __webpack_exports__ = __webpack_require__(248);
 /******/ 	
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;
 });
-//# sourceMappingURL=consoleapi.js.map
+//# sourceMappingURL=consolesdk.js.map

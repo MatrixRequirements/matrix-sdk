@@ -1,9 +1,9 @@
 {
   "name": "matrix-requirements-sdk",
-  "version": "2.4.0-alpha.1",
+  "version": "2.4.0-alpha.2",
   "description": "An SDK for manipulating MatrixRequirements projects",
   "main": "index.js",
-  "types": "matrixApi.d.ts",
+  "types": "matrixSdk.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

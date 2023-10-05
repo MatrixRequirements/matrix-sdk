@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Project</title>
+    <title>JSDoc: Class: StandaloneMatrixSDK</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Project</h1>
+    <h1 class="page-title">Class: StandaloneMatrixSDK</h1>
 
     
 
@@ -28,11 +28,11 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Project<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>StandaloneMatrixSDK<span class="signature">()</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">The Project class offers methods to manipulate a Matrix Project on a Matrix Instance.
-It is not meant to be created by the end user, rather the openProject() method is used on
-a StandaloneMatrixSDK object which represents the Matrix Instance.</div>
+            <div class="class-description">StandaloneMatrixSDK is a connection to a Matrix Instance. It offers services to interact
+with the Instance. A primary purpose beyond authenticating on the server is to provide access
+to Project objects through openProject() or openCurrentProjectFromSession().</div>
         
     
 </header>
@@ -47,7 +47,7 @@ a StandaloneMatrixSDK object which represents the Matrix Instance.</div>
     
 
     
-    <h4 class="name" id="Project"><span class="type-signature"></span>new Project<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="StandaloneMatrixSDK"><span class="type-signature"></span>new StandaloneMatrixSDK<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -95,7 +95,7 @@ a StandaloneMatrixSDK object which represents the Matrix Instance.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5546">line 5546</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19246">line 19246</a>
     </li></ul></dd>
     
 
@@ -151,7 +151,7 @@ a StandaloneMatrixSDK object which represents the Matrix Instance.</div>
     
 
     
-    <h4 class="name" id="complexSearch"><span class="type-signature">(async) </span>complexSearch<span class="signature">(term, filter, treeOrder, mask)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="createFolder"><span class="type-signature">(async) </span>createFolder<span class="signature">(parent, title, data)</span><span class="type-signature"></span></h4>
     
 
     
@@ -159,9 +159,7 @@ a StandaloneMatrixSDK object which represents the Matrix Instance.</div>
 
 
 <div class="description">
-    Perform a search and return items that are initialized according to the provided mask
-settings. This allows you to efficiently gather data from the server with only the fields
-you need brought down.
+    Creates a folder
 </div>
 
 
@@ -187,8 +185,6 @@ you need brought down.
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -199,7 +195,7 @@ you need brought down.
 
         <tr>
             
-                <td class="name"><code>term</code></td>
+                <td class="name"><code>parent</code></td>
             
 
             <td class="type">
@@ -209,19 +205,15 @@ you need brought down.
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last"></td>
+            <td class="description last">where to store the folder</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>filter</code></td>
+                <td class="name"><code>title</code></td>
             
 
             <td class="type">
@@ -231,19 +223,15 @@ you need brought down.
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last"></td>
+            <td class="description last">name of the folder</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>treeOrder</code></td>
+                <td class="name"><code>data</code></td>
             
 
             <td class="type">
@@ -253,36 +241,8 @@ you need brought down.
             
 
             
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
 
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>mask</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"></td>
+            <td class="description last">array with fieldNames and values</td>
         </tr>
 
     
@@ -323,7 +283,7 @@ you need brought down.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5653">line 5653</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line20090">line 20090</a>
     </li></ul></dd>
     
 
@@ -346,13 +306,25 @@ you need brought down.
 
 
 
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        error in case of input error (bad fields, etc)
+    
+    </div>
+
+
+    
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    an array of filled-in Item objects.
+    Promise to the item id of folder
 </div>
 
 
@@ -369,7 +341,7 @@ you need brought down.
     
 
     
-    <h4 class="name" id="complexSearchInProject"><span class="type-signature">(async) </span>complexSearchInProject<span class="signature">(project, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="createItem"><span class="type-signature"></span>createItem<span class="signature">(folder, title, data, labels, downlinks, uplinks)</span><span class="type-signature"></span></h4>
     
 
     
@@ -377,7 +349,9 @@ you need brought down.
 
 
 <div class="description">
-    Execute a more complex search, where the fields in the results can be limited.
+    create a new item in the database
+
+Use: createItem( "F-REQ-1", "my item", [{fieldName:"description",value:"x"}], ["labelx"], downlinks:["SPEC-1"], uplinks:[] )
 </div>
 
 
@@ -413,7 +387,7 @@ you need brought down.
 
         <tr>
             
-                <td class="name"><code>project</code></td>
+                <td class="name"><code>folder</code></td>
             
 
             <td class="type">
@@ -424,14 +398,14 @@ you need brought down.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">where to store the item</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>term</code></td>
+                <td class="name"><code>title</code></td>
             
 
             <td class="type">
@@ -442,14 +416,14 @@ you need brought down.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">name of the item</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>filter</code></td>
+                <td class="name"><code>data</code></td>
             
 
             <td class="type">
@@ -460,14 +434,14 @@ you need brought down.
 
             
 
-            <td class="description last">default empty string</td>
+            <td class="description last">array with fieldNames and values</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>fieldList</code></td>
+                <td class="name"><code>labels</code></td>
             
 
             <td class="type">
@@ -478,16 +452,14 @@ you need brought down.
 
             
 
-            <td class="description last">empty string to mean no fields, * to mean all, or comma-seperated list of
-  field ids from the various categories from which items will be returned. The default
-  value is *.</td>
+            <td class="description last">list of labels to set</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>includeLabels</code></td>
+                <td class="name"><code>downlinks</code></td>
             
 
             <td class="type">
@@ -498,14 +470,14 @@ you need brought down.
 
             
 
-            <td class="description last">default true</td>
+            <td class="description last">list of downlinks to create</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>includeDownlinks</code></td>
+                <td class="name"><code>uplinks</code></td>
             
 
             <td class="type">
@@ -516,43 +488,7 @@ you need brought down.
 
             
 
-            <td class="description last">default false</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeUplinks</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">default false</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>treeOrder</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">default false</td>
+            <td class="description last">list of uplinks to create</td>
         </tr>
 
     
@@ -593,7 +529,7 @@ you need brought down.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5639">line 5639</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19961">line 19961</a>
     </li></ul></dd>
     
 
@@ -622,7 +558,7 @@ you need brought down.
 
         
 <div class="param-desc">
-    returns an array of ISearchResult objects.
+    the created item id
 </div>
 
 
@@ -639,7 +575,7 @@ you need brought down.
     
 
     
-    <h4 class="name" id="constructSearchFieldMask"><span class="type-signature"></span>constructSearchFieldMask<span class="signature">(includeFields, includeLabels, includeDownlinks, includeUplinks)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getField"><span class="type-signature">(async) </span>getField<span class="signature">(itemId, fieldName)</span><span class="type-signature"></span></h4>
     
 
     
@@ -647,551 +583,9 @@ you need brought down.
 
 
 <div class="description">
-    Create an ItemsFieldMask for use with search functions.
-</div>
+    gets the value of a field of an item from the database
 
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>includeFields</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last">true by default. If false, no fields will be retrieved from the server.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeLabels</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last">true by default. If false, no label information will be retrieved from the server.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeDownlinks</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">false by default. If false, no information about downlinks will come from the server.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeUplinks</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">false by default. If false, no information about uplinks will come from the server.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5753">line 5753</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    an initialized ItemsFieldMask object which can be further customized.
-</div>
-
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="createExecuteParamWithDefaults"><span class="type-signature"></span>createExecuteParamWithDefaults<span class="signature">(inputFolderIds, outputCategory, reason)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Used to populate the rather complex ExecuteParam type. We need a mapping from clone source
-field ids to the output category field ids.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>inputFolderIds</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>outputCategory</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>reason</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5597">line 5597</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    A populated ExecuteParam suitable for use with the execute method.
-</div>
-
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="createFolder"><span class="type-signature"></span>createFolder<span class="signature">(type)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create a folder. Every folder must contain only items of a particular type.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5786">line 5786</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    a new Folder item of the given type.
-</div>
-
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="deleteItem"><span class="type-signature">(async) </span>deleteItem<span class="signature">(itemId, force)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Delete an Item from the project. If the Item is a folder with children, then parameter
-{force} must be true.
+Use: await getField( "REQ-1", "description")
 </div>
 
 
@@ -1238,14 +632,14 @@ field ids to the output category field ids.
 
             
 
-            <td class="description last">A valid item</td>
+            <td class="description last">the id of the item like "REQ-1" or a specific version like "REQ-1-v1"</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>force</code></td>
+                <td class="name"><code>fieldName</code></td>
             
 
             <td class="type">
@@ -1256,7 +650,7 @@ field ids to the output category field ids.
 
             
 
-            <td class="description last"></td>
+            <td class="description last">name of the field</td>
         </tr>
 
     
@@ -1297,7 +691,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5844">line 5844</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19751">line 19751</a>
     </li></ul></dd>
     
 
@@ -1326,7 +720,7 @@ field ids to the output category field ids.
 
     <div class="param-desc">
     
-        Error if the item is a non-empty folder and force was not specified as true.
+        Error in case of invalid item or field
     
     </div>
 
@@ -1338,7 +732,7 @@ field ids to the output category field ids.
 
         
 <div class="param-desc">
-    A promise with the string "Ok" on success.
+    Promise to the value of the field
 </div>
 
 
@@ -1355,7 +749,7 @@ field ids to the output category field ids.
     
 
     
-    <h4 class="name" id="execute"><span class="type-signature">(async) </span>execute<span class="signature">(payload)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getFolderChildren"><span class="type-signature">(async) </span>getFolderChildren<span class="signature">(folderId)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1363,7 +757,7 @@ field ids to the output category field ids.
 
 
 <div class="description">
-    Run a server execute command with the given payload
+    get a folder from the database, filling in it's children.
 </div>
 
 
@@ -1399,7 +793,7 @@ field ids to the output category field ids.
 
         <tr>
             
-                <td class="name"><code>payload</code></td>
+                <td class="name"><code>folderId</code></td>
             
 
             <td class="type">
@@ -1410,7 +804,7 @@ field ids to the output category field ids.
 
             
 
-            <td class="description last">a valid ExecuteParam object</td>
+            <td class="description last">the id of the folder like "F-<type>-<id>"</td>
         </tr>
 
     
@@ -1451,7 +845,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5586">line 5586</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19386">line 19386</a>
     </li></ul></dd>
     
 
@@ -1474,13 +868,25 @@ field ids to the output category field ids.
 
 
 
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        error if folderId is invalid
+    
+    </div>
+
+
+    
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    A FolderAnswer object
+    Promise to ITitleAndId array
 </div>
 
 
@@ -1497,7 +903,7 @@ field ids to the output category field ids.
     
 
     
-    <h4 class="name" id="getItemAsDoc"><span class="type-signature">(async) </span>getItemAsDoc<span class="signature">(id)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getItem"><span class="type-signature">(async) </span>getItem<span class="signature">(itemId)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1505,7 +911,9 @@ field ids to the output category field ids.
 
 
 <div class="description">
-    Return a DocItem from an id.
+    get an item from the database as json object.
+
+Use: await api.getItem("F-DOC-1")
 </div>
 
 
@@ -1541,15 +949,10 @@ field ids to the output category field ids.
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>itemId</code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">id</span>
-
-
             
             </td>
 
@@ -1557,7 +960,7 @@ field ids to the output category field ids.
 
             
 
-            <td class="description last">The id of the DOC</td>
+            <td class="description last">the id of the item like "REQ-1" or a specific version like "REQ-1-v1"</td>
         </tr>
 
     
@@ -1598,7 +1001,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5797">line 5797</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19343">line 19343</a>
     </li></ul></dd>
     
 
@@ -1621,101 +1024,25 @@ field ids to the output category field ids.
 
 
 
-
-
-
-
-
-
+<h5>Throws:</h5>
 
         
-            
+
+    <div class="param-desc">
+    
+        error in case the itemId is bad.
+    
+    </div>
+
 
     
-
-    
-    <h4 class="name" id="getProjectTree"><span class="type-signature">(async) </span>getProjectTree<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Get the root TreeFolder for a Project.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5561">line 5561</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <h5>Returns:</h5>
 
         
 <div class="param-desc">
-    A valid TreeFolder.
+    Promise to json object with all fields, links and labels
 </div>
 
 
@@ -1732,7 +1059,7 @@ field ids to the output category field ids.
     
 
     
-    <h4 class="name" id="getTodos"><span class="type-signature"></span>getTodos<span class="signature">(itemRef, includeDone, includeAllUsers, includeFuture)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getProjectTodos"><span class="type-signature">(async) </span>getProjectTodos<span class="signature">(project, itemRef, includeDone, includeAllUsers, includeFuture)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1772,6 +1099,24 @@ field ids to the output category field ids.
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>project</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">project name</td>
+        </tr>
+
     
 
         <tr>
@@ -1882,7 +1227,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5891">line 5891</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line20142">line 20142</a>
     </li></ul></dd>
     
 
@@ -1928,7 +1273,7 @@ field ids to the output category field ids.
     
 
     
-    <h4 class="name" id="moveItems"><span class="type-signature">(async) </span>moveItems<span class="signature">(folderId, itemIds)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getTree"><span class="type-signature">(async) </span>getTree<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -1936,7 +1281,95 @@ field ids to the output category field ids.
 
 
 <div class="description">
-    Move items in the project to a particular folder.
+    get the initial tree structure from a project. Project must be set first.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19362">line 19362</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="moveItemsInProject"><span class="type-signature">(async) </span>moveItemsInProject<span class="signature">(project, folderId, itemIds)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Move items to a particular folder.
 </div>
 
 
@@ -1968,6 +1401,24 @@ field ids to the output category field ids.
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>project</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">a valid project on the instance</td>
+        </tr>
+
     
 
         <tr>
@@ -2042,7 +1493,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5853">line 5853</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19565">line 19565</a>
     </li></ul></dd>
     
 
@@ -2088,7 +1539,7 @@ field ids to the output category field ids.
     
 
     
-    <h4 class="name" id="parseRef"><span class="type-signature"></span>parseRef<span class="signature">(itemId)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="openCurrentProjectFromSession"><span class="type-signature">(async) </span>openCurrentProjectFromSession<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -2096,7 +1547,108 @@ field ids to the output category field ids.
 
 
 <div class="description">
-    Returns information about an item from an id in a given project.
+    The session object contains a string that represents the "current project."
+This convenience method calls openProject() with that string.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19609">line 19609</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A valid Project object, or null if the session has no project.
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="openProject"><span class="type-signature">(async) </span>openProject<span class="signature">(project)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Retrieve or create a Project object for the given project name.  The method is
+asynchronous because it may require a trip to the server to retrieve project
+configuration.
 </div>
 
 
@@ -2132,7 +1684,7 @@ field ids to the output category field ids.
 
         <tr>
             
-                <td class="name"><code>itemId</code></td>
+                <td class="name"><code>project</code></td>
             
 
             <td class="type">
@@ -2143,7 +1695,7 @@ field ids to the output category field ids.
 
             
 
-            <td class="description last">A valid item id in the project</td>
+            <td class="description last">a valid string.</td>
         </tr>
 
     
@@ -2184,7 +1736,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5769">line 5769</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19620">line 19620</a>
     </li></ul></dd>
     
 
@@ -2213,7 +1765,7 @@ field ids to the output category field ids.
 
         
 <div class="param-desc">
-    The itemId decomposed into parts
+    A valid Project object, or null if the project name is undefined.
 </div>
 
 
@@ -2230,7 +1782,7 @@ field ids to the output category field ids.
     
 
     
-    <h4 class="name" id="putItem"><span class="type-signature">(async) </span>putItem<span class="signature">(parentFolderId, item)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="search"><span class="type-signature">(async) </span>search<span class="signature">(term, includeFields, includeLinks, includeLabels)</span><span class="type-signature"></span></h4>
     
 
     
@@ -2238,167 +1790,7 @@ field ids to the output category field ids.
 
 
 <div class="description">
-    Save an item into a given folder.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>parentFolderId</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>item</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5807">line 5807</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    A fresh copy of the Item from the server
-</div>
-
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="search"><span class="type-signature">(async) </span>search<span class="signature">(term)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Perform a search, returning IDs of Items that match.
+    search items
 </div>
 
 
@@ -2445,8 +1837,61 @@ field ids to the output category field ids.
 
             
 
-            <td class="description last">a search term. Consult documentation for valid searches, including
-    "mrql" searches.</td>
+            <td class="description last">search expression, e.g. mrql:category=REQ</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>includeFields</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">true to include fields</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>includeLinks</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">true to include links</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>includeLabels</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">true to include labels</td>
         </tr>
 
     
@@ -2487,7 +1932,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5578">line 5578</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19554">line 19554</a>
     </li></ul></dd>
     
 
@@ -2516,7 +1961,167 @@ field ids to the output category field ids.
 
         
 <div class="param-desc">
-    An array of matching item IDs.
+    search results
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="searchInProject"><span class="type-signature">(async) </span>searchInProject<span class="signature">(project, term)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Execute a search in the given project, returning matching item ids.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>project</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>term</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19577">line 19577</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an array of item ids.
 </div>
 
 
@@ -2543,7 +2148,7 @@ field ids to the output category field ids.
 <div class="description">
     set a field of an item in the database
 
-Use: await project.setField("PROC-83", "plain english", "x");
+Use: await api.setField("PROC-83", "plain english", "x");
 </div>
 
 
@@ -2667,7 +2272,7 @@ Use: await project.setField("PROC-83", "plain english", "x");
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5867">line 5867</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19781">line 19781</a>
     </li></ul></dd>
     
 
@@ -2841,7 +2446,7 @@ Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5880">line 5880</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line19867">line 19867</a>
     </li></ul></dd>
     
 
@@ -2883,290 +2488,6 @@ Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
         
 <div class="param-desc">
     the updated item
-</div>
-
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="updateItem"><span class="type-signature">(async) </span>updateItem<span class="signature">(item)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Update an item on the server.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>item</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5827">line 5827</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    A fresh copy of the Item from the server.
-</div>
-
-
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="uploadFile"><span class="type-signature"></span>uploadFile<span class="signature">(url)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Upload a file given by the url into the project.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5761">line 5761</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    an AddFileAck structure.
 </div>
 
 
