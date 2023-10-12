@@ -2,7 +2,10 @@
 /// <reference types="matrix-requirements-sdk" />
 
 import { ServerSettingsPage } from "./ServerSettingsPage";
-import { IBulkSettings, IServerSettings } from "./Interfaces";
+import { IBulkSettings, IPluginFieldValue, IServerSettings } from "./Interfaces";
+import IDashboardParametersBase = matrixSdk.IDashboardParametersBase;
+
+export interface IDashboardParameters extends IDashboardParametersBase { }
 
 let bulkDefaultSettings: IBulkSettings = {
     project: "BLAH",
@@ -17,21 +20,47 @@ let bulkDefaultSettings: IBulkSettings = {
     imageToAttachURL: "https://www.skiworld.co.uk/images/uploads/photos/large/tignes_resort_-_winter_-_lake_and_reflections_14657.jpg"
 };
 
+export class FieldHandler implements matrixSdk.IPluginFieldHandler<IPluginFieldValue> {
+    getValueAsync(): Promise<IPluginFieldValue> {
+        throw new Error("Method not implemented.");
+    }
+    setValue(T: any): void {
+        throw new Error("Method not implemented.");
+    }
+    getFieldType(): string {
+        throw new Error("Method not implemented.");
+    }
+    initData(serializedFieldData: string) {
+        throw new Error("Method not implemented.");
+    }
+    getDataAsync(): Promise<string> {
+        throw new Error("Method not implemented.");
+    }
+    getRawData() {
+        throw new Error("Method not implemented.");
+    }
+}
+
+
 /** This class is allows you to configure the features of your plugin.
  * 
  *  You can also implement functions to into the plugin (at start in the constructor, when loading a project, when loading an item)
  * 
      */
-export class Plugin implements matrixApi.IExternalPlugin<IServerSettings, matrixApi.IProjectSettingsBase> {
+export class Plugin implements matrixSdk.IExternalPlugin<IServerSettings, 
+                                matrixSdk.IProjectSettingsBase, 
+                                FieldHandler, 
+                                IPluginFieldValue, 
+                                IDashboardParameters> {
 
-    core: matrixApi.PluginCore;
+    core: matrixSdk.PluginCore;
 
     /**This part enables which 
      * 
      * See IPluginConfig interface for explanation of parameters
     */
     
-    static config: matrixApi.IPluginConfig<IServerSettings, matrixApi.IProjectSettingsBase> = {
+    static config: matrixSdk.IPluginConfig<IServerSettings, matrixSdk.IProjectSettingsBase> = {
         /*  Page in admin client to configure settings across all projects - set enabled to false if not needed. 
             The page itself is implemented in the _ServerSettingsPage.ts 
         */
@@ -113,30 +142,30 @@ export class Plugin implements matrixApi.IExternalPlugin<IServerSettings, matrix
      */
     constructor() {
         // here is a good place to register callbacks for UI events (like displaying or saving items)
-        this.core = new matrixApi.PluginCore(this);
+        this.core = new matrixSdk.PluginCore(this);
     }
 
     PLUGIN_VERSION: string;
     PLUGIN_NAME: string;
-    async getDashboard(): Promise<matrixApi.IDashboardPage> {
+    async getDashboardAsync(): Promise<matrixSdk.IDashboardPage<IDashboardParameters>> {
         return null;
     }
-    async getProjectSettingsPage(): Promise<matrixApi.IPluginSettingPage<matrixApi.IProjectSettingsBase>> {
+    async getProjectSettingsPageAsync(): Promise<matrixSdk.IPluginSettingPage<matrixSdk.IProjectSettingsBase>> {
         return null;
     }
-    async getServerSettingsPage(): Promise<matrixApi.IPluginSettingPage<IServerSettings>> {
-        if (matrixApi.app.isConfigApp()) {
-            return new ServerSettingsPage(<matrixApi.IConfigApp><unknown>matrixApi.app);
+    async getServerSettingsPageAsync(): Promise<matrixSdk.IPluginSettingPage<IServerSettings>> {
+        if (matrixSdk.app.isConfigApp()) {
+            return new ServerSettingsPage(<matrixSdk.IConfigApp><unknown>matrixSdk.app);
         }
         return null;
     }
-    async getControl(ctrlObj: JQuery): Promise<matrixApi.ControlCoreBase> {
+    async getControlAsync(ctrlObj: JQuery): Promise<matrixSdk.ControlCoreBase<FieldHandler, IPluginFieldValue>> {
         return null;
     }
-    async getTool(): Promise<matrixApi.ITool> {
+    async getToolAsync(): Promise<matrixSdk.ITool> {
         return null;
     }
-    getConfig(): matrixApi.IPluginConfig<IServerSettings, matrixApi.IProjectSettingsBase> {
+    getConfig(): matrixSdk.IPluginConfig<IServerSettings, matrixSdk.IProjectSettingsBase> {
         return Plugin.config;
     }
     enableToolMenu(ul: JQuery, _hook: number): boolean {
@@ -162,7 +191,7 @@ export class Plugin implements matrixApi.IExternalPlugin<IServerSettings, matrix
     * 
     * @param _item: the item which is being loaded in the UI 
     */
-    onInitItem(item: matrixApi.IItem) {
+    onInitItem(item: matrixSdk.IItem) {
         
         // here is a good place to decide based on the selection in the tree, whether the plugin should be enabled 
         
@@ -179,6 +208,6 @@ declare global {
 }
 
 // Register the plugin
-if (matrixApi.plugins["register"] != undefined) {
-    matrixApi.plugins.register(new Plugin().core);
+if (matrixSdk.plugins["register"] != undefined) {
+    matrixSdk.plugins.register(new Plugin().core);
 }

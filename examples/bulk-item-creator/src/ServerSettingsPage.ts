@@ -1,17 +1,17 @@
 import { CategoryInstruction, IBulkSettings, IServerSettings } from "./Interfaces";
 import { Plugin } from "./Main";
 import { textGenerator } from "./lorem-ipsum";
-import SectionDescriptions = matrixApi.SectionDescriptions;
+import SectionDescriptions = matrixSdk.SectionDescriptions;
 
 
 // eslint-disable-next-line no-unused-vars
 /* server Setting page closure*/
-export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixApi.IPluginSettingPage<IServerSettings> {
+export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSdk.IPluginSettingPage<IServerSettings> {
     settingsOriginal?: IServerSettings;
     settingsChanged?: IServerSettings;
 
     settings(): IServerSettings {
-        const serverSettings = matrixApi.PluginCore.getServerSetting(Plugin.config.customerSettingsPage.settingName, "EMPTY");
+        const serverSettings = matrixSdk.PluginCore.getServerSetting(Plugin.config.customerSettingsPage.settingName, "EMPTY");
         if (serverSettings === "EMPTY") {
             // Go with the default.
             return <IServerSettings>Plugin.config.customerSettingsPage.defaultSettings;
@@ -136,14 +136,14 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
 
     private async getCategoryWithDownlinkItems(category: string, downlinkedCategory: string,
-        without: boolean): Promise<matrixApi.Item[]> {
+        without: boolean): Promise<matrixSdk.Item[]> {
         let not = "";
         if (without) {
             not = "!"
         }
         const search = `mrql:category=${category} and downlink ${not}= ${downlinkedCategory}`;
         let mask = this.project.constructSearchFieldMask(false, false, true, true);
-        const results: matrixApi.Item[] = await this.project.complexSearch(search, "", false, mask);
+        const results: matrixSdk.Item[] = await this.project.complexSearch(search, "", false, mask);
         return results;
     }
 
@@ -163,7 +163,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
         return (await this.getCategoryWithUplinkItems(category, uplinkedCategory, without)).length;
     }
 
-    private createStepsArray(handler: matrixApi.TestStepsFieldHandler, stepCount: number): void {
+    private createStepsArray(handler: matrixSdk.TestStepsFieldHandler, stepCount: number): void {
         for (let i = 0; i < stepCount; i++) {
             handler.setColumnData(i, "action", `Test Action ${i}`);
             handler.setColumnData(i, "expected", `A good result`);
@@ -215,7 +215,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
     private async createObject(folderId: string, cat: CategoryInstruction, i: number): Promise<boolean> {
         const config = this.project.getItemConfig();
         const title = `Bulk_${cat.category}_${i}`;
-        let data: matrixApi.ISetField[] = [];
+        let data: matrixSdk.ISetField[] = [];
 
         // These are created in a different way
         if (this.isXTCCategory(cat.category)) return true;
@@ -230,7 +230,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
         for (let field of itemConfig.fieldList) {
             if (field.fieldType == "richtext") {
                 let f = newItem.getFieldById(field.id);
-                let handler = f.getHandler<matrixApi.RichtextFieldHandler>();
+                let handler = f.getHandler<matrixSdk.RichtextFieldHandler>();
                 handler.setHtml(textGenerator(2));
             }
         }
@@ -240,7 +240,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
             const fieldName = this.findTestStepsField(cat.category);
             if (fieldName) {
                 let field = newItem.getFieldByName(fieldName)[0];
-                let handler = field.getHandler<matrixApi.TestStepsFieldHandler>();
+                let handler = field.getHandler<matrixSdk.TestStepsFieldHandler>();
                 this.createStepsArray(handler, 10);
             }
         }
@@ -267,7 +267,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
     private async createObjects() {
         const settings = this.getSettings();
         let folderId: string;
-        matrixApi.matrixapi.setComment("Bulk creation");
+        matrixSdk.matrixsdk.setComment("Bulk creation");
         for (let cat of settings.categoryInstructions) {
             if (this.isXTCCategory(cat.category)) {
                 // We create these differently, after all other categories have been created and linked.
@@ -302,15 +302,15 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
         }
     }
 
-    private async uploadImage(): Promise<matrixApi.AddFileAck> {
+    private async uploadImage(): Promise<matrixSdk.AddFileAck> {
         const settings = this.getSettings();
         return await this.project.uploadFile(settings.imageToAttachURL);
     }
 
-    private getImageUrl(imgInfo: matrixApi.AddFileAck) {
+    private getImageUrl(imgInfo: matrixSdk.AddFileAck) {
         const projectId = this.project.getName();
         const imageUrl =
-            `${matrixApi.globalMatrix.matrixRestUrl}/${projectId}/file/${imgInfo.fileId}?key=${imgInfo.key}`;
+            `${matrixSdk.globalMatrix.matrixRestUrl}/${projectId}/file/${imgInfo.fileId}?key=${imgInfo.key}`;
         return imageUrl;
     }
 
@@ -327,7 +327,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
             const numberOfRuns = Math.floor(xtcCountToCreate / tcInfo.count);
 
             for (let run = 0; run < numberOfRuns; run++) {
-                let exeParams: matrixApi.ExecuteParam =
+                let exeParams: matrixSdk.ExecuteParam =
                     that.project.createExecuteParamWithDefaults([`F-${testCategory}-1`], executedTestCategory,
                         `For bulk creation run ${run}`);
                 try {
@@ -348,23 +348,23 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
                 return;
             }
             this.log(`Uploading ${xtcInfo.attachmentCount} images to ${xtc}...`);
-            let imageLinks: matrixApi.AddFileAck[] = [];
+            let imageLinks: matrixSdk.AddFileAck[] = [];
             for (let j = 0; j < xtcInfo.attachmentCount; j++) {
                 // Create this many images
                 imageLinks.push(await this.uploadImage());
             }
             // Now make the XTC include the images
-            let xtcItem: matrixApi.Item = await this.project.getItem(xtc);
+            let xtcItem: matrixSdk.Item = await this.project.getItem(xtc);
             // Get the table of steps.
-            let fields: matrixApi.Field[] = xtcItem.getFieldsByType("test_steps_result");
+            let fields: matrixSdk.Field[] = xtcItem.getFieldsByType("test_steps_result");
             if (fields.length != 1) {
                 this.log("Unable to find test_steps_result field to attach images. Aborting");
                 this.running = false;
                 return;
             }
             const field = fields[0];
-            let handler: matrixApi.TestStepsResultFieldHandler =
-                field.getHandler<matrixApi.TestStepsResultFieldHandler>();
+            let handler: matrixSdk.TestStepsResultFieldHandler =
+                field.getHandler<matrixSdk.TestStepsResultFieldHandler>();
 
             // Insert an image at each row.
             for (let row = 0; row < handler.getRowCount(); row++) {
@@ -433,12 +433,12 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
         }
     }
 
-    private project: matrixApi.Project;
+    private project: matrixSdk.Project;
 
     async initializeProject(project: string) {
         const that = this;
 
-        this.project = await matrixApi.matrixapi.openProject(project);
+        this.project = await matrixSdk.matrixsdk.openProject(project);
         that.log("Project successfully found");
 
         if (that.validateCategories(that.project.getItemConfig().getCategories(true))) {
@@ -461,7 +461,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
 
         // Step 1, is the project valid?
         let settings = this.getSettings();
-        const projectList = await matrixApi.matrixapi.getProjects();
+        const projectList = await matrixSdk.matrixsdk.getProjects();
         if (projectList.filter(p => p == settings.project).length < 1) {
             that.log("Project is invalid. Aborting");
             that.running = false;
@@ -491,7 +491,7 @@ export class ServerSettingsPage extends matrixApi.ConfigPage implements matrixAp
             undefined
         );
         this.dom = this.getSettingsDOM(this.settingsChanged);
-        matrixApi.app.itemForm.append(this.dom);
+        matrixSdk.app.itemForm.append(this.dom);
         this.showSimple();
     }
 
