@@ -3,4 +3,7 @@ node_modules
 examples/bulk-item-creator/.idea/
 examples/bulk-item-creator/build/
 examples/bulk-item-creator/dist/
+examples/matrixterm/.idea/
+examples/matrixterm/build/
+examples/matrixterm/dist/
 .idea

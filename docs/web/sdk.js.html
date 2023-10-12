@@ -36,7 +36,7 @@
 	else
 		root["matrixSdk"] = factory();
 })(this, () => {
-return (this["webpackChunkapp"] = this["webpackChunkapp"] || []).push([[8],{
+return (this["webpackChunkapp"] = this["webpackChunkapp"] || []).push([[9],{
 
 /***/ 253:
 /***/ ((module) => {
@@ -2253,7 +2253,7 @@ module.exports = function getSideChannel() {
 
 /***/ }),
 
-/***/ 288:
+/***/ 292:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(53), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, JsonEditor_1, globals_1) {
@@ -2315,11 +2315,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         showWarning(text, id) {
             if (id == undefined)
                 id = "noId";
-            let ret = $(`&lt;div class='configWarning' id='${id}'>`).html("&lt;span class='fal fa-exclamation-triangle'>&lt;/span>  " + text);
+            let ret = $(`&lt;div class='configWarning' id='${id}'>`);
+            ret.append(`&lt;div>&lt;i class="fa fa-exclamation-triangle">&lt;/i> Caution &lt;/div>`);
+            ret.append(`&lt;div class="info">${text}&lt;/div>`);
             ret.appendTo(this.simple);
             return ret;
         }
         showNote(text) {
+            let ret = $(`&lt;div class='configNote' >`);
+            ret.append(`&lt;div>&lt;i class="fa fa-info-circle">&lt;/i> Information &lt;/div>`);
+            ret.append(`&lt;div class="info">${text}&lt;/div>`);
+            ret.appendTo(this.simple);
+            return ret;
             $("&lt;div class='configNote'>").html("&lt;span class='fal fa-info-circle'>&lt;/span>  " + text).appendTo(this.simple);
         }
         showAdvancedCode(code, success, semanticValidate) {
@@ -2615,7 +2622,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 289:
+/***/ 293:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(142)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ILineEditor_1) {
@@ -2644,7 +2651,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 284:
+/***/ 288:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -2809,10 +2816,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 283:
+/***/ 287:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(169), __webpack_require__(53), __webpack_require__(5), __webpack_require__(52), __webpack_require__(284)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, MatrixLibInterfaces_1, PrintProjectUIMods_1, JsonEditor_1, globals_1, PrintProcessorInterfaces_1, PrintPrePostProcessor_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(169), __webpack_require__(53), __webpack_require__(5), __webpack_require__(52), __webpack_require__(288)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, MatrixLibInterfaces_1, PrintProjectUIMods_1, JsonEditor_1, globals_1, PrintProcessorInterfaces_1, PrintPrePostProcessor_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.PrintProcessor = void 0;
@@ -4047,7 +4054,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 281:
+/***/ 285:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this &amp;&amp; this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -4073,7 +4080,7 @@ var __importStar = (this &amp;&amp; this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(251), __webpack_require__(11), __webpack_require__(11), __webpack_require__(1), __webpack_require__(9), __webpack_require__(282), __webpack_require__(123), __webpack_require__(11), __webpack_require__(143), __webpack_require__(137), __webpack_require__(11), __webpack_require__(29), __webpack_require__(11), __webpack_require__(28), __webpack_require__(283), __webpack_require__(285), __webpack_require__(286), __webpack_require__(287), __webpack_require__(288), __webpack_require__(289), __webpack_require__(5), __webpack_require__(8), __webpack_require__(248), __webpack_require__(2), __webpack_require__(32), __webpack_require__(80)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, configuration_1, index_1, index_2, matrixlib_1, RefLinkDefines_1, enums_1, ProjectStorage_1, index_3, WidgetPluginManager_1, WidgetPluginsContainer_1, index_4, ProjectSettings_1, index_5, Notifications_1, PrintProcessor_1, ControlCore_1, PluginCore_1, PluginInterfaces, ConfigPage_1, LinEditor_1, globals_1, SimpleItemTools_1, standalone_1, MatrixLibInterfaces_1, FieldDescriptions_1, SectionDescriptions_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(251), __webpack_require__(11), __webpack_require__(11), __webpack_require__(1), __webpack_require__(9), __webpack_require__(286), __webpack_require__(123), __webpack_require__(11), __webpack_require__(143), __webpack_require__(137), __webpack_require__(11), __webpack_require__(29), __webpack_require__(11), __webpack_require__(28), __webpack_require__(287), __webpack_require__(289), __webpack_require__(290), __webpack_require__(291), __webpack_require__(292), __webpack_require__(293), __webpack_require__(5), __webpack_require__(8), __webpack_require__(248), __webpack_require__(2), __webpack_require__(32), __webpack_require__(80)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, configuration_1, index_1, index_2, matrixlib_1, RefLinkDefines_1, enums_1, ProjectStorage_1, index_3, WidgetPluginManager_1, WidgetPluginsContainer_1, index_4, ProjectSettings_1, index_5, Notifications_1, PrintProcessor_1, ControlCore_1, PluginCore_1, PluginInterfaces, ConfigPage_1, LinEditor_1, globals_1, SimpleItemTools_1, standalone_1, MatrixLibInterfaces_1, FieldDescriptions_1, SectionDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.initializeSDK = exports.matrixsdk = exports.MatrixSDK = exports.TodoTypes = exports.NotificationsBL = exports.ConfigPage = exports.LineEditor = exports.PluginCore = exports.ControlCore = exports.PrintProcessor = exports.matrixApplicationUI = exports.MR1 = exports.Tasks = exports.pluginHooks = exports.Notifications = exports.defaultNotificationConfig = exports.notificationSetting = exports.ItemConfiguration = exports.ControlState = exports.refLinkTooltip = exports.refLinkStyle = exports.plugins = exports.ml = exports.app = exports.matrixSession = exports.globalMatrix = exports.WidgetPluginsConstants = exports.ProjectStorage = exports.PluginInterfaces = exports.IWidgetScope = exports.SectionDescriptions = exports.FieldDescriptions = exports.UIToolsConstants = void 0;
@@ -4419,7 +4426,7 @@ var __importStar = (this &amp;&amp; this.__importStar) || function (mod) {
 
 /***/ }),
 
-/***/ 282:
+/***/ 286:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -4447,7 +4454,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /***/ 251:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// tslint:disable
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable */
 /**
  * MatrixALM and MatrixQMS REST API
  * Feel free to make a copy of this definition and change the url below to your instance of MatrixALM or MatrixQMS. For the authentication, create  a token for an admin to try out all the methods. Use at your own risks! Any question? ask us on https://support.matrixreq.com
@@ -4584,7 +4591,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 throw new Error(`This ItemsFieldMask is not configured to care about fields.`);
             }
             let fieldIds = [];
-            const fields = category.getFields();
             for (let name of fieldNames) {
                 const catFieldIds = category.getFieldIdFromLabel(name);
                 if (catFieldIds.length == 0) {
@@ -4823,7 +4829,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     " because there are only " +
                     sections.length +
                     " sections");
-            let lastField = -1;
             for (let i = number; i &lt; sections.length - 1; i++) {
                 let currentSection = sections[i];
                 let nextSection = sections[i + 1];
@@ -4865,7 +4870,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return this.exportTo("docx", progressReporter);
         }
         addMandatoryFields() {
-            let hasDocumentOptions = false;
             for (let field of this.getCategory().getFields()) {
                 // The mask influences what we send out.
                 if (this.getFieldMask().hasFieldId(field.id)) {
@@ -4909,7 +4913,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         initDHFFields(item, itemConfig) {
             let dhfSections = this.getDHFSections();
             for (let field of dhfSections) {
-                let h = field.getFieldId();
                 let value = undefined;
                 if (item) {
                     // Always set the item config. This is needed for the field handlers
@@ -5548,8 +5551,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return results;
         }
+        /**
+         * Create a Todo attached to this item.
+         * @param users an array of user names
+         * @param type
+         * @param text
+         * @param atDate
+         * @returns A comma-separated list of Todo ids (integers), relative to the Item.
+         */
         async createTodo(users, type, text, atDate) {
             return this.category.getProject().createTodo(users, type, text, this.id, null, atDate);
+        }
+        /**
+         * Return the Todos associated with this item.
+         * @param includeDone - if true, includes done todos
+         * @param includeAllUsers - if true, includes all todos for all users.
+         * @param includeFuture - false by default. If true, includes future todos.
+         * @returns Information on the Todos
+         */
+        async getTodos(includeDone, includeAllUsers, includeFuture) {
+            return this.category.getProject().getTodos(this.id, includeDone, includeAllUsers, includeFuture);
         }
     }
     exports.Item = Item;
@@ -6178,10 +6199,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 285:
+/***/ 289:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(36), __webpack_require__(5), __webpack_require__(283)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, BaseControl_1, globals_1, PrintProcessor_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(36), __webpack_require__(5), __webpack_require__(287)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, BaseControl_1, globals_1, PrintProcessor_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ControlCore = exports.ControlCoreBase = void 0;
@@ -6349,11 +6370,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 286:
+/***/ 290:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// eslint-disable-next-line no-unused-vars
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(281)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, client_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(285)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, client_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.PluginCore = void 0;
@@ -6531,7 +6552,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// eslint-disabl
 
 /***/ }),
 
-/***/ 287:
+/***/ 291:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* Setting interfaces */
@@ -6547,7 +6568,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* Setting inter
 /***/ 252:
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this &amp;&amp; this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * MatrixALM and MatrixQMS REST API
+ * Feel free to make a copy of this definition and change the url below to your instance of MatrixALM or MatrixQMS. For the authentication, create  a token for an admin to try out all the methods. Use at your own risks! Any question? ask us on https://support.matrixreq.com
+ *
+ * OpenAPI spec version: 2.4
+ *
+ *
+ * NOTE: This file is auto generated by the swagger code generator program.
+ * https://github.com/swagger-api/swagger-codegen.git
+ * Do not edit the file manually.
+ */
+/// &lt;reference types="node" />
+var __createBinding = (this &amp;&amp; this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
     if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -6580,7 +6613,7 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
     url = __importStar(url);
     isomorphic_fetch_1 = __importDefault(isomorphic_fetch_1);
     const btoa = __webpack_require__(253);
-    const BASE_PATH = "https://demo23.matrixreq.com/rest/1".replace(/\/+$/, "");
+    const BASE_PATH = "https://clouds5.matrixreq.com/1".replace(/\/+$/, "");
     /**
      *
      * @export
@@ -7657,45 +7690,6 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
-             * @summary Creates a new group
-             * @param {string} groupName group name
-             * @param {*} [options] Override http request option.
-             * @throws {RequiredError}
-             */
-            groupGroupNamePost(groupName, options = {}) {
-                // verify required parameter 'groupName' is not null or undefined
-                if (groupName === null || groupName === undefined) {
-                    throw new RequiredError('groupName', 'Required parameter groupName was null or undefined when calling groupGroupNamePost.');
-                }
-                const localVarPath = `/group/{groupName}`
-                    .replace(`{${"groupName"}}`, encodeURIComponent(String(groupName)));
-                const localVarUrlObj = url.parse(localVarPath, true);
-                const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
-                const localVarHeaderParameter = {};
-                const localVarQueryParameter = {};
-                // authentication ApiKeyAuth required
-                if (configuration &amp;&amp; configuration.apiKey) {
-                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
-                        ? configuration.apiKey("Authorization")
-                        : configuration.apiKey;
-                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
-                }
-                // authentication BasicAuth required
-                // http basic authentication required
-                if (configuration &amp;&amp; (configuration.username || configuration.password)) {
-                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
-                }
-                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
-                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
-                delete localVarUrlObj.search;
-                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
-                return {
-                    url: url.format(localVarUrlObj),
-                    options: localVarRequestOptions,
-                };
-            },
-            /**
-             * Permissions - Must be admin. Valid from version 2.2
              * @summary Removes a user from a group
              * @param {string} groupName group name
              * @param {string} user user login name
@@ -7729,6 +7723,47 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
                 // http basic authentication required
                 if (configuration &amp;&amp; (configuration.username || configuration.password)) {
                     localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
+                }
+                localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
+                // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+                delete localVarUrlObj.search;
+                localVarRequestOptions.headers = Object.assign({}, localVarHeaderParameter, options.headers);
+                return {
+                    url: url.format(localVarUrlObj),
+                    options: localVarRequestOptions,
+                };
+            },
+            /**
+             * Permissions - Must be admin. Valid from version 2.2
+             * @summary Creates a new group
+             * @param {string} groupName The name of the group to create
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            groupPost(groupName, options = {}) {
+                // verify required parameter 'groupName' is not null or undefined
+                if (groupName === null || groupName === undefined) {
+                    throw new RequiredError('groupName', 'Required parameter groupName was null or undefined when calling groupPost.');
+                }
+                const localVarPath = `/group`;
+                const localVarUrlObj = url.parse(localVarPath, true);
+                const localVarRequestOptions = Object.assign({ method: 'POST' }, options);
+                const localVarHeaderParameter = {};
+                const localVarQueryParameter = {};
+                // authentication ApiKeyAuth required
+                if (configuration &amp;&amp; configuration.apiKey) {
+                    const localVarApiKeyValue = typeof configuration.apiKey === 'function'
+                        ? configuration.apiKey("Authorization")
+                        : configuration.apiKey;
+                    localVarHeaderParameter["Authorization"] = localVarApiKeyValue;
+                }
+                // authentication BasicAuth required
+                // http basic authentication required
+                if (configuration &amp;&amp; (configuration.username || configuration.password)) {
+                    localVarHeaderParameter["Authorization"] = "Basic " + btoa(configuration.username + ":" + configuration.password);
+                }
+                if (groupName !== undefined) {
+                    localVarQueryParameter['groupName'] = groupName;
                 }
                 localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
@@ -9207,7 +9242,7 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
              * Permissions - Must have read/write access to the project. Valid from version 2.1
              * @summary Creates a new file - the file should be uploaded as payload (or through the url argument as an alternative). It's mime type should be sent through the HTTP protocol.
              * @param {string} project Project short label
-             * @param {string} [urlIn] Optional argument -  the file could also come from an external URL. In this case there will be an error if we can&amp;#x27;t retrieve it on the server
+             * @param {string} [url] Optional argument -  the file could also come from an external URL. In this case there will be an error if we can&amp;#x27;t retrieve it on the server
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
@@ -11135,16 +11170,17 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
              * @param {string} newTitle New title for the SIGN- item that is generated (only valid for isSignedReport)
              * @param {string} copyFields List of from-to fields (123,456),(124,457) that we can use to generate the fields in the SIGN record (only valid for isSignedReport)
              * @param {string} [itemList] (optional) list of items to use in the report. By default all categories are used
-             * @param {string} [urlIn] (optional) url to generate in the filter
+             * @param {string} [url] (optional) url to generate in the filter
              * @param {string} [resturl] (optional) REST url to generate in the filter
              * @param {string} [format] (optional) format -  html (default), pdf, docx, odt, xml, zipdocx, zippdf or package (from 2.2), or mf (since 2.3)
              * @param {string} [filter] (optional) specify a comma-delimited filter list. Can be negative filters (with minus before)
              * @param {number} [useOld] (optional) ask to use the old report engine (pre 1.11) if set to 1.
              * @param {string} [atDate] (optional) generates the report at that date - format is ISO8601 like atDate&amp;#x3D;2018-05-30T14 - 48 - 27.223Z
+             * @param {string} [reportNameOverride] (optional) Allow to override the reportName of the provided document
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, urlIn, resturl, format, filter, useOld, atDate, options = {}) {
+            projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, urlIn, resturl, format, filter, useOld, atDate, reportNameOverride, options = {}) {
                 // verify required parameter 'project' is not null or undefined
                 if (project === null || project === undefined) {
                     throw new RequiredError('project', 'Required parameter project was null or undefined when calling projectReportReportPost.');
@@ -11220,6 +11256,9 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
                 }
                 if (atDate !== undefined) {
                     localVarQueryParameter['atDate'] = atDate;
+                }
+                if (reportNameOverride !== undefined) {
+                    localVarQueryParameter['reportNameOverride'] = reportNameOverride;
                 }
                 localVarUrlObj.query = Object.assign({}, localVarUrlObj.query, localVarQueryParameter, options.query);
                 // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
@@ -11485,7 +11524,7 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
              * @summary Asks for a new report. The job ID is returned as answer
              * @param {string} project Project short label
-             * @param {string} [urlIn] (optional) url to generate in the filter
+             * @param {string} [url] (optional) url to generate in the filter
              * @param {string} [resturl] (optional) REST url to generate in the filter
              * @param {string} [format] (optional) format -  html (default), pdf, docx, odt, xml, zipdocx or zippdf
              * @param {*} [options] Override http request option.
@@ -12416,7 +12455,7 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
-             * @summary Removes completely a user (only used for unit testing)
+             * @summary Removes a user completely.
              * @param {string} user user login name
              * @param {string} confirm Needs to be yes for the method to be executed
              * @param {*} [options] Override http request option.
@@ -13652,13 +13691,14 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
-             * @summary Creates a new group
+             * @summary Removes a user from a group
              * @param {string} groupName group name
+             * @param {string} user user login name
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            groupGroupNamePost(groupName, options) {
-                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupNamePost(groupName, options);
+            groupGroupNameUserUserDelete(groupName, user, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupNameUserUserDelete(groupName, user, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 &amp;&amp; response.status &lt; 300) {
@@ -13672,14 +13712,13 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
-             * @summary Removes a user from a group
-             * @param {string} groupName group name
-             * @param {string} user user login name
+             * @summary Creates a new group
+             * @param {string} groupName The name of the group to create
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            groupGroupNameUserUserDelete(groupName, user, options) {
-                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupGroupNameUserUserDelete(groupName, user, options);
+            groupPost(groupName, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).groupPost(groupName, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 &amp;&amp; response.status &lt; 300) {
@@ -15110,11 +15149,12 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
              * @param {string} [filter] (optional) specify a comma-delimited filter list. Can be negative filters (with minus before)
              * @param {number} [useOld] (optional) ask to use the old report engine (pre 1.11) if set to 1.
              * @param {string} [atDate] (optional) generates the report at that date - format is ISO8601 like atDate&amp;#x3D;2018-05-30T14 - 48 - 27.223Z
+             * @param {string} [reportNameOverride] (optional) Allow to override the reportName of the provided document
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options) {
-                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options);
+            projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, reportNameOverride, options) {
+                const localVarFetchArgs = (0, exports.DefaultApiFetchParamCreator)(configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, reportNameOverride, options);
                 return (fetch = isomorphic_fetch_1.default, basePath = BASE_PATH) => {
                     return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
                         if (response.status >= 200 &amp;&amp; response.status &lt; 300) {
@@ -15626,7 +15666,7 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
-             * @summary Removes completely a user (only used for unit testing)
+             * @summary Removes a user completely.
              * @param {string} user user login name
              * @param {string} confirm Needs to be yes for the method to be executed
              * @param {*} [options] Override http request option.
@@ -16203,16 +16243,6 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Must be admin. Valid from version 2.2
-             * @summary Creates a new group
-             * @param {string} groupName group name
-             * @param {*} [options] Override http request option.
-             * @throws {RequiredError}
-             */
-            groupGroupNamePost(groupName, options) {
-                return (0, exports.DefaultApiFp)(configuration).groupGroupNamePost(groupName, options)(fetch, basePath);
-            },
-            /**
-             * Permissions - Must be admin. Valid from version 2.2
              * @summary Removes a user from a group
              * @param {string} groupName group name
              * @param {string} user user login name
@@ -16221,6 +16251,16 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
              */
             groupGroupNameUserUserDelete(groupName, user, options) {
                 return (0, exports.DefaultApiFp)(configuration).groupGroupNameUserUserDelete(groupName, user, options)(fetch, basePath);
+            },
+            /**
+             * Permissions - Must be admin. Valid from version 2.2
+             * @summary Creates a new group
+             * @param {string} groupName The name of the group to create
+             * @param {*} [options] Override http request option.
+             * @throws {RequiredError}
+             */
+            groupPost(groupName, options) {
+                return (0, exports.DefaultApiFp)(configuration).groupPost(groupName, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read/write access to the project. Valid from version 2.3
@@ -17021,11 +17061,12 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
              * @param {string} [filter] (optional) specify a comma-delimited filter list. Can be negative filters (with minus before)
              * @param {number} [useOld] (optional) ask to use the old report engine (pre 1.11) if set to 1.
              * @param {string} [atDate] (optional) generates the report at that date - format is ISO8601 like atDate&amp;#x3D;2018-05-30T14 - 48 - 27.223Z
+             * @param {string} [reportNameOverride] (optional) Allow to override the reportName of the provided document
              * @param {*} [options] Override http request option.
              * @throws {RequiredError}
              */
-            projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options) {
-                return (0, exports.DefaultApiFp)(configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options)(fetch, basePath);
+            projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, reportNameOverride, options) {
+                return (0, exports.DefaultApiFp)(configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, reportNameOverride, options)(fetch, basePath);
             },
             /**
              * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -17307,7 +17348,7 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
             },
             /**
              * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
-             * @summary Removes completely a user (only used for unit testing)
+             * @summary Removes a user completely.
              * @param {string} user user login name
              * @param {string} confirm Needs to be yes for the method to be executed
              * @param {*} [options] Override http request option.
@@ -17771,17 +17812,6 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
         }
         /**
          * Permissions - Must be admin. Valid from version 2.2
-         * @summary Creates a new group
-         * @param {string} groupName group name
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         * @memberof DefaultApi
-         */
-        groupGroupNamePost(groupName, options) {
-            return (0, exports.DefaultApiFp)(this.configuration).groupGroupNamePost(groupName, options)(this.fetch, this.basePath);
-        }
-        /**
-         * Permissions - Must be admin. Valid from version 2.2
          * @summary Removes a user from a group
          * @param {string} groupName group name
          * @param {string} user user login name
@@ -17791,6 +17821,17 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
          */
         groupGroupNameUserUserDelete(groupName, user, options) {
             return (0, exports.DefaultApiFp)(this.configuration).groupGroupNameUserUserDelete(groupName, user, options)(this.fetch, this.basePath);
+        }
+        /**
+         * Permissions - Must be admin. Valid from version 2.2
+         * @summary Creates a new group
+         * @param {string} groupName The name of the group to create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         * @memberof DefaultApi
+         */
+        groupPost(groupName, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).groupPost(groupName, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read/write access to the project. Valid from version 2.3
@@ -18653,12 +18694,13 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
          * @param {string} [filter] (optional) specify a comma-delimited filter list. Can be negative filters (with minus before)
          * @param {number} [useOld] (optional) ask to use the old report engine (pre 1.11) if set to 1.
          * @param {string} [atDate] (optional) generates the report at that date - format is ISO8601 like atDate&amp;#x3D;2018-05-30T14 - 48 - 27.223Z
+         * @param {string} [reportNameOverride] (optional) Allow to override the reportName of the provided document
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          * @memberof DefaultApi
          */
-        projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options) {
-            return (0, exports.DefaultApiFp)(this.configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, options)(this.fetch, this.basePath);
+        projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, reportNameOverride, options) {
+            return (0, exports.DefaultApiFp)(this.configuration).projectReportReportPost(project, report, isSignedReport, includeSignatures, newTitle, copyFields, itemList, url, resturl, format, filter, useOld, atDate, reportNameOverride, options)(this.fetch, this.basePath);
         }
         /**
          * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
@@ -18962,7 +19004,7 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
         }
         /**
          * Permissions - Reserved to Matrix Requirements operations. Valid from version 2.1
-         * @summary Removes completely a user (only used for unit testing)
+         * @summary Removes a user completely.
          * @param {string} user user login name
          * @param {string} confirm Needs to be yes for the method to be executed
          * @param {*} [options] Override http request option.
@@ -22129,7 +22171,7 @@ if (!global.fetch) {
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(281));
+/******/ var __webpack_exports__ = (__webpack_exec__(285));
 /******/ return __webpack_exports__;
 /******/ }
 ]);
@@ -22144,13 +22186,13 @@ if (!global.fetch) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BaseAPI.html">BaseAPI</a></li><li><a href="Category.html">Category</a></li><li><a href="DefaultApi.html">DefaultApi</a></li><li><a href="Field.html">Field</a></li><li><a href="Item.html">Item</a></li><li><a href="ItemFieldMask.html">ItemFieldMask</a></li><li><a href="ItemsFieldMask.html">ItemsFieldMask</a></li><li><a href="Project.html">Project</a></li><li><a href="RequiredError.html">RequiredError</a></li><li><a href="StandaloneMatrixSDK.html">StandaloneMatrixSDK</a></li><li><a href="TreeFolder.html">TreeFolder</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COLLECTION_FORMATS">COLLECTION_FORMATS</a></li><li><a href="global.html#allCompareHtmlPost">allCompareHtmlPost</a></li><li><a href="global.html#allDateGet">allDateGet</a></li><li><a href="global.html#allFileFilenoGet">allFileFilenoGet</a></li><li><a href="global.html#allFileGet">allFileGet</a></li><li><a href="global.html#allFilePost">allFilePost</a></li><li><a href="global.html#allLicenseGet">allLicenseGet</a></li><li><a href="global.html#allLogPost">allLogPost</a></li><li><a href="global.html#allLoglevelPut">allLoglevelPut</a></li><li><a href="global.html#allMonitorGet">allMonitorGet</a></li><li><a href="global.html#allOpenapiGet">allOpenapiGet</a></li><li><a href="global.html#allReportsGet">allReportsGet</a></li><li><a href="global.html#allSendmailPost">allSendmailPost</a></li><li><a href="global.html#allServicedeskPost">allServicedeskPost</a></li><li><a href="global.html#allSettingGet">allSettingGet</a></li><li><a href="global.html#allSettingPost">allSettingPost</a></li><li><a href="global.html#allStatusGet">allStatusGet</a></li><li><a href="global.html#allTimezoneGet">allTimezoneGet</a></li><li><a href="global.html#allTodoGet">allTodoGet</a></li><li><a href="global.html#allWebhookPost">allWebhookPost</a></li><li><a href="global.html#groupGet">groupGet</a></li><li><a href="global.html#groupGroupIdDelete">groupGroupIdDelete</a></li><li><a href="global.html#groupGroupIdGet">groupGroupIdGet</a></li><li><a href="global.html#groupGroupIdProjectProjectPost">groupGroupIdProjectProjectPost</a></li><li><a href="global.html#groupGroupIdRenamePut">groupGroupIdRenamePut</a></li><li><a href="global.html#groupGroupIdUserUserPut">groupGroupIdUserUserPut</a></li><li><a href="global.html#groupGroupIdUserlistPut">groupGroupIdUserlistPut</a></li><li><a href="global.html#groupGroupNamePost">groupGroupNamePost</a></li><li><a href="global.html#groupGroupNameUserUserDelete">groupGroupNameUserUserDelete</a></li><li><a href="global.html#mainprojectMergeBranchprojectPost">mainprojectMergeBranchprojectPost</a></li><li><a href="global.html#projectAccessGet">projectAccessGet</a></li><li><a href="global.html#projectAuditGet">projectAuditGet</a></li><li><a href="global.html#projectBranchPost">projectBranchPost</a></li><li><a href="global.html#projectCalendarGet">projectCalendarGet</a></li><li><a href="global.html#projectCatCategoryDelete">projectCatCategoryDelete</a></li><li><a href="global.html#projectCatCategoryGet">projectCatCategoryGet</a></li><li><a href="global.html#projectCatCategoryPut">projectCatCategoryPut</a></li><li><a href="global.html#projectCatCategorySettingGet">projectCatCategorySettingGet</a></li><li><a href="global.html#projectCatCategorySettingPost">projectCatCategorySettingPost</a></li><li><a href="global.html#projectCatGet">projectCatGet</a></li><li><a href="global.html#projectCatPost">projectCatPost</a></li><li><a href="global.html#projectClonePost">projectClonePost</a></li><li><a href="global.html#projectCompareSignitem1Signitem2Post">projectCompareSignitem1Signitem2Post</a></li><li><a href="global.html#projectConfigcheckGet">projectConfigcheckGet</a></li><li><a href="global.html#projectCopyItemOrFolderPost">projectCopyItemOrFolderPost</a></li><li><a href="global.html#projectCrossprojectlinkGet">projectCrossprojectlinkGet</a></li><li><a href="global.html#projectDelete">projectDelete</a></li><li><a href="global.html#projectExcelxmlPost">projectExcelxmlPost</a></li><li><a href="global.html#projectExecutePost">projectExecutePost</a></li><li><a href="global.html#projectExportGet">projectExportGet</a></li><li><a href="global.html#projectFieldCategoryDelete">projectFieldCategoryDelete</a></li><li><a href="global.html#projectFieldItemGet">projectFieldItemGet</a></li><li><a href="global.html#projectFieldPut">projectFieldPut</a></li><li><a href="global.html#projectFileFilenoGet">projectFileFilenoGet</a></li><li><a href="global.html#projectFileGet">projectFileGet</a></li><li><a href="global.html#projectFilePost">projectFilePost</a></li><li><a href="global.html#projectFolderPost">projectFolderPost</a></li><li><a href="global.html#projectGet">projectGet</a></li><li><a href="global.html#projectHidePut">projectHidePut</a></li><li><a href="global.html#projectHookItemPost">projectHookItemPost</a></li><li><a href="global.html#projectHtmlCleanupBlobPost">projectHtmlCleanupBlobPost</a></li><li><a href="global.html#projectHtmlCleanupTestPost">projectHtmlCleanupTestPost</a></li><li><a href="global.html#projectImportIdDelete">projectImportIdDelete</a></li><li><a href="global.html#projectImportPost">projectImportPost</a></li><li><a href="global.html#projectImportinfoGet">projectImportinfoGet</a></li><li><a href="global.html#projectItemFolderGet">projectItemFolderGet</a></li><li><a href="global.html#projectItemItemDelete">projectItemItemDelete</a></li><li><a href="global.html#projectItemItemGet">projectItemItemGet</a></li><li><a href="global.html#projectItemItemPost">projectItemItemPost</a></li><li><a href="global.html#projectItemItemPut">projectItemItemPut</a></li><li><a href="global.html#projectItemPost">projectItemPost</a></li><li><a href="global.html#projectItemlinkUpitemDownitemDelete">projectItemlinkUpitemDownitemDelete</a></li><li><a href="global.html#projectItemlinkUpitemDownitemPost">projectItemlinkUpitemDownitemPost</a></li><li><a href="global.html#projectItemlistItemGet">projectItemlistItemGet</a></li><li><a href="global.html#projectJobGet">projectJobGet</a></li><li><a href="global.html#projectJobJobDelete">projectJobJobDelete</a></li><li><a href="global.html#projectJobJobFilenoGet">projectJobJobFilenoGet</a></li><li><a href="global.html#projectJobJobGet">projectJobJobGet</a></li><li><a href="global.html#projectJobJobPost">projectJobJobPost</a></li><li><a href="global.html#projectLabelhistoryGet">projectLabelhistoryGet</a></li><li><a href="global.html#projectMergehistoryGet">projectMergehistoryGet</a></li><li><a href="global.html#projectMergeinfoGet">projectMergeinfoGet</a></li><li><a href="global.html#projectModuleimportPost">projectModuleimportPost</a></li><li><a href="global.html#projectMoveinFolderPost">projectMoveinFolderPost</a></li><li><a href="global.html#projectNeedleGet">projectNeedleGet</a></li><li><a href="global.html#projectNeedlePost">projectNeedlePost</a></li><li><a href="global.html#projectNeedleminimalGet">projectNeedleminimalGet</a></li><li><a href="global.html#projectNeedleminimalPost">projectNeedleminimalPost</a></li><li><a href="global.html#projectPost">projectPost</a></li><li><a href="global.html#projectPublishItemPost">projectPublishItemPost</a></li><li><a href="global.html#projectQmsfindGet">projectQmsfindGet</a></li><li><a href="global.html#projectReportReportPost">projectReportReportPost</a></li><li><a href="global.html#projectSchemaGet">projectSchemaGet</a></li><li><a href="global.html#projectSettingGet">projectSettingGet</a></li><li><a href="global.html#projectSettingPost">projectSettingPost</a></li><li><a href="global.html#projectSignItemPost">projectSignItemPost</a></li><li><a href="global.html#projectSignItemPut">projectSignItemPut</a></li><li><a href="global.html#projectSignedreportSIGNNPost">projectSignedreportSIGNNPost</a></li><li><a href="global.html#projectTagGet">projectTagGet</a></li><li><a href="global.html#projectTagPost">projectTagPost</a></li><li><a href="global.html#projectTodoGet">projectTodoGet</a></li><li><a href="global.html#projectTodoItemPost">projectTodoItemPost</a></li><li><a href="global.html#projectTodoTodoidDelete">projectTodoTodoidDelete</a></li><li><a href="global.html#projectTouchItemPut">projectTouchItemPut</a></li><li><a href="global.html#projectTreeGet">projectTreeGet</a></li><li><a href="global.html#projectUnhidePut">projectUnhidePut</a></li><li><a href="global.html#projectWordconvertPost">projectWordconvertPost</a></li><li><a href="global.html#punycode">punycode</a></li><li><a href="global.html#rootGet">rootGet</a></li><li><a href="global.html#rootPost">rootPost</a></li><li><a href="global.html#userGet">userGet</a></li><li><a href="global.html#userPost">userPost</a></li><li><a href="global.html#userUserAuditGet">userUserAuditGet</a></li><li><a href="global.html#userUserCheckGet">userUserCheckGet</a></li><li><a href="global.html#userUserCheckPost">userUserCheckPost</a></li><li><a href="global.html#userUserDelete">userUserDelete</a></li><li><a href="global.html#userUserGet">userUserGet</a></li><li><a href="global.html#userUserLoginPost">userUserLoginPost</a></li><li><a href="global.html#userUserLogoutPost">userUserLogoutPost</a></li><li><a href="global.html#userUserPasswordResetPost">userUserPasswordResetPost</a></li><li><a href="global.html#userUserProjectPost">userUserProjectPost</a></li><li><a href="global.html#userUserProjectPut">userUserProjectPut</a></li><li><a href="global.html#userUserProjectsGet">userUserProjectsGet</a></li><li><a href="global.html#userUserPut">userUserPut</a></li><li><a href="global.html#userUserRenamePut">userUserRenamePut</a></li><li><a href="global.html#userUserSettingPost">userUserSettingPost</a></li><li><a href="global.html#userUserStatusPut">userUserStatusPut</a></li><li><a href="global.html#userUserTokenDelete">userUserTokenDelete</a></li><li><a href="global.html#userUserTokenPost">userUserTokenPost</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BaseAPI.html">BaseAPI</a></li><li><a href="Category.html">Category</a></li><li><a href="DefaultApi.html">DefaultApi</a></li><li><a href="Field.html">Field</a></li><li><a href="Item.html">Item</a></li><li><a href="ItemFieldMask.html">ItemFieldMask</a></li><li><a href="ItemsFieldMask.html">ItemsFieldMask</a></li><li><a href="Project.html">Project</a></li><li><a href="RequiredError.html">RequiredError</a></li><li><a href="StandaloneMatrixSDK.html">StandaloneMatrixSDK</a></li><li><a href="TreeFolder.html">TreeFolder</a></li></ul><h3>Global</h3><ul><li><a href="global.html#COLLECTION_FORMATS">COLLECTION_FORMATS</a></li><li><a href="global.html#allCompareHtmlPost">allCompareHtmlPost</a></li><li><a href="global.html#allDateGet">allDateGet</a></li><li><a href="global.html#allFileFilenoGet">allFileFilenoGet</a></li><li><a href="global.html#allFileGet">allFileGet</a></li><li><a href="global.html#allFilePost">allFilePost</a></li><li><a href="global.html#allLicenseGet">allLicenseGet</a></li><li><a href="global.html#allLogPost">allLogPost</a></li><li><a href="global.html#allLoglevelPut">allLoglevelPut</a></li><li><a href="global.html#allMonitorGet">allMonitorGet</a></li><li><a href="global.html#allOpenapiGet">allOpenapiGet</a></li><li><a href="global.html#allReportsGet">allReportsGet</a></li><li><a href="global.html#allSendmailPost">allSendmailPost</a></li><li><a href="global.html#allServicedeskPost">allServicedeskPost</a></li><li><a href="global.html#allSettingGet">allSettingGet</a></li><li><a href="global.html#allSettingPost">allSettingPost</a></li><li><a href="global.html#allStatusGet">allStatusGet</a></li><li><a href="global.html#allTimezoneGet">allTimezoneGet</a></li><li><a href="global.html#allTodoGet">allTodoGet</a></li><li><a href="global.html#allWebhookPost">allWebhookPost</a></li><li><a href="global.html#groupGet">groupGet</a></li><li><a href="global.html#groupGroupIdDelete">groupGroupIdDelete</a></li><li><a href="global.html#groupGroupIdGet">groupGroupIdGet</a></li><li><a href="global.html#groupGroupIdProjectProjectPost">groupGroupIdProjectProjectPost</a></li><li><a href="global.html#groupGroupIdRenamePut">groupGroupIdRenamePut</a></li><li><a href="global.html#groupGroupIdUserUserPut">groupGroupIdUserUserPut</a></li><li><a href="global.html#groupGroupIdUserlistPut">groupGroupIdUserlistPut</a></li><li><a href="global.html#groupGroupNameUserUserDelete">groupGroupNameUserUserDelete</a></li><li><a href="global.html#groupPost">groupPost</a></li><li><a href="global.html#mainprojectMergeBranchprojectPost">mainprojectMergeBranchprojectPost</a></li><li><a href="global.html#projectAccessGet">projectAccessGet</a></li><li><a href="global.html#projectAuditGet">projectAuditGet</a></li><li><a href="global.html#projectBranchPost">projectBranchPost</a></li><li><a href="global.html#projectCalendarGet">projectCalendarGet</a></li><li><a href="global.html#projectCatCategoryDelete">projectCatCategoryDelete</a></li><li><a href="global.html#projectCatCategoryGet">projectCatCategoryGet</a></li><li><a href="global.html#projectCatCategoryPut">projectCatCategoryPut</a></li><li><a href="global.html#projectCatCategorySettingGet">projectCatCategorySettingGet</a></li><li><a href="global.html#projectCatCategorySettingPost">projectCatCategorySettingPost</a></li><li><a href="global.html#projectCatGet">projectCatGet</a></li><li><a href="global.html#projectCatPost">projectCatPost</a></li><li><a href="global.html#projectClonePost">projectClonePost</a></li><li><a href="global.html#projectCompareSignitem1Signitem2Post">projectCompareSignitem1Signitem2Post</a></li><li><a href="global.html#projectConfigcheckGet">projectConfigcheckGet</a></li><li><a href="global.html#projectCopyItemOrFolderPost">projectCopyItemOrFolderPost</a></li><li><a href="global.html#projectCrossprojectlinkGet">projectCrossprojectlinkGet</a></li><li><a href="global.html#projectDelete">projectDelete</a></li><li><a href="global.html#projectExcelxmlPost">projectExcelxmlPost</a></li><li><a href="global.html#projectExecutePost">projectExecutePost</a></li><li><a href="global.html#projectExportGet">projectExportGet</a></li><li><a href="global.html#projectFieldCategoryDelete">projectFieldCategoryDelete</a></li><li><a href="global.html#projectFieldItemGet">projectFieldItemGet</a></li><li><a href="global.html#projectFieldPut">projectFieldPut</a></li><li><a href="global.html#projectFileFilenoGet">projectFileFilenoGet</a></li><li><a href="global.html#projectFileGet">projectFileGet</a></li><li><a href="global.html#projectFilePost">projectFilePost</a></li><li><a href="global.html#projectFolderPost">projectFolderPost</a></li><li><a href="global.html#projectGet">projectGet</a></li><li><a href="global.html#projectHidePut">projectHidePut</a></li><li><a href="global.html#projectHookItemPost">projectHookItemPost</a></li><li><a href="global.html#projectHtmlCleanupBlobPost">projectHtmlCleanupBlobPost</a></li><li><a href="global.html#projectHtmlCleanupTestPost">projectHtmlCleanupTestPost</a></li><li><a href="global.html#projectImportIdDelete">projectImportIdDelete</a></li><li><a href="global.html#projectImportPost">projectImportPost</a></li><li><a href="global.html#projectImportinfoGet">projectImportinfoGet</a></li><li><a href="global.html#projectItemFolderGet">projectItemFolderGet</a></li><li><a href="global.html#projectItemItemDelete">projectItemItemDelete</a></li><li><a href="global.html#projectItemItemGet">projectItemItemGet</a></li><li><a href="global.html#projectItemItemPost">projectItemItemPost</a></li><li><a href="global.html#projectItemItemPut">projectItemItemPut</a></li><li><a href="global.html#projectItemPost">projectItemPost</a></li><li><a href="global.html#projectItemlinkUpitemDownitemDelete">projectItemlinkUpitemDownitemDelete</a></li><li><a href="global.html#projectItemlinkUpitemDownitemPost">projectItemlinkUpitemDownitemPost</a></li><li><a href="global.html#projectItemlistItemGet">projectItemlistItemGet</a></li><li><a href="global.html#projectJobGet">projectJobGet</a></li><li><a href="global.html#projectJobJobDelete">projectJobJobDelete</a></li><li><a href="global.html#projectJobJobFilenoGet">projectJobJobFilenoGet</a></li><li><a href="global.html#projectJobJobGet">projectJobJobGet</a></li><li><a href="global.html#projectJobJobPost">projectJobJobPost</a></li><li><a href="global.html#projectLabelhistoryGet">projectLabelhistoryGet</a></li><li><a href="global.html#projectMergehistoryGet">projectMergehistoryGet</a></li><li><a href="global.html#projectMergeinfoGet">projectMergeinfoGet</a></li><li><a href="global.html#projectModuleimportPost">projectModuleimportPost</a></li><li><a href="global.html#projectMoveinFolderPost">projectMoveinFolderPost</a></li><li><a href="global.html#projectNeedleGet">projectNeedleGet</a></li><li><a href="global.html#projectNeedlePost">projectNeedlePost</a></li><li><a href="global.html#projectNeedleminimalGet">projectNeedleminimalGet</a></li><li><a href="global.html#projectNeedleminimalPost">projectNeedleminimalPost</a></li><li><a href="global.html#projectPost">projectPost</a></li><li><a href="global.html#projectPublishItemPost">projectPublishItemPost</a></li><li><a href="global.html#projectQmsfindGet">projectQmsfindGet</a></li><li><a href="global.html#projectReportReportPost">projectReportReportPost</a></li><li><a href="global.html#projectSchemaGet">projectSchemaGet</a></li><li><a href="global.html#projectSettingGet">projectSettingGet</a></li><li><a href="global.html#projectSettingPost">projectSettingPost</a></li><li><a href="global.html#projectSignItemPost">projectSignItemPost</a></li><li><a href="global.html#projectSignItemPut">projectSignItemPut</a></li><li><a href="global.html#projectSignedreportSIGNNPost">projectSignedreportSIGNNPost</a></li><li><a href="global.html#projectTagGet">projectTagGet</a></li><li><a href="global.html#projectTagPost">projectTagPost</a></li><li><a href="global.html#projectTodoGet">projectTodoGet</a></li><li><a href="global.html#projectTodoItemPost">projectTodoItemPost</a></li><li><a href="global.html#projectTodoTodoidDelete">projectTodoTodoidDelete</a></li><li><a href="global.html#projectTouchItemPut">projectTouchItemPut</a></li><li><a href="global.html#projectTreeGet">projectTreeGet</a></li><li><a href="global.html#projectUnhidePut">projectUnhidePut</a></li><li><a href="global.html#projectWordconvertPost">projectWordconvertPost</a></li><li><a href="global.html#punycode">punycode</a></li><li><a href="global.html#rootGet">rootGet</a></li><li><a href="global.html#rootPost">rootPost</a></li><li><a href="global.html#userGet">userGet</a></li><li><a href="global.html#userPost">userPost</a></li><li><a href="global.html#userUserAuditGet">userUserAuditGet</a></li><li><a href="global.html#userUserCheckGet">userUserCheckGet</a></li><li><a href="global.html#userUserCheckPost">userUserCheckPost</a></li><li><a href="global.html#userUserDelete">userUserDelete</a></li><li><a href="global.html#userUserGet">userUserGet</a></li><li><a href="global.html#userUserLoginPost">userUserLoginPost</a></li><li><a href="global.html#userUserLogoutPost">userUserLogoutPost</a></li><li><a href="global.html#userUserPasswordResetPost">userUserPasswordResetPost</a></li><li><a href="global.html#userUserProjectPost">userUserProjectPost</a></li><li><a href="global.html#userUserProjectPut">userUserProjectPut</a></li><li><a href="global.html#userUserProjectsGet">userUserProjectsGet</a></li><li><a href="global.html#userUserPut">userUserPut</a></li><li><a href="global.html#userUserRenamePut">userUserRenamePut</a></li><li><a href="global.html#userUserSettingPost">userUserSettingPost</a></li><li><a href="global.html#userUserStatusPut">userUserStatusPut</a></li><li><a href="global.html#userUserTokenDelete">userUserTokenDelete</a></li><li><a href="global.html#userUserTokenPost">userUserTokenPost</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Oct 05 2023 14:41:46 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Oct 12 2023 12:46:01 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
