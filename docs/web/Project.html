@@ -95,7 +95,7 @@ a StandaloneMatrixSDK object which represents the Matrix Instance.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5567">line 5567</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5568">line 5568</a>
     </li></ul></dd>
     
 
@@ -214,7 +214,7 @@ you need brought down.
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last">the search term</td>
         </tr>
 
     
@@ -236,7 +236,7 @@ you need brought down.
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last">by default empty string</td>
         </tr>
 
     
@@ -260,7 +260,7 @@ you need brought down.
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last">return results in tree order (by default false)</td>
         </tr>
 
     
@@ -282,7 +282,7 @@ you need brought down.
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last">an optional mask</td>
         </tr>
 
     
@@ -323,7 +323,7 @@ you need brought down.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5674">line 5674</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5667">line 5667</a>
     </li></ul></dd>
     
 
@@ -369,7 +369,7 @@ you need brought down.
     
 
     
-    <h4 class="name" id="complexSearchInProject"><span class="type-signature">(async) </span>complexSearchInProject<span class="signature">(project, term, filter, fieldList, includeLabels, includeDownlinks, includeUplinks, treeOrder)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="complexSearchInProject"><span class="type-signature">(async) </span>complexSearchInProject<span class="signature">(term, options)</span><span class="type-signature"></span></h4>
     
 
     
@@ -413,24 +413,6 @@ you need brought down.
 
         <tr>
             
-                <td class="name"><code>project</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>term</code></td>
             
 
@@ -449,7 +431,7 @@ you need brought down.
 
         <tr>
             
-                <td class="name"><code>filter</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
@@ -460,99 +442,7 @@ you need brought down.
 
             
 
-            <td class="description last">default empty string</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fieldList</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">empty string to mean no fields, * to mean all, or comma-seperated list of
-  field ids from the various categories from which items will be returned. The default
-  value is *.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeLabels</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">default true</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeDownlinks</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">default false</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeUplinks</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">default false</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>treeOrder</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">default false</td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -593,7 +483,7 @@ you need brought down.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5660">line 5660</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5653">line 5653</a>
     </li></ul></dd>
     
 
@@ -639,7 +529,7 @@ you need brought down.
     
 
     
-    <h4 class="name" id="constructSearchFieldMask"><span class="type-signature"></span>constructSearchFieldMask<span class="signature">(includeFields, includeLabels, includeDownlinks, includeUplinks)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="constructSearchFieldMask"><span class="type-signature"></span>constructSearchFieldMask<span class="signature">(options)</span><span class="type-signature"></span></h4>
     
 
     
@@ -673,8 +563,6 @@ you need brought down.
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -685,7 +573,7 @@ you need brought down.
 
         <tr>
             
-                <td class="name"><code>includeFields</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
@@ -695,86 +583,8 @@ you need brought down.
             
 
             
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
 
-            <td class="description last">true by default. If false, no fields will be retrieved from the server.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeLabels</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last">true by default. If false, no label information will be retrieved from the server.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeDownlinks</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">false by default. If false, no information about downlinks will come from the server.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>includeUplinks</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">false by default. If false, no information about uplinks will come from the server.</td>
+            <td class="description last">A IFieldMaskOptions object. If not specified, then appropriate defaults are chosen.</td>
         </tr>
 
     
@@ -815,7 +625,7 @@ you need brought down.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5774">line 5774</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5759">line 5759</a>
     </li></ul></dd>
     
 
@@ -994,7 +804,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5618">line 5618</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5619">line 5619</a>
     </li></ul></dd>
     
 
@@ -1136,7 +946,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5807">line 5807</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5792">line 5792</a>
     </li></ul></dd>
     
 
@@ -1297,7 +1107,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5865">line 5865</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5850">line 5850</a>
     </li></ul></dd>
     
 
@@ -1451,7 +1261,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5607">line 5607</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5608">line 5608</a>
     </li></ul></dd>
     
 
@@ -1481,6 +1291,184 @@ field ids to the output category field ids.
         
 <div class="param-desc">
     A FolderAnswer object
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="generateDocument"><span class="type-signature">(async) </span>generateDocument<span class="signature">(type, docId, progressReporter)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Export a DOC to an external file.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Can be one of "pdf", "html", "docx", or "odt"</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>docId</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The DOC id</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>progressReporter</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">an optional callback with status updates</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5925">line 5925</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    a pointer to the location on the server where the file can be downloaded
 </div>
 
 
@@ -1598,7 +1586,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5818">line 5818</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5803">line 5803</a>
     </li></ul></dd>
     
 
@@ -1686,7 +1674,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5582">line 5582</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5583">line 5583</a>
     </li></ul></dd>
     
 
@@ -1882,7 +1870,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5912">line 5912</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5897">line 5897</a>
     </li></ul></dd>
     
 
@@ -2042,7 +2030,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5874">line 5874</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5859">line 5859</a>
     </li></ul></dd>
     
 
@@ -2184,7 +2172,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5790">line 5790</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5775">line 5775</a>
     </li></ul></dd>
     
 
@@ -2344,7 +2332,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5828">line 5828</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5813">line 5813</a>
     </li></ul></dd>
     
 
@@ -2487,7 +2475,7 @@ field ids to the output category field ids.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5599">line 5599</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5600">line 5600</a>
     </li></ul></dd>
     
 
@@ -2667,7 +2655,7 @@ Use: await project.setField("PROC-83", "plain english", "x");
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5888">line 5888</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5873">line 5873</a>
     </li></ul></dd>
     
 
@@ -2841,7 +2829,7 @@ Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5901">line 5901</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5886">line 5886</a>
     </li></ul></dd>
     
 
@@ -2995,7 +2983,7 @@ Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5848">line 5848</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5833">line 5833</a>
     </li></ul></dd>
     
 
@@ -3137,7 +3125,7 @@ Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5782">line 5782</a>
+        <a href="sdk.js.html">sdk.js</a>, <a href="sdk.js.html#line5767">line 5767</a>
     </li></ul></dd>
     
 
@@ -3199,7 +3187,7 @@ Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Oct 12 2023 12:46:01 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Oct 20 2023 13:45:16 GMT+0200 (GMT+02:00)
 </footer>
 
 <script> prettyPrint(); </script>

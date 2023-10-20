@@ -1,17 +1,28 @@
+import {
+    SectionDescriptions,
+    IPluginSettingPage,
+    Item,
+    TestStepsFieldHandler,
+    ISetField,
+    RichtextFieldHandler,
+    AddFileAck,
+    ExecuteParam,
+    Field,
+    TestStepsResultFieldHandler,
+    Project,
+} from 'matrix-requirements-sdk/client';
 import { CategoryInstruction, IBulkSettings, IServerSettings } from "./Interfaces";
 import { Plugin } from "./Main";
 import { textGenerator } from "./lorem-ipsum";
-import SectionDescriptions = matrixSdk.SectionDescriptions;
+import { sdkInstance } from './instance';
 
-
-// eslint-disable-next-line no-unused-vars
 /* server Setting page closure*/
-export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSdk.IPluginSettingPage<IServerSettings> {
+export class ServerSettingsPage extends sdkInstance.ConfigPage implements IPluginSettingPage<IServerSettings> {
     settingsOriginal?: IServerSettings;
     settingsChanged?: IServerSettings;
 
     settings(): IServerSettings {
-        const serverSettings = matrixSdk.PluginCore.getServerSetting(Plugin.config.customerSettingsPage.settingName, "EMPTY");
+        const serverSettings = sdkInstance.PluginCore.getServerSetting(Plugin.config.customerSettingsPage.settingName, "EMPTY");
         if (serverSettings === "EMPTY") {
             // Go with the default.
             return <IServerSettings>Plugin.config.customerSettingsPage.defaultSettings;
@@ -136,14 +147,19 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
 
 
     private async getCategoryWithDownlinkItems(category: string, downlinkedCategory: string,
-        without: boolean): Promise<matrixSdk.Item[]> {
+        without: boolean): Promise<Item[]> {
         let not = "";
         if (without) {
             not = "!"
         }
         const search = `mrql:category=${category} and downlink ${not}= ${downlinkedCategory}`;
-        let mask = this.project.constructSearchFieldMask(false, false, true, true);
-        const results: matrixSdk.Item[] = await this.project.complexSearch(search, "", false, mask);
+        let mask = this.project.constructSearchFieldMask({
+            includeFields: false,
+            includeLabels: false,
+            includeDownlinks: true,
+            includeUplinks: true
+        });
+        const results: Item[] = await this.project.complexSearch(search, "", false, mask);
         return results;
     }
 
@@ -163,7 +179,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
         return (await this.getCategoryWithUplinkItems(category, uplinkedCategory, without)).length;
     }
 
-    private createStepsArray(handler: matrixSdk.TestStepsFieldHandler, stepCount: number): void {
+    private createStepsArray(handler: TestStepsFieldHandler, stepCount: number): void {
         for (let i = 0; i < stepCount; i++) {
             handler.setColumnData(i, "action", `Test Action ${i}`);
             handler.setColumnData(i, "expected", `A good result`);
@@ -215,7 +231,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
     private async createObject(folderId: string, cat: CategoryInstruction, i: number): Promise<boolean> {
         const config = this.project.getItemConfig();
         const title = `Bulk_${cat.category}_${i}`;
-        let data: matrixSdk.ISetField[] = [];
+        let data: ISetField[] = [];
 
         // These are created in a different way
         if (this.isXTCCategory(cat.category)) return true;
@@ -230,7 +246,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
         for (let field of itemConfig.fieldList) {
             if (field.fieldType == "richtext") {
                 let f = newItem.getFieldById(field.id);
-                let handler = f.getHandler<matrixSdk.RichtextFieldHandler>();
+                let handler = f.getHandler<RichtextFieldHandler>();
                 handler.setHtml(textGenerator(2));
             }
         }
@@ -240,7 +256,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
             const fieldName = this.findTestStepsField(cat.category);
             if (fieldName) {
                 let field = newItem.getFieldByName(fieldName)[0];
-                let handler = field.getHandler<matrixSdk.TestStepsFieldHandler>();
+                let handler = field.getHandler<TestStepsFieldHandler>();
                 this.createStepsArray(handler, 10);
             }
         }
@@ -267,7 +283,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
     private async createObjects() {
         const settings = this.getSettings();
         let folderId: string;
-        matrixSdk.matrixsdk.setComment("Bulk creation");
+        sdkInstance.matrixsdk.setComment("Bulk creation");
         for (let cat of settings.categoryInstructions) {
             if (this.isXTCCategory(cat.category)) {
                 // We create these differently, after all other categories have been created and linked.
@@ -302,15 +318,15 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
         }
     }
 
-    private async uploadImage(): Promise<matrixSdk.AddFileAck> {
+    private async uploadImage(): Promise<AddFileAck> {
         const settings = this.getSettings();
         return await this.project.uploadFile(settings.imageToAttachURL);
     }
 
-    private getImageUrl(imgInfo: matrixSdk.AddFileAck) {
+    private getImageUrl(imgInfo: AddFileAck) {
         const projectId = this.project.getName();
         const imageUrl =
-            `${matrixSdk.globalMatrix.matrixRestUrl}/${projectId}/file/${imgInfo.fileId}?key=${imgInfo.key}`;
+            `${sdkInstance.globalMatrix.matrixRestUrl}/${projectId}/file/${imgInfo.fileId}?key=${imgInfo.key}`;
         return imageUrl;
     }
 
@@ -327,7 +343,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
             const numberOfRuns = Math.floor(xtcCountToCreate / tcInfo.count);
 
             for (let run = 0; run < numberOfRuns; run++) {
-                let exeParams: matrixSdk.ExecuteParam =
+                let exeParams: ExecuteParam =
                     that.project.createExecuteParamWithDefaults([`F-${testCategory}-1`], executedTestCategory,
                         `For bulk creation run ${run}`);
                 try {
@@ -348,23 +364,23 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
                 return;
             }
             this.log(`Uploading ${xtcInfo.attachmentCount} images to ${xtc}...`);
-            let imageLinks: matrixSdk.AddFileAck[] = [];
+            let imageLinks: AddFileAck[] = [];
             for (let j = 0; j < xtcInfo.attachmentCount; j++) {
                 // Create this many images
                 imageLinks.push(await this.uploadImage());
             }
             // Now make the XTC include the images
-            let xtcItem: matrixSdk.Item = await this.project.getItem(xtc);
+            let xtcItem: Item = await this.project.getItem(xtc);
             // Get the table of steps.
-            let fields: matrixSdk.Field[] = xtcItem.getFieldsByType("test_steps_result");
+            let fields: Field[] = xtcItem.getFieldsByType("test_steps_result");
             if (fields.length != 1) {
                 this.log("Unable to find test_steps_result field to attach images. Aborting");
                 this.running = false;
                 return;
             }
             const field = fields[0];
-            let handler: matrixSdk.TestStepsResultFieldHandler =
-                field.getHandler<matrixSdk.TestStepsResultFieldHandler>();
+            let handler: TestStepsResultFieldHandler =
+                field.getHandler<TestStepsResultFieldHandler>();
 
             // Insert an image at each row.
             for (let row = 0; row < handler.getRowCount(); row++) {
@@ -372,7 +388,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
                     const imgInfo = imageLinks.pop();
                     const currentImageUrl = this.getImageUrl(imgInfo);
                     const existingText = handler.getColumnData(row, "comment") ?? "";
-                    const newText = existingText + 
+                    const newText = existingText +
                         `<br><p>I have a BULK IMAGE at <img src="${currentImageUrl}"></p>`;
                     handler.setColumnData(row, "comment", newText);
                 }
@@ -433,12 +449,12 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
         }
     }
 
-    private project: matrixSdk.Project;
+    private project: Project;
 
     async initializeProject(project: string) {
         const that = this;
 
-        this.project = await matrixSdk.matrixsdk.openProject(project);
+        this.project = await sdkInstance.matrixsdk.openProject(project);
         that.log("Project successfully found");
 
         if (that.validateCategories(that.project.getItemConfig().getCategories(true))) {
@@ -461,7 +477,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
 
         // Step 1, is the project valid?
         let settings = this.getSettings();
-        const projectList = await matrixSdk.matrixsdk.getProjects();
+        const projectList = await sdkInstance.matrixsdk.getProjects();
         if (projectList.filter(p => p == settings.project).length < 1) {
             that.log("Project is invalid. Aborting");
             that.running = false;
@@ -491,7 +507,7 @@ export class ServerSettingsPage extends matrixSdk.ConfigPage implements matrixSd
             undefined
         );
         this.dom = this.getSettingsDOM(this.settingsChanged);
-        matrixSdk.app.itemForm.append(this.dom);
+        sdkInstance.app.itemForm.append(this.dom);
         this.showSimple();
     }
 
