@@ -1,9 +1,17 @@
 {
   "name": "matrix-requirements-sdk",
-  "version": "2.4.0-alpha.3",
+  "version": "2.4.0-alpha.4",
   "description": "An SDK for manipulating MatrixRequirements projects",
-  "main": "index.js",
-  "types": "matrixSdk.d.ts",
+  "exports": {
+    "./client": {
+      "types": "./client/index.js",
+      "default": "./client/index.js"
+    },
+    "./server": {
+      "types": "./server/index.js",
+      "default": "./server/index.js"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

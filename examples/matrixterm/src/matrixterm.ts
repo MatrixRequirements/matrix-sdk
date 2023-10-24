@@ -1,13 +1,8 @@
-/// <reference types="matrixrequirements-type-declarations" />
-/// <reference types="matrix-requirements-sdk" />
+import 'node-self';
 import readline from 'readline';
-// import { exit } from "process";
-import { Command } from 'commander';
-require('node-self');
-let matrix = require('matrix-requirements-sdk');
-export {};
-
-// let token = "Token api_6k95hig76a2u4mdkn2vr5i15jo.v6dm6rrukfe929c5ujjsg6pe5t";
+import { ITitleAndId, Project, StandaloneMatrixSDK, TreeFolder, Item } from 'matrix-requirements-sdk/server'
+// FIXME: getting 'self is not defined' error when using "import". ship server sdk with "node-self" included?
+const { createConsoleAPI } = require('matrix-requirements-sdk/server');
 
 // Commands:
 //   -- ls
@@ -15,9 +10,8 @@ export {};
 //   -- cat
 //   -- find (?)
 class Directory {
-    // public project?: string;
-    public project: matrixSdk.Project;
-    public currentFolder: matrixSdk.TreeFolder;
+    public project: Project;
+    public currentFolder: TreeFolder;
 
     private reset() {
         this.project = undefined;
@@ -61,7 +55,7 @@ class Directory {
         }
     }
 
-    public async cd(path: string, mmapi: matrixSdk.StandaloneMatrixSDK) {
+    public async cd(path: string, mmapi: StandaloneMatrixSDK) {
         if (path[0] === '/') {
             // absolute path
             await this.initFromPath(path, mmapi);
@@ -114,8 +108,8 @@ class Directory {
     }
 
     /**
-     * If the current folder is the leaf folder. 
-     * @returns 
+     * If the current folder is the leaf folder.
+     * @returns
      */
     public topId(): string {
         if (this.currentFolder) {
@@ -152,14 +146,14 @@ async function handleLs(args: string) {
             print('> ' + p);
         });
     } else {
-        const children: matrixSdk.ITitleAndId[] = currentDir.currentFolder.getAllChildren();
+        const children: ITitleAndId[] = currentDir.currentFolder.getAllChildren();
         children.forEach(child => {
             print((child.isFolder ? '> ' : '') + child.title);
         });
     }
 }
 
-function catProject(project: matrixSdk.Project) {
+function catProject(project: Project) {
     const config = project.getItemConfig();
     const cats = config.getCategories();
     print(`Project ${project.getName()} contains ${cats.length} categories:`);
@@ -187,7 +181,7 @@ async function handleCat(args: string) {
             catProject(await mmapi.openProject(args));
         }
     } else {
-        const children: matrixSdk.ITitleAndId[] = await currentDir.currentFolder.getAllChildren();
+        const children: ITitleAndId[] = await currentDir.currentFolder.getAllChildren();
         const filteredFolders = children.filter((p) => p.title == args);
         if (filteredFolders.length < 1) {
             print(`Sorry, item ${args} not found`);
@@ -198,7 +192,7 @@ async function handleCat(args: string) {
     }
     if (itemId) {
         // Get the item
-        const item: matrixSdk.Item = await currentDir.project.getItem(itemId);
+        const item: Item = await currentDir.project.getItem(itemId);
         const iitem = await item.extractDataAsync();
         console.dir(iitem, { depth: null, colors: true });
         // print(JSON.stringify(item));
@@ -259,7 +253,7 @@ async function completer(line, callback) {
         return;
     }
 
-    const children: matrixSdk.ITitleAndId[] = currentDir.currentFolder.getAllChildren();
+    const children: ITitleAndId[] = currentDir.currentFolder.getAllChildren();
     const completions = children.map((v) => v.title);
     const hits = completions.filter((c) => c.startsWith(line));
     callback(null, [hits.length ? hits : completions, line]);
@@ -276,7 +270,7 @@ let key = process.argv[3];
 let token = processKey(key);
 const server = process.argv[2];
 const restUrl = server + "/rest/1";
-let mmapi = matrix.CreateConsoleAPI(token, restUrl, server);  // new MMAPI(config, server);
+let mmapi = createConsoleAPI(token, restUrl, server);  // new MMAPI(config, server);
 
 function main() {
     rl.setPrompt(`/ > `);
