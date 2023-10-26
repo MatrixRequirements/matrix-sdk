@@ -2394,6 +2394,34 @@ export declare class ItemConfiguration {
 	/** return cleanup rules, if there's a project setting that wins, if there's no rules or it's disabled it returns -1 */
 	getCleanupRules(): ICleanup;
 }
+/**
+ * A Field represents a field in an Item in a Project on a Matrix Instance. The Field contains
+ * the data for a given field, along with knowledge about the configuration of that field, as
+ * given by the Category settings for Items of that particular category.
+ *
+ * The end user reads and changes the data in a field through a Field Handler. There is a
+ * unique field handler for each field type. Consult documentation for a table mapping field
+ * types to field handlers.
+ */
+export declare class Field {
+	private item;
+	private config;
+	private handler;
+	private oldData;
+	constructor(item: Item, config: XRFieldTypeAnnotated, handler: IFieldHandler);
+	/**
+	 * Get the Item which contains this field.
+	 * @returns the containing Item
+	 */
+	getItem(): Item;
+	getHandlerRaw(): IFieldHandler;
+	getHandler<T>(): T;
+	getFieldType(): string;
+	getFieldId(): number;
+	getFieldName(): string;
+	getFieldConfigParameter(name: string): unknown;
+	needsSaveAsync(): Promise<boolean>;
+}
 interface ConfigurationParameters {
 	apiKey?: string | ((name: string) => string);
 	username?: string;
@@ -8117,6 +8145,357 @@ export declare class LoggerTools implements ILoggerTools {
 	error(message: string): void;
 	getLog(): string;
 }
+export interface ITitleAndId {
+	title: string;
+	id: string;
+	isFolder: boolean;
+}
+interface IProjectSearchOptions {
+	/**
+	 * Specifies a search filter. Default value empty string.
+	 */
+	filter?: string;
+	/**
+	 * A list of comma-separated field IDs to retrieve for each Item. By
+	 * default all fields, given by the wildcard string "*".
+	 */
+	fieldList?: string;
+	/**
+	 * Include information on the labels on each item. By default true.
+	 */
+	includeLabels?: boolean;
+	/**
+	 * Include information on the downlinks for each item. By default false.
+	 */
+	includeDownlinks?: boolean;
+	/**
+	 * Include information on the uplinks for each item. By default false.
+	 */
+	includeUplinks?: boolean;
+	/**
+	 * Return the array of results in tree order. By default false.
+	 */
+	treeOrder?: boolean;
+}
+export interface IProjectNeeds {
+	parseRefForProject(project: string, itemRef: string): IItemIdParts;
+	setFieldsInProject(project: string, projectItemConfig: ItemConfiguration, itemId: string, data: ISetField[]): Promise<IItemGet>;
+	getItemFromProject(project: string, id: string): Promise<IItemGet>;
+	updateItemInProject(project: string, item: IItemPut, currentVersion?: number): Promise<string>;
+	createItemInProject(project: string, parentFolderId: string, item: IItemPut): Promise<string>;
+	deleteItemInProject(project: string, itemId: string, force?: boolean): Promise<string>;
+	moveItemsInProject(project: string, folderId: string, itemIds: string[]): Promise<string>;
+	searchIdsInProject(project: string, term: string): Promise<string[]>;
+	searchItemsInProject(project: string, term: string, options?: IProjectSearchOptions): Promise<ISearchResult[]>;
+	getFullTreeFromProject(projectName: string): Promise<FancyFolder[]>;
+	getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
+	uploadFileToProject(project: string, url: string): Promise<AddFileAck>;
+	executeInProject(project: string, payload: ExecuteParam): Promise<FolderAnswer>;
+	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
+	getJobStatus(project: string, jobId: number, options?: unknown): Promise<JobsStatusWithUrl>;
+	createTodo(project: string, users: string[], type: TodoTypes | string, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
+}
+interface ITreeFolderNeeds {
+	parseRef(id: string): IItemIdParts;
+	getItem(id: string): Promise<Item>;
+	putItem(parentFolderId: string, item: Item): Promise<Item>;
+	deleteItem(itemId: string, force?: boolean): Promise<string>;
+	moveItems(folderId: string, itemIds: string[]): Promise<string>;
+}
+/**
+ * A TreeFolder represents a folder in the Matrix application. It can answer queries about
+ * folder and item children. A Folder is also an Item.
+ */
+export declare class TreeFolder {
+	private needs;
+	private parent?;
+	private id;
+	private title;
+	private type;
+	private folderChildren;
+	private itemChildren;
+	constructor(needs: ITreeFolderNeeds, folder: FancyFolder, parent?: TreeFolder);
+	isRoot(): boolean;
+	getId(): string;
+	getTitle(): string;
+	getParent(): TreeFolder;
+	/**
+	 * Creates a path string including all ancestor folder titles, separated by "/".
+	 * @returns the folder path
+	 */
+	getPath(): string;
+	/**
+	 * Return a TreeFolder if the folderId is valid in the project.
+	 * @param folderId
+	 * @returns null if folderId cannot be found.
+	 */
+	findFolder(folderId: string): TreeFolder;
+	/**
+	 * Find a TreeFolder with the given name in this folder.
+	 * @param folderTitle
+	 * @returns A valid TreeFolder object or null if not found.
+	 */
+	findDirectFolderByTitle(folderTitle: string): TreeFolder;
+	/**
+	 * Save an item with this folder as the parent folder.
+	 * @param item An item that hasn't yet been saved on the server
+	 * @returns An Item object which corresponds to the newly created Item on the server.
+	 * @throws throws Error if your item already has an id (was already created on the server).
+	 */
+	saveInFolder(item: Item): Promise<Item>;
+	/**
+	 * Move the given items into this folder. This method does NOT update the list of folder children,
+	 * since server-side information is necessary.
+	 * @param itemIds an array of itemIds
+	 * @returns the string "Ok" on success
+	 */
+	moveItemsToThisFolder(itemIds: string[]): Promise<string>;
+	/**
+	 * Delete a child of this folder.
+	 * @param id A valid child id of this folder
+	 * @param force If the id points to a non-empty folder, then this must be true to carry out the deletion
+	 * @throws Error if the child wasn't found, or if it points to a non-empty folder and {force} is not true
+	 * @returns The string "Ok" if successful.
+	 */
+	deleteChildItemOrFolder(id: string, force?: boolean): Promise<string>;
+	/**
+	 * TreeFolder is nice/simple to work with, but sometimes you need the
+	 * underlying Item. For example, you might want to set a label on the folder.
+	 * Item is the necessary type to do that.
+	 * @returns An Item which matches this folder
+	 */
+	getItem(): Promise<Item>;
+	/**
+	 * Returns information on the folders in the folder. May make a request to
+	 * the server if children haven't been loaded yet, otherwise, acts on
+	 * cached information (which may be out of date. Call refresh() to update
+	 * the folder in that case).
+	 * @returns an array of TreeFolder objects.
+	 */
+	getFolderChildren(): TreeFolder[];
+	/**
+	 * Returns information on the items in the folder. May make a request to
+	 * the server if children haven't been loaded yet, otherwise, acts on
+	 * cached information (which may be out of date. Call refresh() to update
+	 * the folder in that case).
+	 * @returns an array of ITitleAndId objects
+	 */
+	getItemChildren(): ITitleAndId[];
+	/**
+	 * Returns both folders and items at this level.
+	 * @returns an array of ITitleAndId objects for the folders and items
+	 */
+	getAllChildren(): ITitleAndId[];
+}
+export declare class DocItem extends Item {
+	private project;
+	constructor(project: Project, item?: IItemGet, fieldMask?: ItemFieldMask);
+	/**
+	 * add a section to the end of a document
+	 * @param {title} Title of the section
+	 * @param {sectionType} Type of the section
+	 */
+	addSection(title: string, sectionType: string): DHFFieldHandler;
+	/**
+	 * Get the next section that needs to be filled
+	 * */
+	getNextDHFFieldName(): string;
+	/** Get the list of DHF fields */
+	getDHFSections(): Field[];
+	/** insert a section at a given position
+	 * @param {number} number Position of the section
+	 * @param {sectionName} sectionName Name of the section
+	 * @param {sectionType} sectionType Type of the section
+	 * */
+	insertSection(number: number, sectionName: string, sectionType: string): DHFFieldHandler;
+	/** Remove a section at a given position
+	 * @param {number} number The position of the element to remove */
+	removeSection(number: number): void;
+	private exportTo;
+	/** Generate a html document
+	 * @return {url} the URL of the generated document */
+	toHTML(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	/** Generate a pdf document
+	 * @return {url} the URL of the generated document */ toPDF(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	/** Generate a docx  document
+	 * @return {url} the URL of the generated document */
+	toDOCx(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	private addMandatoryFields;
+	private initDHFFields;
+	private addDocumentOptions;
+}
+export interface IProjectContext {
+	getItemConfig(): ItemConfiguration;
+	getJsonTools(): IJSONTools;
+	getLogger(): ILoggerTools;
+	getLabelManager(): ILabelManager;
+	getTestManagerConfig(): TestManagerConfiguration;
+}
+/**
+ * The Project class offers methods to manipulate a Matrix Project on a Matrix Instance.
+ * It is not meant to be created by the end user, rather the openProject() method is used on
+ * a StandaloneMatrixSDK object which represents the Matrix Instance.
+ */
+export declare class Project {
+	private server;
+	private name;
+	private context;
+	private categories;
+	constructor(server: IProjectNeeds, name: string, context: IProjectContext);
+	/**
+	 * Get the root TreeFolder for a Project.
+	 * @returns A valid TreeFolder.
+	 */
+	getProjectTree(): Promise<TreeFolder>;
+	/**
+	 * Perform a search, returning IDs of Items that match.
+	 * @param term - a search term. Consult documentation for valid searches, including
+	 *     "mrql" searches.
+	 * @returns An array of matching item IDs.
+	 */
+	searchForIds(term: string): Promise<string[]>;
+	/**
+	 * Run a server execute command with the given payload
+	 * @param payload a valid ExecuteParam object
+	 * @returns A FolderAnswer object
+	 */
+	execute(payload: ExecuteParam): Promise<FolderAnswer>;
+	/**
+	 * Used to populate the rather complex ExecuteParam type. We need a mapping from clone source
+	 * field ids to the output category field ids.
+	 * @param inputFolderIds
+	 * @param outputCategory
+	 * @param reason
+	 * @returns A populated ExecuteParam suitable for use with the execute method.
+	 */
+	createExecuteParamWithDefaults(inputFolderIds: string[], outputCategory: string, reason: string): ExecuteParam;
+	/**
+	 * Execute a more complex search, where the fields in the results can be limited.
+	 * @param term
+	 * @param options
+	 * @return returns an array of ISearchResult objects.
+	 */
+	searchRaw(term: string, options?: IProjectSearchOptions): Promise<ISearchResult[]>;
+	/**
+	 * Perform a search and return items that are initialized according to the provided mask
+	 * settings. This allows you to efficiently gather data from the server with only the fields
+	 * you need brought down.
+	 *
+	 * @param term the search term
+	 * @param filter by default empty string
+	 * @param treeOrder return results in tree order (by default false)
+	 * @param mask an optional mask
+	 * @returns an array of filled-in Item objects.
+	 */
+	searchForItems(term: string, filter?: string, treeOrder?: boolean, mask?: ItemsFieldMask): Promise<Item[]>;
+	/**
+	 * Create an ItemsFieldMask for use with search functions.
+	 *
+	 * @param options A IFieldMaskOptions object. If not specified, then appropriate defaults are chosen.
+	 * @returns an initialized ItemsFieldMask object which can be further customized.
+	 */
+	constructSearchFieldMask(options?: IFieldMaskOptions): ItemsFieldMask;
+	/**
+	 * Upload a file given by the url into the project.
+	 * @param url
+	 * @returns an AddFileAck structure.
+	 */
+	uploadFile(url: string): Promise<AddFileAck>;
+	/**
+	 * Returns information about an item from an id in a given project.
+	 * @param itemId A valid item id in the project
+	 * @returns The itemId decomposed into parts
+	 */
+	parseRef(itemId: string): IItemIdParts;
+	createItem(category: string): Item;
+	createDOC(): DocItem;
+	/**
+	 * Create a folder. Every folder must contain only items of a particular type.
+	 * @param type
+	 * @returns a new Folder item of the given type.
+	 */
+	createFolder(type: string): Item;
+	getItem(id: string): Promise<Item>;
+	/** Return a DocItem from an id.
+	 * @param {id} id The id of the DOC */
+	getItemAsDoc(id: string): Promise<DocItem>;
+	/**
+	 * Save an item into a given folder.
+	 * @param parentFolderId
+	 * @param item
+	 * @returns A fresh copy of the Item from the server
+	 */
+	putItem(parentFolderId: string, item: Item): Promise<Item>;
+	/**
+	 * Update an item on the server.
+	 * @param item
+	 * @returns A fresh copy of the Item from the server.
+	 */
+	updateItem(item: Item): Promise<Item>;
+	/**
+	 * Delete an Item from the project. If the Item is a folder with children, then parameter
+	 * {force} must be true.
+	 * @param itemId A valid item
+	 * @param force
+	 * @throws Error if the item is a non-empty folder and force was not specified as true.
+	 * @returns A promise with the string "Ok" on success.
+	 */
+	deleteItem(itemId: string, force?: boolean): Promise<string>;
+	/**
+	 * Move items in the project to a particular folder.
+	 * @param folderId a valid folder id within the project
+	 * @param itemIds an array of itemIds
+	 * @returns the string "Ok" on success
+	 */
+	moveItems(folderId: string, itemIds: string[]): Promise<string>;
+	/**
+	 * set a field of an item in the database
+	 *
+	 * Use: await project.setField("PROC-83", "plain english", "x");
+	 *
+	 * @param itemId itemId the id of the item like "REQ-1"
+	 * @param fieldName name of the field
+	 * @param value value of the field
+	 * @throws Error in case of invalid itemId or fieldName
+	 * @returns Promise to the updated item
+	 */
+	setField(itemId: string, fieldName: string, value: string): Promise<IItemGet>;
+	/**
+	 * sets multiple fields in the database
+	 *
+	 * Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
+	 *
+	 * @param itemId itemId itemId the id of the item like "REQ-1"
+	 * @param data array of fieldName and value tupels
+	 * @throws Error in case of invalid id or fields
+	 * @returns the updated item
+	 */
+	setFields(itemId: string, data: ISetField[]): Promise<IItemGet>;
+	/**
+	 * Get the TODOs for a project.
+	 * @param itemRef if specified, returns all todos linked to an item, regardless of user
+	 * @param includeDone - if true, includes done todos
+	 * @param includeAllUsers - if true, includes all todos for all users.
+	 * @param includeFuture - false by default. If true, includes future todos.
+	 * @returns Information on the todos.
+	 */
+	getTodos(itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
+	getCategory(category: string): Category;
+	getName(): string;
+	getItemConfig(): ItemConfiguration;
+	getLabelManager(): ILabelManager;
+	getTestConfig(): TestManagerConfiguration;
+	/**
+	 * Export a DOC to an external file.
+	 * @param type Can be one of "pdf", "html", "docx", or "odt"
+	 * @param docId The DOC id
+	 * @param progressReporter an optional callback with status updates
+	 * @returns a pointer to the location on the server where the file can be downloaded
+	 */
+	generateDocument(type: "pdf" | "html" | "docx" | "odt", docId: string, progressReporter?: (jobId: any, progress: any) => void): Promise<JobFileWithUrl[]>;
+	private sleep;
+	createTodo(users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
+}
 export declare class FieldDescriptions {
 	static Field_sourceref: string;
 	static Field_markAsTemplate: string;
@@ -8215,78 +8594,6 @@ export declare class SectionDescriptions {
 	static section_CustomSection: string;
 	static section_checkbox: string;
 	static section_hidden: string;
-}
-export interface ITitleAndId {
-	title: string;
-	id: string;
-	isFolder: boolean;
-}
-interface IProjectSearchOptions {
-	/**
-	 * Specifies a search filter. Default value empty string.
-	 */
-	filter?: string;
-	/**
-	 * A list of comma-separated field IDs to retrieve for each Item. By
-	 * default all fields, given by the wildcard string "*".
-	 */
-	fieldList?: string;
-	/**
-	 * Include information on the labels on each item. By default true.
-	 */
-	includeLabels?: boolean;
-	/**
-	 * Include information on the downlinks for each item. By default false.
-	 */
-	includeDownlinks?: boolean;
-	/**
-	 * Include information on the uplinks for each item. By default false.
-	 */
-	includeUplinks?: boolean;
-	/**
-	 * Return the array of results in tree order. By default false.
-	 */
-	treeOrder?: boolean;
-}
-export interface IProjectNeeds {
-	parseRefForProject(project: string, itemRef: string): IItemIdParts;
-	setFieldsInProject(project: string, projectItemConfig: ItemConfiguration, itemId: string, data: ISetField[]): Promise<IItemGet>;
-	getItemFromProject(project: string, id: string): Promise<IItemGet>;
-	updateItemInProject(project: string, item: IItemPut, currentVersion?: number): Promise<string>;
-	createItemInProject(project: string, parentFolderId: string, item: IItemPut): Promise<string>;
-	deleteItemInProject(project: string, itemId: string, force?: boolean): Promise<string>;
-	moveItemsInProject(project: string, folderId: string, itemIds: string[]): Promise<string>;
-	searchInProject(project: string, term: string): Promise<string[]>;
-	complexSearchInProject(project: string, term: string, options?: IProjectSearchOptions): Promise<ISearchResult[]>;
-	getFullTreeFromProject(projectName: string): Promise<FancyFolder[]>;
-	getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
-	uploadFileToProject(project: string, url: string): Promise<AddFileAck>;
-	executeInProject(project: string, payload: ExecuteParam): Promise<FolderAnswer>;
-	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
-	getJobStatus(project: string, jobId: number, options?: unknown): Promise<JobsStatusWithUrl>;
-	createTodo(project: string, users: string[], type: TodoTypes | string, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
-}
-/**
- * A Field represents a field in an Item in a Project on a Matrix Instance. The Field contains
- * the data for a given field, along with knowledge about the configuration of that field, as
- * given by the Category settings for Items of that particular category.
- *
- * The end user reads and changes the data in a field through a Field Handler. There is a
- * unique field handler for each field type. Consult documentation for a table mapping field
- * types to field handlers.
- */
-export declare class Field {
-	private config;
-	private handler;
-	private oldData;
-	constructor(config: XRFieldTypeAnnotated, handler: IFieldHandler);
-	getHandlerRaw(): IFieldHandler;
-	getHandler<T>(): T;
-	getFieldType(): string;
-	getFieldId(): number;
-	getFieldName(): string;
-	getFieldConfigParameter(name: string): unknown;
-	needsSaveAsync(): Promise<boolean>;
 }
 /**
  * An Item represents a database item. Every Item must have at least a category.
@@ -8527,307 +8834,6 @@ export declare class Item {
 	 */
 	getTodos(includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
 }
-interface ITreeFolderNeeds {
-	parseRef(id: string): IItemIdParts;
-	getItem(id: string): Promise<Item>;
-	putItem(parentFolderId: string, item: Item): Promise<Item>;
-	deleteItem(itemId: string, force?: boolean): Promise<string>;
-	moveItems(folderId: string, itemIds: string[]): Promise<string>;
-}
-/**
- * A TreeFolder represents a folder in the Matrix application. It can answer queries about
- * folder and item children. A Folder is also an Item.
- */
-export declare class TreeFolder {
-	private needs;
-	private parent?;
-	private id;
-	private title;
-	private type;
-	private folderChildren;
-	private itemChildren;
-	constructor(needs: ITreeFolderNeeds, folder: FancyFolder, parent?: TreeFolder);
-	isRoot(): boolean;
-	getId(): string;
-	getTitle(): string;
-	getParent(): TreeFolder;
-	/**
-	 * Creates a path string including all ancestor folder titles, separated by "/".
-	 * @returns the folder path
-	 */
-	getPath(): string;
-	/**
-	 * Return a TreeFolder if the folderId is valid in the project.
-	 * @param folderId
-	 * @returns null if folderId cannot be found.
-	 */
-	findFolder(folderId: string): TreeFolder;
-	/**
-	 * Find a TreeFolder with the given name in this folder.
-	 * @param folderTitle
-	 * @returns A valid TreeFolder object or null if not found.
-	 */
-	findDirectFolderByTitle(folderTitle: string): TreeFolder;
-	/**
-	 * Save an item with this folder as the parent folder.
-	 * @param item An item that hasn't yet been saved on the server
-	 * @returns An Item object which corresponds to the newly created Item on the server.
-	 * @throws throws Error if your item already has an id (was already created on the server).
-	 */
-	saveInFolder(item: Item): Promise<Item>;
-	/**
-	 * Move the given items into this folder. This method does NOT update the list of folder children,
-	 * since server-side information is necessary.
-	 * @param itemIds an array of itemIds
-	 * @returns the string "Ok" on success
-	 */
-	moveItemsToThisFolder(itemIds: string[]): Promise<string>;
-	/**
-	 * Delete a child of this folder.
-	 * @param id A valid child id of this folder
-	 * @param force If the id points to a non-empty folder, then this must be true to carry out the deletion
-	 * @throws Error if the child wasn't found, or if it points to a non-empty folder and {force} is not true
-	 * @returns The string "Ok" if successful.
-	 */
-	deleteChildItemOrFolder(id: string, force?: boolean): Promise<string>;
-	/**
-	 * TreeFolder is nice/simple to work with, but sometimes you need the
-	 * underlying Item. For example, you might want to set a label on the folder.
-	 * Item is the necessary type to do that.
-	 * @returns An Item which matches this folder
-	 */
-	getItem(): Promise<Item>;
-	/**
-	 * Returns information on the folders in the folder. May make a request to
-	 * the server if children haven't been loaded yet, otherwise, acts on
-	 * cached information (which may be out of date. Call refresh() to update
-	 * the folder in that case).
-	 * @returns an array of TreeFolder objects.
-	 */
-	getFolderChildren(): TreeFolder[];
-	/**
-	 * Returns information on the items in the folder. May make a request to
-	 * the server if children haven't been loaded yet, otherwise, acts on
-	 * cached information (which may be out of date. Call refresh() to update
-	 * the folder in that case).
-	 * @returns an array of ITitleAndId objects
-	 */
-	getItemChildren(): ITitleAndId[];
-	/**
-	 * Returns both folders and items at this level.
-	 * @returns an array of ITitleAndId objects for the folders and items
-	 */
-	getAllChildren(): ITitleAndId[];
-}
-export declare class DocItem extends Item {
-	private project;
-	constructor(project: Project, item?: IItemGet, fieldMask?: ItemFieldMask);
-	/**
-	 * add a section to the end of a document
-	 * @param {title} Title of the section
-	 * @param {sectionType} Type of the section
-	 */
-	addSection(title: string, sectionType: string): DHFFieldHandler;
-	/**
-	 * Get the next section that needs to be filled
-	 * */
-	getNextDHFFieldName(): string;
-	/** Get the list of DHF fields */
-	getDHFSections(): Field[];
-	/** insert a section at a given position
-	 * @param {number} number Position of the section
-	 * @param {sectionName} sectionName Name of the section
-	 * @param {sectionType} sectionType Type of the section
-	 * */
-	insertSection(number: number, sectionName: string, sectionType: string): DHFFieldHandler;
-	/** Remove a section at a given position
-	 * @param {number} number The position of the element to remove */
-	removeSection(number: number): void;
-	private exportTo;
-	/** Generate a html document
-	 * @return {url} the URL of the generated document */
-	toHTML(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
-	/** Generate a pdf document
-	 * @return {url} the URL of the generated document */ toPDF(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
-	/** Generate a docx  document
-	 * @return {url} the URL of the generated document */
-	toDOCx(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
-	private addMandatoryFields;
-	private initDHFFields;
-	private addDocumentOptions;
-}
-export interface IProjectContext {
-	getItemConfig(): ItemConfiguration;
-	getJsonTools(): IJSONTools;
-	getLogger(): ILoggerTools;
-	getLabelManager(): ILabelManager;
-	getTestManagerConfig(): TestManagerConfiguration;
-}
-/**
- * The Project class offers methods to manipulate a Matrix Project on a Matrix Instance.
- * It is not meant to be created by the end user, rather the openProject() method is used on
- * a StandaloneMatrixSDK object which represents the Matrix Instance.
- */
-export declare class Project {
-	private server;
-	private name;
-	private context;
-	private categories;
-	constructor(server: IProjectNeeds, name: string, context: IProjectContext);
-	/**
-	 * Get the root TreeFolder for a Project.
-	 * @returns A valid TreeFolder.
-	 */
-	getProjectTree(): Promise<TreeFolder>;
-	/**
-	 * Perform a search, returning IDs of Items that match.
-	 * @param term - a search term. Consult documentation for valid searches, including
-	 *     "mrql" searches.
-	 * @returns An array of matching item IDs.
-	 */
-	search(term: string): Promise<string[]>;
-	/**
-	 * Run a server execute command with the given payload
-	 * @param payload a valid ExecuteParam object
-	 * @returns A FolderAnswer object
-	 */
-	execute(payload: ExecuteParam): Promise<FolderAnswer>;
-	/**
-	 * Used to populate the rather complex ExecuteParam type. We need a mapping from clone source
-	 * field ids to the output category field ids.
-	 * @param inputFolderIds
-	 * @param outputCategory
-	 * @param reason
-	 * @returns A populated ExecuteParam suitable for use with the execute method.
-	 */
-	createExecuteParamWithDefaults(inputFolderIds: string[], outputCategory: string, reason: string): ExecuteParam;
-	/**
-	 * Execute a more complex search, where the fields in the results can be limited.
-	 * @param term
-	 * @param options
-	 * @return returns an array of ISearchResult objects.
-	 */
-	complexSearchInProject(term: string, options?: IProjectSearchOptions): Promise<ISearchResult[]>;
-	/**
-	 * Perform a search and return items that are initialized according to the provided mask
-	 * settings. This allows you to efficiently gather data from the server with only the fields
-	 * you need brought down.
-	 *
-	 * @param term the search term
-	 * @param filter by default empty string
-	 * @param treeOrder return results in tree order (by default false)
-	 * @param mask an optional mask
-	 * @returns an array of filled-in Item objects.
-	 */
-	complexSearch(term: string, filter?: string, treeOrder?: boolean, mask?: ItemsFieldMask): Promise<Item[]>;
-	/**
-	 * Create an ItemsFieldMask for use with search functions.
-	 *
-	 * @param options A IFieldMaskOptions object. If not specified, then appropriate defaults are chosen.
-	 * @returns an initialized ItemsFieldMask object which can be further customized.
-	 */
-	constructSearchFieldMask(options?: IFieldMaskOptions): ItemsFieldMask;
-	/**
-	 * Upload a file given by the url into the project.
-	 * @param url
-	 * @returns an AddFileAck structure.
-	 */
-	uploadFile(url: string): Promise<AddFileAck>;
-	/**
-	 * Returns information about an item from an id in a given project.
-	 * @param itemId A valid item id in the project
-	 * @returns The itemId decomposed into parts
-	 */
-	parseRef(itemId: string): IItemIdParts;
-	createItem(category: string): Item;
-	createDOC(): DocItem;
-	/**
-	 * Create a folder. Every folder must contain only items of a particular type.
-	 * @param type
-	 * @returns a new Folder item of the given type.
-	 */
-	createFolder(type: string): Item;
-	getItem(id: string): Promise<Item>;
-	/** Return a DocItem from an id.
-	 * @param {id} id The id of the DOC */
-	getItemAsDoc(id: string): Promise<DocItem>;
-	/**
-	 * Save an item into a given folder.
-	 * @param parentFolderId
-	 * @param item
-	 * @returns A fresh copy of the Item from the server
-	 */
-	putItem(parentFolderId: string, item: Item): Promise<Item>;
-	/**
-	 * Update an item on the server.
-	 * @param item
-	 * @returns A fresh copy of the Item from the server.
-	 */
-	updateItem(item: Item): Promise<Item>;
-	/**
-	 * Delete an Item from the project. If the Item is a folder with children, then parameter
-	 * {force} must be true.
-	 * @param itemId A valid item
-	 * @param force
-	 * @throws Error if the item is a non-empty folder and force was not specified as true.
-	 * @returns A promise with the string "Ok" on success.
-	 */
-	deleteItem(itemId: string, force?: boolean): Promise<string>;
-	/**
-	 * Move items in the project to a particular folder.
-	 * @param folderId a valid folder id within the project
-	 * @param itemIds an array of itemIds
-	 * @returns the string "Ok" on success
-	 */
-	moveItems(folderId: string, itemIds: string[]): Promise<string>;
-	/**
-	 * set a field of an item in the database
-	 *
-	 * Use: await project.setField("PROC-83", "plain english", "x");
-	 *
-	 * @param itemId itemId the id of the item like "REQ-1"
-	 * @param fieldName name of the field
-	 * @param value value of the field
-	 * @throws Error in case of invalid itemId or fieldName
-	 * @returns Promise to the updated item
-	 */
-	setField(itemId: string, fieldName: string, value: string): Promise<IItemGet>;
-	/**
-	 * sets multiple fields in the database
-	 *
-	 * Use: await api.setFields("PROC-83", [{fieldName:"plain english",value:"x"}]  )
-	 *
-	 * @param itemId itemId itemId the id of the item like "REQ-1"
-	 * @param data array of fieldName and value tupels
-	 * @throws Error in case of invalid id or fields
-	 * @returns the updated item
-	 */
-	setFields(itemId: string, data: ISetField[]): Promise<IItemGet>;
-	/**
-	 * Get the TODOs for a project.
-	 * @param itemRef if specified, returns all todos linked to an item, regardless of user
-	 * @param includeDone - if true, includes done todos
-	 * @param includeAllUsers - if true, includes all todos for all users.
-	 * @param includeFuture - false by default. If true, includes future todos.
-	 * @returns Information on the todos.
-	 */
-	getTodos(itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
-	getCategory(category: string): Category;
-	getName(): string;
-	getItemConfig(): ItemConfiguration;
-	getLabelManager(): ILabelManager;
-	getTestConfig(): TestManagerConfiguration;
-	/**
-	 * Export a DOC to an external file.
-	 * @param type Can be one of "pdf", "html", "docx", or "odt"
-	 * @param docId The DOC id
-	 * @param progressReporter an optional callback with status updates
-	 * @returns a pointer to the location on the server where the file can be downloaded
-	 */
-	generateDocument(type: "pdf" | "html" | "docx" | "odt", docId: string, progressReporter?: (jobId: any, progress: any) => void): Promise<JobFileWithUrl[]>;
-	private sleep;
-	createTodo(users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
-}
 interface IFieldMaskOptions {
 	/**
 	 * includeFields true by default. If false, no fields will be retrieved from the server.
@@ -8845,6 +8851,11 @@ interface IFieldMaskOptions {
 	 * includeUplinks false by default. If false, no information about uplinks will come from the server.
 	 */
 	includeUplinks?: boolean;
+}
+interface ICategoryItemOptions {
+	filter?: string;
+	treeOrder?: boolean;
+	mask?: ItemsFieldMask;
 }
 declare class ItemFieldMask {
 	private fieldIds;
@@ -8933,6 +8944,18 @@ export declare class Category {
 	 * @returns an ItemFieldMask.
 	 */
 	createFieldMask(fieldIds?: number[]): ItemFieldMask;
+	/**
+	 * Construct a search mask from chosen options
+	 * @param options
+	 * @returns an ItemsFieldMask object
+	 */
+	constructSearchFieldMask(options: IFieldMaskOptions): ItemsFieldMask;
+	/**
+	 * Get all of the items of this Category.
+	 * @param options An optional ICategoryItemOptions describing search options.
+	 * @returns An array of Items of this Category, configured according to the options given.
+	 */
+	getItems(options?: ICategoryItemOptions): Promise<Item[]>;
 }
 export declare class SimpleItemTools implements ISimpleItemTools {
 	parseRef(itemRef: string, project: string, matrixBaseUrl: string): IItemIdParts;
@@ -9057,8 +9080,8 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * @param term
 	 * @returns an array of item ids.
 	 */
-	searchInProject(project: string, term: string): Promise<string[]>;
-	complexSearchInProject(project: string, term: string, options?: IProjectSearchOptions): Promise<ISearchResult[]>;
+	searchIdsInProject(project: string, term: string): Promise<string[]>;
+	searchItemsInProject(project: string, term: string, options?: IProjectSearchOptions): Promise<ISearchResult[]>;
 	uploadProjectFile(url: string): Promise<AddFileAck>;
 	uploadFileToProject(project: string, url: string): Promise<AddFileAck>;
 	executeInProject(project: string, payload: ExecuteParam): Promise<FolderAnswer>;

@@ -4706,6 +4706,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return this.allFieldsFieldMask;
         }
+        /**
+         * Construct a search mask from chosen options
+         * @param options
+         * @returns an ItemsFieldMask object
+         */
+        constructSearchFieldMask(options) {
+            return this.project.constructSearchFieldMask(options);
+        }
+        /**
+         * Get all of the items of this Category.
+         * @param options An optional ICategoryItemOptions describing search options.
+         * @returns An array of Items of this Category, configured according to the options given.
+         */
+        async getItems(options) {
+            var _a, _b, _c;
+            const filter = (_a = options === null || options === void 0 ? void 0 : options.filter) !== null &amp;&amp; _a !== void 0 ? _a : "";
+            const treeOrder = (_b = options === null || options === void 0 ? void 0 : options.treeOrder) !== null &amp;&amp; _b !== void 0 ? _b : false;
+            const mask = (_c = options === null || options === void 0 ? void 0 : options.mask) !== null &amp;&amp; _c !== void 0 ? _c : undefined;
+            return this.project.searchForItems(`mrql:category=${this.category}`, filter, treeOrder, mask);
+        }
     }
     exports.Category = Category;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -4964,7 +4984,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
      * types to field handlers.
      */
     class Field {
-        constructor(config, handler) {
+        constructor(item, config, handler) {
+            this.item = item;
             this.config = config;
             this.handler = handler;
             if (this.config.fieldType != this.handler.getFieldType()) {
@@ -4974,6 +4995,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             handler.getDataAsync().then((data) => {
                 this.oldData = data;
             });
+        }
+        /**
+         * Get the Item which contains this field.
+         * @returns the containing Item
+         */
+        getItem() {
+            return this.item;
         }
         getHandlerRaw() {
             return this.handler;
@@ -5281,7 +5309,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
                     let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
                     handler.initData(value);
-                    this.fieldMap.set(field.id, new Field_1.Field(field, handler));
+                    this.fieldMap.set(field.id, new Field_1.Field(this, field, handler));
                 }
             }
             // TODO: deal with labels. They show up as a pseudo field, but are really not.
@@ -5320,7 +5348,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
             let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
             handler.initData(value);
-            this.fieldMap.set(field.id, new Field_1.Field(field, handler));
+            this.fieldMap.set(field.id, new Field_1.Field(this, field, handler));
             assert(field.id == fieldId);
             this.setDirty();
             return this.getFieldById(field.id);
@@ -5625,8 +5653,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          *     "mrql" searches.
          * @returns An array of matching item IDs.
          */
-        async search(term) {
-            return this.server.searchInProject(this.name, term);
+        async searchForIds(term) {
+            return this.server.searchIdsInProject(this.name, term);
         }
         /**
          * Run a server execute command with the given payload
@@ -5678,8 +5706,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param options
          * @return returns an array of ISearchResult objects.
          */
-        async complexSearchInProject(term, options) {
-            return this.server.complexSearchInProject(this.name, term, options);
+        async searchRaw(term, options) {
+            return this.server.searchItemsInProject(this.name, term, options);
         }
         /**
          * Perform a search and return items that are initialized according to the provided mask
@@ -5692,7 +5720,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param mask an optional mask
          * @returns an array of filled-in Item objects.
          */
-        async complexSearch(term, filter = "", treeOrder = false, mask) {
+        async searchForItems(term, filter = "", treeOrder = false, mask) {
             var _a, _b, _c, _d;
             let params = {
                 filter: filter !== null &amp;&amp; filter !== void 0 ? filter : "",
@@ -5702,7 +5730,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 fieldList: (_d = mask === null || mask === void 0 ? void 0 : mask.getFieldMaskString()) !== null &amp;&amp; _d !== void 0 ? _d : "*'",
                 treeOrder: treeOrder,
             };
-            const results = await this.complexSearchInProject(term, params);
+            const results = await this.searchRaw(term, params);
             let items = [];
             // Turn the results into Items.
             // ItemFieldMasks are unique per category. This cache allows us to avoid creating
@@ -19208,16 +19236,12 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
 /***/ }),
 
 /***/ 248:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
-    return (mod &amp;&amp; mod.__esModule) ? mod : { "default": mod };
-};
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(249), __webpack_require__(251), __webpack_require__(257), __webpack_require__(278), __webpack_require__(120), __webpack_require__(53), __webpack_require__(8), __webpack_require__(131), __webpack_require__(130), __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, isomorphic_fetch_1, Project_1, rest_api_1, configuration_1, ItemConfiguration_1, TestManagerConfiguration_1, SimpleItemTools_1, LoggerTools_1, JSONTools_1, LabelManager_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(249), __webpack_require__(251), __webpack_require__(257), __webpack_require__(278), __webpack_require__(120), __webpack_require__(53), __webpack_require__(8), __webpack_require__(131), __webpack_require__(130), __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, isomorphicFetch, Project_1, rest_api_1, configuration_1, ItemConfiguration_1, TestManagerConfiguration_1, SimpleItemTools_1, LoggerTools_1, JSONTools_1, LabelManager_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.StandaloneMatrixSDK = exports.createFrom23Environment = exports.createConsoleAPI = void 0;
-    isomorphic_fetch_1 = __importDefault(isomorphic_fetch_1);
     function createConsoleAPI(token, baseRestUrl, baseMatrixUrl) {
         let config = new configuration_1.Configuration({ apiKey: token });
         let session = new (class {
@@ -19346,7 +19370,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
             this.simpleItemTools = simpleItemTools;
             this.debug = false;
             this.projectMap = new Map();
-            this.fetchWrapper = new IsomorphicFetchWrapper(isomorphic_fetch_1.default);
+            this.fetchWrapper = new IsomorphicFetchWrapper(isomorphicFetch);
             this.instance = new rest_api_1.DefaultApi(this.config, this.baseRestUrl, this.fetchWrapper.getFetch());
             this.setItemConfig(initialItemConfig);
             this.labelManager = new LabelManager_1.LabelManager(logger, json, () => {
@@ -19666,14 +19690,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __importDefa
          * @param term
          * @returns an array of item ids.
          */
-        async searchInProject(project, term) {
+        async searchIdsInProject(project, term) {
             this.log(`Search in ${project} for "${term}"`);
             let params = { search: term };
             const options = { headers: this.getHeadersForPost() };
             const results = await this.instance.projectNeedleminimalPost(params, project, options);
             return results;
         }
-        async complexSearchInProject(project, term, options) {
+        async searchItemsInProject(project, term, options) {
             var _a, _b, _c, _d, _e, _f;
             options = options || {};
             const filter = (_a = options === null || options === void 0 ? void 0 : options.filter) !== null &amp;&amp; _a !== void 0 ? _a : "";
@@ -22222,7 +22246,7 @@ if (!global.fetch) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Oct 20 2023 13:45:15 GMT+0200 (GMT+02:00)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Oct 26 2023 16:58:27 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
