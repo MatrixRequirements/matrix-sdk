@@ -728,6 +728,39 @@ declare class MatrixSchemaView {
 	renderArray(array: ISchemaArray): string;
 	renderProperty(prop: ISchemaItem): ISchemaPrintTypeInfo;
 }
+interface IPrintSorterMap {
+	[key: string]: IPrintSorter;
+}
+interface IPrintSorter {
+	getName: () => string;
+	getHelp: () => string;
+	sort: (a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => number;
+}
+interface IPrintSortParams {
+	sorter: string;
+	descending: boolean;
+	params?: any;
+}
+interface IPrintIteratorMap {
+	[key: string]: IPrintIterator;
+}
+interface IPrintItemIteratorParams {
+	maxDepth?: number;
+	sorting?: IPrintSortParams[];
+}
+interface IPrintIterator extends IPrintBaseFunction {
+	worksOnItem: boolean;
+	worksOnFolder: boolean;
+}
+interface IPrintItemIterator extends IPrintIterator {
+	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<string[]>;
+	getValidation: () => JsonEditorValidation | null;
+	folderIterator: boolean;
+	traceIterator: boolean;
+	tableRowIterator: boolean;
+}
+interface IPrintFieldIteratorParams {
+}
 interface IPrintFieldInfo {
 	fieldId: string;
 	field: JQuery;
@@ -736,6 +769,21 @@ interface IPrintFieldInfo {
 	config: JQuery;
 	jsonConfig: any;
 	jsonValue: any;
+}
+interface IPrintFieldIterator extends IPrintIterator {
+	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintFieldIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<IPrintFieldInfo[]>;
+}
+interface IPrintLabelIteratorParams {
+}
+interface IPrintLabelInfo {
+	id: string;
+	printName: string;
+	icon: string;
+	set: boolean;
+	jsonConfig: {};
+}
+interface IPrintLabelIterator extends IPrintIterator {
+	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintLabelIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => IPrintLabelInfo[];
 }
 interface IPrintFormatter {
 	/**
@@ -783,7 +831,7 @@ interface ICustomSection {
 	formatter: string;
 	functionDefaults?: IPrintFunctionParamsOverwrites;
 }
-interface IProcessResult {
+export interface IProcessResult {
 	/** generated html */
 	html: string;
 	/** primary list of items from selection + first level interators */
@@ -823,10 +871,19 @@ interface IPrintGlobals {
 	lastItem: string;
 	lastFields: IFieldCache;
 }
+interface IPrintFunctionMap {
+	[key: string]: IPrintFunction;
+}
+interface IConditionFunctionMap {
+	[key: string]: IConditionFunction;
+}
 interface IPrintBaseFunction {
 	getName: () => string;
 	getHelp: (hideDetails?: boolean) => string;
 	editParams?: (json: any, onUpdate: (newParams: any) => void) => JQuery;
+}
+interface IPrintBaseFunctionMap {
+	[key: string]: IPrintBaseFunction;
 }
 interface IPrintFunction extends IPrintBaseFunction {
 	getGroup: () => string;
@@ -845,6 +902,10 @@ interface IGlobalPrintFunctionParams {
 	project: IPrintFunctionParamsOverwrites;
 	section: IPrintFunctionParamsOverwrites;
 	tableRow?: number;
+}
+interface IConditionFunction extends IPrintBaseFunction {
+	itemOrFolder: boolean;
+	evaluate: (overwrites: IGlobalPrintFunctionParams, params: any, itemOrFolderRef: any, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<boolean>;
 }
 interface ITraceConfig {
 	rules: ITraceConfigDetails[];
@@ -1642,12 +1703,11 @@ interface IFieldHandler {
 	getFieldType(): string;
 	/** Initializes the field handler with the raw string data. */
 	initData(serializedFieldData: string): any;
-	/** Returns a promise with the raw data to be saved using rest API */
-	getDataAsync(): Promise<string>;
 	/**
-	 * @deprecated Use getDataAsync whenever possible instead.
+	 * getData() returns a string representing the data in the database. It may be
+	 * a JSON object, in which case use JSON.parse() to manipulate it.
 	 */
-	getRawData(): any;
+	getData(): string;
 }
 export interface IBaseControl {
 	getFieldHandler(): IFieldHandler;
@@ -1717,8 +1777,7 @@ export declare class DropdownFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
 	protected params: IBaseDropdownFieldParams;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
@@ -1754,8 +1813,7 @@ export declare class EmptyFieldHandler implements IFieldHandler {
 	constructor(fieldTypeIn: string, configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 }
 interface ILinkRenderParams {
 	linkTypes?: ILinkCategories[];
@@ -1858,8 +1916,7 @@ export declare class RichtextFieldHandler implements IFieldHandler {
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getHtml(): string;
 	setHtml(str: string): RichtextFieldHandler;
 }
@@ -2137,7 +2194,7 @@ interface IUIToolsEnum {
 	Progress: IProgressUI;
 	ThemeSelector: IThemeSelector;
 	fixC3ForCopy(copied: JQuery): any;
-	createDropDownButton(defaultText: string, options: IDropDownButtonOption[], isUp: boolean, isJui: boolean, buttonId?: string, disableDefaultButtonClick?: boolean): JQuery;
+	createDropDownButton(defaultText: string, options: IDropDownButtonOption[], isUp: boolean, buttonId?: string, disableDefaultButtonClick?: boolean): JQuery;
 	getNiceDialogSize(minWidth: number, minHeight: number): {
 		width: number;
 		height: number;
@@ -3471,7 +3528,7 @@ interface IDocFieldHandler extends IFieldHandler {
 	dhfFieldConfig: IAnyMap;
 	setDHFConfig(config: IAnyMap): void;
 	getDefaultConfig(): any;
-	getXmlValue(): Promise<string>;
+	getXmlValue(): string;
 	getFieldName(): string;
 	setFieldName(value: string): void;
 	addSignatures(signatures: string[], includeAll?: boolean): void;
@@ -3604,9 +3661,7 @@ export declare class BaseTableFieldHandler implements IFieldHandler {
 	columnNumberToFieldId(columnNumber: number): string;
 	validate(): void;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
-	getDataRaw(): any;
+	getData(): string;
 	setData(dataIn: any[], fixData?: boolean): void;
 	getRowCount(): number;
 	deleteRow(rowNumber: number): void;
@@ -3635,9 +3690,8 @@ export declare class CheckboxFieldHandler implements IFieldHandler {
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
-	getValueAsync(): Promise<boolean | undefined>;
+	getData(): string;
+	getValue(): boolean | undefined;
 	setValue(value: boolean): void;
 }
 export declare class GenericFieldHandler implements IFieldHandler {
@@ -3647,21 +3701,18 @@ export declare class GenericFieldHandler implements IFieldHandler {
 	constructor(fieldTypeIn: string, configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 }
 interface IDHFControlDefinition extends IControlDefinition {
 	dhfValue?: IDHFControlDefinitionValue;
 	configTouched?: boolean;
 }
 export declare class DHFFieldHandler extends GenericFieldHandler {
+	private itemConfig;
 	private fieldConfig;
 	innerDataHandler: IDocFieldHandler;
-	private itemConfig;
-	constructor(fieldConfig: IDHFControlDefinition);
-	setItemConfig(itemConfig: ItemConfiguration): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): any;
+	constructor(itemConfig: ItemConfiguration, fieldConfig: IDHFControlDefinition);
+	getData(): string;
 	initData(fieldValue: string): void;
 	setInnerFieldHandler(docFieldHandler: IDocFieldHandler): void;
 }
@@ -3674,8 +3725,7 @@ export declare class TextlineFieldHandler implements IFieldHandler {
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getText(): string;
 	setText(str: string): void;
 }
@@ -3697,8 +3747,7 @@ export declare class TestResultFieldHandler implements IFieldHandler {
 	static UpdateFieldConfig(params: IBaseDropdownFieldParams, testConfig: TestManagerConfiguration): void;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	initData(serializedFieldData: string): void;
 	getValues(filterOnOptions?: boolean): string[];
 	getHuman(): string;
@@ -3708,8 +3757,7 @@ export declare class UserFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
 	private params;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
@@ -3721,8 +3769,7 @@ export declare class UserFieldHandler implements IFieldHandler {
 export declare class DateFieldHandler implements IFieldHandler {
 	private date;
 	constructor(config: IAnyMap);
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	static getDateFromString(dateStr: string): Date;
@@ -3738,8 +3785,7 @@ export declare class ItemSelectionFieldHandler implements IFieldHandler {
 	addSignatures(signatures: string[], includeAll: boolean): void;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getItems(): IReference[];
 	getItemCount(): number;
 	hasItems(): boolean;
@@ -3778,8 +3824,7 @@ export declare class HyperlinkFieldHandler implements IFieldHandler {
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getValue(): boolean | undefined;
 	setValue(value: boolean): void;
 }
@@ -3793,8 +3838,7 @@ export declare class ItemSelectionFieldHandlerFromTo implements IFieldHandler {
 	private selectedItems;
 	private defaultSelection;
 	constructor(configIn: XRFieldTypeAnnotatedParamJson, fieldTypeIn?: string);
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getSelectedItems(): IFromToSelection;
@@ -3929,8 +3973,7 @@ export declare class GateFieldHandler implements IFieldHandler {
 	private allPassed;
 	private currentValue;
 	constructor(config: IBaseGateOptions);
-	getDataAsync(): Promise<string>;
-	getRawData(): IGateStatus;
+	getData(): string;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	private defautValue;
@@ -4183,6 +4226,109 @@ export declare abstract class BaseWidget implements IWidgetPlugin {
 	hide(showConfirm?: boolean): void;
 	unhide(showConfirm: boolean): void;
 }
+interface IAttributePrimitiveParams {
+	attributeName?: string;
+	path?: string;
+	class?: string;
+	replace?: IReplaceParam;
+}
+interface IReplaceParam {
+	match: string;
+	with: string;
+}
+/************************************** Processor class  ********************************************/
+export declare class PrintProcessor implements IPrintProcessor {
+	private onError;
+	private possibleTargets;
+	private mf;
+	globals: IPrintGlobals;
+	private functionDefaults;
+	static itemIterators: IPrintIteratorMap;
+	static labelIterators: IPrintIteratorMap;
+	static fieldIterators: IPrintIteratorMap;
+	static itemSorter: IPrintSorterMap;
+	static functions: IPrintFunctionMap;
+	static conditions: IConditionFunctionMap;
+	private formatter;
+	constructor();
+	private stylesheets;
+	/*******************************************************************************
+	 *
+	 *  Iterator Blocks
+	 *
+	 ***************************************************************************** */
+	prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): void;
+	private getRiskControlCategories;
+	processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): Promise<IProcessResult>;
+	getTableData(tableId: string, selection: string[]): Promise<string>;
+	/********************************************************************************
+	 *  Main Processing functions to handle items from the print project
+	 ********************************************************************************/
+	private processItem;
+	private processBlockFormatter;
+	private processFieldsFormatter;
+	private processTraceFormatter;
+	private processListFormatter;
+	private processTableFormatter;
+	/********************************************************************************
+	*  processing of "json" macros like {execute:"function", parameters:{...}}
+	********************************************************************************/
+	private processMacros;
+	private processPrintFormatterMacro;
+	private processFunctionMacro;
+	/********************************************************************************
+	*  Helper for building tables
+	********************************************************************************/
+	private mergeCells;
+	private extractClassesFromTable;
+	private addRows;
+	private getSubTableCells;
+	/********************************************************************************
+	*  Misc helper
+	********************************************************************************/
+	getCustomStylesheet(): string;
+	private applyDepth;
+	private hasMergeMacro;
+	private addScriptInfo;
+	private evaluateCondition;
+	private enumeratePossibleTargets;
+	private sortItems;
+	/*********************************** manage formatters ************************************/
+	static getFunctions(group: string): IPrintFunctionMap;
+	static functionHasOptions(functionUid: string): boolean;
+	static editFunctionOptions(currentValue: string, onUpdate: (newOptions: string) => void): void;
+	static showOptionsEditor(fctName: string, currentValue: string, onUpdate: (newValue: string) => void): void;
+	static openEditor(fct: IPrintBaseFunction, params: IAttributePrimitiveParams, onUpdate: (newParams: IAttributePrimitiveParams) => void): boolean;
+	static editStyle(wrap: JQuery): void;
+	private getItemFormatter;
+	static addItemSorter(uid: string, sorter: IPrintSorter): void;
+	static getItemSorters(): IPrintSorterMap;
+	static getItemSorter(uid: string): IPrintSorter;
+	static getItemSorterDropdown(): IDropdownOption[];
+	static addItemIterator(uid: string, iterator: IPrintIterator): void;
+	static getItemIterator(uid: string, quiet?: boolean): IPrintItemIterator | null;
+	static getItemIteratorsDropdown(items: boolean, folders: boolean, allowNoIterator: boolean): IDropdownOption[];
+	static addLabelIterator(uid: string, iterator: IPrintIterator): void;
+	static getLabelIterator(uid: string): IPrintLabelIterator;
+	static addFieldIterator(uid: string, iterator: IPrintIterator): void;
+	static getFieldIterator(uid: string): IPrintFieldIterator;
+	static addFunction(uid: string, fctn: IPrintFunction): void;
+	static getFunction(uid: string): IPrintFunction | null;
+	static FIELD_FUNCTION_TYPE: string;
+	static FIELD_FUNCTION_PREFIX: string;
+	static getFieldFunctionId(uid: string): string;
+	static getFieldFunction(uid: string): IPrintFunction | null;
+	static addConditionFunction(uid: string, fctn: IConditionFunction): void;
+	static getConditionFunction(uid: string): IConditionFunction;
+	static getItemConditionDropdown(): IDropdownOption[];
+	static getAllFunctions(): IPrintBaseFunctionMap;
+	static getAllIterators(): IPrintBaseFunctionMap;
+	static getJsonConfig(config: string, mf: JQuery): any;
+	static getCdataAsJSON(node: Element): any;
+	static getCdataAsText(node: Element, escapeHtmlEntities: boolean): string;
+	static getUserName(user: string, mf: JQuery, first: boolean, last: boolean, login: boolean, email: boolean): string;
+	static getFieldAndLabelsIteratorsDropdown(): IDropdownOption[];
+}
 /**
  * A Field represents a field in an Item in a Project on a Matrix Instance. The Field contains
  * the data for a given field, along with knowledge about the configuration of that field, as
@@ -4209,7 +4355,7 @@ export declare class Field {
 	getFieldId(): number;
 	getFieldName(): string;
 	getFieldConfigParameter(name: string): unknown;
-	needsSaveAsync(): Promise<boolean>;
+	needsSave(): boolean;
 }
 interface ConfigurationParameters {
 	apiKey?: string | ((name: string) => string);
@@ -10121,7 +10267,7 @@ export declare abstract class ControlCoreBase<T extends IPluginFieldHandler<AAA>
 	static defaultOptions: IControlOptions;
 	pluginConfig: IPluginConfig<IServerSettingsBase, IProjectSettingsBase>;
 	constructor(pluginConfig: IPluginConfig<IServerSettingsBase, IProjectSettingsBase>, fieldHandler: T, control?: JQuery);
-	init(options: IControlOptions): Promise<void>;
+	init(options: IControlOptions): void;
 	/** method to call to initialize the editor, e.g. to attach handlers to checkboxes etc */
 	protected initEditor(): void;
 	/** this method is called by the UI to retrieve the string to be saved in the database */
@@ -10131,7 +10277,7 @@ export declare abstract class ControlCoreBase<T extends IPluginFieldHandler<AAA>
 	 * @readOnly is set to true if the user cannot edit the data (e.g. in history or while printing)
 	 * @params are can be parameter added by the printing configuration, to configure how something should be printed
 	 */
-	protected abstract renderControlAsync(readOnly: boolean, params?: IPluginPrintParamsBase): Promise<JQuery>;
+	protected abstract renderControl(readOnly: boolean, params?: IPluginPrintParamsBase): JQuery;
 	protected abstract renderPrint(fieldId: string, value: IPluginFieldValueBase, options: IPluginFieldOptionsBase, params: IPluginPrintParamsBase): JQuery;
 	protected abstract renderEditor(fieldId: string, value: IPluginFieldValueBase, options: IPluginFieldOptionsBase): JQuery;
 	/** this method is called by the UI to figure out if the control's value changed */
@@ -10149,7 +10295,7 @@ export declare abstract class ControlCoreBase<T extends IPluginFieldHandler<AAA>
 }
 export declare abstract class ControlCore<T extends IPluginFieldOptionsBase, F extends IPluginFieldHandler<A>, A extends IPluginFieldValueBase> extends ControlCoreBase<F, A> {
 	protected controlConfig: IPluginFieldParameterBase<T>;
-	protected renderControlAsync(readOnly: boolean, params?: IPluginPrintParamsBase): Promise<JQuery>;
+	protected renderControlAsync(readOnly: boolean, params?: IPluginPrintParamsBase): JQuery;
 }
 export declare class PluginCore implements IPlugin {
 	Plugin: IExternalPlugin<IServerSettingsBase, IProjectSettingsBase, IPluginFieldHandler<IPluginFieldValueBase>, IPluginFieldValueBase, IDashboardParametersBase>;
@@ -10349,6 +10495,76 @@ export declare class LineEditor {
 	constructor();
 	showDialog(configPage: ConfigPage, title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number): void;
 	static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
+}
+export declare class DocItem extends Item {
+	constructor(category: Category, item?: IItemGet, fieldMask?: ItemFieldMask);
+	/**
+	 * add a section to the end of a document
+	 * @param {title} Title of the section
+	 * @param {sectionType} Type of the section
+	 */
+	addSection(title: string, sectionType: string): DHFFieldHandler;
+	/**
+	 * Get the next section that needs to be filled
+	 * */
+	getNextDHFFieldName(): string;
+	/**
+	 * Get the list of DHF fields. This list only includes actual DHF fields,
+	 * not the "hidden" ones.
+	 * @returns DHF fields sorted by name (dhf00, dhf01, etc).
+	 */
+	getDHFFields(): Field[];
+	/**
+	 * It's helpful to see the names of DHF fields that would show up in the
+	 * UI for the DOC. Then fields can be retrieved by these names.
+	 * @returns A list of DOC UI field names (not "dhf01" but "Signatures",
+	 *     for example).
+	 */
+	getDHFFieldInnerNames(): string[];
+	/**
+	 * Retrieve an array of DOC DHF fields with the given UI name.
+	 * @param name
+	 * @returns An array of Field objects from the Item.
+	 */
+	getDHFFieldsByInnerName(name: string): Field[];
+	/**
+	 * It is often convenient to work with the "inner field" of a dhf field,
+	 * where the configuration and values lie.
+	 * @returns An array of IDocFieldHandlers[]. The length is the number of valid fields.
+	 */
+	getInnerDHFFields(): IDocFieldHandler[];
+	/**
+	 * This method helps you know the most appropriate FieldHandler class to use
+	 * to manipulate the doc field.
+	 * @param handler
+	 * @returns the name of the handler class.
+	 */
+	getDocFieldHandlerClassName(handler: IDocFieldHandler): string;
+	private isHiddenDHFField;
+	/** insert a section at a given position
+	 * @param {number} number Position of the section
+	 * @param {sectionName} sectionName Name of the section
+	 * @param {sectionType} sectionType Type of the section
+	 * @returns the DHFFieldHandler inserted.
+	 * */
+	insertSection(number: number, sectionName: string, sectionType: string): DHFFieldHandler;
+	/**
+	 * Remove a section at a given position
+	 * @param number The position of the element to remove.
+	 * @throws Error if number is out of range.
+	 */
+	removeSection(number: number): void;
+	private exportTo;
+	/** Generate a html document
+	 * @return {url} the URL of the generated document */
+	toHTML(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	/** Generate a pdf document
+	 * @return {url} the URL of the generated document */ toPDF(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	/** Generate a docx  document
+	 * @return {url} the URL of the generated document */
+	toDOCx(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	private addMandatoryFields;
+	private addDocumentOptions;
 }
 export interface ITitleAndId {
 	title: string;
@@ -10663,43 +10879,6 @@ export declare class Project {
 	generateDocument(type: "pdf" | "html" | "docx" | "odt", docId: string, progressReporter?: (jobId: any, progress: any) => void): Promise<JobFileWithUrl[]>;
 	private sleep;
 	createTodo(users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
-}
-export declare class DocItem extends Item {
-	private project;
-	constructor(project: Project, item?: IItemGet, fieldMask?: ItemFieldMask);
-	/**
-	 * add a section to the end of a document
-	 * @param {title} Title of the section
-	 * @param {sectionType} Type of the section
-	 */
-	addSection(title: string, sectionType: string): DHFFieldHandler;
-	/**
-	 * Get the next section that needs to be filled
-	 * */
-	getNextDHFFieldName(): string;
-	/** Get the list of DHF fields */
-	getDHFSections(): Field[];
-	/** insert a section at a given position
-	 * @param {number} number Position of the section
-	 * @param {sectionName} sectionName Name of the section
-	 * @param {sectionType} sectionType Type of the section
-	 * */
-	insertSection(number: number, sectionName: string, sectionType: string): DHFFieldHandler;
-	/** Remove a section at a given position
-	 * @param {number} number The position of the element to remove */
-	removeSection(number: number): void;
-	private exportTo;
-	/** Generate a html document
-	 * @return {url} the URL of the generated document */
-	toHTML(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
-	/** Generate a pdf document
-	 * @return {url} the URL of the generated document */ toPDF(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
-	/** Generate a docx  document
-	 * @return {url} the URL of the generated document */
-	toDOCx(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
-	private addMandatoryFields;
-	private initDHFFields;
-	private addDocumentOptions;
 }
 export declare class FieldDescriptions {
 	static Field_sourceref: string;
@@ -11313,7 +11492,7 @@ export declare class Item {
 	 * Export the data from this item into an IItemPut structure
 	 * @returns An IItemPut structure, filled in from the current state of the Item.
 	 */
-	extractDataAsync(): Promise<IItemPut>;
+	extractData(): IItemPut;
 	getId(): string;
 	getIsFolder(): boolean;
 	getType(): string;
@@ -11357,7 +11536,7 @@ export declare class Item {
 	 * @returns Category
 	 */
 	getCategory(): Category;
-	needsSaveAsync(): Promise<boolean>;
+	needsSave(): boolean;
 	/**
 	 * An Item can be complete or partial, based on the ItemFieldMask passed in
 	 * at construction.
@@ -11414,6 +11593,12 @@ export declare class Item {
 	 * @returns Information on the Todos
 	 */
 	getTodos(includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
+	/**
+	 * Visit the server and get this Item as a DocItem.
+	 * @throws Error if the fields of this Item are dirty.
+	 * @returns a DocItem.
+	 */
+	toDocItem(): Promise<DocItem>;
 }
 interface IFieldMaskOptions {
 	/**
@@ -11552,6 +11737,7 @@ export interface ClientMatrixSdk {
 	matrixsdk: MatrixSDK;
 	ConfigPage: typeof ConfigPage;
 	PluginCore: typeof PluginCore;
+	PrintProcessor: typeof PrintProcessor;
 }
 export declare function getSdkInstance(): ClientMatrixSdk;
 export declare function registerPlugin(plugin: PluginCore): void;

@@ -1052,12 +1052,11 @@ interface IFieldHandler {
 	getFieldType(): string;
 	/** Initializes the field handler with the raw string data. */
 	initData(serializedFieldData: string): any;
-	/** Returns a promise with the raw data to be saved using rest API */
-	getDataAsync(): Promise<string>;
 	/**
-	 * @deprecated Use getDataAsync whenever possible instead.
+	 * getData() returns a string representing the data in the database. It may be
+	 * a JSON object, in which case use JSON.parse() to manipulate it.
 	 */
-	getRawData(): any;
+	getData(): string;
 }
 interface IBaseControlOptions {
 	[key: string]: any;
@@ -1087,8 +1086,7 @@ export declare class EmptyFieldHandler implements IFieldHandler {
 	constructor(fieldTypeIn: string, configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 }
 interface IItemControlOptions extends IBaseControlOptions {
 	id?: string;
@@ -1290,7 +1288,7 @@ interface IDocFieldHandler extends IFieldHandler {
 	dhfFieldConfig: IAnyMap;
 	setDHFConfig(config: IAnyMap): void;
 	getDefaultConfig(): any;
-	getXmlValue(): Promise<string>;
+	getXmlValue(): string;
 	getFieldName(): string;
 	setFieldName(value: string): void;
 	addSignatures(signatures: string[], includeAll?: boolean): void;
@@ -1617,8 +1615,7 @@ export declare class DropdownFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
 	protected params: IBaseDropdownFieldParams;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
@@ -1638,8 +1635,7 @@ export declare class RichtextFieldHandler implements IFieldHandler {
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getHtml(): string;
 	setHtml(str: string): RichtextFieldHandler;
 }
@@ -1777,9 +1773,7 @@ export declare class BaseTableFieldHandler implements IFieldHandler {
 	columnNumberToFieldId(columnNumber: number): string;
 	validate(): void;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
-	getDataRaw(): any;
+	getData(): string;
 	setData(dataIn: any[], fixData?: boolean): void;
 	getRowCount(): number;
 	deleteRow(rowNumber: number): void;
@@ -1808,9 +1802,8 @@ export declare class CheckboxFieldHandler implements IFieldHandler {
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
-	getValueAsync(): Promise<boolean | undefined>;
+	getData(): string;
+	getValue(): boolean | undefined;
 	setValue(value: boolean): void;
 }
 export declare class GenericFieldHandler implements IFieldHandler {
@@ -1820,21 +1813,18 @@ export declare class GenericFieldHandler implements IFieldHandler {
 	constructor(fieldTypeIn: string, configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 }
 interface IDHFControlDefinition extends IControlDefinition {
 	dhfValue?: IDHFControlDefinitionValue;
 	configTouched?: boolean;
 }
 export declare class DHFFieldHandler extends GenericFieldHandler {
+	private itemConfig;
 	private fieldConfig;
 	innerDataHandler: IDocFieldHandler;
-	private itemConfig;
-	constructor(fieldConfig: IDHFControlDefinition);
-	setItemConfig(itemConfig: ItemConfiguration): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): any;
+	constructor(itemConfig: ItemConfiguration, fieldConfig: IDHFControlDefinition);
+	getData(): string;
 	initData(fieldValue: string): void;
 	setInnerFieldHandler(docFieldHandler: IDocFieldHandler): void;
 }
@@ -1847,8 +1837,7 @@ export declare class TextlineFieldHandler implements IFieldHandler {
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getText(): string;
 	setText(str: string): void;
 }
@@ -1870,8 +1859,7 @@ export declare class TestResultFieldHandler implements IFieldHandler {
 	static UpdateFieldConfig(params: IBaseDropdownFieldParams, testConfig: TestManagerConfiguration): void;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	initData(serializedFieldData: string): void;
 	getValues(filterOnOptions?: boolean): string[];
 	getHuman(): string;
@@ -1881,8 +1869,7 @@ export declare class UserFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
 	private params;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
@@ -1894,8 +1881,7 @@ export declare class UserFieldHandler implements IFieldHandler {
 export declare class DateFieldHandler implements IFieldHandler {
 	private date;
 	constructor(config: IAnyMap);
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	static getDateFromString(dateStr: string): Date;
@@ -1911,8 +1897,7 @@ export declare class ItemSelectionFieldHandler implements IFieldHandler {
 	addSignatures(signatures: string[], includeAll: boolean): void;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getItems(): IReference[];
 	getItemCount(): number;
 	hasItems(): boolean;
@@ -1951,8 +1936,7 @@ export declare class HyperlinkFieldHandler implements IFieldHandler {
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getValue(): boolean | undefined;
 	setValue(value: boolean): void;
 }
@@ -1966,8 +1950,7 @@ export declare class ItemSelectionFieldHandlerFromTo implements IFieldHandler {
 	private selectedItems;
 	private defaultSelection;
 	constructor(configIn: XRFieldTypeAnnotatedParamJson, fieldTypeIn?: string);
-	getDataAsync(): Promise<string>;
-	getRawData(): string;
+	getData(): string;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getSelectedItems(): IFromToSelection;
@@ -2102,8 +2085,7 @@ export declare class GateFieldHandler implements IFieldHandler {
 	private allPassed;
 	private currentValue;
 	constructor(config: IBaseGateOptions);
-	getDataAsync(): Promise<string>;
-	getRawData(): IGateStatus;
+	getData(): string;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	private defautValue;
@@ -2420,7 +2402,7 @@ export declare class Field {
 	getFieldId(): number;
 	getFieldName(): string;
 	getFieldConfigParameter(name: string): unknown;
-	needsSaveAsync(): Promise<boolean>;
+	needsSave(): boolean;
 }
 interface ConfigurationParameters {
 	apiKey?: string | ((name: string) => string);
@@ -8288,8 +8270,7 @@ export declare class TreeFolder {
 	getAllChildren(): ITitleAndId[];
 }
 export declare class DocItem extends Item {
-	private project;
-	constructor(project: Project, item?: IItemGet, fieldMask?: ItemFieldMask);
+	constructor(category: Category, item?: IItemGet, fieldMask?: ItemFieldMask);
 	/**
 	 * add a section to the end of a document
 	 * @param {title} Title of the section
@@ -8300,16 +8281,51 @@ export declare class DocItem extends Item {
 	 * Get the next section that needs to be filled
 	 * */
 	getNextDHFFieldName(): string;
-	/** Get the list of DHF fields */
-	getDHFSections(): Field[];
+	/**
+	 * Get the list of DHF fields. This list only includes actual DHF fields,
+	 * not the "hidden" ones.
+	 * @returns DHF fields sorted by name (dhf00, dhf01, etc).
+	 */
+	getDHFFields(): Field[];
+	/**
+	 * It's helpful to see the names of DHF fields that would show up in the
+	 * UI for the DOC. Then fields can be retrieved by these names.
+	 * @returns A list of DOC UI field names (not "dhf01" but "Signatures",
+	 *     for example).
+	 */
+	getDHFFieldInnerNames(): string[];
+	/**
+	 * Retrieve an array of DOC DHF fields with the given UI name.
+	 * @param name
+	 * @returns An array of Field objects from the Item.
+	 */
+	getDHFFieldsByInnerName(name: string): Field[];
+	/**
+	 * It is often convenient to work with the "inner field" of a dhf field,
+	 * where the configuration and values lie.
+	 * @returns An array of IDocFieldHandlers[]. The length is the number of valid fields.
+	 */
+	getInnerDHFFields(): IDocFieldHandler[];
+	/**
+	 * This method helps you know the most appropriate FieldHandler class to use
+	 * to manipulate the doc field.
+	 * @param handler
+	 * @returns the name of the handler class.
+	 */
+	getDocFieldHandlerClassName(handler: IDocFieldHandler): string;
+	private isHiddenDHFField;
 	/** insert a section at a given position
 	 * @param {number} number Position of the section
 	 * @param {sectionName} sectionName Name of the section
 	 * @param {sectionType} sectionType Type of the section
+	 * @returns the DHFFieldHandler inserted.
 	 * */
 	insertSection(number: number, sectionName: string, sectionType: string): DHFFieldHandler;
-	/** Remove a section at a given position
-	 * @param {number} number The position of the element to remove */
+	/**
+	 * Remove a section at a given position
+	 * @param number The position of the element to remove.
+	 * @throws Error if number is out of range.
+	 */
 	removeSection(number: number): void;
 	private exportTo;
 	/** Generate a html document
@@ -8321,7 +8337,6 @@ export declare class DocItem extends Item {
 	 * @return {url} the URL of the generated document */
 	toDOCx(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
 	private addMandatoryFields;
-	private initDHFFields;
 	private addDocumentOptions;
 }
 export interface IProjectContext {
@@ -8732,7 +8747,7 @@ export declare class Item {
 	 * Export the data from this item into an IItemPut structure
 	 * @returns An IItemPut structure, filled in from the current state of the Item.
 	 */
-	extractDataAsync(): Promise<IItemPut>;
+	extractData(): IItemPut;
 	getId(): string;
 	getIsFolder(): boolean;
 	getType(): string;
@@ -8776,7 +8791,7 @@ export declare class Item {
 	 * @returns Category
 	 */
 	getCategory(): Category;
-	needsSaveAsync(): Promise<boolean>;
+	needsSave(): boolean;
 	/**
 	 * An Item can be complete or partial, based on the ItemFieldMask passed in
 	 * at construction.
@@ -8833,6 +8848,12 @@ export declare class Item {
 	 * @returns Information on the Todos
 	 */
 	getTodos(includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
+	/**
+	 * Visit the server and get this Item as a DocItem.
+	 * @throws Error if the fields of this Item are dirty.
+	 * @returns a DocItem.
+	 */
+	toDocItem(): Promise<DocItem>;
 }
 interface IFieldMaskOptions {
 	/**

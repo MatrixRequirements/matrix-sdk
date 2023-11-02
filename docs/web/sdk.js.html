@@ -38,7 +38,7 @@
 })(this, () => {
 return (this["webpackChunkapp"] = this["webpackChunkapp"] || []).push([[9],{
 
-/***/ 258:
+/***/ 260:
 /***/ ((module) => {
 
 (function () {
@@ -62,15 +62,15 @@ return (this["webpackChunkapp"] = this["webpackChunkapp"] || []).push([[9],{
 
 /***/ }),
 
-/***/ 271:
+/***/ 273:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(264);
+var GetIntrinsic = __webpack_require__(266);
 
-var callBind = __webpack_require__(272);
+var callBind = __webpack_require__(274);
 
 var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
 
@@ -85,14 +85,14 @@ module.exports = function callBoundIntrinsic(name, allowMissing) {
 
 /***/ }),
 
-/***/ 272:
+/***/ 274:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var bind = __webpack_require__(268);
-var GetIntrinsic = __webpack_require__(264);
+var bind = __webpack_require__(270);
+var GetIntrinsic = __webpack_require__(266);
 
 var $apply = GetIntrinsic('%Function.prototype.apply%');
 var $call = GetIntrinsic('%Function.prototype.call%');
@@ -140,7 +140,7 @@ if ($defineProperty) {
 
 /***/ }),
 
-/***/ 269:
+/***/ 271:
 /***/ ((module) => {
 
 "use strict";
@@ -200,20 +200,20 @@ module.exports = function bind(that) {
 
 /***/ }),
 
-/***/ 268:
+/***/ 270:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var implementation = __webpack_require__(269);
+var implementation = __webpack_require__(271);
 
 module.exports = Function.prototype.bind || implementation;
 
 
 /***/ }),
 
-/***/ 264:
+/***/ 266:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -261,8 +261,8 @@ var ThrowTypeError = $gOPD
 	}())
 	: throwTypeError;
 
-var hasSymbols = __webpack_require__(265)();
-var hasProto = __webpack_require__(267)();
+var hasSymbols = __webpack_require__(267)();
+var hasProto = __webpack_require__(269)();
 
 var getProto = Object.getPrototypeOf || (
 	hasProto
@@ -432,8 +432,8 @@ var LEGACY_ALIASES = {
 	'%WeakSetPrototype%': ['WeakSet', 'prototype']
 };
 
-var bind = __webpack_require__(268);
-var hasOwn = __webpack_require__(270);
+var bind = __webpack_require__(270);
+var hasOwn = __webpack_require__(272);
 var $concat = bind.call(Function.call, Array.prototype.concat);
 var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
 var $replace = bind.call(Function.call, String.prototype.replace);
@@ -572,7 +572,7 @@ module.exports = function GetIntrinsic(name, allowMissing) {
 
 /***/ }),
 
-/***/ 267:
+/***/ 269:
 /***/ ((module) => {
 
 "use strict";
@@ -591,14 +591,14 @@ module.exports = function hasProto() {
 
 /***/ }),
 
-/***/ 265:
+/***/ 267:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 var origSymbol = typeof Symbol !== 'undefined' &amp;&amp; Symbol;
-var hasSymbolSham = __webpack_require__(266);
+var hasSymbolSham = __webpack_require__(268);
 
 module.exports = function hasNativeSymbols() {
 	if (typeof origSymbol !== 'function') { return false; }
@@ -612,7 +612,7 @@ module.exports = function hasNativeSymbols() {
 
 /***/ }),
 
-/***/ 266:
+/***/ 268:
 /***/ ((module) => {
 
 "use strict";
@@ -662,33 +662,33 @@ module.exports = function hasSymbols() {
 
 /***/ }),
 
-/***/ 270:
+/***/ 272:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var bind = __webpack_require__(268);
+var bind = __webpack_require__(270);
 
 module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 
 
 /***/ }),
 
-/***/ 249:
+/***/ 251:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
 // Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(250);
+__webpack_require__(252);
 module.exports = self.fetch.bind(self);
 
 
 /***/ }),
 
-/***/ 273:
+/***/ 275:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var hasMap = typeof Map === 'function' &amp;&amp; Map.prototype;
@@ -758,7 +758,7 @@ function addNumericSeparator(num, str) {
     return $replace.call(str, sepRegex, '$&amp;_');
 }
 
-var utilInspect = __webpack_require__(274);
+var utilInspect = __webpack_require__(276);
 var inspectCustom = utilInspect.custom;
 var inspectSymbol = isSymbol(inspectCustom) ? inspectCustom : null;
 
@@ -1211,7 +1211,7 @@ function arrObjKeys(obj, inspect) {
 
 /***/ }),
 
-/***/ 276:
+/***/ 278:
 /***/ ((module) => {
 
 "use strict";
@@ -1242,15 +1242,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ 261:
+/***/ 263:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var stringify = __webpack_require__(262);
-var parse = __webpack_require__(277);
-var formats = __webpack_require__(276);
+var stringify = __webpack_require__(264);
+var parse = __webpack_require__(279);
+var formats = __webpack_require__(278);
 
 module.exports = {
     formats: formats,
@@ -1261,13 +1261,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 277:
+/***/ 279:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var utils = __webpack_require__(275);
+var utils = __webpack_require__(277);
 
 var has = Object.prototype.hasOwnProperty;
 var isArray = Array.isArray;
@@ -1533,15 +1533,15 @@ module.exports = function (str, opts) {
 
 /***/ }),
 
-/***/ 262:
+/***/ 264:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var getSideChannel = __webpack_require__(263);
-var utils = __webpack_require__(275);
-var formats = __webpack_require__(276);
+var getSideChannel = __webpack_require__(265);
+var utils = __webpack_require__(277);
+var formats = __webpack_require__(278);
 var has = Object.prototype.hasOwnProperty;
 
 var arrayPrefixGenerators = {
@@ -1861,13 +1861,13 @@ module.exports = function (object, opts) {
 
 /***/ }),
 
-/***/ 275:
+/***/ 277:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var formats = __webpack_require__(276);
+var formats = __webpack_require__(278);
 
 var has = Object.prototype.hasOwnProperty;
 var isArray = Array.isArray;
@@ -2121,15 +2121,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ 263:
+/***/ 265:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(264);
-var callBound = __webpack_require__(271);
-var inspect = __webpack_require__(273);
+var GetIntrinsic = __webpack_require__(266);
+var callBound = __webpack_require__(273);
+var inspect = __webpack_require__(275);
 
 var $TypeError = GetIntrinsic('%TypeError%');
 var $WeakMap = GetIntrinsic('%WeakMap%', true);
@@ -2253,7 +2253,7 @@ module.exports = function getSideChannel() {
 
 /***/ }),
 
-/***/ 293:
+/***/ 295:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(56), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, JsonEditor_1, globals_1) {
@@ -2622,10 +2622,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 294:
+/***/ 296:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(142)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ILineEditor_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(144)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, ILineEditor_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.LineEditor = void 0;
@@ -2651,7 +2651,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 289:
+/***/ 291:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -2816,10 +2816,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 288:
+/***/ 290:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(169), __webpack_require__(56), __webpack_require__(5), __webpack_require__(55), __webpack_require__(289)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, MatrixLibInterfaces_1, PrintProjectUIMods_1, JsonEditor_1, globals_1, PrintProcessorInterfaces_1, PrintPrePostProcessor_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(171), __webpack_require__(56), __webpack_require__(5), __webpack_require__(55), __webpack_require__(291)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, MatrixLibInterfaces_1, PrintProjectUIMods_1, JsonEditor_1, globals_1, PrintProcessorInterfaces_1, PrintPrePostProcessor_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.PrintProcessor = void 0;
@@ -4054,7 +4054,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 286:
+/***/ 288:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __createBinding = (this &amp;&amp; this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -4080,7 +4080,7 @@ var __importStar = (this &amp;&amp; this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(278), __webpack_require__(11), __webpack_require__(11), __webpack_require__(1), __webpack_require__(9), __webpack_require__(287), __webpack_require__(123), __webpack_require__(11), __webpack_require__(143), __webpack_require__(137), __webpack_require__(11), __webpack_require__(33), __webpack_require__(11), __webpack_require__(32), __webpack_require__(288), __webpack_require__(290), __webpack_require__(291), __webpack_require__(292), __webpack_require__(293), __webpack_require__(294), __webpack_require__(5), __webpack_require__(8), __webpack_require__(248), __webpack_require__(2), __webpack_require__(28), __webpack_require__(83)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, configuration_1, index_1, index_2, matrixlib_1, RefLinkDefines_1, enums_1, ProjectStorage_1, index_3, WidgetPluginManager_1, WidgetPluginsContainer_1, index_4, ProjectSettings_1, index_5, Notifications_1, PrintProcessor_1, ControlCore_1, PluginCore_1, PluginInterfaces, ConfigPage_1, LinEditor_1, globals_1, SimpleItemTools_1, serverSdk_1, MatrixLibInterfaces_1, FieldDescriptions_1, SectionDescriptions_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(280), __webpack_require__(11), __webpack_require__(11), __webpack_require__(1), __webpack_require__(9), __webpack_require__(289), __webpack_require__(125), __webpack_require__(11), __webpack_require__(145), __webpack_require__(139), __webpack_require__(11), __webpack_require__(33), __webpack_require__(11), __webpack_require__(32), __webpack_require__(290), __webpack_require__(292), __webpack_require__(293), __webpack_require__(294), __webpack_require__(295), __webpack_require__(296), __webpack_require__(5), __webpack_require__(8), __webpack_require__(250), __webpack_require__(2), __webpack_require__(28), __webpack_require__(85)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, configuration_1, index_1, index_2, matrixlib_1, RefLinkDefines_1, enums_1, ProjectStorage_1, index_3, WidgetPluginManager_1, WidgetPluginsContainer_1, index_4, ProjectSettings_1, index_5, Notifications_1, PrintProcessor_1, ControlCore_1, PluginCore_1, PluginInterfaces, ConfigPage_1, LinEditor_1, globals_1, SimpleItemTools_1, serverSdk_1, MatrixLibInterfaces_1, FieldDescriptions_1, SectionDescriptions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.initializeSDK = exports.matrixsdk = exports.MatrixSDK = exports.TodoTypes = exports.NotificationsBL = exports.ConfigPage = exports.LineEditor = exports.PluginCore = exports.ControlCore = exports.PrintProcessor = exports.matrixApplicationUI = exports.MR1 = exports.Tasks = exports.pluginHooks = exports.Notifications = exports.defaultNotificationConfig = exports.notificationSetting = exports.ItemConfiguration = exports.ControlState = exports.refLinkTooltip = exports.refLinkStyle = exports.plugins = exports.ml = exports.app = exports.matrixSession = exports.globalMatrix = exports.WidgetPluginsConstants = exports.ProjectStorage = exports.PluginInterfaces = exports.IWidgetScope = exports.SectionDescriptions = exports.FieldDescriptions = exports.UIToolsConstants = void 0;
@@ -4426,7 +4426,7 @@ var __importStar = (this &amp;&amp; this.__importStar) || function (mod) {
 
 /***/ }),
 
-/***/ 287:
+/***/ 289:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -4451,7 +4451,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 278:
+/***/ 280:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disable */
@@ -4486,7 +4486,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* eslint-disabl
 
 /***/ }),
 
-/***/ 252:
+/***/ 254:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -4734,17 +4734,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 256:
+/***/ 258:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(253), __webpack_require__(28), __webpack_require__(83), __webpack_require__(84)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Item_1, FieldDescriptions_1, SectionDescriptions_1, Document_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(255), __webpack_require__(28), __webpack_require__(85), __webpack_require__(86)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Item_1, FieldDescriptions_1, SectionDescriptions_1, Document_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DocItem = void 0;
     class DocItem extends Item_1.Item {
-        constructor(project, item, fieldMask) {
-            super(project.getCategory("DOC"), item, fieldMask);
-            this.project = project;
+        constructor(category, item, fieldMask) {
+            super(category, item, fieldMask);
             // Verify that either fieldMask is not set or contains all fieds of the category
             if (fieldMask) {
                 for (let field of this.getCategory().getFields()) {
@@ -4753,7 +4752,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     }
                 }
             }
-            this.initDHFFields(item, project.getItemConfig());
         }
         /**
          * add a section to the end of a document
@@ -4761,7 +4759,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param {sectionType} Type of the section
          */
         addSection(title, sectionType) {
-            let documentOptionIndex = this.getDHFSections().findIndex((section) => section.getHandler().innerDataHandler.getFieldType() ==
+            let documentOptionIndex = this.getDHFFields().findIndex((section) => section.getHandler().innerDataHandler.getFieldType() ==
                 SectionDescriptions_1.SectionDescriptions.section_document_options);
             let handler = null;
             if (documentOptionIndex > -1) {
@@ -4778,7 +4776,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * */
         getNextDHFFieldName() {
             let nextFieldToFill = "";
-            let dhfSections = this.getDHFSections();
+            let dhfSections = this.getDHFFields();
             for (let field of dhfSections) {
                 let type = field.getHandler().innerDataHandler.getFieldType();
                 if (type == SectionDescriptions_1.SectionDescriptions.section_hidden) {
@@ -4788,18 +4786,70 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             }
             return nextFieldToFill;
         }
-        /** Get the list of DHF fields */
-        getDHFSections() {
-            return this.getFieldsByType(FieldDescriptions_1.FieldDescriptions.Field_dhf).sort((a, b) => a.getFieldName().localeCompare(b.getFieldName()));
+        /**
+         * Get the list of DHF fields. This list only includes actual DHF fields,
+         * not the "hidden" ones.
+         * @returns DHF fields sorted by name (dhf00, dhf01, etc).
+         */
+        getDHFFields() {
+            return this.getFieldsByType(FieldDescriptions_1.FieldDescriptions.Field_dhf).sort((a, b) => {
+                return a.getFieldName().localeCompare(b.getFieldName());
+            });
+        }
+        /**
+         * It's helpful to see the names of DHF fields that would show up in the
+         * UI for the DOC. Then fields can be retrieved by these names.
+         * @returns A list of DOC UI field names (not "dhf01" but "Signatures",
+         *     for example).
+         */
+        getDHFFieldInnerNames() {
+            return this.getDHFFields().map((field) => {
+                return field.getHandler().innerDataHandler.getFieldName();
+            });
+        }
+        /**
+         * Retrieve an array of DOC DHF fields with the given UI name.
+         * @param name
+         * @returns An array of Field objects from the Item.
+         */
+        getDHFFieldsByInnerName(name) {
+            const filteredFields = this.getDHFFields().filter((field) => {
+                return field.getHandler().innerDataHandler.getFieldName() == name;
+            });
+            return filteredFields;
+        }
+        /**
+         * It is often convenient to work with the "inner field" of a dhf field,
+         * where the configuration and values lie.
+         * @returns An array of IDocFieldHandlers[]. The length is the number of valid fields.
+         */
+        getInnerDHFFields() {
+            return this.getDHFFields()
+                .filter((field) => !this.isHiddenDHFField(field))
+                .map((field) => field.getHandler().innerDataHandler);
+        }
+        /**
+         * This method helps you know the most appropriate FieldHandler class to use
+         * to manipulate the doc field.
+         * @param handler
+         * @returns the name of the handler class.
+         */
+        getDocFieldHandlerClassName(handler) {
+            return handler.constructor.name;
+        }
+        isHiddenDHFField(field) {
+            const res = field.getHandler().innerDataHandler.getFieldType() === SectionDescriptions_1.SectionDescriptions.section_hidden;
+            return res;
         }
         /** insert a section at a given position
          * @param {number} number Position of the section
          * @param {sectionName} sectionName Name of the section
          * @param {sectionType} sectionType Type of the section
+         * @returns the DHFFieldHandler inserted.
          * */
         insertSection(number, sectionName, sectionType) {
             // Create the section
-            let sections = this.getDHFSections();
+            let sections = this.getDHFFields();
             if (number &lt; 0) {
                 // Negative numbers are counted from the end
                 number = sections.length + number;
@@ -4811,8 +4861,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     sections.length +
                     " sections");
             // Get the count of non hidden sections
-            let nonHiddenSectionsCount = sections.filter((section) => section.getHandler().innerDataHandler.getFieldType() !=
-                SectionDescriptions_1.SectionDescriptions.section_hidden).length;
+            const that = this;
+            let nonHiddenSectionsCount = sections.filter((section) => !that.isHiddenDHFField(section)).length;
             if (nonHiddenSectionsCount == sections.length)
                 throw new Error("Cannot insert section at position " + number + " because there are no section left");
             if (number > nonHiddenSectionsCount + 1)
@@ -4825,8 +4875,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     .setInnerFieldHandler(previous.getHandler().innerDataHandler);
             }
             let section = sections[number];
-            let config = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.project.getItemConfig(), sectionType, {});
-            let innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
+            let config = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.getCategory().getItemConfig(), sectionType, {});
+            let innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.getCategory().getItemConfig(), {
                 type: sectionType,
                 ctrlConfig: config,
             });
@@ -4836,10 +4886,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.addMandatoryFields();
             return this.getSingleFieldByName(fieldName).getHandler();
         }
-        /** Remove a section at a given position
-         * @param {number} number The position of the element to remove */
+        /**
+         * Remove a section at a given position
+         * @param number The position of the element to remove.
+         * @throws Error if number is out of range.
+         */
         removeSection(number) {
-            let sections = this.getDHFSections();
+            let sections = this.getDHFFields();
             if (number &lt; 0) {
                 // Negative numbers are counted from the end
                 number = sections.length + number;
@@ -4858,7 +4911,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     .setInnerFieldHandler(nextSection.getHandler().innerDataHandler);
                 if (nextSection.getHandler().innerDataHandler.getFieldType() !=
                     SectionDescriptions_1.SectionDescriptions.section_hidden) {
-                    nextSection.getHandler().setInnerFieldHandler(Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
+                    nextSection.getHandler().setInnerFieldHandler(Document_1.DocFieldHandlerFactory.createHandler(this.getCategory().getItemConfig(), {
                         type: SectionDescriptions_1.SectionDescriptions.section_hidden,
                         ctrlConfig: {},
                     }));
@@ -4868,7 +4921,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.addMandatoryFields();
         }
         async exportTo(type, progressReporter) {
-            let jobFiles = await this.project.generateDocument(type, this.getId(), progressReporter);
+            const project = this.getCategory().getProject();
+            let jobFiles = await project.generateDocument(type, this.getId(), progressReporter);
             for (let jobFile of jobFiles) {
                 if (jobFile.visibleName.endsWith(type)) {
                     return jobFile.restUrl;
@@ -4901,7 +4955,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 }
             }
             // Document options should be the last field
-            let sections = this.getDHFSections();
+            let sections = this.getDHFFields();
             let foundDocumentOptions = sections.find((section) => section.getHandler().innerDataHandler.getFieldType() ==
                 SectionDescriptions_1.SectionDescriptions.section_document_options);
             if (foundDocumentOptions == undefined) {
@@ -4931,29 +4985,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                     sections[lastField].getHandler().setInnerFieldHandler(documenOptionsInnerHandler);
             }
         }
-        initDHFFields(item, itemConfig) {
-            let dhfSections = this.getDHFSections();
-            for (let field of dhfSections) {
-                let value = undefined;
-                if (item) {
-                    // Always set the item config. This is needed for the field handlers
-                    field.getHandler().setItemConfig(itemConfig);
-                    value = item[field.getFieldId()];
-                    let handler = field.getHandler();
-                    if (value &amp;&amp; handler) {
-                        handler.initData(value);
-                    }
-                }
-            }
-        }
         addDocumentOptions() {
             let field = this.getSingleFieldByName(this.getNextDHFFieldName());
             if (!field) {
                 throw new Error("Cannot insert section because there are no section left");
             }
             let handler = field.getHandler();
-            let config = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.project.getItemConfig(), SectionDescriptions_1.SectionDescriptions.section_document_options, {});
-            let innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.project.getItemConfig(), {
+            let config = Document_1.DocFieldHandlerFactory.GetDHFFieldConfig(this.getCategory().getItemConfig(), SectionDescriptions_1.SectionDescriptions.section_document_options, {});
+            let innerDataHandler = Document_1.DocFieldHandlerFactory.createHandler(this.getCategory().getItemConfig(), {
                 type: SectionDescriptions_1.SectionDescriptions.section_document_options,
                 ctrlConfig: config,
             });
@@ -4967,7 +5006,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 254:
+/***/ 256:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -4991,10 +5030,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             if (this.config.fieldType != this.handler.getFieldType()) {
                 throw new Error(`Field type ${this.config.fieldType} doesn't match handler field type ${this.handler.getFieldType()}`);
             }
-            this.oldData = handler.getRawData(); // Not fully implemented for dhfFieldHandler and dashboardFieldHandler as it requires a async call.
-            handler.getDataAsync().then((data) => {
-                this.oldData = data;
-            });
+            // Also implemented for dhfFieldHandler and dashboardFieldHandler because it uses the cached data stored in the database.
+            this.oldData = handler.getData();
         }
         /**
          * Get the Item which contains this field.
@@ -5023,8 +5060,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         getFieldConfigParameter(name) {
             return this.config.parameterJson[name];
         }
-        async needsSaveAsync() {
-            return (await this.handler.getDataAsync()) !== this.oldData;
+        needsSave() {
+            return this.handler.getData() !== this.oldData;
         }
     }
     exports.Field = Field;
@@ -5034,10 +5071,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 253:
+/***/ 255:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(254), __webpack_require__(60)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Field_1, index_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(256), __webpack_require__(60)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Field_1, index_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.Item = void 0;
@@ -5307,7 +5344,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                         value = item[field.id];
                     }
                     index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
-                    let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
+                    let handler = index_1.FieldHandlerFactory.CreateHandler(this.category.getItemConfig(), field.fieldType, field.parameterJson);
                     handler.initData(value);
                     this.fieldMap.set(field.id, new Field_1.Field(this, field, handler));
                 }
@@ -5346,7 +5383,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             const field = foundFields[0];
             const value = undefined; // empty field.
             index_1.FieldHandlerFactory.UpdateFieldConfig(this.category.getItemConfig(), this.category.getTestConfig(), field.fieldType, this.type, value, field.parameterJson);
-            let handler = index_1.FieldHandlerFactory.CreateHandler(field.fieldType, field.parameterJson);
+            let handler = index_1.FieldHandlerFactory.CreateHandler(this.category.getItemConfig(), field.fieldType, field.parameterJson);
             handler.initData(value);
             this.fieldMap.set(field.id, new Field_1.Field(this, field, handler));
             assert(field.id == fieldId);
@@ -5357,7 +5394,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * Export the data from this item into an IItemPut structure
          * @returns An IItemPut structure, filled in from the current state of the Item.
          */
-        async extractDataAsync() {
+        extractData() {
             let item = {
                 upLinks: this.upLinks,
                 upLinkList: this.toBeIntegrated.upLinkList,
@@ -5388,9 +5425,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 // The mask influences what we send out.
                 if (this.fieldMask.hasFieldId(field.id)) {
                     const myField = this.fieldMap.get(field.id);
-                    item[field.id] = await myField.getHandlerRaw().getDataAsync();
+                    item[field.id] = myField.getHandlerRaw().getData();
                     // TODO: do we need to do this?
-                    item[`fx${field.id.toString()}`] = await myField.getHandlerRaw().getDataAsync();
+                    item[`fx${field.id.toString()}`] = myField.getHandlerRaw().getData();
                 }
             }
             // Note that "creationDate" was ignored.
@@ -5496,10 +5533,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         getCategory() {
             return this.category;
         }
-        async needsSaveAsync() {
+        needsSave() {
             // Are any fields dirty?
             for (let field of this.fieldMap.values()) {
-                if (await field.needsSaveAsync()) {
+                if (field.needsSave()) {
                     this.dirty = true;
                     break;
                 }
@@ -5601,6 +5638,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         async getTodos(includeDone, includeAllUsers, includeFuture) {
             return this.category.getProject().getTodos(this.id, includeDone, includeAllUsers, includeFuture);
         }
+        /**
+         * Visit the server and get this Item as a DocItem.
+         * @throws Error if the fields of this Item are dirty.
+         * @returns a DocItem.
+         */
+        async toDocItem() {
+            const dirty = this.needsSave();
+            if (dirty) {
+                throw new Error(`This item needs to be saved first`);
+            }
+            const project = this.category.getProject();
+            return project.getItemAsDoc(this.getId());
+        }
     }
     exports.Item = Item;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -5609,10 +5659,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 251:
+/***/ 253:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(252), __webpack_require__(253), __webpack_require__(255), __webpack_require__(256)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Category_1, Item_1, TreeFolder_1, DocItem_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(254), __webpack_require__(255), __webpack_require__(257), __webpack_require__(258)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, Category_1, Item_1, TreeFolder_1, DocItem_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.Project = void 0;
@@ -5838,7 +5888,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             return new Item_1.Item(this.getCategory(category));
         }
         createDOC() {
-            return new DocItem_1.DocItem(this);
+            return new DocItem_1.DocItem(this.getCategory("DOC"));
         }
         /**
          * Create a folder. Every folder must contain only items of a particular type.
@@ -5858,7 +5908,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @param {id} id The id of the DOC */
         async getItemAsDoc(id) {
             const iitem = await this.server.getItemFromProject(this.name, id);
-            return new DocItem_1.DocItem(this, iitem);
+            return new DocItem_1.DocItem(this.getCategory("DOC"), iitem);
         }
         /**
          * Save an item into a given folder.
@@ -5867,7 +5917,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @returns A fresh copy of the Item from the server
          */
         async putItem(parentFolderId, item) {
-            let iitem = await item.extractDataAsync();
+            let iitem = item.extractData();
             let newId;
             if (iitem.id) {
                 // this is an update.
@@ -5887,7 +5937,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
          * @returns A fresh copy of the Item from the server.
          */
         async updateItem(item) {
-            let iitem = await item.extractDataAsync();
+            let iitem = item.extractData();
             if (!iitem.id) {
                 throw new Error(`updateItem requires an item with an existing ID`);
             }
@@ -6014,7 +6064,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 255:
+/***/ 257:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports) {
@@ -6219,10 +6269,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 290:
+/***/ 292:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(39), __webpack_require__(5), __webpack_require__(288)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, BaseControl_1, globals_1, PrintProcessor_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(39), __webpack_require__(5), __webpack_require__(290)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, matrixlib_1, BaseControl_1, globals_1, PrintProcessor_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.ControlCore = exports.ControlCoreBase = void 0;
@@ -6232,7 +6282,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
             this.pluginConfig = pluginConfig;
         }
         // function called from the UI to render the control
-        async init(options) {
+        init(options) {
             // get (default) configuration + a field value
             this.settings = matrixlib_1.ml.JSON.mergeOptions(ControlCore.defaultOptions, options);
             let config = this.settings.parameter;
@@ -6255,11 +6305,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 !this.settings.canEdit /* no rights to edit */ ||
                 this.settings.parameter.readonly /* disabled in admin*/) {
                 // readonly display //
-                let c = await this.renderControlAsync(true, null);
+                let c = this.renderControl(true, null);
                 c.appendTo(container);
             }
             else {
-                this.editor = await this.renderControlAsync(false, null);
+                this.editor = this.renderControl(false, null);
                 this.editor.appendTo(container); // the actual UI
                 this.initEditor();
             }
@@ -6271,7 +6321,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         }
         /** this method is called by the UI to retrieve the string to be saved in the database */
         async getValueAsync() {
-            return await this.fieldHandler.getDataAsync();
+            return await this.fieldHandler.getData();
         }
         /** this method is called by the UI to figure out if the control's value changed */
         async hasChangedAsync() {
@@ -6329,7 +6379,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 parameter: paramsCaller.fieldInfo.jsonConfig,
             };
             this.fieldHandler.initData(JSON.stringify(paramsCaller.fieldInfo.jsonValue));
-            let control = await this.renderControlAsync(true, params);
+            let control = this.renderControl(true, params);
             return control.html();
         }
     }
@@ -6346,7 +6396,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
         },
     };
     class ControlCore extends ControlCoreBase {
-        async renderControlAsync(readOnly, params) {
+        renderControlAsync(readOnly, params) {
             // this are the options saved in the field setting, configuring the control
             let config = this.settings.parameter;
             // here, we get the options defining the radio buttons
@@ -6362,7 +6412,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
                 return $(`&lt;div>field ${this.settings.fieldId} is not (properly) configured: no options are defined.&lt;/div>`);
             }
             // get the actual value / default value
-            let value = JSON.parse(await this.fieldHandler.getDataAsync());
+            let value = JSON.parse(this.fieldHandler.getData());
             // check if there is a value / and if not if there is a default value
             if (value) {
                 // something has been saved before
@@ -6390,11 +6440,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 291:
+/***/ 293:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// eslint-disable-next-line no-unused-vars
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(286)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, client_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(288)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, client_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.PluginCore = void 0;
@@ -6600,7 +6650,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// eslint-disabl
 
 /***/ }),
 
-/***/ 292:
+/***/ 294:
 /***/ ((module, exports, __webpack_require__) => {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* Setting interfaces */
@@ -6613,7 +6663,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* Setting inter
 
 /***/ }),
 
-/***/ 257:
+/***/ 259:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6654,13 +6704,13 @@ var __importStar = (this &amp;&amp; this.__importStar) || function (mod) {
 var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
     return (mod &amp;&amp; mod.__esModule) ? mod : { "default": mod };
 };
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(259), __webpack_require__(249)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(261), __webpack_require__(251)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, url, isomorphic_fetch_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
     exports.DefaultApi = exports.DefaultApiFactory = exports.DefaultApiFp = exports.DefaultApiFetchParamCreator = exports.RequiredError = exports.BaseAPI = exports.COLLECTION_FORMATS = void 0;
     url = __importStar(url);
     isomorphic_fetch_1 = __importDefault(isomorphic_fetch_1);
-    const btoa = __webpack_require__(258);
+    const btoa = __webpack_require__(260);
     const BASE_PATH = "https://clouds5.matrixreq.com/1".replace(/\/+$/, "");
     /**
      *
@@ -19235,13 +19285,14 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
 
 /***/ }),
 
-/***/ 248:
+/***/ 250:
 /***/ ((module, exports, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(249), __webpack_require__(251), __webpack_require__(257), __webpack_require__(278), __webpack_require__(120), __webpack_require__(53), __webpack_require__(8), __webpack_require__(131), __webpack_require__(130), __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, isomorphicFetch, Project_1, rest_api_1, configuration_1, ItemConfiguration_1, TestManagerConfiguration_1, SimpleItemTools_1, LoggerTools_1, JSONTools_1, LabelManager_1) {
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(251), __webpack_require__(253), __webpack_require__(259), __webpack_require__(280), __webpack_require__(122), __webpack_require__(85), __webpack_require__(53), __webpack_require__(8), __webpack_require__(133), __webpack_require__(132), __webpack_require__(30)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, isomorphicFetch, Project_1, rest_api_1, configuration_1, ItemConfiguration_1, SectionDescriptions_1, TestManagerConfiguration_1, SimpleItemTools_1, LoggerTools_1, JSONTools_1, LabelManager_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.StandaloneMatrixSDK = exports.createFrom23Environment = exports.createConsoleAPI = void 0;
+    exports.StandaloneMatrixSDK = exports.createFrom23Environment = exports.createConsoleAPI = exports.SectionDescriptions = void 0;
+    Object.defineProperty(exports, "SectionDescriptions", ({ enumerable: true, get: function () { return SectionDescriptions_1.SectionDescriptions; } }));
     function createConsoleAPI(token, baseRestUrl, baseMatrixUrl) {
         let config = new configuration_1.Configuration({ apiKey: token });
         let session = new (class {
@@ -20286,7 +20337,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 260:
+/***/ 262:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* module decorator */ module = __webpack_require__.nmd(module);
@@ -20813,7 +20864,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathia
 
 /***/ }),
 
-/***/ 259:
+/***/ 261:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -20842,7 +20893,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathia
 
 
 
-var punycode = __webpack_require__(260);
+var punycode = __webpack_require__(262);
 
 function Url() {
   this.protocol = null;
@@ -20924,7 +20975,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     'gopher:': true,
     'file:': true
   },
-  querystring = __webpack_require__(261);
+  querystring = __webpack_require__(263);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url &amp;&amp; typeof url === 'object' &amp;&amp; url instanceof Url) { return url; }
@@ -21594,7 +21645,7 @@ exports.Url = Url;
 
 /***/ }),
 
-/***/ 250:
+/***/ 252:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -22215,7 +22266,7 @@ if (!global.fetch) {
 
 /***/ }),
 
-/***/ 274:
+/***/ 276:
 /***/ (() => {
 
 /* (ignored) */
@@ -22225,7 +22276,7 @@ if (!global.fetch) {
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(286));
+/******/ var __webpack_exports__ = (__webpack_exec__(288));
 /******/ return __webpack_exports__;
 /******/ }
 ]);
@@ -22246,7 +22297,7 @@ if (!global.fetch) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Oct 26 2023 16:58:27 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Nov 02 2023 11:10:01 GMT+0100 (Central European Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
