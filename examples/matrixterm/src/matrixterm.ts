@@ -193,7 +193,7 @@ async function handleCat(args: string) {
     if (itemId) {
         // Get the item
         const item: Item = await currentDir.project.getItem(itemId);
-        const iitem = await item.extractDataAsync();
+        const iitem = item.extractData();
         console.dir(iitem, { depth: null, colors: true });
         // print(JSON.stringify(item));
     }

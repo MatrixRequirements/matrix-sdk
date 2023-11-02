@@ -135,14 +135,14 @@ export class ServerSettingsPage extends sdkInstance.ConfigPage implements IPlugi
     }
 
     private async getCategoryCount(category: string) {
-        const results: string[] = await this.project.search(
+        const results: string[] = await this.project.searchForIds(
             "mrql:category=" + category);
         return results.length;
     }
 
     private async getCategoryWithoutImages(category: string, keyword: string): Promise<string[]> {
         const search = `mrql:category=${category} and "test case steps" !~ "${keyword}"`;
-        return await this.project.search(search);
+        return await this.project.searchForIds(search);
     }
 
 
@@ -159,7 +159,7 @@ export class ServerSettingsPage extends sdkInstance.ConfigPage implements IPlugi
             includeDownlinks: true,
             includeUplinks: true
         });
-        const results: Item[] = await this.project.complexSearch(search, "", false, mask);
+        const results: Item[] = await this.project.searchForItems(search, "", false, mask);
         return results;
     }
 
@@ -171,7 +171,7 @@ export class ServerSettingsPage extends sdkInstance.ConfigPage implements IPlugi
             not = "!"
         }
         const search = `mrql:category=${category} and uplink ${not}= ${uplinkedCategory}`;
-        return await this.project.search(search);
+        return await this.project.searchForIds(search);
     }
 
     private async getCategoryWithUplinkCount(category: string, uplinkedCategory: string,

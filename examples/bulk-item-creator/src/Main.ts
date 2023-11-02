@@ -45,7 +45,7 @@ export class FieldHandler implements IPluginFieldHandler<IPluginFieldValue> {
     initData(serializedFieldData: string) {
         throw new Error("Method not implemented.");
     }
-    getDataAsync(): Promise<string> {
+    getData(): string {
         throw new Error("Method not implemented.");
     }
     getRawData() {
