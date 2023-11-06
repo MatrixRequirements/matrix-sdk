@@ -10295,7 +10295,7 @@ export declare abstract class ControlCoreBase<T extends IPluginFieldHandler<AAA>
 }
 export declare abstract class ControlCore<T extends IPluginFieldOptionsBase, F extends IPluginFieldHandler<A>, A extends IPluginFieldValueBase> extends ControlCoreBase<F, A> {
 	protected controlConfig: IPluginFieldParameterBase<T>;
-	protected renderControlAsync(readOnly: boolean, params?: IPluginPrintParamsBase): JQuery;
+	protected renderControl(readOnly: boolean, params?: IPluginPrintParamsBase): JQuery;
 }
 export declare class PluginCore implements IPlugin {
 	Plugin: IExternalPlugin<IServerSettingsBase, IProjectSettingsBase, IPluginFieldHandler<IPluginFieldValueBase>, IPluginFieldValueBase, IDashboardParametersBase>;
@@ -11738,6 +11738,7 @@ export interface ClientMatrixSdk {
 	ConfigPage: typeof ConfigPage;
 	PluginCore: typeof PluginCore;
 	PrintProcessor: typeof PrintProcessor;
+	ControlCore: typeof ControlCore;
 }
 export declare function getSdkInstance(): ClientMatrixSdk;
 export declare function registerPlugin(plugin: PluginCore): void;
