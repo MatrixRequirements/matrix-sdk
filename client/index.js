@@ -3469,83 +3469,44 @@ module.exports = validRange
 
 /***/ }),
 
-/***/ 250:
-/***/ ((module, exports, __webpack_require__) => {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(251)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, versions_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.registerPlugin = exports.getSdkInstance = void 0;
-    function isOutsideMatrixApp() {
-        return !(window && window.matrixSdk);
-    }
-    function getSettingsMinVersion(instance) {
-        const minVersion = instance.matrixSession.getCustomerSettingJSON(versions_1.SDK_SETTINGS_KEY).minVersion;
-        if (!minVersion || minVersion.trim().length === 0) {
-            return null;
-        }
-        return minVersion;
-    }
-    function getSdkInstance(skipSdkVersionCheck) {
-        if (isOutsideMatrixApp()) {
-            throw new Error("Client SDK can only be used within Matrix Requirements application");
-        }
-        const instance = window.matrixSdk;
-        if (!skipSdkVersionCheck) {
-            (0, versions_1.validateSdkVersion)({
-                sdkVersion: versions_1.SDK_VERSION,
-                serverVersion: instance.matrixSession.serverConfig.serverVersion,
-                settingsMinVersion: getSettingsMinVersion(instance),
-            });
-        }
-        return instance;
-    }
-    exports.getSdkInstance = getSdkInstance;
-    function registerPlugin(plugin, skipSdkVersionCheck) {
-        getSdkInstance(skipSdkVersionCheck).plugins.register(plugin);
-    }
-    exports.registerPlugin = registerPlugin;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-
 /***/ 251:
-/***/ ((module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(252)], __WEBPACK_AMD_DEFINE_RESULT__ = (function (require, exports, semver_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", ({ value: true }));
-    exports.validateSdkVersion = exports.SDK_SETTINGS_KEY = exports.SDK_VERSION = void 0;
-    // because source code for SDK lives here and not in SDK repo, I think that's the only way to define the version
-    // TODO: replace it with something like `process.env.npm_package_version` once SDK is extracted
-    exports.SDK_VERSION = "2.4.0";
-    exports.SDK_SETTINGS_KEY = "sdk";
-    function validateSdkVersion({ sdkVersion, serverVersion, settingsMinVersion, }) {
-        const matchServerVersion = (0, semver_1.satisfies)(sdkVersion, getServerVersionRule(serverVersion));
-        const biggerThanMinVersion = settingsMinVersion
-            ? (0, semver_1.satisfies)(sdkVersion, `>=${removePrereleaseTags(settingsMinVersion)}`)
-            : true;
-        if (matchServerVersion && biggerThanMinVersion) {
-            return true;
-        }
-        throw new Error(`Please use a version of the Matrix Requirements SDK that matches version ${serverVersion}${settingsMinVersion ? ` and/or bigger than ${settingsMinVersion}` : ""}.`);
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SDK_SETTINGS_KEY: () => (/* binding */ SDK_SETTINGS_KEY),
+/* harmony export */   SDK_VERSION: () => (/* binding */ SDK_VERSION),
+/* harmony export */   validateSdkVersion: () => (/* binding */ validateSdkVersion)
+/* harmony export */ });
+/* harmony import */ var semver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(252);
+/* harmony import */ var semver__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(semver__WEBPACK_IMPORTED_MODULE_0__);
+
+// because source code for SDK lives here and not in SDK repo, I think that's the only way to define the version
+// TODO: replace it with something like `process.env.npm_package_version` once SDK is extracted
+const SDK_VERSION = "2.4.0";
+const SDK_SETTINGS_KEY = "sdk";
+function validateSdkVersion({ sdkVersion, serverVersion, settingsMinVersion, }) {
+    const matchServerVersion = (0,semver__WEBPACK_IMPORTED_MODULE_0__.satisfies)(sdkVersion, getServerVersionRule(serverVersion));
+    const biggerThanMinVersion = settingsMinVersion
+        ? (0,semver__WEBPACK_IMPORTED_MODULE_0__.satisfies)(sdkVersion, `>=${removePrereleaseTags(settingsMinVersion)}`)
+        : true;
+    if (matchServerVersion && biggerThanMinVersion) {
+        return true;
     }
-    exports.validateSdkVersion = validateSdkVersion;
-    // replacing patch version with "x", e.g. 2.4.0 -> 2.4.x
-    function getServerVersionRule(version) {
-        return removePrereleaseTags(version)
-            .split(".")
-            .map((number, index) => (index === 2 ? "x" : number))
-            .join(".");
-    }
-    // e.g. 2.4.0.999-11579ba -> 2.4.0
-    function removePrereleaseTags(version) {
-        return (0, semver_1.coerce)(version).format();
-    }
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    throw new Error(`Please use a version of the Matrix Requirements SDK that matches version ${serverVersion}${settingsMinVersion ? ` and/or bigger than ${settingsMinVersion}` : ""}.`);
+}
+// replacing patch version with "x", e.g. 2.4.0 -> 2.4.x
+function getServerVersionRule(version) {
+    return removePrereleaseTags(version)
+        .split(".")
+        .map((number, index) => (index === 2 ? "x" : number))
+        .join(".");
+}
+// e.g. 2.4.0.999-11579ba -> 2.4.0
+function removePrereleaseTags(version) {
+    return (0,semver__WEBPACK_IMPORTED_MODULE_0__.coerce)(version).format();
+}
 
 
 /***/ })
@@ -3577,12 +3538,88 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
 /******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module used 'module' so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(250);
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getSdkInstance: () => (/* binding */ getSdkInstance),
+/* harmony export */   registerPlugin: () => (/* binding */ registerPlugin)
+/* harmony export */ });
+/* harmony import */ var _utils_versions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(251);
+
+function isOutsideMatrixApp() {
+    return !(window && window.matrixSdk);
+}
+function getSettingsMinVersion(instance) {
+    const minVersion = instance.matrixSession.getCustomerSettingJSON(_utils_versions__WEBPACK_IMPORTED_MODULE_0__.SDK_SETTINGS_KEY).minVersion;
+    if (!minVersion || minVersion.trim().length === 0) {
+        return null;
+    }
+    return minVersion;
+}
+function getSdkInstance(skipSdkVersionCheck) {
+    if (isOutsideMatrixApp()) {
+        throw new Error("Client SDK can only be used within Matrix Requirements application");
+    }
+    const instance = window.matrixSdk;
+    if (!skipSdkVersionCheck) {
+        (0,_utils_versions__WEBPACK_IMPORTED_MODULE_0__.validateSdkVersion)({
+            sdkVersion: _utils_versions__WEBPACK_IMPORTED_MODULE_0__.SDK_VERSION,
+            serverVersion: instance.matrixSession.serverConfig.serverVersion,
+            settingsMinVersion: getSettingsMinVersion(instance),
+        });
+    }
+    return instance;
+}
+function registerPlugin(plugin, skipSdkVersionCheck) {
+    getSdkInstance(skipSdkVersionCheck).plugins.register(plugin);
+}
+
+})();
+
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;
