@@ -7,7 +7,6 @@
     "declarationMap": true,
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
-    "module": "amd",
     "moduleResolution": "node",
     "isolatedModules": true,
     "esModuleInterop": true,
@@ -27,6 +26,6 @@
 
   "include": [
     "src/*.ts", "src/**/*.ts",
-    
+
   ]
 }

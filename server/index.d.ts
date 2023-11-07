@@ -9002,14 +9002,19 @@ export interface ISimpleSessionControl {
 	 */
 	getDefaultProjectContext(): IProjectContext;
 }
-export declare function createConsoleAPI(token: string, baseRestUrl: string, baseMatrixUrl: string): StandaloneMatrixSDK;
+interface ICreateConsoleAPIArgs {
+	token: string;
+	url: string;
+	skipSdkVersionCheck?: boolean;
+}
+export declare function createConsoleAPI({ token, url, skipSdkVersionCheck, }: ICreateConsoleAPIArgs): Promise<StandaloneMatrixSDK>;
 /**
  * If this file is loaded in a 2.3 environment, then this function provides an easy way
  * to sniff context from globals and create an sdk object.
  * @throws an Error if some of the environment variables can't be found.
  * @returns A StandaloneMatrixSDK
  */
-export declare function createFrom23Environment(): StandaloneMatrixSDK;
+export declare function createFrom23Environment(skipSdkVersionCheck?: boolean): Promise<StandaloneMatrixSDK>;
 /**
  * StandaloneMatrixSDK is a connection to a Matrix Instance. It offers services to interact
  * with the Instance. A primary purpose beyond authenticating on the server is to provide access
@@ -9018,7 +9023,6 @@ export declare function createFrom23Environment(): StandaloneMatrixSDK;
 export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	protected config: Configuration;
 	protected session: ISimpleSessionControl;
-	protected baseRestUrl: string;
 	protected matrixBaseUrl: string;
 	protected logger: ILoggerTools;
 	protected json: IJSONTools;
@@ -9026,10 +9030,11 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	protected instance: DefaultApi;
 	private ItemConfig;
 	protected labelManager: ILabelManager;
+	protected baseRestUrl: string;
 	debug: boolean;
 	private projectMap;
 	private fetchWrapper;
-	constructor(config: Configuration, session: ISimpleSessionControl, initialItemConfig: ItemConfiguration, baseRestUrl: string, matrixBaseUrl: string, logger: ILoggerTools, json: IJSONTools, simpleItemTools: ISimpleItemTools);
+	constructor(config: Configuration, session: ISimpleSessionControl, initialItemConfig: ItemConfiguration, matrixBaseUrl: string, logger: ILoggerTools, json: IJSONTools, simpleItemTools: ISimpleItemTools);
 	getFetchLog(): string[];
 	createNewItemConfig(): ItemConfiguration;
 	getLabelManager(): ILabelManager;
@@ -9214,6 +9219,8 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
 	getJobStatus(project: string, jobId: number, options?: unknown): Promise<JobsStatusWithUrl>;
 	createTodo(project: string, users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
+	rootGet(adminUI?: number, output?: string, options?: unknown): Promise<ListProjectAndSettings>;
+	validateSdkVersion(): Promise<boolean>;
 }
 
 export {};

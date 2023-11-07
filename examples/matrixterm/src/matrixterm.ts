@@ -1,8 +1,5 @@
-import 'node-self';
 import readline from 'readline';
-import { ITitleAndId, Project, StandaloneMatrixSDK, TreeFolder, Item } from 'matrix-requirements-sdk/server'
-// FIXME: getting 'self is not defined' error when using "import". ship server sdk with "node-self" included?
-const { createConsoleAPI } = require('matrix-requirements-sdk/server');
+import { ITitleAndId, Project, StandaloneMatrixSDK, TreeFolder, Item, createConsoleAPI } from 'matrix-requirements-sdk/server'
 
 // Commands:
 //   -- ls
@@ -269,10 +266,10 @@ if (process.argv.length != 4) {
 let key = process.argv[3];
 let token = processKey(key);
 const server = process.argv[2];
-const restUrl = server + "/rest/1";
-let mmapi = createConsoleAPI(token, restUrl, server);  // new MMAPI(config, server);
+let mmapi;
 
-function main() {
+async function main() {
+    mmapi = await createConsoleAPI({ token, url: server});
     rl.setPrompt(`/ > `);
     rl.prompt();
     rl.on('line', async (args) => {
