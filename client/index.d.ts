@@ -11743,7 +11743,7 @@ export interface ClientMatrixSdk {
 	PrintProcessor: typeof PrintProcessor;
 	ControlCore: typeof ControlCore;
 }
-export declare function getSdkInstance(skipSdkVersionCheck?: boolean): ClientMatrixSdk;
-export declare function registerPlugin(plugin: PluginCore, skipSdkVersionCheck?: boolean): void;
+export declare function getSdkInstance(): ClientMatrixSdk;
+export declare function registerPlugin(plugin: PluginCore): void;
 
 export {};
