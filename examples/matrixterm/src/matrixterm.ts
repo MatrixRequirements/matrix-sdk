@@ -269,7 +269,7 @@ const server = process.argv[2];
 let mmapi;
 
 async function main() {
-    mmapi = await createConsoleAPI({ token, url: server});
+    mmapi = await createConsoleAPI({ token, url: server });
     rl.setPrompt(`/ > `);
     rl.prompt();
     rl.on('line', async (args) => {
