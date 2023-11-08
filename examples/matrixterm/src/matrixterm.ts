@@ -1,4 +1,4 @@
-import readline from 'readline';
+import * as readline from 'readline';
 import { ITitleAndId, Project, StandaloneMatrixSDK, TreeFolder, Item, createConsoleAPI } from 'matrix-requirements-sdk/server'
 
 // Commands:
