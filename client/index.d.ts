@@ -2262,6 +2262,7 @@ interface IUIToolsEnum {
 	createConfigAddLine(action: string, onAdd: () => void): any;
 	standardizeColor(fieldValue: string, alpha?: number): string;
 	toggleFilters(filterOn: boolean): void;
+	changeGlobalFilterSelectionEnabled(isEnabled: boolean): void;
 }
 export declare class UIToolsConstants {
 	static CIColors: ICIColorList;
@@ -11011,7 +11012,6 @@ export interface ISimpleSessionControl {
 export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	protected config: Configuration;
 	protected session: ISimpleSessionControl;
-	protected baseRestUrl: string;
 	protected matrixBaseUrl: string;
 	protected logger: ILoggerTools;
 	protected json: IJSONTools;
@@ -11019,10 +11019,11 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	protected instance: DefaultApi;
 	private ItemConfig;
 	protected labelManager: ILabelManager;
+	protected baseRestUrl: string;
 	debug: boolean;
 	private projectMap;
 	private fetchWrapper;
-	constructor(config: Configuration, session: ISimpleSessionControl, initialItemConfig: ItemConfiguration, baseRestUrl: string, matrixBaseUrl: string, logger: ILoggerTools, json: IJSONTools, simpleItemTools: ISimpleItemTools);
+	constructor(config: Configuration, session: ISimpleSessionControl, initialItemConfig: ItemConfiguration, matrixBaseUrl: string, logger: ILoggerTools, json: IJSONTools, simpleItemTools: ISimpleItemTools);
 	getFetchLog(): string[];
 	createNewItemConfig(): ItemConfiguration;
 	getLabelManager(): ILabelManager;
@@ -11207,6 +11208,8 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
 	getJobStatus(project: string, jobId: number, options?: unknown): Promise<JobsStatusWithUrl>;
 	createTodo(project: string, users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
+	rootGet(adminUI?: number, output?: string, options?: unknown): Promise<ListProjectAndSettings>;
+	validateSdkVersion(): Promise<boolean>;
 }
 declare class MatrixSDK {
 	protected config: Configuration;
@@ -11740,7 +11743,7 @@ export interface ClientMatrixSdk {
 	PrintProcessor: typeof PrintProcessor;
 	ControlCore: typeof ControlCore;
 }
-export declare function getSdkInstance(): ClientMatrixSdk;
-export declare function registerPlugin(plugin: PluginCore): void;
+export declare function getSdkInstance(skipSdkVersionCheck?: boolean): ClientMatrixSdk;
+export declare function registerPlugin(plugin: PluginCore, skipSdkVersionCheck?: boolean): void;
 
 export {};
