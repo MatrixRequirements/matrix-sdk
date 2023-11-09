@@ -4,12 +4,13 @@
   "description": "An SDK for manipulating MatrixRequirements projects",
   "exports": {
     "./client": {
-      "types": "./client/index.js",
+      "types": "./client/index.d.ts",
       "default": "./client/index.js"
     },
     "./server": {
-      "types": "./server/index.js",
-      "default": "./server/index.js"
+      "types": "./server/index.d.ts",
+      "import": "./server/index.mjs",
+      "require": "./server/index.js"
     }
   },
   "scripts": {

@@ -7,11 +7,13 @@
     "declarationMap": true,
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "isolatedModules": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "outDir": "./build",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/matrix-type-declarations"
@@ -19,13 +21,10 @@
     "lib": [
       "es2016",
       "dom"
-  ]
+    ]
   },
-  "paths": {
-  },
-
   "include": [
-    "src/*.ts", "src/**/*.ts",
-
+    "./src/*.ts",
+    "./src/**/*.ts"
   ]
 }
