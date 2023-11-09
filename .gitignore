@@ -1,5 +1,6 @@
 node_modules
 .DS_Store
+tsconfig.tsbuildinfo
 examples/bulk-item-creator/.idea/
 examples/bulk-item-creator/build/
 examples/bulk-item-creator/dist/
