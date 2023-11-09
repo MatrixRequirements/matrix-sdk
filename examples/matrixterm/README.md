@@ -6,5 +6,5 @@ on the command line.
 
 ## Usage
 
-`node dist/Main.js <matrix server> <api token>`
+`npx ts-node --esm ./src/matrixterm.ts <matrix server> <api token>`
 
