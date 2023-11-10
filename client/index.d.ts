@@ -2624,6 +2624,18 @@ export interface ISetField {
 	fieldName: string;
 	value: string;
 }
+export declare enum SelectMode {
+	/*** DO NOT CHANGED numbers use from baseControl */
+	none = 0,
+	items = 1,
+	folders = 2,
+	singleItem = 3,
+	singleFolder = 4,
+	independent = 5,
+	auto = 6,
+	independentAuto = 7,
+	autoPrecise = 8
+}
 interface INavigationBar {
 	disableTabs: boolean;
 	tabs: INavigationBarTab[];
@@ -4035,7 +4047,7 @@ export interface IStringMap {
 export interface IStringNumberMap {
 	[key: string]: number;
 }
-interface IStringStringArrayMap {
+export interface IStringStringArrayMap {
 	[key: string]: string[];
 }
 interface IStringJQueryMap {
@@ -11725,6 +11737,70 @@ export declare class Category {
 	 * @returns An array of Items of this Category, configured according to the options given.
 	 */
 	getItems(options?: ICategoryItemOptions): Promise<Item[]>;
+}
+export interface IReviewConfig {
+	tasks?: IReviewConfigTask;
+	lockLabel?: ILockAction;
+	doneLabel?: IReviewStatusUpdate;
+	mailTo?: IMailAction;
+	allowSelectUserGroups?: boolean;
+	showVersions?: boolean;
+	showAnnotations?: boolean;
+	annotationMasters?: string[];
+	showComments?: boolean;
+	showInline?: boolean;
+	showHistory?: boolean;
+	/** like showHistoryOutOfDate but it only shows items as out of date if review is not yet completed */
+	showHistoryOutOfDateBeforeDone?: boolean;
+	/** shows items as out of date if current revision is newer than the one in the review */
+	showHistoryOutOfDate?: boolean;
+	readonly?: boolean;
+	appendComments?: boolean;
+	statusDropdown?: string;
+	canBeModified?: boolean;
+	canBeModifiedBy?: string[];
+	cellAskEdit?: string;
+	autoshowContext?: boolean;
+	createDoc?: ICreateDoc;
+	hide_UI?: boolean;
+}
+interface ICreateDoc {
+	template: string;
+	section: string;
+	pasteTo: string;
+	hide?: string[];
+}
+interface IReviewAction {
+	buttonName: string;
+	users: string[];
+}
+interface IMailAction extends IReviewAction {
+	mailSubject: string;
+}
+interface ILockAction extends IReviewAction {
+	label: string;
+}
+interface IReviewStatusUpdate extends IReviewAction {
+	passedLabel?: string;
+	failedLabel?: string;
+	todoLabel?: string;
+}
+interface IReviewConfigTask {
+	buttonName: string;
+	users: string[];
+	taskPluginId: number;
+	taskIssueType: string;
+	taskProject: string;
+	taskDescription?: string;
+}
+export interface ITableReviewData {
+	reviewtable: IStringMap[];
+}
+export declare class ReviewControlColumns {
+	static COL_COMMENT_LOG: string;
+	static COL_ITEM: string;
+	static COL_VERSION: string;
+	static COL_ANNOTATIONS: string;
 }
 export interface ClientMatrixSdk {
 	plugins: PluginManager;
