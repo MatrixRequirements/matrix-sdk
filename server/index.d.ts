@@ -1057,6 +1057,14 @@ interface IFieldHandler {
 	 * a JSON object, in which case use JSON.parse() to manipulate it.
 	 */
 	getData(): string;
+	/**
+	 * setData() sets the raw data of the field, which is always a string.
+	 * More specific methods along with validation can be offered by the field handler
+	 * implementation class.
+	 * @param value
+	 * @param doValidation If not specified, the default is false (no validation)
+	 */
+	setData(value: string, doValidation?: boolean): any;
 }
 interface IBaseControlOptions {
 	[key: string]: any;
@@ -1087,6 +1095,7 @@ export declare class EmptyFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 }
 interface IItemControlOptions extends IBaseControlOptions {
 	id?: string;
@@ -1153,6 +1162,18 @@ declare class ItemControl {
 	private getFieldType;
 	private sendNeedsSave;
 	private renderActionButtonsReport;
+}
+export declare enum SelectMode {
+	/*** DO NOT CHANGED numbers use from baseControl */
+	none = 0,
+	items = 1,
+	folders = 2,
+	singleItem = 3,
+	singleFolder = 4,
+	independent = 5,
+	auto = 6,
+	independentAuto = 7,
+	autoPrecise = 8
 }
 interface INavigationBar {
 	disableTabs: boolean;
@@ -1612,10 +1633,12 @@ interface IBaseDropdownFieldParams {
 	optionSetting?: string;
 }
 export declare class DropdownFieldHandler implements IFieldHandler {
+	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, itemConfig: ItemConfiguration): void;
 	private rawData;
 	private human;
 	protected params: IBaseDropdownFieldParams;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
@@ -1636,6 +1659,7 @@ export declare class RichtextFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	getHtml(): string;
 	setHtml(str: string): RichtextFieldHandler;
 }
@@ -1774,7 +1798,8 @@ export declare class BaseTableFieldHandler implements IFieldHandler {
 	validate(): void;
 	initData(serializedFieldData: string): void;
 	getData(): string;
-	setData(dataIn: any[], fixData?: boolean): void;
+	setData(value: string, doValidation?: boolean): void;
+	setDataAsArray(dataIn: any[], fixData?: boolean): void;
 	getRowCount(): number;
 	deleteRow(rowNumber: number): void;
 	insertRow(rowNumber: number, columnData: Array<any>): void;
@@ -1794,7 +1819,7 @@ export declare class BaseTableFieldHandler implements IFieldHandler {
 export declare class BaseValidatedTableFieldHandler extends BaseTableFieldHandler {
 	constructor(configIn: ITableControlBaseParams);
 	validate(): void;
-	setData(dataIn: any[], fixData?: boolean): void;
+	setDataAsArray(dataIn: any[], fixData?: boolean): void;
 }
 export declare class CheckboxFieldHandler implements IFieldHandler {
 	private data;
@@ -1803,6 +1828,7 @@ export declare class CheckboxFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	getValue(): boolean | undefined;
 	setValue(value: boolean): void;
 }
@@ -1814,6 +1840,7 @@ export declare class GenericFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 }
 interface IDHFControlDefinition extends IControlDefinition {
 	dhfValue?: IDHFControlDefinitionValue;
@@ -1838,6 +1865,7 @@ export declare class TextlineFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	getText(): string;
 	setText(str: string): void;
 }
@@ -1860,6 +1888,7 @@ export declare class TestResultFieldHandler implements IFieldHandler {
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	initData(serializedFieldData: string): void;
 	getValues(filterOnOptions?: boolean): string[];
 	getHuman(): string;
@@ -1870,6 +1899,7 @@ export declare class UserFieldHandler implements IFieldHandler {
 	private human;
 	private params;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
@@ -1884,6 +1914,7 @@ export declare class DateFieldHandler implements IFieldHandler {
 	getData(): string;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
+	setData(value: string, doValidation?: boolean): void;
 	static getDateFromString(dateStr: string): Date;
 	setDate(date: Date): void;
 	getDate(): Date;
@@ -1898,6 +1929,7 @@ export declare class ItemSelectionFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	getItems(): IReference[];
 	getItemCount(): number;
 	hasItems(): boolean;
@@ -1937,6 +1969,7 @@ export declare class HyperlinkFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	getValue(): boolean | undefined;
 	setValue(value: boolean): void;
 }
@@ -1951,6 +1984,7 @@ export declare class ItemSelectionFieldHandlerFromTo implements IFieldHandler {
 	private defaultSelection;
 	constructor(configIn: XRFieldTypeAnnotatedParamJson, fieldTypeIn?: string);
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	getSelectedItems(): IFromToSelection;
@@ -2086,6 +2120,7 @@ export declare class GateFieldHandler implements IFieldHandler {
 	private currentValue;
 	constructor(config: IBaseGateOptions);
 	getData(): string;
+	setData(value: string, doValidation?: boolean): void;
 	getFieldType(): string;
 	initData(serializedFieldData: string): void;
 	private defautValue;
@@ -8987,6 +9022,12 @@ export declare class SimpleItemTools implements ISimpleItemTools {
 	updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
 	clone(item: IItemGet, copyLabels: boolean): IItemPut;
 	sort(a: string, b: string, project: string, matrixBaseUrl: string): number;
+}
+export declare class ReviewControlColumns {
+	static COL_COMMENT_LOG: string;
+	static COL_ITEM: string;
+	static COL_VERSION: string;
+	static COL_ANNOTATIONS: string;
 }
 export interface ISimpleSessionControl {
 	getCsrfCookie(): string;
