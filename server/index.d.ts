@@ -1867,7 +1867,8 @@ export declare class SteplistFieldHandler extends BaseValidatedTableFieldHandler
 export declare class TextlineFieldHandler implements IFieldHandler {
 	private data;
 	private config;
-	constructor(configIn: XRFieldTypeAnnotatedParamJson);
+	private fieldType;
+	constructor(fieldType: string, configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string | undefined): void;
 	getData(): string | undefined;
