@@ -22,6 +22,7 @@ import {Mockttp, MockttpServer} from "mockttp";
     const baseURL = `https://${target}`
     const url = /^\/?(\/[A-Za-z]+\/\w+-\w+(-\w+))?$/
     const adminUrl = /^\/adminConfig(\/\w+)?$/
+    const qmsUrl = /^\/pub\/QMS(\/\S+)?$/
 
     const addedUrl = `<script src="/${scriptFile}"></script>`
     const replaced = `${addedUrl}\n</body>\n</html>`
@@ -33,15 +34,27 @@ import {Mockttp, MockttpServer} from "mockttp";
     await server.forAnyWebSocket().always()
         .thenPassThrough();
     await server.forGet(url).always()
-        .thenReply(200, patchedPage)
+        .thenReply(200, patchedPage);
     await server.forGet(adminUrl).always()
-        .thenReply(200, patchedAdminPage)
+        .thenReply(200, patchedAdminPage);
+    await server.forGet(qmsUrl).always()
+       .thenPassThrough({ beforeRequest: async (req) => {
+            const stringBody = await req.body.getText();
+            if (stringBody) {
+                const patchedStringBody = stringBody.replace(/<\/body>\s*<\/html>/, replaced)
+                return { body: patchedStringBody };
+            } else {
+                console.log(`Failed to load plugin for ${req.url}`);
+            }
+            return undefined;
+        }
+       });
     await server.forGet(`${baseURL}/${scriptFile}`).always()
-        .thenFromFile(200, `../dist/${scriptFile}`)
+        .thenFromFile(200, `../dist/${scriptFile}`);
     await server.forGet(`${baseURL}/${scriptFile}.map`).always()
-        .thenFromFile(200, `../dist/${scriptFile}.map`)
+        .thenFromFile(200, `../dist/${scriptFile}.map`);
     await server.forAnyRequest().forHostname(target).always()
-        .thenPassThrough()
+        .thenPassThrough();
     await server.start();
 
     const caFingerprint = mockttp.generateSPKIFingerprint(https.cert);
