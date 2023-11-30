@@ -7,6 +7,7 @@ import {
     IItem,
     IPluginConfig,
     IPluginFieldHandler,
+    IPluginFieldValueBase,
     IPluginSettingPage,
     IProjectSettingsBase,
     ITool,
@@ -14,10 +15,8 @@ import {
     registerPlugin,
 } from 'matrix-requirements-sdk/client';
 import { ServerSettingsPage } from "./ServerSettingsPage";
-import { IBulkSettings, IPluginFieldValue, IServerSettings } from "./Interfaces";
+import { IBulkSettings } from "./Interfaces";
 import { sdkInstance } from './instance';
-
-export interface IDashboardParameters extends IDashboardParametersBase { }
 
 let bulkDefaultSettings: IBulkSettings = {
     project: "BLAH",
@@ -32,41 +31,16 @@ let bulkDefaultSettings: IBulkSettings = {
     imageToAttachURL: "https://www.skiworld.co.uk/images/uploads/photos/large/tignes_resort_-_winter_-_lake_and_reflections_14657.jpg"
 };
 
-export class FieldHandler implements IPluginFieldHandler<IPluginFieldValue> {
-    getValueAsync(): Promise<IPluginFieldValue> {
-        throw new Error("Method not implemented.");
-    }
-    setValue(T: any): void {
-        throw new Error("Method not implemented.");
-    }
-    getFieldType(): string {
-        throw new Error("Method not implemented.");
-    }
-    initData(serializedFieldData: string) {
-        throw new Error("Method not implemented.");
-    }
-    setData(serializedFieldData: string) {
-        throw new Error("Method not implemented.");
-    }
-    getData(): string {
-        throw new Error("Method not implemented.");
-    }
-    getRawData() {
-        throw new Error("Method not implemented.");
-    }
-}
-
-
 /** This class is allows you to configure the features of your plugin.
  *
  *  You can also implement functions to into the plugin (at start in the constructor, when loading a project, when loading an item)
  *
      */
-export class Plugin implements IExternalPlugin<IServerSettings,
+export class Plugin implements IExternalPlugin<IBulkSettings,
                                 IProjectSettingsBase,
-                                FieldHandler,
-                                IPluginFieldValue,
-                                IDashboardParameters> {
+                                IPluginFieldHandler<IPluginFieldValueBase>,
+                                IPluginFieldValueBase,
+                                IDashboardParametersBase> {
 
     core: PluginCore;
 
@@ -75,7 +49,7 @@ export class Plugin implements IExternalPlugin<IServerSettings,
      * See IPluginConfig interface for explanation of parameters
     */
 
-    static config: IPluginConfig<IServerSettings, IProjectSettingsBase> = {
+    static config: IPluginConfig<IBulkSettings, IProjectSettingsBase> = {
         /*  Page in admin client to configure settings across all projects - set enabled to false if not needed.
             The page itself is implemented in the _ServerSettingsPage.ts
         */
@@ -85,7 +59,16 @@ export class Plugin implements IExternalPlugin<IServerSettings,
             type: "BPPcs",
             enabled: true,
             defaultSettings: {
-                myServerSetting: bulkDefaultSettings
+                project: "BLAH",
+                categoryInstructions: [
+                    { category: "DOC", count: 1000, attachmentCount: 0, downLinks: [] },
+                    { category: "REQ", count: 3000, attachmentCount: 0, downLinks: ["SPEC"] },
+                    { category: "RISK", count: 1000, attachmentCount: 0, downLinks: ["SPEC"] },
+                    { category: "SPEC", count: 5000, attachmentCount: 0, downLinks: ["TC"] },
+                    { category: "TC", count: 5000, attachmentCount: 0, downLinks: ["XTC"] },
+                    { category: "XTC", count: 20000, attachmentCount: 10, downLinks: [] }
+                ],
+                imageToAttachURL: "https://www.skiworld.co.uk/images/uploads/photos/large/tignes_resort_-_winter_-_lake_and_reflections_14657.jpg"
             },
             settingName: "BulkItemCreation_Settings",
             help: "Use this to make many items",
@@ -162,26 +145,25 @@ export class Plugin implements IExternalPlugin<IServerSettings,
 
     PLUGIN_VERSION: string;
     PLUGIN_NAME: string;
-    async getDashboardAsync(): Promise<IDashboardPage<IDashboardParameters>> {
+    async getDashboardAsync(): Promise<IDashboardPage<IDashboardParametersBase>> {
         return null;
     }
     async getProjectSettingsPageAsync(): Promise<IPluginSettingPage<IProjectSettingsBase>> {
         return null;
     }
-    async getServerSettingsPageAsync(): Promise<IPluginSettingPage<IServerSettings>> {
+    async getServerSettingsPageAsync(): Promise<IPluginSettingPage<IBulkSettings>> {
         if (sdkInstance.app.isConfigApp()) {
-            // TODO: investigate "<IConfigApp><unknown>"
             return new ServerSettingsPage(<IConfigApp><unknown>sdkInstance.app);
         }
         return null;
     }
-    async getControlAsync(ctrlObj: JQuery): Promise<ControlCoreBase<FieldHandler, IPluginFieldValue>> {
+    async getControlAsync(ctrlObj: JQuery): Promise<ControlCoreBase<IPluginFieldHandler<IPluginFieldValueBase>, IPluginFieldValueBase>> {
         return null;
     }
     async getToolAsync(): Promise<ITool> {
         return null;
     }
-    getConfig(): IPluginConfig<IServerSettings, IProjectSettingsBase> {
+    getConfig(): IPluginConfig<IBulkSettings, IProjectSettingsBase> {
         return Plugin.config;
     }
     enableToolMenu(ul: JQuery, _hook: number): boolean {

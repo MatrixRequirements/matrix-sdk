@@ -11,27 +11,27 @@ import {
     TestStepsResultFieldHandler,
     Project,
 } from 'matrix-requirements-sdk/client';
-import { CategoryInstruction, IBulkSettings, IServerSettings } from "./Interfaces";
+import { CategoryInstruction, IBulkSettings } from "./Interfaces";
 import { Plugin } from "./Main";
 import { textGenerator } from "./lorem-ipsum";
 import { sdkInstance } from './instance';
 
 /* server Setting page closure*/
-export class ServerSettingsPage extends sdkInstance.ConfigPage implements IPluginSettingPage<IServerSettings> {
-    settingsOriginal?: IServerSettings;
-    settingsChanged?: IServerSettings;
+export class ServerSettingsPage extends sdkInstance.ConfigPage implements IPluginSettingPage<IBulkSettings> {
+    settingsOriginal?: IBulkSettings;
+    settingsChanged?: IBulkSettings;
 
-    settings(): IServerSettings {
+    settings(): IBulkSettings {
         const serverSettings = sdkInstance.PluginCore.getServerSetting(Plugin.config.customerSettingsPage.settingName, "EMPTY");
         if (serverSettings === "EMPTY") {
             // Go with the default.
-            return <IServerSettings>Plugin.config.customerSettingsPage.defaultSettings;
+            return Plugin.config.customerSettingsPage.defaultSettings;
         }
-        return <IServerSettings>serverSettings;
+        return <IBulkSettings> serverSettings;
     }
 
     /** Customize this method to generate static HTML.  */
-    getSettingsDOM(settings: IServerSettings): JQuery {
+    getSettingsDOM(settings: IBulkSettings): JQuery {
         return $(`
             <div class="panel-body-v-scroll fillHeight">
                 <div>
@@ -97,13 +97,12 @@ export class ServerSettingsPage extends sdkInstance.ConfigPage implements IPlugi
     running: boolean;
 
     private log(data: string) {
-     $('#myLogger').append(data + '\n');
+        $('#myLogger').append(data + '\n');
         console.log(data);
     }
 
     private getSettings(): IBulkSettings {
-        let settings: IBulkSettings = <IBulkSettings><unknown>this.settingsChanged.myServerSetting;
-        return settings;
+        return this.settingsChanged;
     }
 
     private isTestCategory(category: string): boolean {
