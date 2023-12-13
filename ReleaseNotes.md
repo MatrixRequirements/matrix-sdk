@@ -1,5 +1,10 @@
 # Release Notes
 
+
+## 2.4.0-alpha.16
+
+Various SDK bug fixes.
+
 ## 2.4.0-alpha.1
 
 Updated version number to match Matrix Requirements shipping version.
