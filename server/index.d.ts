@@ -1638,13 +1638,13 @@ interface IBaseDropdownFieldParams {
 	initialContent?: string;
 }
 export declare class DropdownFieldHandler implements IFieldHandler {
-	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, itemConfig: ItemConfiguration): void;
 	private rawData;
 	private human;
 	protected params: IBaseDropdownFieldParams;
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
+	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, itemConfig: ItemConfiguration): void;
+	getData(): string | undefined;
+	setData(value: string): void;
 	getFieldType(): string;
 	initData(serializedFieldData: string | undefined): void;
 	/**
@@ -1838,20 +1838,47 @@ export declare class CheckboxFieldHandler implements IFieldHandler {
 	getValue(): boolean | undefined;
 	setValue(value: boolean): void;
 }
+/**
+ * GenericFieldHandler is a field handler which does no validation on the field
+ * data. It simply stores the data as a string.
+ */
 export declare class GenericFieldHandler implements IFieldHandler {
 	protected fieldType: string;
 	protected data: string;
 	private config;
 	constructor(fieldTypeIn: string, configIn: XRFieldTypeAnnotatedParamJson);
+	/**
+	 * Return the field type of this field as a string.
+	 * @returns string
+	 */
 	getFieldType(): string;
+	/**
+	 * initData will set the data of the field handler to the passed-in parameter,
+	 * or, if it is undefined, consult the initialContent key of the configuration
+	 * object. If this key is defined, then the data of the field handler will
+	 * be set to that value.
+	 * @param serializedFieldData
+	 */
 	initData(serializedFieldData: string | undefined): void;
+	/**
+	 * Get the data for the field.
+	 * @returns a string or undefined.
+	 */
 	getData(): string | undefined;
+	/**
+	 * Set the field data to the input string.
+	 * @param value
+	 * @param doValidation
+	 */
 	setData(value: string, doValidation?: boolean): void;
 }
 interface IDHFControlDefinition extends IControlDefinition {
 	dhfValue?: IDHFControlDefinitionValue;
 	configTouched?: boolean;
 }
+/**
+ * The FieldHandler for all DOC fields.
+ */
 export declare class DHFFieldHandler extends GenericFieldHandler {
 	private itemConfig;
 	private fieldConfig;
@@ -1900,16 +1927,17 @@ export declare class TestResultFieldHandler implements IFieldHandler {
 	getValues(filterOnOptions?: boolean): string[];
 	getHuman(): string;
 }
+interface IUserFieldHandlerParams extends Omit<IBaseDropdownFieldParams, "splitHuman"> {
+}
 export declare class UserFieldHandler implements IFieldHandler {
-	static UpdateFieldConfig(params: ITestFieldParam, fieldValue: string, itemConfig: ItemConfiguration): void;
 	private rawData;
-	private human;
 	private params;
+	constructor(params: IUserFieldHandlerParams, initialValue?: string);
+	static UpdateFieldConfig(params: ITestFieldParam, fieldValue: string, itemConfig: ItemConfiguration): void;
 	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
+	setData(value: string): void;
 	getFieldType(): string;
-	initData(serializedFieldData: string | undefined): void;
+	initData(serializedFieldData: string): void;
 	getValues(filterOnOptions?: boolean): string[];
 	private getMaxItems;
 	setValues(values: string[]): void;
@@ -2096,7 +2124,7 @@ export declare class NotificationsBL {
 }
 interface IBaseGateOptions {
 	/** define different reviews/approvals which need to be made for gate to pass */
-	lines: IGateLineBase[];
+	lines?: IGateLineBase[];
 }
 interface IGateLineBase {
 	/** a unique id for the line */
@@ -2107,7 +2135,7 @@ interface IGateLineBase {
 interface IGateStatus {
 	passed: boolean;
 	failed: boolean;
-	lines: IGateStatusLine[];
+	lines?: IGateStatusLine[];
 	search: string;
 }
 interface IGateStatusLine {
@@ -2121,7 +2149,6 @@ interface IGateStatusLine {
 }
 export declare class GateFieldHandler implements IFieldHandler {
 	private config;
-	private allPassed;
 	private currentValue;
 	constructor(config: IBaseGateOptions);
 	getData(): string | undefined;
@@ -8112,9 +8139,8 @@ export declare class JSONTools implements IJSONTools {
 		value: {};
 	};
 	clone(src: any): any;
-	/** json lint and JSON.parse( ) don't handle backslashes ( "a":"\s" )*/
 	escapeJson(code: string): string;
-	/** json lint and JSON.parse( ) don't handle backslashes ( "a":"\s" )*/
+	/** MATRIX-5951: json lint and JSON.parse( ) don't handle backslashes ( "a":"\s" )*/
 	unEscapeJson(code: string): string;
 }
 type GetItemConfigFunction = () => ItemConfiguration;
@@ -8309,7 +8335,17 @@ export declare class TreeFolder {
 	 */
 	getAllChildren(): ITitleAndId[];
 }
+/**
+ * DocItem is a subclass of Item which provides additional helper functions for managing a
+ * Document (Items of Category DOC in a Matrix Instance).
+ */
 export declare class DocItem extends Item {
+	/**
+	 * Construct a DocItem.
+	 * @param category
+	 * @param item
+	 * @param fieldMask
+	 */
 	constructor(category: Category, item?: IItemGet, fieldMask?: ItemFieldMask);
 	/**
 	 * add a section to the end of a document
@@ -8649,6 +8685,8 @@ export declare class SectionDescriptions {
 	static section_CustomSection: string;
 	static section_checkbox: string;
 	static section_hidden: string;
+	/** get all sections name for document*/
+	static getAllSections(): string[];
 }
 /**
  * An Item represents a database item. Every Item must have at least a category.

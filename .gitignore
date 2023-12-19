@@ -4,7 +4,11 @@ tsconfig.tsbuildinfo
 examples/bulk-item-creator/.idea/
 examples/bulk-item-creator/build/
 examples/bulk-item-creator/dist/
+examples/bulk-item-creator/Proxy.env
+
 examples/matrixterm/.idea/
 examples/matrixterm/build/
 examples/matrixterm/dist/
+
+examples/users-guide/credentials.json
 .idea

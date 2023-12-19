@@ -14,8 +14,7 @@ The interesting classes are:
 The classes `ItemFieldMask` and `ItemsFieldMask` are useful for constructing powerful searches that return `Item` objects
 that contain only the fields you are interested in.
 
-There are user's guides with live coding examples at [Observablehq.com](https://observablehq.com/@ripsawridge/matrix-requirements-api-and-sdk):
+The [Matrix SDK User's Guide](https://matrixrequirements.github.io/matrix-sdk-docs/)
+contains practical information on using the SDK. Additionally, code examples
+from the guide can be found in this project at `../examples/users-guide`.
 
-* [Getting Started](https://observablehq.com/@ripsawridge/matrix-requirements-api-and-sdk)
-* [Advanced Searching](https://observablehq.com/@ripsawridge/matrix-requirements-sdk-part-ii-advanced-searching)
-* [Linking and creating objects](https://observablehq.com/@ripsawridge/matrix-requirements-sdk-part-3-links-labels)

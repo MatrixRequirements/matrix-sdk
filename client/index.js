@@ -10,9 +10,9 @@
 })(this, () => {
 return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
-
-/***/ 240:
+/******/ 	var __webpack_modules__ = ([
+/* 0 */,
+/* 1 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -30,57 +30,14 @@ ReviewControlColumns.COL_ANNOTATIONS = "_annotation";
 
 
 /***/ }),
-
-/***/ 18:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   SearchState: () => (/* binding */ SearchState),
-/* harmony export */   SearchUpdate: () => (/* binding */ SearchUpdate),
-/* harmony export */   SelectMode: () => (/* binding */ SelectMode)
-/* harmony export */ });
-
-var SelectMode;
-(function (SelectMode) {
-    /*** DO NOT CHANGED numbers use from baseControl */
-    SelectMode[SelectMode["none"] = 0] = "none";
-    SelectMode[SelectMode["items"] = 1] = "items";
-    SelectMode[SelectMode["folders"] = 2] = "folders";
-    SelectMode[SelectMode["singleItem"] = 3] = "singleItem";
-    SelectMode[SelectMode["singleFolder"] = 4] = "singleFolder";
-    SelectMode[SelectMode["independent"] = 5] = "independent";
-    SelectMode[SelectMode["auto"] = 6] = "auto";
-    SelectMode[SelectMode["independentAuto"] = 7] = "independentAuto";
-    SelectMode[SelectMode["autoPrecise"] = 8] = "autoPrecise"; //  if you select a folder it select everything within, if you unselect something it unselects all parents
-})(SelectMode || (SelectMode = {}));
-var SearchState;
-(function (SearchState) {
-    SearchState[SearchState["NoSearch"] = 0] = "NoSearch";
-    SearchState[SearchState["FilterDone"] = 1] = "FilterDone";
-    SearchState[SearchState["ServerRunning"] = 2] = "ServerRunning";
-    SearchState[SearchState["ServerDone"] = 3] = "ServerDone"; // the search results returned
-})(SearchState || (SearchState = {}));
-var SearchUpdate;
-(function (SearchUpdate) {
-    SearchUpdate[SearchUpdate["inserted_node"] = 1] = "inserted_node";
-    SearchUpdate[SearchUpdate["updated_rec"] = 2] = "updated_rec";
-    SearchUpdate[SearchUpdate["filter_status_changed"] = 3] = "filter_status_changed";
-    SearchUpdate[SearchUpdate["title_changed"] = 4] = "title_changed";
-    SearchUpdate[SearchUpdate["item_dropped"] = 5] = "item_dropped"; // an item was draged and dropped to a new place (if this happens after creating it , it must be refreshed)
-})(SearchUpdate || (SearchUpdate = {}));
-
-
-/***/ }),
-
-/***/ 24:
+/* 2 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FieldDescriptions: () => (/* binding */ FieldDescriptions)
 /* harmony export */ });
-/* harmony import */ var _PluginManager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
+/* harmony import */ var _PluginManager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 
 
 class FieldDescriptions {
@@ -250,8 +207,7 @@ FieldDescriptions.descriptions = [
 
 
 /***/ }),
-
-/***/ 12:
+/* 3 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -261,7 +217,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pluginHooks: () => (/* binding */ pluginHooks),
 /* harmony export */   plugins: () => (/* binding */ plugins)
 /* harmony export */ });
-/* harmony import */ var _globals__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _globals__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 
 
 
@@ -618,8 +574,7 @@ function InitializePluginManager() {
 
 
 /***/ }),
-
-/***/ 5:
+/* 4 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -725,11 +680,12 @@ function applyResponsiveView() {
     if (mobileView) {
         $('#contextframesizer').css("display", "none");
         $('#dragbar').css("display", "none");
+        $('#sidebar').css("max-width", "none");
     }
     if (mobileView == "0") { // see item
         $('#sidebar').css("display", "none");
         $("#navLeft").css("display", "none");
-        $('#main').css("left", 0).css("display", "block");
+        $('#main').css("display", "block");
     }
     else if (mobileView == "1") { // see navigation tree
         $('#sidebar').css("width", x).css("display", "block");
@@ -739,7 +695,7 @@ function applyResponsiveView() {
     else if (mobileView == "2") { // see both
         $('#sidebar').css("width", (x / 2) + "px");
         $("#navLeft").css("display", "");
-        $('#main').css("left", (x / 2) + "px").css("display", "block");
+        $('#main').css("display", "block");
     }
     else { // not mobile
         $('#dragbar').css("display", "block");
@@ -751,9 +707,49 @@ function applyResponsiveView() {
 }
 
 
-/***/ })
+/***/ }),
+/* 5 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-/******/ 	});
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SearchState: () => (/* binding */ SearchState),
+/* harmony export */   SearchUpdate: () => (/* binding */ SearchUpdate),
+/* harmony export */   SelectMode: () => (/* binding */ SelectMode)
+/* harmony export */ });
+
+var SelectMode;
+(function (SelectMode) {
+    /*** DO NOT CHANGED numbers use from baseControl */
+    SelectMode[SelectMode["none"] = 0] = "none";
+    SelectMode[SelectMode["items"] = 1] = "items";
+    SelectMode[SelectMode["folders"] = 2] = "folders";
+    SelectMode[SelectMode["singleItem"] = 3] = "singleItem";
+    SelectMode[SelectMode["singleFolder"] = 4] = "singleFolder";
+    SelectMode[SelectMode["independent"] = 5] = "independent";
+    SelectMode[SelectMode["auto"] = 6] = "auto";
+    SelectMode[SelectMode["independentAuto"] = 7] = "independentAuto";
+    SelectMode[SelectMode["autoPrecise"] = 8] = "autoPrecise"; //  if you select a folder it select everything within, if you unselect something it unselects all parents
+})(SelectMode || (SelectMode = {}));
+var SearchState;
+(function (SearchState) {
+    SearchState[SearchState["NoSearch"] = 0] = "NoSearch";
+    SearchState[SearchState["FilterDone"] = 1] = "FilterDone";
+    SearchState[SearchState["ServerRunning"] = 2] = "ServerRunning";
+    SearchState[SearchState["ServerDone"] = 3] = "ServerDone"; // the search results returned
+})(SearchState || (SearchState = {}));
+var SearchUpdate;
+(function (SearchUpdate) {
+    SearchUpdate[SearchUpdate["inserted_node"] = 1] = "inserted_node";
+    SearchUpdate[SearchUpdate["updated_rec"] = 2] = "updated_rec";
+    SearchUpdate[SearchUpdate["filter_status_changed"] = 3] = "filter_status_changed";
+    SearchUpdate[SearchUpdate["title_changed"] = 4] = "title_changed";
+    SearchUpdate[SearchUpdate["item_dropped"] = 5] = "item_dropped"; // an item was draged and dropped to a new place (if this happens after creating it , it must be refreshed)
+})(SearchUpdate || (SearchUpdate = {}));
+
+
+/***/ })
+/******/ 	]);
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
@@ -820,9 +816,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getSdkInstance: () => (/* binding */ getSdkInstance),
 /* harmony export */   registerPlugin: () => (/* binding */ registerPlugin)
 /* harmony export */ });
-/* harmony import */ var _core_client_plugins_ScheduleReviewDefines__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(240);
-/* harmony import */ var _core_common_businesslogic_FieldDescriptions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(24);
-/* harmony import */ var _core_common_UI_Components_ProjectViewDefines__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(18);
+/* harmony import */ var _core_client_plugins_ScheduleReviewDefines__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _core_common_businesslogic_FieldDescriptions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/* harmony import */ var _core_common_UI_Components_ProjectViewDefines__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
 
 
 
