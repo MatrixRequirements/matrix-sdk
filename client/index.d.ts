@@ -3523,7 +3523,7 @@ declare class MatrixSession {
 	private changeToken;
 	setProjectColor(projectShort: string, color: string): void;
 	getProjectColor(projectShort: string): string;
-	getImgFromProject(pRef: string, offsetTop?: number): string;
+	getImgFromProject(pRef: string): string;
 	private createProjectSelectLink;
 	amIAllowedUser(limitedTo: string[]): boolean;
 	updateUI(afterTimeout?: boolean): void;
@@ -4065,6 +4065,7 @@ declare class Application {
 	currentItem: IItem;
 	protected currentItemForcedReadonly: boolean;
 	protected isSaving: boolean;
+	private latestUpdateControlEventId;
 	constructor();
 	saveSave(): void;
 	updateMainUI(disabled?: boolean): void;
@@ -11495,7 +11496,7 @@ declare class MatrixSDK {
 	getUser(): string;
 	getCustomerSettingJSON(s: string, defaultValue?: unknown): unknown;
 	serverConfig(): XRGetProject_StartupInfo_ListProjectAndSettings;
-	getImgFromProject(pref: string, offsetTop?: number): string;
+	getImgFromProject(pref: string): string;
 	getProjectList(readOrWriteOnly: boolean): XRProjectType[];
 	getTestManager(): TestManager;
 	static getLabelDefinitions(cats: string[]): ILabel[];
