@@ -3614,7 +3614,12 @@ interface GetReportsAck {
 	 */
 	reportList?: Array<ReportType>;
 }
-interface GetSettingAck {
+/**
+ *
+ * @export
+ * @interface GetSettingAck
+ */
+export interface GetSettingAck {
 	/**
 	 *
 	 * @type {Array<SettingType>}
@@ -8240,7 +8245,10 @@ export interface IProjectNeeds {
 	uploadFileToProject(project: string, url: string): Promise<AddFileAck>;
 	executeInProject(project: string, payload: ExecuteParam): Promise<FolderAnswer>;
 	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
+	runHookInProject(project: string, itemId: string, hookName: string, body: string): Promise<string>;
 	getJobStatus(project: string, jobId: number, options?: unknown): Promise<JobsStatusWithUrl>;
+	postJobProgressForProject(project: string, jobId: number, progress: number, status?: string): Promise<string>;
+	deleteJobForProject(project: string, jobId: number, reason: string): Promise<string>;
 	createTodo(project: string, users: string[], type: TodoTypes | string, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
 }
 interface ITreeFolderNeeds {
@@ -8576,6 +8584,37 @@ export declare class Project {
 	getItemConfig(): ItemConfiguration;
 	getLabelManager(): ILabelManager;
 	getTestConfig(): TestManagerConfiguration;
+	/**
+	 * Run a hook with the given name on a project item.
+	 * @param itemId
+	 * @param hookName
+	 * @param body
+	 * @returns the return value of the hook.
+	 */
+	runHook(itemId: string, hookName: string, body: string): Promise<string>;
+	/**
+	 * Some server operations that return files as URLs are long-running jobs. With a
+	 * jobId, you can wait on their result while also getting progress updates.
+	 * @param jobId
+	 * @param progressReporter an optional callback to be notified of the job's progress.
+	 * @returns an array of JobFileWithUrl structures
+	 */
+	waitOnJobCompletion(jobId: number, progressReporter?: (jobId: any, progress: any) => void): Promise<JobFileWithUrl[]>;
+	/**
+	 * For implementors of server-side hooks and other services that use the Job API.
+	 * @param jobId the jobId on which you are reporting progress
+	 * @param progress Progress (0 to 100, 200 to indicate error)
+	 * @param status optional status string like "Done" or "Error"
+	 * @returns string result
+	 */
+	postJobProgress(jobId: number, progress: number, status?: string): Promise<string>;
+	/**
+	 * Admin permission on the server is required to successfully call this.
+	 * @param jobId the jobId you wish to cancel
+	 * @param reason the reason for cancellation
+	 * @returns string result
+	 */
+	deleteJob(jobId: number, reason: string): Promise<string>;
 	/**
 	 * Export a DOC to an external file.
 	 * @param type Can be one of "pdf", "html", "docx", or "odt"
@@ -9132,6 +9171,17 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	setProject(project: string): Promise<void>;
 	getProject(): string;
 	getProjects(): Promise<string[]>;
+	/**
+	 * Return server settings (also called customer settings).
+	 * @returns A GetSettingAck object describing all the server settings
+	 */
+	getServerSettings(): Promise<GetSettingAck>;
+	/**
+	 * Put a server setting (also called a customer setting).
+	 * @param key the key to save the setting under
+	 * @param value the value of the setting
+	 */
+	putServerSetting(key: string, value: string): Promise<string>;
 	protected parseRef(itemId: string): IItemIdParts;
 	private getType;
 	/**
@@ -9184,6 +9234,14 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * @returns the string "Ok" on success
 	 */
 	moveItemsInProject(project: string, folderId: string, itemIds: string[]): Promise<string>;
+	/**
+	 * Run a hook in a project
+	 * @param project
+	 * @param itemId
+	 * @param hookName
+	 * @param body
+	 */
+	runHookInProject(project: string, itemId: string, hookName: string, body: string): Promise<string>;
 	/**
 	 * Execute a search in the given project, returning matching item ids.
 	 * @param project
@@ -9302,6 +9360,8 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
 	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
 	getJobStatus(project: string, jobId: number, options?: unknown): Promise<JobsStatusWithUrl>;
+	postJobProgressForProject(project: string, jobId: number, progress: number, status?: string): Promise<string>;
+	deleteJobForProject(project: string, jobId: number, reason: string): Promise<string>;
 	createTodo(project: string, users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
 	rootGet(adminUI?: number, output?: string, options?: unknown): Promise<ListProjectAndSettings>;
 	validateSdkVersion(): Promise<boolean>;
