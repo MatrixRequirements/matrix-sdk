@@ -10638,12 +10638,12 @@ export declare class DocItem extends Item {
 	private exportTo;
 	/** Generate a html document
 	 * @return {url} the URL of the generated document */
-	toHTML(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	toHTML(progressReporter?: (jobId: number, jobDetails: JobsStatusWithUrl) => void): Promise<string>;
 	/** Generate a pdf document
-	 * @return {url} the URL of the generated document */ toPDF(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	 * @return {url} the URL of the generated document */ toPDF(progressReporter?: (jobId: number, jobDetails: JobsStatusWithUrl) => void): Promise<string>;
 	/** Generate a docx  document
 	 * @return {url} the URL of the generated document */
-	toDOCx(progressReporter?: (jobId: any, progress: any) => void): Promise<string>;
+	toDOCx(progressReporter?: (jobId: number, jobDetails: JobsStatusWithUrl) => void): Promise<string>;
 	private addMandatoryFields;
 	private addDocumentOptions;
 }
@@ -10968,7 +10968,7 @@ export declare class Project {
 	 * @param progressReporter an optional callback to be notified of the job's progress.
 	 * @returns an array of JobFileWithUrl structures
 	 */
-	waitOnJobCompletion(jobId: number, progressReporter?: (jobId: any, progress: any) => void): Promise<JobFileWithUrl[]>;
+	waitOnJobCompletion(jobId: number, progressReporter?: (jobId: number, jobDetails: JobsStatusWithUrl) => void): Promise<JobFileWithUrl[]>;
 	/**
 	 * For implementors of server-side hooks and other services that use the Job API.
 	 * @param jobId the jobId on which you are reporting progress
@@ -10991,7 +10991,7 @@ export declare class Project {
 	 * @param progressReporter an optional callback with status updates
 	 * @returns a pointer to the location on the server where the file can be downloaded
 	 */
-	generateDocument(type: "pdf" | "html" | "docx" | "odt", docId: string, progressReporter?: (jobId: any, progress: any) => void): Promise<JobFileWithUrl[]>;
+	generateDocument(type: "pdf" | "html" | "docx" | "odt", docId: string, progressReporter?: (jobId: number, jobDetails: JobsStatusWithUrl) => void): Promise<JobFileWithUrl[]>;
 	private sleep;
 	createTodo(users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
 }
