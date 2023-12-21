@@ -11579,6 +11579,12 @@ declare class MatrixSDK {
  */
 export declare class Item {
 	private category;
+	/**
+	 * Construct an Item
+	 * @param category
+	 * @param item
+	 * @param fieldMask
+	 */
 	constructor(category: Category, item?: IItemGet, fieldMask?: ItemFieldMask);
 	private fieldMask;
 	private fieldMap;
@@ -11587,7 +11593,7 @@ export declare class Item {
 	private type;
 	private title;
 	private labels;
-	private isFolder;
+	private isFolderProperty;
 	private downLinks;
 	private upLinks;
 	private creationDate;
@@ -11595,6 +11601,10 @@ export declare class Item {
 	private history;
 	protected toBeIntegrated: IItemGet;
 	private setDirty;
+	/**
+	 * Gets the ItemFieldMask which specifies which fields are loaded
+	 * @returns on ItemFieldMask object
+	 */
 	getFieldMask(): ItemFieldMask;
 	/**
 	 * Read-only.
@@ -11708,12 +11718,42 @@ export declare class Item {
 	 * @returns An IItemPut structure, filled in from the current state of the Item.
 	 */
 	extractData(): IItemPut;
+	/**
+	 * Get the unique Id of the Item within the Project.
+	 * @returns a string value containing the Item Id.
+	 */
 	getId(): string;
-	getIsFolder(): boolean;
+	/**
+	 * isFolder returns true if the Item is of Category FOLDER.
+	 * @returns true if a FOLDER, false otherwise
+	 */
+	isFolder(): boolean;
+	/**
+	 * Returns the type (Category) of the Item.
+	 * @returns the Item type
+	 */
 	getType(): string;
+	/**
+	 * Get the creation date of the item
+	 * @returns a string date value or undefined
+	 */
 	getCreationDate(): string | undefined;
+	/**
+	 * Set the creation date.
+	 * @param creationDate
+	 * @returns the Item itself.
+	 */
 	setCreationDate(creationDate: string): Item;
+	/**
+	 * Get the Item title
+	 * @returns the Item title
+	 */
 	getTitle(): string;
+	/**
+	 * Set the title of the Item
+	 * @param title
+	 * @returns the Item itself
+	 */
 	setTitle(title: string): Item;
 	/**
 	 * Returns an array of labels set for the Item.
@@ -11751,6 +11791,11 @@ export declare class Item {
 	 * @returns Category
 	 */
 	getCategory(): Category;
+	/**
+	 * needsSave() checks the Fields of the Category to which the Item belongs to see if they've
+	 * been changed. If so it marks the Item as dirty.
+	 * @returns true if the Item has changes that should be propped to the server
+	 */
 	needsSave(): boolean;
 	/**
 	 * An Item can be complete or partial, based on the ItemFieldMask passed in
