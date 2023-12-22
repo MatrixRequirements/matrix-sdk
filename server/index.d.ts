@@ -8265,7 +8265,7 @@ export interface IProjectNeeds {
 	getFullTreeFromProject(projectName: string): Promise<FancyFolder[]>;
 	getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
 	uploadFileToProject(project: string, url: string): Promise<AddFileAck>;
-	uploadLocalFileToProject(project: string, file: unknown, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
+	uploadLocalFileToProject(project: string, axiosLib: unknown, file: unknown, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
 	executeInProject(project: string, payload: ExecuteParam): Promise<FolderAnswer>;
 	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
 	runHookInProject(project: string, itemId: string, hookName: string, body: string): Promise<string>;
@@ -8527,11 +8527,12 @@ export declare class Project {
 	 * Upload a file to the server in Node. Not suitable for call in a web browser,
 	 * as the necessary libraries (and access to the file system) are not available.
 	 *
+	 * @param axiosLib A pointer to your local Axios library
 	 * @param file Passed through to an Axios request. A fs.ReadStream object is appropriate.
 	 * @param progress a callback to be notified of upload progress.
 	 * @returns a IFileUploadResult object.
 	 */
-	uploadLocalFile(file: unknown, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
+	uploadLocalFile(axiosLib: unknown, file: unknown, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
 	/**
 	 * Files uploaded to the server with uploadFile() or uploadLocalFile() are retrieved
 	 * with a special Url that depends on the Project. This method computes the url
@@ -9346,7 +9347,7 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	uploadProjectFile(url: string): Promise<AddFileAck>;
 	uploadFileToProject(project: string, url: string): Promise<AddFileAck>;
 	private uploadFileServerAsync;
-	uploadLocalFileToProject(project: string, file: IFileParam, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
+	uploadLocalFileToProject(project: string, axiosLib: unknown, file: IFileParam, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
 	executeInProject(project: string, payload: ExecuteParam): Promise<FolderAnswer>;
 	execute(payload: ExecuteParam): Promise<FolderAnswer>;
 	/**
