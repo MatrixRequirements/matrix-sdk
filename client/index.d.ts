@@ -10680,6 +10680,14 @@ interface IProjectSearchOptions {
 	treeOrder?: boolean;
 }
 export interface IProjectNeeds {
+	/**
+	 * Returns the base URL of the server, and the REST api endpoint.
+	 * @returns a tuple with [baseUrl, baseRestUrl]
+	 */
+	getUrlInfo(): [
+		string,
+		string
+	];
 	parseRefForProject(project: string, itemRef: string): IItemIdParts;
 	setFieldsInProject(project: string, projectItemConfig: ItemConfiguration, itemId: string, data: ISetField[]): Promise<IItemGet>;
 	getItemFromProject(project: string, id: string): Promise<IItemGet>;
@@ -10692,6 +10700,7 @@ export interface IProjectNeeds {
 	getFullTreeFromProject(projectName: string): Promise<FancyFolder[]>;
 	getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
 	uploadFileToProject(project: string, url: string): Promise<AddFileAck>;
+	uploadLocalFileToProject(project: string, file: unknown, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
 	executeInProject(project: string, payload: ExecuteParam): Promise<FolderAnswer>;
 	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
 	runHookInProject(project: string, itemId: string, hookName: string, body: string): Promise<string>;
@@ -10869,6 +10878,23 @@ export declare class Project {
 	 * @returns an AddFileAck structure.
 	 */
 	uploadFile(url: string): Promise<AddFileAck>;
+	/**
+	 * Upload a file to the server in Node. Not suitable for call in a web browser,
+	 * as the necessary libraries (and access to the file system) are not available.
+	 *
+	 * @param file Passed through to an Axios request. A fs.ReadStream object is appropriate.
+	 * @param progress a callback to be notified of upload progress.
+	 * @returns a IFileUploadResult object.
+	 */
+	uploadLocalFile(file: unknown, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
+	/**
+	 * Files uploaded to the server with uploadFile() or uploadLocalFile() are retrieved
+	 * with a special Url that depends on the Project. This method computes the url
+	 * correctly.
+	 * @param fileInfo an AddFileAck object with information about the uploaded file
+	 * @returns a Url pointing to the file on the server
+	 */
+	computeFileUrl(fileInfo: AddFileAck): string;
 	/**
 	 * Returns information about an item from an id in a given project.
 	 * @param itemId A valid item id in the project
@@ -11204,6 +11230,14 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	private projectMap;
 	private fetchWrapper;
 	constructor(config: Configuration, session: ISimpleSessionControl, initialItemConfig: ItemConfiguration, matrixBaseUrl: string, logger: ILoggerTools, json: IJSONTools, simpleItemTools: ISimpleItemTools);
+	/**
+	 * Returns the base URL of the server, and the REST api endpoint.
+	 * @returns a tuple with [baseUrl, baseRestUrl]
+	 */
+	getUrlInfo(): [
+		string,
+		string
+	];
 	getFetchLog(): string[];
 	createNewItemConfig(): ItemConfiguration;
 	getLabelManager(): ILabelManager;
@@ -11298,6 +11332,8 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	searchItemsInProject(project: string, term: string, options?: IProjectSearchOptions): Promise<ISearchResult[]>;
 	uploadProjectFile(url: string): Promise<AddFileAck>;
 	uploadFileToProject(project: string, url: string): Promise<AddFileAck>;
+	private uploadFileServerAsync;
+	uploadLocalFileToProject(project: string, file: IFileParam, progress: (p: IFileUploadProgress) => void): Promise<AddFileAck>;
 	executeInProject(project: string, payload: ExecuteParam): Promise<FolderAnswer>;
 	execute(payload: ExecuteParam): Promise<FolderAnswer>;
 	/**
@@ -11424,6 +11460,10 @@ declare class MatrixSDK {
 	setProject(project: string): Promise<void>;
 	getProject(): string;
 	getProjects(): Promise<string[]>;
+	getUrlInfo(): [
+		string,
+		string
+	];
 	/**
 	 * The session object contains a string that represents the "current project."
 	 * This convenience method calls openProject() with that string.
