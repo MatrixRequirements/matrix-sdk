@@ -10,14 +10,14 @@ export declare enum TodoTypes {
 	approveDone = "approveDone"
 }
 export type XRGetProject_StartupInfo_ListProjectAndSettings = XRListProjectAndSettings;
-type XRGetProject_ProjectInfo_ProjectInfo = XRProjectInfo;
+export type XRGetProject_ProjectInfo_ProjectInfo = XRProjectInfo;
 export type XRGetProject_CategoryList_GetProjectStructAck = XRGetProjectStructAck;
 export type XRGetProject_ProjectSettingAll_GetSettingAck = XRGetSettingAck;
 export type XRGetProject_Todos_GetTodosAck = XRGetTodosAck;
-type XRGetProject_JobStatus_JobsStatusWithUrl = XRJobsStatusWithUrl;
+export type XRGetProject_JobStatus_JobsStatusWithUrl = XRJobsStatusWithUrl;
 export type XRGetProject_Needle_TrimNeedle = XRTrimNeedle;
-type XRGetProject_Reports_GetReportsAck = XRGetReportsAck;
-interface XRListProjectAndSettings {
+export type XRGetProject_Reports_GetReportsAck = XRGetReportsAck;
+export interface XRListProjectAndSettings {
 	currentUser: string;
 	customerAdmin: number;
 	superAdmin: number;
@@ -50,17 +50,17 @@ export interface XRProjectInfo {
 	pluginSettingsList: XRPluginSetting[];
 	todos: XRTodo[];
 }
-interface XRGetProjectStructAck {
+export interface XRGetProjectStructAck {
 	categoryList: XRCategoryExtendedListType;
 	label: string;
 	shortLabel: string;
 	acl: string;
 	aclExplanations: string;
 }
-interface XRGetSettingAck {
+export interface XRGetSettingAck {
 	settingList: XRSettingType[];
 }
-interface XRTag {
+export interface XRTag {
 	id: number;
 	auditId: number;
 	auditTime: string;
@@ -79,7 +79,7 @@ export interface XRGetTodosAck {
 	todos: XRTodo[];
 	todoCounts: XRTodoCount[];
 }
-interface XRJobsStatusWithUrl {
+export interface XRJobsStatusWithUrl {
 	progress: number;
 	status: string;
 	visibleName: string;
@@ -92,10 +92,10 @@ export interface XRTrimNeedle {
 	searchId: string;
 	needles: XRTrimNeedleItem[];
 }
-interface XRGetReportsAck {
+export interface XRGetReportsAck {
 	reportList: XRReportType[];
 }
-interface XRGetDateAck {
+export interface XRGetDateAck {
 	dateIso8601: string;
 	timeUserFormat: string;
 	dateUserFormat: string;
@@ -110,21 +110,21 @@ interface XRGetDateAck {
 	customerTimezone: string;
 	customerTimezoneDesc: string;
 }
-interface XRLabelHistory {
+export interface XRLabelHistory {
 	entries: XRLabelEntry[];
 }
-interface XRCrossProjectLink {
+export interface XRCrossProjectLink {
 	upItem: XRCrossProjectLink$OneItem;
 	downItem: XRCrossProjectLink$OneItem;
 	relation: string;
 	creationDate: string;
 }
-interface XRSettingType {
+export interface XRSettingType {
 	value: string;
 	key: string;
 	secret: boolean;
 }
-interface XRMatrixLicense {
+export interface XRMatrixLicense {
 	logger: XRLogger;
 	licenseVersion: number;
 	customerName: string;
@@ -142,7 +142,7 @@ interface XRMatrixLicense {
 	VERSION: number;
 	MAX_USERS: number;
 }
-interface XRUserType {
+export interface XRUserType {
 	id: number;
 	login: string;
 	email: string;
@@ -186,7 +186,7 @@ export interface XRTodo {
 	closedAtUserFormat: string;
 	future: boolean;
 }
-interface XRMainAndBranch {
+export interface XRMainAndBranch {
 	mainline: string;
 	branch: string;
 	user: string;
@@ -198,7 +198,7 @@ interface XRMainAndBranch {
 	lastMergeDatetimeUser: string;
 	lastMergeUser: string;
 }
-interface XRProjectType {
+export interface XRProjectType {
 	id: number;
 	label: string;
 	shortLabel: string;
@@ -207,7 +207,7 @@ interface XRProjectType {
 	accessType: string;
 	uniqueIds: boolean;
 }
-interface XRUserPermissionType {
+export interface XRUserPermissionType {
 	id: number;
 	login: string;
 	email: string;
@@ -215,21 +215,21 @@ interface XRUserPermissionType {
 	firstName: string;
 	lastName: string;
 }
-interface XRGroupPermissionType {
+export interface XRGroupPermissionType {
 	groupName: string;
 	permission: number;
 	groupId: number;
 	membership: XRUserTypeSimple[];
 }
-interface XRCategoryExtendedListType {
+export interface XRCategoryExtendedListType {
 	categoryExtended: XRCategoryExtendedType[];
 }
-interface XRCategoryAndSettingListType {
+export interface XRCategoryAndSettingListType {
 	settingList: XRSettingType[];
 	categoryId: number;
 	categoryShort: string;
 }
-interface XRPluginSetting {
+export interface XRPluginSetting {
 	pluginId: number;
 	pluginLongName: string;
 	pluginShortName: string;
@@ -237,14 +237,14 @@ interface XRPluginSetting {
 	computedSettings: XRSettingAndValue[];
 	capabilities: XRPluginCapabilities;
 }
-interface XRJobFileWithUrl {
+export interface XRJobFileWithUrl {
 	restUrl: string;
 	jobFileId: number;
 	visibleName: string;
 	internalPath: string;
 	mimeType: string;
 }
-interface XRCategoryType {
+export interface XRCategoryType {
 	id: number;
 	label: string;
 	shortLabel: string;
@@ -261,7 +261,7 @@ export interface XRTrimNeedleItem {
 	upLinkList: XRTrimLink[];
 	downLinkList: XRTrimLink[];
 }
-interface XRReportType {
+export interface XRReportType {
 	id: string;
 	label: string;
 	group: string;
@@ -274,7 +274,7 @@ interface XRReportType {
 	selectSubtree: string;
 	targets: XRReportTarget[];
 }
-interface XRTrimLink {
+export interface XRTrimLink {
 	upLinkList: XRTrimLink[];
 	downLinkList: XRTrimLink[];
 	itemRef: string;
@@ -282,24 +282,24 @@ interface XRTrimLink {
 	modDate: string;
 	modDateUserFormat: string;
 }
-interface XRCategoryAndRoot {
+export interface XRCategoryAndRoot {
 	category: string;
 	rootFolder: string;
 }
-interface XRCrossProjectLink {
+export interface XRCrossProjectLink {
 	upItem: XRCrossProjectLink$OneItem;
 	downItem: XRCrossProjectLink$OneItem;
 	relation: string;
 	creationDate: string;
 }
-interface XRItemSimpleType {
+export interface XRItemSimpleType {
 	author: string;
 	birth: string;
 	ref: string;
 	title: string;
 	version: number;
 }
-interface XRTrimAudit {
+export interface XRTrimAudit {
 	userLogin: string;
 	dateTime: string;
 	dateTimeUserFormat: string;
@@ -319,20 +319,20 @@ interface XRTrimAudit {
 	tags: XRTag[];
 	itemsDeletedByMerge: XRItemSimpleType[];
 }
-interface XRLabelEntry {
+export interface XRLabelEntry {
 	itemRef: string;
 	labels: XRLabelChange[];
 }
-interface XRCrossProjectLink$OneItem {
+export interface XRCrossProjectLink$OneItem {
 	itemId: number;
 	version: number;
 	projectShort: string;
 	itemRefWithVersion: string;
 }
-interface XRLogger {
+export interface XRLogger {
 	ROOT_LOGGER_NAME: string;
 }
-interface XRTokenType {
+export interface XRTokenType {
 	userId: number;
 	tokenId: number;
 	purpose: string;
@@ -341,28 +341,28 @@ interface XRTokenType {
 	validTo: string;
 	validToUserFormat: string;
 }
-interface XRTodoAction {
+export interface XRTodoAction {
 	text: string;
 	todoType: string;
 }
-interface XRUserTypeSimple {
+export interface XRUserTypeSimple {
 	userId: number;
 	login: string;
 	email: string;
 	firstName: string;
 	lastName: string;
 }
-interface XRCategoryExtendedType {
+export interface XRCategoryExtendedType {
 	category: XRCategoryType;
 	fieldList: XRFieldListType;
 	enable: string[];
 }
-interface XRSettingAndValue {
+export interface XRSettingAndValue {
 	setting: string;
 	value: string;
 	encrypted: boolean;
 }
-interface XRPluginCapabilities {
+export interface XRPluginCapabilities {
 	canCreate: boolean;
 	canFind: boolean;
 	needSetup: boolean;
@@ -376,7 +376,7 @@ interface XRPluginCapabilities {
 	extendedSettings: boolean;
 	hideInProjectSettings: boolean;
 }
-interface XRFieldValType {
+export interface XRFieldValType {
 	id: number;
 	value: string;
 	hide: number;
@@ -384,18 +384,18 @@ interface XRFieldValType {
 	fieldName: string;
 	fieldType: string;
 }
-interface XRReportTarget {
+export interface XRReportTarget {
 	targetId: string;
 	targetText: string;
 }
-interface XRTechAuditType {
+export interface XRTechAuditType {
 	id: number;
 	operation: string;
 	table: string;
 	index: number;
 	ref: string;
 }
-interface XRTag {
+export interface XRTag {
 	id: number;
 	auditId: number;
 	auditTime: string;
@@ -410,67 +410,67 @@ interface XRTag {
 	baseAuditCreation: string;
 	baseAuditId: number;
 }
-interface XRLabelChange {
+export interface XRLabelChange {
 	label: string;
 	set: XRLabelChangeDetail[];
 	reset: XRLabelChangeDetail[];
 }
-interface XRFieldListType {
+export interface XRFieldListType {
 	field: XRFieldType[];
 }
-interface XRLabelChangeDetail {
+export interface XRLabelChangeDetail {
 	version: number;
 	dateIso: string;
 	dateUser: string;
 }
-interface XRFieldType {
+export interface XRFieldType {
 	id: number;
 	order: number;
 	fieldType: string;
 	parameter: string;
 	label: string;
 }
-type XRPostProject_AddFile_AddFileAck = XRAddFileAck;
-type XRPostProject_LaunchReport_CreateReportJobAck = XRCreateReportJobAck;
-type XRPostProject_RestoreItem_UndeleteAnswer = XRUndeleteAnswer;
-type XRPostProject_SignItem_SignItemAck = XRSignItemAck;
-type XRPostProject_CompareHtml_HtmlCompareResult = XRHtmlCompareResult;
-interface XRAddFileAck {
+export type XRPostProject_AddFile_AddFileAck = XRAddFileAck;
+export type XRPostProject_LaunchReport_CreateReportJobAck = XRCreateReportJobAck;
+export type XRPostProject_RestoreItem_UndeleteAnswer = XRUndeleteAnswer;
+export type XRPostProject_SignItem_SignItemAck = XRSignItemAck;
+export type XRPostProject_CompareHtml_HtmlCompareResult = XRHtmlCompareResult;
+export interface XRAddFileAck {
 	fileId: number;
 	fileFullPath: string;
 	key: string;
 }
-interface XRCreateReportJobAck {
+export interface XRCreateReportJobAck {
 	jobId: number;
 }
-interface XRUndeleteAnswer {
+export interface XRUndeleteAnswer {
 	newParent: string;
 	newOrder: number;
 }
-interface XRSignItemAck {
+export interface XRSignItemAck {
 	result: string;
 	ok: boolean;
 }
-interface XRHtmlCompareResult {
+export interface XRHtmlCompareResult {
 	html: string[];
 	htmlMultiple: string[][];
 	spanElement: string;
 	addClass: string;
 	removeClass: string;
 }
-interface XRAccess {
+export interface XRAccess {
 	startDate8601: string;
 	endDate8601: string;
 	readWrite: number;
 	visitorOnly: boolean;
 }
-interface XRGroupType {
+export interface XRGroupType {
 	groupName: string;
 	membership: XRUserType[];
 	permissions: XRProjectPermissionType[];
 	groupId: number;
 }
-interface XRProjectPermissionType {
+export interface XRProjectPermissionType {
 	project: XRProjectType;
 	access: XRAccess;
 }
@@ -489,12 +489,12 @@ export interface IDB {
 	mode?: string;
 	order?: number;
 }
-interface IDBParent {
+export interface IDBParent {
 	parent: string;
 	position: number;
 	item: IItem;
 }
-interface IDBCache {
+export interface IDBCache {
 	sortChildren(itemId: string): any;
 	initMatrixTree(init: IDB[], includeActivity: boolean): any;
 	initConfigTree(init: IDB[]): any;
@@ -571,35 +571,35 @@ declare class DBCache implements IDBCache {
 	private deleteItemRec;
 	private insertAtRec;
 }
-interface XCPostCompareHtml extends IRestParam {
+export interface XCPostCompareHtml extends IRestParam {
 	arg?: string;
 }
-interface IRestConfig {
+export interface IRestConfig {
 	server: string;
 }
-interface IJcxhr {
+export interface IJcxhr {
 	status: number;
 	responseText: string;
 	responseJSON: IResponseJson;
 	displayError: string;
 	statusText?: string;
 }
-interface IResponseJson {
+export interface IResponseJson {
 	category: string;
 	detailsList: string[];
 	displayError?: string;
 	code?: string;
 }
-interface IFileParam {
+export interface IFileParam {
 	name: string;
 }
-interface IFileUploadProgress {
+export interface IFileUploadProgress {
 	position?: number;
 	loaded?: number;
 	totalSize?: number;
 	total?: number;
 }
-interface IFileUploadResult {
+export interface IFileUploadResult {
 	fileId: string;
 	fileFullPath: string;
 	key: string;
@@ -640,7 +640,7 @@ declare class RestConnector {
 	private put;
 	private deleteRestAsync;
 }
-type JsonEditorValidation = (json: unknown) => Promise<string | null>;
+export type JsonEditorValidation = (json: unknown) => Promise<string | null>;
 declare class JsonValidator {
 	private baseUrl;
 	private schemas;
@@ -688,22 +688,22 @@ declare class JsonValidator {
 	 */
 	schemaView(type: string): Promise<MatrixSchemaView | null>;
 }
-interface ISchema extends ISchemaObject {
+export interface ISchema extends ISchemaObject {
 }
-type ISchemaPropertyMap = {
+export type ISchemaPropertyMap = {
 	[key: string]: ISchemaItem;
 };
-interface ISchemaItem {
+export interface ISchemaItem {
 	description?: string;
 	type?: ESchemaType;
 	anyOf?: ISchemaItem[];
 }
-interface ISchemaObject extends ISchemaItem {
+export interface ISchemaObject extends ISchemaItem {
 	properties?: ISchemaPropertyMap;
 	additionalProperties?: ISchemaItem;
 	required?: string[];
 }
-interface ISchemaArray extends ISchemaItem {
+export interface ISchemaArray extends ISchemaItem {
 	items?: ISchemaItem;
 }
 declare enum ESchemaType {
@@ -713,7 +713,7 @@ declare enum ESchemaType {
 	number = "number",
 	boolean = "boolean"
 }
-interface ISchemaPrintTypeInfo {
+export interface ISchemaPrintTypeInfo {
 	help?: string;
 	type?: string;
 	subItems?: string;
@@ -728,40 +728,57 @@ declare class MatrixSchemaView {
 	renderArray(array: ISchemaArray): string;
 	renderProperty(prop: ISchemaItem): ISchemaPrintTypeInfo;
 }
-interface IPrintSorterMap {
+/************************************************************************
+ 
+print sorter allow to sort items in tables
+ 
+************************************************************************/
+export interface IPrintSorterMap {
 	[key: string]: IPrintSorter;
 }
-interface IPrintSorter {
+export interface IPrintSorter {
 	getName: () => string;
 	getHelp: () => string;
 	sort: (a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => number;
 }
-interface IPrintSortParams {
+export interface IPrintSortParams {
 	sorter: string;
 	descending: boolean;
 	params?: any;
 }
-interface IPrintIteratorMap {
+/************************************************************************
+
+Iterators return children of an item, items or folders in a folder, or field / label objects
+
+ There are 3 main different types of formatters:
+ * Item operators return item ids based on an reference item or folder
+ * Label iterators return label objects for an item
+ * Field iterators return field objects for an item or folder
+
+ These are implemented as javascript functions
+
+************************************************************************/
+export interface IPrintIteratorMap {
 	[key: string]: IPrintIterator;
 }
-interface IPrintItemIteratorParams {
+export interface IPrintItemIteratorParams {
 	maxDepth?: number;
 	sorting?: IPrintSortParams[];
 }
-interface IPrintIterator extends IPrintBaseFunction {
+export interface IPrintIterator extends IPrintBaseFunction {
 	worksOnItem: boolean;
 	worksOnFolder: boolean;
 }
-interface IPrintItemIterator extends IPrintIterator {
+export interface IPrintItemIterator extends IPrintIterator {
 	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<string[]>;
 	getValidation: () => JsonEditorValidation | null;
 	folderIterator: boolean;
 	traceIterator: boolean;
 	tableRowIterator: boolean;
 }
-interface IPrintFieldIteratorParams {
+export interface IPrintFieldIteratorParams {
 }
-interface IPrintFieldInfo {
+export interface IPrintFieldInfo {
 	fieldId: string;
 	field: JQuery;
 	name: string;
@@ -770,22 +787,36 @@ interface IPrintFieldInfo {
 	jsonConfig: any;
 	jsonValue: any;
 }
-interface IPrintFieldIterator extends IPrintIterator {
+export interface IPrintFieldIterator extends IPrintIterator {
 	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintFieldIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<IPrintFieldInfo[]>;
 }
-interface IPrintLabelIteratorParams {
+export interface IPrintLabelIteratorParams {
 }
-interface IPrintLabelInfo {
+export interface IPrintLabelInfo {
 	id: string;
 	printName: string;
 	icon: string;
 	set: boolean;
 	jsonConfig: {};
 }
-interface IPrintLabelIterator extends IPrintIterator {
+export interface IPrintLabelIterator extends IPrintIterator {
 	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintLabelIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => IPrintLabelInfo[];
 }
-interface IPrintFormatter {
+/************************************************************************
+ 
+Formatter deal with an array or a single item/folder/label/field and convert that to an "html" string
+
+ There are 5 main different types of formatters:
+ * sequential: print folders/items in a list by mixing html with macros
+ * tables: print folders arrays in a tabular form by mixing html with macros
+ * blocks: print something about an item/folder/label/field by mixing html with macros
+ * traces: know how to iterate over traces
+ * fields / labels: know how to iterate over fields or labels
+ 
+ These are implemented as JSON objects or javascript functions
+
+************************************************************************/
+export interface IPrintFormatter {
 	/**
 	 * a unique id required for user defined id's if the uid is not unique it will overwrite the defaults
 	 */
@@ -807,7 +838,7 @@ interface IPrintFormatter {
 	*/
 	modDate?: string;
 }
-interface IPrintCustomFormatter {
+export interface IPrintCustomFormatter {
 	/**
 	 * The project on this instance that is used as the source
 	 * for the definitions. By default this is PRINT
@@ -824,7 +855,8 @@ interface IPrintCustomFormatter {
 	 */
 	functionDefaults: IPrintFunctionParamsOverwrites;
 }
-interface ICustomSection {
+/************************************** Main section definition  ********************************************/
+export interface ICustomSection {
 	description?: string;
 	descriptionContent?: string;
 	descriptionNoContent?: string;
@@ -837,7 +869,7 @@ export interface IProcessResult {
 	/** primary list of items from selection + first level interators */
 	redlining: string[];
 }
-interface IPrintProcessor {
+export interface IPrintProcessor {
 	prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): any;
 	processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): Promise<IProcessResult>;
 	getCustomStylesheet(): string;
@@ -850,13 +882,13 @@ interface IPrintProcessor {
 	getTableData(tableId: string, selection: string[]): Promise<string>;
 	globals: IPrintGlobals;
 }
-interface IStringRiskConfigMap {
+export interface IStringRiskConfigMap {
 	[key: string]: IRiskConfig;
 }
-interface IFieldCache {
+export interface IFieldCache {
 	[key: string]: IPrintFieldInfo;
 }
-interface IPrintGlobals {
+export interface IPrintGlobals {
 	itemMap: IStringJQueryMap;
 	riskControlCategories: IStringStringArrayMap;
 	categories: IStringJQueryMap;
@@ -871,46 +903,46 @@ interface IPrintGlobals {
 	lastItem: string;
 	lastFields: IFieldCache;
 }
-interface IPrintFunctionMap {
+export interface IPrintFunctionMap {
 	[key: string]: IPrintFunction;
 }
-interface IConditionFunctionMap {
+export interface IConditionFunctionMap {
 	[key: string]: IConditionFunction;
 }
-interface IPrintBaseFunction {
+export interface IPrintBaseFunction {
 	getName: () => string;
 	getHelp: (hideDetails?: boolean) => string;
 	editParams?: (json: any, onUpdate: (newParams: any) => void) => JQuery;
 }
-interface IPrintBaseFunctionMap {
+export interface IPrintBaseFunctionMap {
 	[key: string]: IPrintBaseFunction;
 }
-interface IPrintFunction extends IPrintBaseFunction {
+export interface IPrintFunction extends IPrintBaseFunction {
 	getGroup: () => string;
 	getSubGroup?: () => string;
 	renderAsync: (overwrites: IGlobalPrintFunctionParams, params: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void, printProcessor?: IPrintProcessor) => Promise<string>;
 }
-interface IPrintFunctionParams {
+export interface IPrintFunctionParams {
 }
-interface IPrintFunctionParamsOverwrites {
+export interface IPrintFunctionParamsOverwrites {
 	debug: number;
 	[key: string]: IPrintFunctionParams;
 }
-interface IGlobalPrintFunctionParams {
+export interface IGlobalPrintFunctionParams {
 	outputFormat: string;
 	customer: IPrintFunctionParamsOverwrites;
 	project: IPrintFunctionParamsOverwrites;
 	section: IPrintFunctionParamsOverwrites;
 	tableRow?: number;
 }
-interface IConditionFunction extends IPrintBaseFunction {
+export interface IConditionFunction extends IPrintBaseFunction {
 	itemOrFolder: boolean;
 	evaluate: (overwrites: IGlobalPrintFunctionParams, params: any, itemOrFolderRef: any, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<boolean>;
 }
-interface ITraceConfig {
+export interface ITraceConfig {
 	rules: ITraceConfigDetails[];
 }
-interface ITraceConfigDetails {
+export interface ITraceConfigDetails {
 	category: string;
 	creates_end: string | boolean;
 	end_point?: string;
@@ -918,19 +950,19 @@ interface ITraceConfigDetails {
 	up_rules: ITraceConfigRule[];
 	down_rules: ITraceConfigRule[];
 }
-interface ITraceConfigRule {
+export interface ITraceConfigRule {
 	message: string;
 	name: string;
 	rule: TTraceRule;
 	any_of: string[];
 }
-type TTraceRule = "can_have" | "must_have";
+export type TTraceRule = "can_have" | "must_have";
 declare enum EnumItemPublish {
 	IfNotInGroup = 0,
 	Always = 1,
 	Never = 2
 }
-interface IQMSConfig {
+export interface IQMSConfig {
 	/** there's only one publication in the array supported */
 	publications: IPublication[];
 	rolesTargetProjects?: string[];
@@ -942,16 +974,16 @@ interface IQMSConfig {
 	/** obsolete */
 	legacyRoles: boolean;
 }
-interface ITraining {
+export interface ITraining {
 	messages?: ITrainingMessages;
 }
-interface ITrainingMessages {
+export interface ITrainingMessages {
 	trainingSub?: string;
 	trainingText?: string;
 	overdueSub?: string;
 	overdueText?: string;
 }
-interface IPublication {
+export interface IPublication {
 	/** information for each publishable category */
 	rules: IPublicationCategory[];
 	/** needs to be PUB right now */
@@ -965,7 +997,7 @@ interface IPublication {
 	/** obsolete */
 	keepFlatList: boolean;
 }
-interface IPublicationCategory {
+export interface IPublicationCategory {
 	/** the category for which the rule applies  */
 	category: string;
 	/** a list of labels which must be set to be able to publish (approved labels)*/
@@ -979,7 +1011,7 @@ interface IPublicationCategory {
 	/** if a PROC should only be published with its WI,s the group down would be WI*/
 	groupDown?: string[];
 }
-interface ILabelsConfig {
+export interface ILabelsConfig {
 	/** basic label definitions */
 	labels: ILabel[];
 	/** grouping of labels to or, xor or review groups */
@@ -995,7 +1027,7 @@ interface ILabelsConfig {
 	/** invert groups in items (this will make groups show in the wrong order... as it was in 2.2 and before) */
 	invertGroups?: boolean;
 }
-interface ILabelStyle {
+export interface ILabelStyle {
 	label: {
 		on: {
 			foreground: string;
@@ -1047,12 +1079,12 @@ export interface ILabel {
 	template?: ILabelTemplate;
 	dontCopy?: boolean;
 }
-interface ILabelTemplate {
+export interface ILabelTemplate {
 	id: number;
 	name: string;
 	key: string;
 }
-interface ILabelGroup {
+export interface ILabelGroup {
 	selection: string;
 	labels: string[];
 	filterMenu?: IFilterMenu;
@@ -1073,7 +1105,7 @@ interface ILabelGroup {
 	filterSelection?: string;
 	virtualGroup?: boolean;
 }
-interface IFilterMenu {
+export interface IFilterMenu {
 	displayName: string;
 	on?: {
 		foreground: string;
@@ -1090,7 +1122,7 @@ interface IFilterMenu {
 		tooltip?: string;
 	};
 }
-interface IDesignReview {
+export interface IDesignReview {
 	/** id of label (no spaces, special characters) */
 	label: string;
 	/** define who can approve the review. Empty array -> everybody.  */
@@ -1118,11 +1150,11 @@ interface IDesignReview {
 	/** beta: allows to name a table field. If this exists, the revision need to increase when setting the label */
 	revisionTableName?: string;
 }
-interface IMailConfig {
+export interface IMailConfig {
 	canned?: IMailConfigCanned;
 	defaultCC?: string[];
 }
-interface IMailConfigCanned {
+export interface IMailConfigCanned {
 	/**  replacement for please sign message (in SIGN page)*/
 	please_sign?: string;
 	/** replacement for look at item message (in tool menu)*/
@@ -1134,29 +1166,29 @@ interface IMailConfigCanned {
 	/** Generic replacement */
 	[key: string]: string | undefined;
 }
-interface ISearchConfig {
+export interface ISearchConfig {
 	searches: ISearchConfigSearch[];
 	init?: IInitialSearches[];
 }
-interface ISearchConfigSearch {
+export interface ISearchConfigSearch {
 	name: string;
 	expr: string;
 }
-interface IInitialSearches {
+export interface IInitialSearches {
 	expr: string;
 	style: string;
 	computeFolder: number;
 }
-interface ILabelLockConfig {
+export interface ILabelLockConfig {
 	locks: ILabelLockConfigLocks[];
 }
-interface ILabelLockConfigLocks {
+export interface ILabelLockConfigLocks {
 	label: string;
 	lockKeeper: string[];
 	/**  if set to true, the user can add up / down traces to the item even if the item is locked*/
 	allowTraces?: boolean;
 }
-interface IRiskConfig {
+export interface IRiskConfig {
 	factors?: IRiskConfigFactor[];
 	method?: IRiskConfigMethod;
 	maxGreen?: number;
@@ -1175,19 +1207,19 @@ interface IRiskConfig {
 	controls?: string;
 	hazard_category?: string;
 }
-type IRiskConfigMethod = "+" | "*" | "lookup";
-interface IRiskConfigRT {
+export type IRiskConfigMethod = "+" | "*" | "lookup";
+export interface IRiskConfigRT {
 	short: string;
 	long: string;
 	report: string;
 	hidden?: boolean;
 	colDef?: IColDef;
 }
-interface IRiskConfigMitgationType {
+export interface IRiskConfigMitgationType {
 	type: string;
 	name: string;
 }
-interface IRiskConfigFactor {
+export interface IRiskConfigFactor {
 	type: string;
 	label: string;
 	weights: IRiskConfigFactorWeight[];
@@ -1198,34 +1230,34 @@ interface IRiskConfigFactor {
 	spancols?: boolean;
 	colDef?: IColDef;
 }
-interface IColDef {
+export interface IColDef {
 	width?: string;
 	minWidth?: string;
 	maxWidth?: string;
 	rowSpan?: boolean;
 }
-interface IRiskConfigMitgationTable {
+export interface IRiskConfigMitgationTable {
 	columns: IRiskConfigTablesColumn[];
 }
-interface IRiskConfigTablesColumn {
+export interface IRiskConfigTablesColumn {
 	name: string;
 	field: string;
 	editor: RiskTableCellEditor;
 	options?: any;
 }
-type RiskTableCellEditor = "control" | "reduction";
-type IRiskConfigFactorInputType = "text" | "select" | "textarea" | "richtext";
-interface IRiskConfigFactorOption {
+export type RiskTableCellEditor = "control" | "reduction";
+export type IRiskConfigFactorInputType = "text" | "select" | "textarea" | "richtext";
+export interface IRiskConfigFactorOption {
 	value: string;
 	label: string;
 	changes: IRiskConfigSelectChanges[];
 }
-interface IRiskConfigSelectChanges {
+export interface IRiskConfigSelectChanges {
 	changesFactor?: string;
 	changesWeight?: string;
 	value: number | string;
 }
-interface IRiskConfigFactorWeight {
+export interface IRiskConfigFactorWeight {
 	type: string;
 	help: boolean;
 	label: string;
@@ -1234,37 +1266,37 @@ interface IRiskConfigFactorWeight {
 	values: IRiskConfigFactorWeightValue[];
 	colDef?: IColDef;
 }
-interface IRiskConfigFactorWeightValue {
+export interface IRiskConfigFactorWeightValue {
 	shortname: string;
 	help: string;
 	factor: number;
 }
-interface IRiskConfigReduction {
+export interface IRiskConfigReduction {
 	name: string;
 	options: IRiskConfigReductionOptions[];
 }
-interface IRiskConfigReductionOptions {
+export interface IRiskConfigReductionOptions {
 	shortname: string;
 	by: number;
 	changes: string;
 }
-interface IRiskConfigZone {
+export interface IRiskConfigZone {
 	zone?: string;
 	foreground?: string;
 	background?: string;
 	textColor?: string;
 	label?: string;
 }
-interface IRiskConfigRPN {
+export interface IRiskConfigRPN {
 	zone: string;
 	text: string;
 	[key: string]: string | number;
 }
-interface IRiskPostReduction {
+export interface IRiskPostReduction {
 	weights: IRiskConfigFactorWeight[];
 	help?: string;
 }
-interface IDHFConfig {
+export interface IDHFConfig {
 	/** if set to true the created PDFs won't be locked */
 	doNotLockPDF?: boolean;
 	/** default formats for different report types */
@@ -1320,45 +1352,45 @@ interface IDHFConfig {
 	/** obsolete */
 	functionDefaults?: IPrintFunctionParamsOverwrites;
 }
-interface ICaptions {
+export interface ICaptions {
 	figure?: ICaption;
 	table?: ICaption;
 }
-interface ICaption {
+export interface ICaption {
 	preNo: string;
 	postNo: string;
 }
-interface IDHFCategories {
+export interface IDHFCategories {
 	documentTypes: string[];
 	documentForms: string[];
 	documentSigned: string[];
 	documentTemplates: string[];
 	signAs: string;
 }
-interface IDHFConfigCustomReports {
+export interface IDHFConfigCustomReports {
 	group: string;
 }
-interface IDHFConfigDefaultFormats {
+export interface IDHFConfigDefaultFormats {
 	DOC: IDHFConfigDefaultFormatsOption;
 	SIGN: IDHFConfigDefaultFormatsOption;
 	REPORT: IDHFConfigDefaultFormatsOption;
 	[map: string]: IDHFConfigDefaultFormatsOption;
 }
-type IDHFConfigDefaultFormatsOption = "docx" | "pdf" | "html";
-interface IDHFConfigHideFormat {
+export type IDHFConfigDefaultFormatsOption = "docx" | "pdf" | "html";
+export interface IDHFConfigHideFormat {
 	category: string;
 	format: IDHFConfigDefaultFormatsOption;
 }
-interface IDHFConfigCustomColumn {
+export interface IDHFConfigCustomColumn {
 	type: string;
 	options: IDropdownOption[] | any;
 	name: string;
 	editor?: string;
 }
-interface IDHFConfigTable {
+export interface IDHFConfigTable {
 	columns: IDHFConfigTableColumn[];
 }
-interface IDHFConfigTableColumn {
+export interface IDHFConfigTableColumn {
 	name: string;
 	field: string;
 	columnType: IDHFConfigTableColumnType;
@@ -1366,26 +1398,26 @@ interface IDHFConfigTableColumn {
 	editor?: TableCellEditor;
 	options?: IDropdownOption[];
 }
-type IDHFConfigTableColumnType = "type0" | "type1" | "type2" | "type3" | "type4" | "type5" | "type6" | "type7" | "type8" | "type9" | "type10" | "type11" | "type12" | "type13" | "type14";
-interface IDHFConfigCustomTable {
+export type IDHFConfigTableColumnType = "type0" | "type1" | "type2" | "type3" | "type4" | "type5" | "type6" | "type7" | "type8" | "type9" | "type10" | "type11" | "type12" | "type13" | "type14";
+export interface IDHFConfigCustomTable {
 	name: string;
 	id: string;
 }
-interface IDHFConfigStandardDocs {
+export interface IDHFConfigStandardDocs {
 	[key: string]: IDHFConfigStandardDocsDef;
 }
-interface IDHFConfigStandardDocsDef {
+export interface IDHFConfigStandardDocsDef {
 	fields: IDHFConfigStandardDocsSection[];
 }
-interface IDHFConfigStandardDocsSection {
+export interface IDHFConfigStandardDocsSection {
 	[key: string]: string;
 }
-interface IContextPageConfig {
+export interface IContextPageConfig {
 	categoryHelp?: IContextPageConfigHelp;
 	itemHelp?: IContextPageConfigHelp;
 	tabs?: IContextPageConfigTab[];
 }
-interface IContextPageConfigHelp {
+export interface IContextPageConfigHelp {
 	[key: string]: string;
 }
 export interface IContextPageConfigTab {
@@ -1395,8 +1427,8 @@ export interface IContextPageConfigTab {
 	hipchat?: boolean;
 	baseURL?: string;
 }
-type ContextPageConfigTabOption = "help" | "support" | "faq" | "references" | "smartlinks" | "iframe" | "iframeget" | "upreferences" | "downreferences" | "foldercontent" | "trainings";
-interface ITestConfig {
+export type ContextPageConfigTabOption = "help" | "support" | "faq" | "references" | "smartlinks" | "iframe" | "iframeget" | "upreferences" | "downreferences" | "foldercontent" | "trainings";
+export interface ITestConfig {
 	xtcType: string;
 	cloneSources: string[];
 	presetFields: ITestConfigPresetField[];
@@ -1408,47 +1440,47 @@ interface ITestConfig {
 	reExecute?: string;
 	autoFillTester?: string;
 }
-interface ITestConfigPresetField {
+export interface ITestConfigPresetField {
 	field: string;
 	value: string;
 }
-interface ITestConfigTables {
+export interface ITestConfigTables {
 	[key: string]: ITestConfigTablesColumns;
 }
-interface ITestConfigTablesColumns {
+export interface ITestConfigTablesColumns {
 	columns: ITestConfigTablesColumn[];
 }
-interface ITestConfigTablesColumn {
+export interface ITestConfigTablesColumn {
 	name: string;
 	field: string;
 	editor: TableCellEditor;
 	options?: IDropdownOption[] | any;
 }
-type TableCellEditor = ColumnEditor.text | ColumnEditor.none | ColumnEditor.textline | ColumnEditor.design | ColumnEditor.uprules | ColumnEditor.downrules | ColumnEditor.rules | ColumnEditor.result | ColumnEditor.user | ColumnEditor.versionletter | ColumnEditor.date | ColumnEditor.select;
-interface ITestRule {
+export type TableCellEditor = ColumnEditor.text | ColumnEditor.none | ColumnEditor.textline | ColumnEditor.design | ColumnEditor.uprules | ColumnEditor.downrules | ColumnEditor.rules | ColumnEditor.result | ColumnEditor.user | ColumnEditor.versionletter | ColumnEditor.date | ColumnEditor.select;
+export interface ITestRule {
 	human: string;
 	code: string;
 	render: TestResultType;
 }
-interface ITestRuleAuto extends ITestRule {
+export interface ITestRuleAuto extends ITestRule {
 	rule: TestResultRule;
 	param: string;
 }
-interface ITestRuleManual extends ITestRule {
+export interface ITestRuleManual extends ITestRule {
 	command: string;
 }
-interface ITestRuleStep extends ITestRuleManual {
+export interface ITestRuleStep extends ITestRuleManual {
 	key: string;
 	image: string;
 }
-type TestResultType = "ok" | "error" | "warning";
-type TestResultRule = "all" | "one" | "";
-interface ICategorySetting {
+export type TestResultType = "ok" | "error" | "warning";
+export type TestResultRule = "all" | "one" | "";
+export interface ICategorySetting {
 }
-interface ICategoryGroups {
+export interface ICategoryGroups {
 	groups: ICategoryGroup[];
 }
-interface ICategoryGroup {
+export interface ICategoryGroup {
 	categories: string[];
 	text: string;
 	name: string;
@@ -1456,15 +1488,15 @@ interface ICategoryGroup {
 	position?: number;
 	helpPage?: string;
 }
-interface IACL {
+export interface IACL {
 	rules: IACLRules[];
 }
-interface IACLRules {
+export interface IACLRules {
 	name: string;
 	groups: string[];
 	acl: IACLGroupsAcl[];
 }
-interface IACLGroupsAcl {
+export interface IACLGroupsAcl {
 	category: string;
 	fields?: string[];
 	rights: string[];
@@ -1504,13 +1536,13 @@ export interface IFieldParameter {
 	/** legacy options */
 	requiresContent?: boolean;
 }
-interface IDropDownConfig {
+export interface IDropDownConfig {
 	fieldMeaning?: string;
 	placeholder?: string;
 	options: IDropdownOption[];
 	groups?: IDropdownGroup[];
 }
-interface IDropdownGroup {
+export interface IDropdownGroup {
 	value: string;
 	label: string;
 }
@@ -1521,10 +1553,10 @@ export interface IDropdownOption {
 	disabled?: boolean;
 	strikethrough?: boolean;
 }
-interface ISmartTextConfig {
+export interface ISmartTextConfig {
 	replacements?: ISmartTextConfigReplacement[];
 }
-interface ISmartTextConfigReplacement {
+export interface ISmartTextConfigReplacement {
 	/** id of the macro: needs to be simple combination of letters and digits */
 	what: string;
 	/** the text to display */
@@ -1544,7 +1576,7 @@ interface ISmartTextConfigReplacement {
 	/**  Include this term/abv in the List of Terms and abbreviation doc section when not surrounded with _ */
 	tableNoUnderscore?: boolean;
 }
-interface IExtras {
+export interface IExtras {
 	tableCanImport: boolean | string;
 	copyPaste: boolean | string;
 	moveIn: boolean | string;
@@ -1559,7 +1591,7 @@ interface IExtras {
 	defaultToNewEditor: boolean | string;
 	enableLegacyReport?: "0" | "1" | "2";
 }
-interface IFieldCapabilities {
+export interface IFieldCapabilities {
 	/** if set only one of this kind of fields can be created per category*/
 	onlyOne?: boolean;
 	/** can be published to QMS site */
@@ -1585,7 +1617,7 @@ interface IFieldCapabilities {
 	/** Can be imported from excel */
 	canImportedFromExcel?: boolean;
 }
-interface IFieldDescription {
+export interface IFieldDescription {
 	id: string;
 	label: string;
 	class: string;
@@ -1599,25 +1631,26 @@ export interface INotificationConfig {
 	browserNotificationDisabled?: boolean;
 	browserNotificationAutoCloseAfter?: number;
 }
-interface ICleanup {
+export interface ICleanup {
 	"cleanup": boolean;
 	"tags": string[];
 	"attributes": IStringStringArrayMap;
 	"enforcedAttributes": IStringStringArrayMap;
 	"protocolAttributes": ICleanupProtocol[];
 }
-interface ICleanupProtocol {
+export interface ICleanupProtocol {
 	"element": string;
 	"attribute": string;
 	"protocols": string[];
 }
-interface IImportConfig {
+/** defines parameters for imports */
+export interface IImportConfig {
 	/** includes keep same id */
 	includes: IImportConfigDetails;
 	/** copies are editable new copies */
 	copies: IImportConfigDetails;
 }
-interface IImportConfigDetails {
+export interface IImportConfigDetails {
 	/** includes can be locked by specifying a lock label */
 	lockLabel: string;
 	/** there can be a list of users who can import (if there's nobody in there, or no list is defined: everybody can) */
@@ -1639,7 +1672,7 @@ export declare enum IWidgetScope {
 	user = 1,
 	superAdmin = 2
 }
-interface IWidgetPosition {
+export interface IWidgetPosition {
 	dashboard: string;
 	w: number;
 	h: number;
@@ -1672,11 +1705,11 @@ export interface IWidgetPlugin {
 	clicked?(): void;
 	refresh?(): void;
 }
-interface IDashboard {
+export interface IDashboard {
 	displayString: string;
 	icon?: string;
 }
-interface IDashboardConfig {
+export interface IDashboardConfig {
 	dashboards: {
 		[key: string]: IDashboard;
 	};
@@ -1685,7 +1718,7 @@ export declare class WidgetPluginsConstants {
 	static defaultDashboardId: string;
 	static defaultDashboard: IDashboard;
 }
-interface IWidgetPluginsContainer {
+export interface IWidgetPluginsContainer {
 	visible: boolean;
 	previousUrl: string;
 	toggle(): any;
@@ -1698,7 +1731,10 @@ interface IWidgetPluginsContainer {
 	deleteWidget(displayedWidget: IDisplayedWidget): any;
 	showUpdateShowHiddenButton(): any;
 }
-interface IFieldHandler {
+/**
+ * There should be an implementation of IFieldHandler for each type of field matrix supports.
+ */
+export interface IFieldHandler {
 	/** Returns the type of field this handler is for. */
 	getFieldType(): string;
 	/**
@@ -1778,7 +1814,7 @@ declare abstract class BaseControl<T extends IFieldHandler> implements IBaseCont
 	abstract resizeItem(newWidth?: number, force?: boolean): void;
 	abstract destroy(): void;
 }
-interface IBaseDropdownFieldParams {
+export interface IBaseDropdownFieldParams {
 	splitHuman?: boolean;
 	maxItems?: number;
 	create?: boolean;
@@ -1806,7 +1842,7 @@ export declare class DropdownFieldHandler implements IFieldHandler {
 	getValues(filterOnOptions?: boolean): string[];
 	getHuman(): string;
 }
-interface IDropdownParams extends IBaseDropdownFieldParams {
+export interface IDropdownParams extends IBaseDropdownFieldParams {
 	readonly?: boolean;
 	placeholder?: string;
 	groups?: IDropdownGroup[];
@@ -1830,7 +1866,7 @@ export declare class EmptyFieldHandler implements IFieldHandler {
 	getData(): string | undefined;
 	setData(value: string, doValidation?: boolean): void;
 }
-interface ILinkRenderParams {
+export interface ILinkRenderParams {
 	linkTypes?: ILinkCategories[];
 	none?: string;
 	disableCreate?: boolean;
@@ -1845,7 +1881,7 @@ interface ILinkRenderParams {
 		ignoreOutOfDate?: boolean;
 	}[];
 }
-interface ILinkCollectionOptions extends IBaseControlOptions {
+export interface ILinkCollectionOptions extends IBaseControlOptions {
 	item?: any;
 	fieldValue?: IReference[];
 	parameter?: ILinkRenderParams;
@@ -1854,12 +1890,12 @@ interface ILinkCollectionOptions extends IBaseControlOptions {
 	id?: string;
 	tiny?: boolean;
 }
-interface ILinkCategories {
+export interface ILinkCategories {
 	name?: string;
 	required?: boolean;
 	type: string;
 }
-interface IItemControlOptions extends IBaseControlOptions {
+export interface IItemControlOptions extends IBaseControlOptions {
 	id?: string;
 	control?: JQuery;
 	type?: string;
@@ -1875,6 +1911,14 @@ interface IItemControlOptions extends IBaseControlOptions {
 	canEdit?: boolean;
 	canEditLabels?: boolean;
 	canEditTitle?: boolean;
+}
+export interface ILinkType {
+	type: string;
+	name?: string;
+	buttonName?: string;
+	folder?: boolean;
+	import?: boolean;
+	required?: boolean;
 }
 declare class ItemControl {
 	private settings;
@@ -1936,7 +1980,7 @@ export declare class RichtextFieldHandler implements IFieldHandler {
 	getHtml(): string;
 	setHtml(str: string): RichtextFieldHandler;
 }
-interface IRichTextParams {
+export interface IRichTextParams {
 	showSmartText?: boolean;
 	autoEdit?: boolean;
 	height?: number;
@@ -1953,7 +1997,7 @@ interface IRichTextParams {
 	initialContent?: string;
 	visibleOption?: string;
 }
-interface IThemeSelector {
+export interface IThemeSelector {
 	themeSelectorAdded: boolean;
 	loadTheme(themeName: string): any;
 	init(): any;
@@ -1969,7 +2013,7 @@ export interface IContextInformation {
 	item: string;
 	fieldList: string;
 }
-interface IContextFramesTools {
+export interface IContextFramesTools {
 	showContextFrame(tabType: string, makeVisible: boolean): any;
 	getExpender(): any;
 	visibility(enabled: boolean): any;
@@ -1979,19 +2023,19 @@ interface IContextFramesTools {
 	fillContextFrame(_data: IItem, itemId: string): any;
 	init(): any;
 }
-interface IUploadedFileInfo {
+export interface IUploadedFileInfo {
 	fileName: string;
 	fileId?: string;
 	uploaded?: boolean;
 	fileObj?: any;
 }
-interface IFileTools {
+export interface IFileTools {
 	UploadFilesAsync(files: FileList | File[]): JQueryDeferred<IUploadedFileInfo[]>;
 	UploadFileAsync(file: File): JQueryDeferred<IUploadedFileInfo[]>;
 	convertXLSXAsync(file: IFileParam): JQueryDeferred<string>;
 }
-type GetTitleFunction = (itemId: string) => string;
-interface ISimpleItemTools {
+export type GetTitleFunction = (itemId: string) => string;
+export interface ISimpleItemTools {
 	parseRef(itemRef: string, project: string, matrixBaseUrl: string): IItemIdParts;
 	getCreator(item: IItem): string;
 	getLastEditor(item: IItem): string;
@@ -2001,7 +2045,7 @@ interface ISimpleItemTools {
 	clone(item: IItemGet, copyLabels: boolean): IItemPut;
 	sort(a: string, b: string, project: string, matrixBaseUrl: string): any;
 }
-interface IItemTools {
+export interface IItemTools {
 	parseRef(itemRef: string): IItemIdParts;
 	getCreator(item: IItem): string;
 	getLastEditor(item: IItem): string;
@@ -2011,7 +2055,7 @@ interface IItemTools {
 	clone(item: IItemGet, copyLabels: boolean): IItemPut;
 	sort(a: string, b: string): any;
 }
-interface IJSONTools {
+export interface IJSONTools {
 	mergeOptions(defaultOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
 	setOptions(newOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
 	isTrue(obj: undefined | null | boolean | string | number): boolean;
@@ -2024,7 +2068,7 @@ interface IJSONTools {
 	escapeJson(code: string): string;
 	unEscapeJson(code: string): string;
 }
-interface IReportOptions extends IRestParam {
+export interface IReportOptions extends IRestParam {
 	format?: string;
 	inline?: boolean;
 	reason?: string;
@@ -2038,14 +2082,14 @@ interface IReportOptions extends IRestParam {
 	resturl?: string;
 	reportNameOverride?: string;
 }
-interface IReportTransferField {
+export interface IReportTransferField {
 	fromId: string;
 	toId: string;
 }
-interface IReportInput {
+export interface IReportInput {
 	to: string;
 }
-interface IReportGeneratorTools {
+export interface IReportGeneratorTools {
 	SaveAndCreate(itemId: string, reportOptions: IReportOptions, progressInfo: string, postCreateCallback: Function, postFailCallback?: Function, postProgressCallback?: Function): void;
 	CreateSignedDoc(docId: string, signatures: string[], signedDocumentsControl: JQuery, labelFilter: string, signName: string, transferFields: IReportTransferField[], defaultLabels: string[], docUpdateCb: (createdDocumentId: string) => void): void;
 	createSIGN(target: string, comment: string, docId: string, signatures: string[], signedDocumentsControl: JQuery, labelFilter: string, signName: string, transferFields: IReportTransferField[], defaultLabels: string[], docUpdateCb: (createdDocumentId: string) => void): void;
@@ -2053,13 +2097,13 @@ interface IReportGeneratorTools {
 	CreateReport(reportId: string, format: IReportOptions, inputItems?: IReportInput[], requiredItems?: IReportInput[]): void;
 	DownloadSignedDoc(signedId: string, format: IReportOptions): any;
 }
-interface IChangedLabels {
+export interface IChangedLabels {
 	changed: boolean;
 	added: string[];
 	removed: string[];
 	delta: string;
 }
-interface ILabelManager {
+export interface ILabelManager {
 	ignoreProjectFilter: boolean;
 	getFilterColor(): string;
 	getFilter(): string;
@@ -2091,7 +2135,7 @@ interface ILabelManager {
 	 */
 	decipherLastTimeLabelWasSet(labelHistory: XRLabelHistory, itemId: string, label: string, beforeRevision: number): number;
 }
-interface ILabelTools extends ILabelManager {
+export interface ILabelTools extends ILabelManager {
 	/**
 	 * Makes a server call to retrieve history for {itemId}, finds the revision of the item
 	 * with the given {itemId} at which {label} was last set. If {beforeRevision} is non-zero, the
@@ -2105,7 +2149,7 @@ interface ILabelTools extends ILabelManager {
 	 */
 	getLastTimeLabelWasSet(itemId: string, label: string, beforeRevision: number): Promise<number>;
 }
-interface ILoggerTools {
+export interface ILoggerTools {
 	log(id: string, msg: string): any;
 	debug(message: string): void;
 	info(message: string): void;
@@ -2113,7 +2157,7 @@ interface ILoggerTools {
 	error(message: string): void;
 	getLog(): string;
 }
-interface IMailTools {
+export interface IMailTools {
 	/** send mail
 	* @param {type} to comma separated list of user ids
 	* @param {type} cc comma separated  list of user ids
@@ -2146,9 +2190,9 @@ interface IMailTools {
 	getCannedMessage(messageId: string, to: string, itemId: string, custom?: string, body?: string): string;
 	sendMails(sendTos: string[], subject: string, messages: string[]): any;
 }
-interface ICancelSearchEvent {
+export interface ICancelSearchEvent {
 }
-interface ISearchTools {
+export interface ISearchTools {
 	OnCancelSearch: IEvent<ICancelSearchEvent, void>;
 	getFilter(): any;
 	cancelSearch(): any;
@@ -2158,7 +2202,7 @@ interface ISearchTools {
 	hideHighlight(): any;
 	renderHighlight(): any;
 }
-interface ISmartTextTools {
+export interface ISmartTextTools {
 	createMenu(docMode: boolean, tableMode: boolean): void;
 	deleteTag(what: string): void;
 	insertFigReference(reference: string, editor: any, editable: any): any;
@@ -2173,12 +2217,12 @@ interface ISmartTextTools {
 	showTooltips(node: JQuery, noContainer?: boolean): any;
 	prepareForReadReadRender(itemDetails: JQuery): any;
 }
-interface IDropDownButtonOption {
+export interface IDropDownButtonOption {
 	name: string;
 	class?: string;
 	click: Function;
 }
-interface IDialogOptions {
+export interface IDialogOptions {
 	container: JQuery;
 	title: string;
 	buttons: any[];
@@ -2194,14 +2238,14 @@ interface IDialogOptions {
 	onResize?: Function;
 	noCloseOnEscape?: boolean;
 }
-interface ICIColor {
+export interface ICIColor {
 	color: string;
 	alternateColor: string;
 }
-interface ICIColorList {
+export interface ICIColorList {
 	[key: string]: ICIColor;
 }
-interface IUIToolsEnum {
+export interface IUIToolsEnum {
 	widgetPluginsContainer: IWidgetPluginsContainer;
 	DateTime: IDateTimeUI;
 	BlockingProgress: IBlockingProgressUI;
@@ -2293,7 +2337,7 @@ export declare module UIToolsConstants {
 		None = 2
 	}
 }
-interface IDateTimeUI {
+export interface IDateTimeUI {
 	initDateTimeSettings(update?: boolean): Promise<void>;
 	renderHumanDate(date: Date, dateOnly?: boolean): string;
 	renderCustomerHumanDate(date: Date, dateOnly?: boolean): string;
@@ -2311,22 +2355,22 @@ interface IDateTimeUI {
 	getSimpleDateFormatMoment(): any;
 	getSimpleDateTimeFormatMoment(): any;
 }
-interface IBlockingProgressUITask {
+export interface IBlockingProgressUITask {
 	name: string;
 	progress?: number;
 }
-interface IBlockingProgressUI {
+export interface IBlockingProgressUI {
 	Init(tasks: IBlockingProgressUITask[], animate?: boolean): void;
 	SetProgress(taskIdx: number, percent: number, newText?: string): void;
 	SetProgressError(taskIdx: number, problem: string): void;
 }
-interface IProgressUI {
+export interface IProgressUI {
 	Init(message: string, warning?: boolean): void;
 	Update(progress: number): void;
 	SuccessHide(message: string, ms: number): void;
 	ErrorHide(message: string, ms: number): void;
 }
-interface ISelectUserOrGroupUI {
+export interface ISelectUserOrGroupUI {
 	showMultiUserSelect(container: JQuery, help: string, selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): any;
 	getUsersInSelection(selection: string[]): any;
 	getGroupId(group: XRGroupPermissionType | XRGroupType): any;
@@ -2339,24 +2383,24 @@ interface ISelectUserOrGroupUI {
 	getAllUsersAndGroups(): JQueryDeferred<IDropdownOption[]>;
 	showSingleSelectDialog(selected: string, title: string, help: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[]): any;
 }
-interface ILT {
+export interface ILT {
 	forDB(code: string, fieldId: number): any;
 	forUI(code: string, fieldId: number): any;
 }
-interface IMatrixUrlParts {
+export interface IMatrixUrlParts {
 	project: string;
 	item: string;
 	params: IStringMap;
 }
-interface IURLTools {
+export interface IURLTools {
 	getParameterByName(url: string, name: string): string | null;
 	parseUrl(url: String): IMatrixUrlParts;
 }
-interface IXPathTools {
+export interface IXPathTools {
 	get(node: JQuery): any;
 	hardCopy(element: JQuery): any;
 }
-interface IMatrix {
+export interface IMatrix {
 	Search: ISearchTools;
 	Item: IItemTools;
 	ContextFrames: IContextFramesTools;
@@ -2375,7 +2419,7 @@ interface IMatrix {
 	 */
 	CreateNewLabelTools(): ILabelTools;
 }
-interface IApp extends IBaseApp {
+export interface IApp extends IBaseApp {
 	mainApp: boolean;
 	mainTreeLoaded: boolean;
 	setCache(externalCache: DBCache): void;
@@ -2500,7 +2544,7 @@ interface IApp extends IBaseApp {
 	evaluateTraceRule(item: IItem, checkDownRule: boolean): ITraceRules;
 	dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
 }
-interface IBaseApp {
+export interface IBaseApp {
 	getParentId(itemId: string): string;
 	itemChanged(needsSave: boolean): void;
 	getVersion(): string;
@@ -2528,44 +2572,44 @@ export interface ISearchResult {
 	labels: string[];
 	creationDate?: string;
 }
-interface ISearchResultField {
+export interface ISearchResultField {
 	id: number;
 	value: string;
 }
-interface IRestoreItemResult {
+export interface IRestoreItemResult {
 	item: string;
 	version: number;
 	response: XRPostProject_RestoreItem_UndeleteAnswer;
 }
-interface IUpdateCache {
+export interface IUpdateCache {
 	item: IItem;
 	parent: string;
 }
-interface IItemEditor {
+export interface IItemEditor {
 	user: string;
 	thisSocket: boolean;
 }
-interface IItemWatched {
+export interface IItemWatched {
 	item: string;
 	users: string[];
 	editor: IItemEditor;
 	version: number;
 }
-interface IItemUpdated {
+export interface IItemUpdated {
 	item: string;
 	version: number;
 	title: string;
 	thisSocket: boolean;
 }
-interface IItemCreated {
+export interface IItemCreated {
 	item: string;
 	parent: string;
 	title: string;
 }
-interface IItemDeleted {
+export interface IItemDeleted {
 	item: string;
 }
-interface ITodoChanged {
+export interface ITodoChanged {
 }
 declare class PushMessages {
 	private webSocket;
@@ -2594,7 +2638,7 @@ declare class PushMessages {
 	onItemDeleted(fn: (args: IItemDeleted) => void): void;
 	onItemWatched(fn: (args: IItemWatched) => void): void;
 }
-interface ITraceRules {
+export interface ITraceRules {
 	valid: boolean;
 	mustHaveCategories: string[];
 	canHaveCategories: string[];
@@ -2603,11 +2647,11 @@ interface ITraceRules {
 	missingCanHaveCategories: string[];
 	outdatedReferences: string[];
 }
-interface ILinkInfo {
+export interface ILinkInfo {
 	category: string | string[];
 	reason: string;
 }
-interface IVersionDetails {
+export interface IVersionDetails {
 	action: string;
 	id: string;
 	title: string;
@@ -2622,7 +2666,7 @@ interface IVersionDetails {
 	auditId: number;
 	tags: XRTag[];
 }
-interface IReferenceUpdate {
+export interface IReferenceUpdate {
 	added: boolean;
 	fromId: string;
 	toId: string;
@@ -2631,7 +2675,7 @@ interface IReferenceUpdate {
 	comment: string;
 	user: string;
 }
-interface ISimpleTree {
+export interface ISimpleTree {
 	itemId: string;
 	title: string;
 	children?: ISimpleTree[];
@@ -2652,11 +2696,11 @@ export declare enum SelectMode {
 	independentAuto = 7,
 	autoPrecise = 8
 }
-interface INavigationBar {
+export interface INavigationBar {
 	disableTabs: boolean;
 	tabs: INavigationBarTab[];
 }
-interface INavigationBarTab {
+export interface INavigationBarTab {
 	name: string;
 	icon: string;
 	mode: TabMode;
@@ -2666,7 +2710,7 @@ declare enum TabMode {
 	ShowAsDefault = 1,
 	HideAsDefault = 2
 }
-interface IItemViewEvent {
+export interface IItemViewEvent {
 	caller: any;
 	item: IItem;
 	view: ItemControl;
@@ -2677,40 +2721,40 @@ export interface IItemChangeEvent {
 	before: IItem;
 	after: IItem;
 }
-interface IPreCreateItemEvent {
+export interface IPreCreateItemEvent {
 	caller: any;
 	view: ItemControl;
 	isItem: boolean;
 	category: string;
 }
-interface IPreCreateCloseEvent {
+export interface IPreCreateCloseEvent {
 	caller: any;
 	ok: boolean;
 }
-interface IGenericItemEvent {
+export interface IGenericItemEvent {
 	caller: any;
 	item: IItem;
 }
-interface IGenericItemIdEvent {
+export interface IGenericItemIdEvent {
 	caller: any;
 	itemId: string;
 }
-interface INewItemIdEvent {
+export interface INewItemIdEvent {
 	caller: any;
 	item: IDBParent;
 }
-interface ILabelChangeEvent {
+export interface ILabelChangeEvent {
 	caller: any;
 	item: IItem;
 	set: string[];
 	unset: string[];
 }
-interface ISignatureEvent {
+export interface ISignatureEvent {
 	caller: any;
 	item: IItem;
 	lastuser: boolean;
 }
-interface IEvent<TArgs, TMode> {
+export interface IEvent<TArgs, TMode> {
 	subscribe(caller: any, fn: (args: TArgs) => TMode): void;
 	unsubscribe(fn: (args: TArgs) => TMode): void;
 	dispatch(args: TArgs): TMode;
@@ -2825,10 +2869,10 @@ export interface IPlugin {
 	 */
 	getQMSUserMenuItems?(): IPluginMenuAction[];
 }
-interface IPluginHooks {
+export interface IPluginHooks {
 	shares: number;
 }
-interface ISettingPage {
+export interface ISettingPage {
 	id: string;
 	title: string;
 	type?: string;
@@ -2851,11 +2895,11 @@ export interface IProjectPageParam {
 	icon?: string;
 	usesFilters: boolean;
 }
-interface IPluginCoreForDashboard<DASHBOARDPARAMS extends IDashboardParametersBase> {
+export interface IPluginCoreForDashboard<DASHBOARDPARAMS extends IDashboardParametersBase> {
 	getDashboardAsync(): Promise<IDashboardPage<DASHBOARDPARAMS>>;
 	getConfig(): IPluginConfigForDashboard;
 }
-interface IPluginConfigForDashboard {
+export interface IPluginConfigForDashboard {
 	dashboard: IPluginFeatureDashboard;
 }
 export interface IDashboardPage<T extends IDashboardParametersBase> {
@@ -2892,12 +2936,12 @@ export interface IPluginFeatureDashboard extends IPluginFeatureBase {
 	/** Order in the tree */
 	order: number;
 }
-interface ITinySubMenuItem {
+export interface ITinySubMenuItem {
 	type: string;
 	text: string;
 	onAction: () => void;
 }
-interface ITinyMenuItem {
+export interface ITinyMenuItem {
 	text: string;
 	getSubmenuItems: () => ITinySubMenuItem[];
 }
@@ -3001,16 +3045,19 @@ declare class PluginManager {
 	/******************** admin function  */
 	getPlugins(): IPlugin[];
 }
-interface ITasksConfiguration {
+/*** config
+ *
+ */
+export interface ITasksConfiguration {
 	config: ITaskConfiguration[];
 }
-type FolderItem = Folder | IWltItemWithLinks;
-type Folder = {
+export type FolderItem = Folder | IWltItemWithLinks;
+export type Folder = {
 	name: string;
 	id: string;
 	children: FolderItem[];
 };
-interface IPFExternalField {
+export interface IPFExternalField {
 	/**  Jira field id something like custom_... or assignee or ...*/
 	extFieldId: string;
 	/** converter which specified how to convert matrix field into jira field */
@@ -3019,13 +3066,13 @@ interface IPFExternalField {
 	ddMapping?: IStringMap;
 	[key: string]: any;
 }
-interface ICatFieldMapping {
+export interface ICatFieldMapping {
 	/** map from category to the fields in the category. The matrixFieldName is the name of the field in Matrix  */
 	[key: string]: {
 		[matrixFieldName: string]: IPFExternalField;
 	};
 }
-interface ITaskConfiguration {
+export interface ITaskConfiguration {
 	/** defaultSearches: can be used to define default search expressions, (e.g. shortcuts to search task changed in last x hours, server plugin must understand these...) */
 	defaultSearches?: ITaskSearch[];
 	/** one2OneMapping: #
@@ -3083,46 +3130,46 @@ interface ITaskConfiguration {
 	/** pluginId: 'internal id provided by server'*/
 	pluginId?: number;
 }
-type ITaskTaskDescription = "hide" | "empty" | "text";
-interface IOne2OneMapping {
+export type ITaskTaskDescription = "hide" | "empty" | "text";
+export interface IOne2OneMapping {
 	projectId: string;
 	taskTypeId: string;
 	showId?: boolean;
 	statusOverwrites: IOne2OneMappingStatus[];
 }
-interface IOne2OneMappingStatus extends ITaskRenderInfo {
+export interface IOne2OneMappingStatus extends ITaskRenderInfo {
 	externalStatusName: string;
 	text: string;
 }
-interface ITaskRenderInfo {
+export interface ITaskRenderInfo {
 	text: string;
 	color?: string;
 	background?: string;
 	strikethrough?: boolean;
 }
-interface ITaskSearch {
+export interface ITaskSearch {
 	name: string;
 	expression: string;
 }
-interface ITaksProjects {
+export interface ITaksProjects {
 	projectId: string;
 	projectName: string;
 	taskTypes: ITaskType[];
 }
-interface ITaskType {
+export interface ITaskType {
 	taskTypeId: string;
 	taskTypeName: string;
 	iconUrl?: string;
 	iconClass?: string;
 }
-interface ISmartTask {
+export interface ISmartTask {
 	regex: string;
 	issueProjectId: string;
 	issueId: string;
 	title: string;
 	url?: string;
 }
-interface ISmartUrls {
+export interface ISmartUrls {
 	regex: string;
 	issueProjectId: string;
 	issueId: string;
@@ -3136,7 +3183,7 @@ export interface IWltItemWithLinks {
 	matrixItem: IWltMatrixItem;
 	links: IExternalItem[];
 }
-interface IWltMatrixItem {
+export interface IWltMatrixItem {
 	itemId: number;
 	projectId: number;
 	title: string;
@@ -3156,7 +3203,7 @@ export interface IExternalItem {
 	plugin: number;
 	more?: IMoreInfo[];
 }
-interface IMoreInfo {
+export interface IMoreInfo {
 	key: string;
 	value: string;
 }
@@ -3232,21 +3279,21 @@ export interface ICategoryConfig {
 	downLinksOptional: string[];
 	enable: string[];
 }
-interface XRFieldTypeAnnotated extends XRFieldType {
+export interface XRFieldTypeAnnotated extends XRFieldType {
 	parameterJson?: XRFieldTypeAnnotatedParamJson;
 }
-interface XRFieldTypeAnnotatedParamJson extends IFieldParameter {
+export interface XRFieldTypeAnnotatedParamJson extends IFieldParameter {
 	linkTypes?: XRFieldTypeAnnotatedParamJsonLinkType[];
 }
-interface XRFieldTypeAnnotatedParamJsonLinkType {
+export interface XRFieldTypeAnnotatedParamJsonLinkType {
 	required: boolean;
 	type: string;
 }
-interface IFieldsOfType {
+export interface IFieldsOfType {
 	category: string;
 	field: XRFieldTypeAnnotated;
 }
-interface IDropDownInfo {
+export interface IDropDownInfo {
 	id: string;
 	label: string;
 	value: IDropDownConfig;
@@ -3359,7 +3406,7 @@ export declare class ItemConfiguration {
 	/** return cleanup rules, if there's a project setting that wins, if there's no rules or it's disabled it returns -1 */
 	getCleanupRules(): ICleanup;
 }
-interface IGetProjectResultDateInfo {
+export interface IGetProjectResultDateInfo {
 	timeformat: string;
 	dateformat: string;
 	timeZone: string;
@@ -3369,7 +3416,7 @@ interface IGetProjectResultDateInfo {
 	dateIso8601: string;
 	timeUserFormat: string;
 }
-interface ICompanyUISettings {
+export interface ICompanyUISettings {
 	/** allow to add links to locked items */
 	allowAddLinkToLocked?: boolean;
 	/** if true the save button is always on the left */
@@ -3401,7 +3448,7 @@ interface ICompanyUISettings {
 	/** @internal obsolete */
 	legacyKeepFolder?: boolean;
 }
-interface ICompanyTiny {
+export interface ICompanyTiny {
 	/** true if browser context menu should be used as default */
 	tinyHideMenu?: boolean;
 	/** enable or disable editor plugins */
@@ -3440,10 +3487,10 @@ interface ICompanyTiny {
 	/** define auto replacement in tiny editor - see https://www.tiny.cloud/docs/tinymce/6/content-behavior-options/#text_patterns */
 	text_patterns?: any[];
 }
-interface ICompanyTinyMenuMap {
+export interface ICompanyTinyMenuMap {
 	[key: string]: ICompanyTinyMenu;
 }
-interface ICompanyTinyMenu {
+export interface ICompanyTinyMenu {
 	/** display name of menu */
 	title: string;
 	/** items to show */
@@ -3555,7 +3602,7 @@ declare class MatrixSession {
 	getCustomParams(): IStringMap;
 	getDashboardConfig(): IDashboardConfig;
 }
-interface IDocFieldHandler extends IFieldHandler {
+export interface IDocFieldHandler extends IFieldHandler {
 	dhfFieldConfig: IAnyMap;
 	setDHFConfig(config: IAnyMap): void;
 	getDefaultConfig(): any;
@@ -3564,7 +3611,7 @@ interface IDocFieldHandler extends IFieldHandler {
 	setFieldName(value: string): void;
 	addSignatures(signatures: string[], includeAll?: boolean): void;
 }
-interface IDHFSectionOptions {
+export interface IDHFSectionOptions {
 	globalOptions?: boolean;
 	show_section_title?: string;
 	automation?: string;
@@ -3572,21 +3619,21 @@ interface IDHFSectionOptions {
 	landscape?: boolean;
 	sub_section?: string;
 }
-interface IDHFControlDefinitionValue {
+export interface IDHFControlDefinitionValue {
 	fieldValue?: string;
 	fieldValueXML?: string;
 	name?: string;
 	type?: string;
 	ctrlConfig?: IDHFSectionOptions;
 }
-interface ITestFieldParam extends XRFieldTypeAnnotatedParamJson {
+export interface ITestFieldParam extends XRFieldTypeAnnotatedParamJson {
 	fieldMeaning: string;
 }
-interface ITestStepsResultOption {
+export interface ITestStepsResultOption {
 	id: string;
 	label: string;
 }
-interface ITestStepsResultsConfig {
+export interface ITestStepsResultsConfig {
 	canBeModified: boolean;
 	columns: ITestConfigTablesColumn[];
 	passFailEditorConfig: ITestRuleStep[];
@@ -3605,7 +3652,7 @@ declare class TestManagerConfiguration {
 	getTestRunResultPlaceholder(value: string): string;
 	isCloneSource(category: string): boolean;
 }
-interface IFieldMapping {
+export interface IFieldMapping {
 	fromId: number;
 	toId: number;
 }
@@ -3669,7 +3716,7 @@ declare enum ColumnEditor {
 	uid = "uid",
 	rules = "rules"
 }
-interface ITableControlOptionsColumn {
+export interface ITableControlOptionsColumn {
 	name: string;
 	field: string;
 	editor: ColumnEditor;
@@ -3680,7 +3727,7 @@ interface ITableControlOptionsColumn {
 	headerCssClass?: string;
 	cssClass?: string;
 }
-interface ITableControlBaseParams {
+export interface ITableControlBaseParams {
 	columns?: ITableControlOptionsColumn[];
 	initialContent?: any[];
 }
@@ -3762,7 +3809,7 @@ export declare class GenericFieldHandler implements IFieldHandler {
 	 */
 	setData(value: string, doValidation?: boolean): void;
 }
-interface IDHFControlDefinition extends IControlDefinition {
+export interface IDHFControlDefinition extends IControlDefinition {
 	dhfValue?: IDHFControlDefinitionValue;
 	configTouched?: boolean;
 }
@@ -3817,7 +3864,7 @@ export declare class TestResultFieldHandler implements IFieldHandler {
 	getValues(filterOnOptions?: boolean): string[];
 	getHuman(): string;
 }
-interface IUserFieldHandlerParams extends Omit<IBaseDropdownFieldParams, "splitHuman"> {
+export interface IUserFieldHandlerParams extends Omit<IBaseDropdownFieldParams, "splitHuman"> {
 }
 export declare class UserFieldHandler implements IFieldHandler {
 	private rawData;
@@ -3896,7 +3943,7 @@ export declare class HyperlinkFieldHandler implements IFieldHandler {
 	getData(): string | undefined;
 	setData(value: string, doValidation?: boolean): void;
 }
-interface IFromToSelection {
+export interface IFromToSelection {
 	from: IReference[];
 	to: IReference[];
 }
@@ -3918,7 +3965,7 @@ export declare class ItemSelectionFieldHandlerFromTo implements IFieldHandler {
 	setDefaultSelection(map: IReference[]): void;
 	setConfig(config: IAnyMap): void;
 }
-interface INotificationsChanges {
+export interface INotificationsChanges {
 	total: number;
 	allNotifications: XRGetTodosAck;
 }
@@ -4012,23 +4059,23 @@ export declare class NotificationsBL {
 	 */
 	static getAllNotificationForItem(project: string, currentItemId: string): Promise<XRGetTodosAck>;
 }
-interface IBaseGateOptions {
+export interface IBaseGateOptions {
 	/** define different reviews/approvals which need to be made for gate to pass */
 	lines?: IGateLineBase[];
 }
-interface IGateLineBase {
+export interface IGateLineBase {
 	/** a unique id for the line */
 	id: string;
 	/** define which users can approve */
 	users: string[];
 }
-interface IGateStatus {
+export interface IGateStatus {
 	passed: boolean;
 	failed: boolean;
 	lines?: IGateStatusLine[];
 	search: string;
 }
-interface IGateStatusLine {
+export interface IGateStatusLine {
 	id: string;
 	passed: boolean;
 	failed: boolean;
@@ -4052,7 +4099,7 @@ export declare class GateFieldHandler implements IFieldHandler {
 	getGateValue(): IGateStatus;
 	setGateValue(gateValue: IGateStatus): void;
 }
-interface IPanel {
+export interface IPanel {
 	destroy: Function;
 	title: string;
 	toggleZen?: Function;
@@ -4081,7 +4128,7 @@ declare class Application {
 	private createItemControlCached;
 	private createItemControl;
 }
-interface IControlDefinition {
+export interface IControlDefinition {
 	name?: string;
 	control?: JQuery;
 	fieldId?: number;
@@ -4092,7 +4139,7 @@ interface IControlDefinition {
 	 */
 	fieldType?: string;
 }
-interface IGenericMap {
+export interface IGenericMap {
 	[key: string]: any;
 }
 export interface IAnyMap {
@@ -4107,14 +4154,14 @@ export interface IStringNumberMap {
 export interface IStringStringArrayMap {
 	[key: string]: string[];
 }
-interface IStringJQueryMap {
+export interface IStringJQueryMap {
 	[key: string]: JQuery;
 }
-interface IJsonSetting {
+export interface IJsonSetting {
 	id: string;
 	value: any;
 }
-interface IRestParam extends Object {
+export interface IRestParam extends Object {
 	td?: number;
 	reason?: string;
 	filter?: string;
@@ -4160,7 +4207,7 @@ export interface IReference {
 	modDate?: string;
 	isIndirect?: boolean;
 }
-interface IItemIdParts {
+export interface IItemIdParts {
 	id: string;
 	version: number;
 	type: string;
@@ -4170,7 +4217,7 @@ interface IItemIdParts {
 	linkv: string;
 	number: number;
 }
-interface IReferenceChange {
+export interface IReferenceChange {
 	action: string;
 	fromId: string;
 	toId: string;
@@ -4198,16 +4245,16 @@ export interface IItem {
 	docHasPackage?: boolean;
 	[key: string]: any;
 }
-interface IItemGet extends IItem {
+export interface IItemGet extends IItem {
 	labels?: string[];
 	crossLinks?: XRCrossProjectLink[];
 }
-interface IItemPut extends IItem {
+export interface IItemPut extends IItem {
 	labels?: string;
 	onlyThoseFields?: number;
 	onlyThoseLabels?: number;
 }
-interface IItemHistory {
+export interface IItemHistory {
 	action: string;
 	user: string;
 	dateUserFormat: string;
@@ -4296,13 +4343,13 @@ export declare abstract class BaseWidget implements IWidgetPlugin {
 	hide(showConfirm?: boolean): void;
 	unhide(showConfirm: boolean): void;
 }
-interface IAttributePrimitiveParams {
+export interface IAttributePrimitiveParams {
 	attributeName?: string;
 	path?: string;
 	class?: string;
 	replace?: IReplaceParam;
 }
-interface IReplaceParam {
+export interface IReplaceParam {
 	match: string;
 	with: string;
 }
@@ -4427,7 +4474,18 @@ export declare class Field {
 	getFieldConfigParameter(name: string): unknown;
 	needsSave(): boolean;
 }
-interface ConfigurationParameters {
+/**
+ * MatrixALM and MatrixQMS REST API
+ * Feel free to make a copy of this definition and change the url below to your instance of MatrixALM or MatrixQMS. For the authentication, create  a token for an admin to try out all the methods. Use at your own risks! Any question? ask us on https://support.matrixreq.com
+ *
+ * OpenAPI spec version: 2.3
+ *
+ *
+ * NOTE: This file is auto generated by the swagger code generator program.
+ * https://github.com/swagger-api/swagger-codegen.git
+ * Do not edit the file manually.
+ */
+export interface ConfigurationParameters {
 	apiKey?: string | ((name: string) => string);
 	username?: string;
 	password?: string;
@@ -4471,7 +4529,12 @@ declare class Configuration {
 	basePath?: string;
 	constructor(param?: ConfigurationParameters);
 }
-interface FetchAPI {
+/**
+ *
+ * @export
+ * @interface FetchAPI
+ */
+export interface FetchAPI {
 	(url: string, init?: any): Promise<Response>;
 }
 declare class BaseAPI {
@@ -4480,7 +4543,12 @@ declare class BaseAPI {
 	protected configuration: Configuration;
 	constructor(configuration?: Configuration, basePath?: string, fetch?: FetchAPI);
 }
-interface Access {
+/**
+ *
+ * @export
+ * @interface Access
+ */
+export interface Access {
 	/**
 	 *
 	 * @type {string}
@@ -4531,7 +4599,12 @@ export interface AddFileAck {
 	 */
 	key?: string;
 }
-interface AddItemAck {
+/**
+ *
+ * @export
+ * @interface AddItemAck
+ */
+export interface AddItemAck {
 	/**
 	 *
 	 * @type {number}
@@ -4551,7 +4624,12 @@ interface AddItemAck {
 	 */
 	cleanupFail?: CleanupFail;
 }
-interface AuthType {
+/**
+ *
+ * @export
+ * @interface AuthType
+ */
+export interface AuthType {
 	/**
 	 *
 	 * @type {string}
@@ -4613,7 +4691,12 @@ interface AuthType {
 	 */
 	verifiedAuth?: VerifiedAuth;
 }
-interface CalendarType {
+/**
+ *
+ * @export
+ * @interface CalendarType
+ */
+export interface CalendarType {
 	/**
 	 *
 	 * @type {string}
@@ -4639,7 +4722,12 @@ interface CalendarType {
 	 */
 	nbChanges?: number;
 }
-interface CategoryAndRoot {
+/**
+ *
+ * @export
+ * @interface CategoryAndRoot
+ */
+export interface CategoryAndRoot {
 	/**
 	 *
 	 * @type {string}
@@ -4653,7 +4741,12 @@ interface CategoryAndRoot {
 	 */
 	rootFolder?: string;
 }
-interface CategoryAndSettingListType {
+/**
+ *
+ * @export
+ * @interface CategoryAndSettingListType
+ */
+export interface CategoryAndSettingListType {
 	/**
 	 *
 	 * @type {Array<SettingType>}
@@ -4673,7 +4766,12 @@ interface CategoryAndSettingListType {
 	 */
 	categoryShort?: string;
 }
-interface CategoryExtendedListType {
+/**
+ *
+ * @export
+ * @interface CategoryExtendedListType
+ */
+export interface CategoryExtendedListType {
 	/**
 	 *
 	 * @type {Array<CategoryExtendedType>}
@@ -4681,7 +4779,12 @@ interface CategoryExtendedListType {
 	 */
 	categoryExtended?: Array<CategoryExtendedType>;
 }
-interface CategoryExtendedType {
+/**
+ *
+ * @export
+ * @interface CategoryExtendedType
+ */
+export interface CategoryExtendedType {
 	/**
 	 *
 	 * @type {CategoryType}
@@ -4701,7 +4804,12 @@ interface CategoryExtendedType {
 	 */
 	enable?: Array<string>;
 }
-interface CategoryFull {
+/**
+ *
+ * @export
+ * @interface CategoryFull
+ */
+export interface CategoryFull {
 	/**
 	 *
 	 * @type {ProjectType}
@@ -4727,7 +4835,12 @@ interface CategoryFull {
 	 */
 	fieldList?: Array<RestField>;
 }
-interface CategoryType {
+/**
+ *
+ * @export
+ * @interface CategoryType
+ */
+export interface CategoryType {
 	/**
 	 *
 	 * @type {number}
@@ -4753,7 +4866,12 @@ interface CategoryType {
 	 */
 	maxSerial?: number;
 }
-interface CheckPasswordAck {
+/**
+ *
+ * @export
+ * @interface CheckPasswordAck
+ */
+export interface CheckPasswordAck {
 	/**
 	 *
 	 * @type {string}
@@ -4797,7 +4915,12 @@ interface CheckPasswordAck {
 	 */
 	customerAdmin?: boolean;
 }
-interface CleanupFail {
+/**
+ *
+ * @export
+ * @interface CleanupFail
+ */
+export interface CleanupFail {
 	/**
 	 *
 	 * @type {Array<CleanupField>}
@@ -4829,7 +4952,12 @@ interface CleanupFail {
 	 */
 	itemRef?: string;
 }
-interface CleanupField {
+/**
+ *
+ * @export
+ * @interface CleanupField
+ */
+export interface CleanupField {
 	/**
 	 *
 	 * @type {number}
@@ -4861,7 +4989,12 @@ interface CleanupField {
 	 */
 	afterCleanup?: string;
 }
-interface CleanupSetting {
+/**
+ *
+ * @export
+ * @interface CleanupSetting
+ */
+export interface CleanupSetting {
 	/**
 	 *
 	 * @type {string}
@@ -4936,7 +5069,12 @@ export interface CopyItemAck {
 	 */
 	itemsAndFoldersCreated?: Array<string>;
 }
-interface CreateReportJobAck {
+/**
+ *
+ * @export
+ * @interface CreateReportJobAck
+ */
+export interface CreateReportJobAck {
 	/**
 	 *
 	 * @type {number}
@@ -4944,7 +5082,12 @@ interface CreateReportJobAck {
 	 */
 	jobId?: number;
 }
-interface CrossProjectLink {
+/**
+ *
+ * @export
+ * @interface CrossProjectLink
+ */
+export interface CrossProjectLink {
 	/**
 	 *
 	 * @type {OneItem}
@@ -4976,7 +5119,12 @@ interface CrossProjectLink {
 	 */
 	importHistoryId?: number;
 }
-interface ExceptionItemIso {
+/**
+ *
+ * @export
+ * @interface ExceptionItemIso
+ */
+export interface ExceptionItemIso {
 	/**
 	 *
 	 * @type {string}
@@ -4990,7 +5138,12 @@ interface ExceptionItemIso {
 	 */
 	text?: string;
 }
-interface ExceptionStatus {
+/**
+ *
+ * @export
+ * @interface ExceptionStatus
+ */
+export interface ExceptionStatus {
 	/**
 	 *
 	 * @type {number}
@@ -5059,7 +5212,12 @@ export interface ExecuteParam {
 	 */
 	single?: number;
 }
-interface ExecuteTestErrorDetails {
+/**
+ *
+ * @export
+ * @interface ExecuteTestErrorDetails
+ */
+export interface ExecuteTestErrorDetails {
 	/**
 	 *
 	 * @type {string}
@@ -5073,7 +5231,12 @@ interface ExecuteTestErrorDetails {
 	 */
 	errors?: Array<string>;
 }
-interface ExportItemsAck {
+/**
+ *
+ * @export
+ * @interface ExportItemsAck
+ */
+export interface ExportItemsAck {
 	/**
 	 *
 	 * @type {number}
@@ -5081,7 +5244,12 @@ interface ExportItemsAck {
 	 */
 	jobId?: number;
 }
-interface FancyFolder {
+/**
+ *
+ * @export
+ * @interface FancyFolder
+ */
+export interface FancyFolder {
 	/**
 	 *
 	 * @type {Array<FancyLeaf>}
@@ -5131,7 +5299,12 @@ interface FancyFolder {
 	 */
 	mode?: string;
 }
-interface FancyLeaf {
+/**
+ *
+ * @export
+ * @interface FancyLeaf
+ */
+export interface FancyLeaf {
 	/**
 	 *
 	 * @type {string}
@@ -5169,7 +5342,12 @@ interface FancyLeaf {
 	 */
 	mode?: string;
 }
-interface FieldAndValue {
+/**
+ *
+ * @export
+ * @interface FieldAndValue
+ */
+export interface FieldAndValue {
 	/**
 	 *
 	 * @type {number}
@@ -5183,7 +5361,12 @@ interface FieldAndValue {
 	 */
 	value?: string;
 }
-interface FieldListType {
+/**
+ *
+ * @export
+ * @interface FieldListType
+ */
+export interface FieldListType {
 	/**
 	 *
 	 * @type {Array<FieldType>}
@@ -5191,7 +5374,12 @@ interface FieldListType {
 	 */
 	field?: Array<FieldType>;
 }
-interface FieldType {
+/**
+ *
+ * @export
+ * @interface FieldType
+ */
+export interface FieldType {
 	/**
 	 *
 	 * @type {number}
@@ -5223,7 +5411,12 @@ interface FieldType {
 	 */
 	label?: string;
 }
-interface FieldValListType {
+/**
+ *
+ * @export
+ * @interface FieldValListType
+ */
+export interface FieldValListType {
 	/**
 	 *
 	 * @type {Array<FieldValType>}
@@ -5231,7 +5424,12 @@ interface FieldValListType {
 	 */
 	fieldVal?: Array<FieldValType>;
 }
-interface FieldValType {
+/**
+ *
+ * @export
+ * @interface FieldValType
+ */
+export interface FieldValType {
 	/**
 	 *
 	 * @type {number}
@@ -5288,7 +5486,12 @@ export interface FolderAnswer {
 	 */
 	xtcInError?: Array<ExecuteTestErrorDetails>;
 }
-interface FromTo {
+/**
+ *
+ * @export
+ * @interface FromTo
+ */
+export interface FromTo {
 	/**
 	 *
 	 * @type {number}
@@ -5302,7 +5505,12 @@ interface FromTo {
 	 */
 	toId?: number;
 }
-interface FromToString {
+/**
+ *
+ * @export
+ * @interface FromToString
+ */
+export interface FromToString {
 	/**
 	 *
 	 * @type {string}
@@ -5316,7 +5524,12 @@ interface FromToString {
 	 */
 	to?: string;
 }
-interface GetAccessAck {
+/**
+ *
+ * @export
+ * @interface GetAccessAck
+ */
+export interface GetAccessAck {
 	/**
 	 *
 	 * @type {Array<UserPermissionType>}
@@ -5330,7 +5543,12 @@ interface GetAccessAck {
 	 */
 	groupPermission?: Array<GroupPermissionType>;
 }
-interface GetDateAck {
+/**
+ *
+ * @export
+ * @interface GetDateAck
+ */
+export interface GetDateAck {
 	/**
 	 *
 	 * @type {string}
@@ -5410,7 +5628,12 @@ interface GetDateAck {
 	 */
 	customerTimezoneDesc?: string;
 }
-interface GetGroupListAck {
+/**
+ *
+ * @export
+ * @interface GetGroupListAck
+ */
+export interface GetGroupListAck {
 	/**
 	 *
 	 * @type {Array<GroupType>}
@@ -5418,7 +5641,12 @@ interface GetGroupListAck {
 	 */
 	groups?: Array<GroupType>;
 }
-interface GetHmlBlobInput {
+/**
+ *
+ * @export
+ * @interface GetHmlBlobInput
+ */
+export interface GetHmlBlobInput {
 	/**
 	 *
 	 * @type {string}
@@ -5426,7 +5654,12 @@ interface GetHmlBlobInput {
 	 */
 	htmlToClean?: string;
 }
-interface GetHtmlBlob {
+/**
+ *
+ * @export
+ * @interface GetHtmlBlob
+ */
+export interface GetHtmlBlob {
 	/**
 	 *
 	 * @type {AuthType}
@@ -5446,7 +5679,12 @@ interface GetHtmlBlob {
 	 */
 	inputHtml?: string;
 }
-interface GetItemListAck {
+/**
+ *
+ * @export
+ * @interface GetItemListAck
+ */
+export interface GetItemListAck {
 	/**
 	 *
 	 * @type {string}
@@ -5472,7 +5710,12 @@ interface GetItemListAck {
 	 */
 	secondaryItems?: Array<ItemSimpleType>;
 }
-interface GetMonitorAck {
+/**
+ *
+ * @export
+ * @interface GetMonitorAck
+ */
+export interface GetMonitorAck {
 	/**
 	 *
 	 * @type {Array<MonitorAction>}
@@ -5492,7 +5735,12 @@ interface GetMonitorAck {
 	 */
 	lastLoginDate?: string;
 }
-interface GetProjectFileListAck {
+/**
+ *
+ * @export
+ * @interface GetProjectFileListAck
+ */
+export interface GetProjectFileListAck {
 	/**
 	 *
 	 * @type {Array<ProjectFileType>}
@@ -5500,7 +5748,12 @@ interface GetProjectFileListAck {
 	 */
 	projectFile?: Array<ProjectFileType>;
 }
-interface GetProjectSettingAck {
+/**
+ *
+ * @export
+ * @interface GetProjectSettingAck
+ */
+export interface GetProjectSettingAck {
 	/**
 	 *
 	 * @type {Array<SettingType>}
@@ -5520,7 +5773,12 @@ interface GetProjectSettingAck {
 	 */
 	pluginSettingsList?: Array<PluginSetting>;
 }
-interface GetProjectStructAck {
+/**
+ *
+ * @export
+ * @interface GetProjectStructAck
+ */
+export interface GetProjectStructAck {
 	/**
 	 *
 	 * @type {CategoryExtendedListType}
@@ -5552,7 +5810,12 @@ interface GetProjectStructAck {
 	 */
 	aclExplanations?: string;
 }
-interface GetReportsAck {
+/**
+ *
+ * @export
+ * @interface GetReportsAck
+ */
+export interface GetReportsAck {
 	/**
 	 *
 	 * @type {Array<ReportType>}
@@ -5560,7 +5823,12 @@ interface GetReportsAck {
 	 */
 	reportList?: Array<ReportType>;
 }
-interface GetSettingAck {
+/**
+ *
+ * @export
+ * @interface GetSettingAck
+ */
+export interface GetSettingAck {
 	/**
 	 *
 	 * @type {Array<SettingType>}
@@ -5568,7 +5836,12 @@ interface GetSettingAck {
 	 */
 	settingList?: Array<SettingType>;
 }
-interface GetTodosAck {
+/**
+ *
+ * @export
+ * @interface GetTodosAck
+ */
+export interface GetTodosAck {
 	/**
 	 *
 	 * @type {Array<Todo>}
@@ -5582,7 +5855,12 @@ interface GetTodosAck {
 	 */
 	todoCounts?: Array<TodoCount>;
 }
-interface GetUserListAck {
+/**
+ *
+ * @export
+ * @interface GetUserListAck
+ */
+export interface GetUserListAck {
 	/**
 	 *
 	 * @type {Array<UserType>}
@@ -5614,7 +5892,12 @@ interface GetUserListAck {
 	 */
 	maxUsers?: number;
 }
-interface GroupPermissionType {
+/**
+ *
+ * @export
+ * @interface GroupPermissionType
+ */
+export interface GroupPermissionType {
 	/**
 	 *
 	 * @type {string}
@@ -5640,7 +5923,12 @@ interface GroupPermissionType {
 	 */
 	membership?: Array<UserTypeSimple>;
 }
-interface GroupType {
+/**
+ *
+ * @export
+ * @interface GroupType
+ */
+export interface GroupType {
 	/**
 	 *
 	 * @type {string}
@@ -5666,7 +5954,12 @@ interface GroupType {
 	 */
 	groupId?: number;
 }
-interface HtmlCompareResult {
+/**
+ *
+ * @export
+ * @interface HtmlCompareResult
+ */
+export interface HtmlCompareResult {
 	/**
 	 *
 	 * @type {Array<string>}
@@ -5698,7 +5991,12 @@ interface HtmlCompareResult {
 	 */
 	removeClass?: string;
 }
-interface HtmlTestCleanup {
+/**
+ *
+ * @export
+ * @interface HtmlTestCleanup
+ */
+export interface HtmlTestCleanup {
 	/**
 	 *
 	 * @type {Array<CleanupFail>}
@@ -5706,7 +6004,12 @@ interface HtmlTestCleanup {
 	 */
 	cleanups?: Array<CleanupFail>;
 }
-interface IdParent {
+/**
+ *
+ * @export
+ * @interface IdParent
+ */
+export interface IdParent {
 	/**
 	 *
 	 * @type {string}
@@ -5720,7 +6023,12 @@ interface IdParent {
 	 */
 	parent?: string;
 }
-interface ItemHistoryListType {
+/**
+ *
+ * @export
+ * @interface ItemHistoryListType
+ */
+export interface ItemHistoryListType {
 	/**
 	 *
 	 * @type {Array<ItemHistoryType>}
@@ -5728,7 +6036,12 @@ interface ItemHistoryListType {
 	 */
 	itemHistory?: Array<ItemHistoryType>;
 }
-interface ItemHistoryType {
+/**
+ *
+ * @export
+ * @interface ItemHistoryType
+ */
+export interface ItemHistoryType {
 	/**
 	 *
 	 * @type {number}
@@ -5796,7 +6109,12 @@ interface ItemHistoryType {
 	 */
 	auditAction?: string;
 }
-interface ItemItemBody {
+/**
+ *
+ * @export
+ * @interface ItemItemBody
+ */
+export interface ItemItemBody {
 	/**
 	 * Specify new title for the item -- if not there, keep the old title
 	 * @type {string}
@@ -5890,7 +6208,12 @@ interface ItemItemBody {
 	 */
 	linksAreComplete?: number;
 }
-interface ItemSimpleType {
+/**
+ *
+ * @export
+ * @interface ItemSimpleType
+ */
+export interface ItemSimpleType {
 	/**
 	 *
 	 * @type {string}
@@ -5922,7 +6245,12 @@ interface ItemSimpleType {
 	 */
 	version?: number;
 }
-interface JobFileWithUrl {
+/**
+ *
+ * @export
+ * @interface JobFileWithUrl
+ */
+export interface JobFileWithUrl {
 	/**
 	 *
 	 * @type {string}
@@ -5954,7 +6282,12 @@ interface JobFileWithUrl {
 	 */
 	mimeType?: string;
 }
-interface JobWithUrl {
+/**
+ *
+ * @export
+ * @interface JobWithUrl
+ */
+export interface JobWithUrl {
 	/**
 	 *
 	 * @type {string}
@@ -5998,7 +6331,12 @@ interface JobWithUrl {
 	 */
 	project?: string;
 }
-interface JobsStatusWithUrl {
+/**
+ *
+ * @export
+ * @interface JobsStatusWithUrl
+ */
+export interface JobsStatusWithUrl {
 	/**
 	 *
 	 * @type {number}
@@ -6024,7 +6362,12 @@ interface JobsStatusWithUrl {
 	 */
 	jobFile?: Array<JobFileWithUrl>;
 }
-interface JobsWithUrl {
+/**
+ *
+ * @export
+ * @interface JobsWithUrl
+ */
+export interface JobsWithUrl {
 	/**
 	 *
 	 * @type {number}
@@ -6044,7 +6387,12 @@ interface JobsWithUrl {
 	 */
 	jobs?: Array<JobWithUrl>;
 }
-interface LabelChange {
+/**
+ *
+ * @export
+ * @interface LabelChange
+ */
+export interface LabelChange {
 	/**
 	 *
 	 * @type {string}
@@ -6064,7 +6412,12 @@ interface LabelChange {
 	 */
 	reset?: Array<LabelChangeDetail>;
 }
-interface LabelChangeDetail {
+/**
+ *
+ * @export
+ * @interface LabelChangeDetail
+ */
+export interface LabelChangeDetail {
 	/**
 	 *
 	 * @type {number}
@@ -6084,7 +6437,12 @@ interface LabelChangeDetail {
 	 */
 	dateUser?: string;
 }
-interface LabelEntry {
+/**
+ *
+ * @export
+ * @interface LabelEntry
+ */
+export interface LabelEntry {
 	/**
 	 *
 	 * @type {string}
@@ -6098,7 +6456,12 @@ interface LabelEntry {
 	 */
 	labels?: Array<LabelChange>;
 }
-interface LabelHistory {
+/**
+ *
+ * @export
+ * @interface LabelHistory
+ */
+export interface LabelHistory {
 	/**
 	 *
 	 * @type {Array<LabelEntry>}
@@ -6106,7 +6469,12 @@ interface LabelHistory {
 	 */
 	entries?: Array<LabelEntry>;
 }
-interface LicenseStatus {
+/**
+ *
+ * @export
+ * @interface LicenseStatus
+ */
+export interface LicenseStatus {
 	/**
 	 *
 	 * @type {Array<string>}
@@ -6132,7 +6500,12 @@ interface LicenseStatus {
 	 */
 	licenseUsers?: Array<LicenseUser>;
 }
-interface LicenseUser {
+/**
+ *
+ * @export
+ * @interface LicenseUser
+ */
+export interface LicenseUser {
 	/**
 	 *
 	 * @type {number}
@@ -6164,7 +6537,12 @@ interface LicenseUser {
 	 */
 	level?: string;
 }
-interface ListProjectAndSettings {
+/**
+ *
+ * @export
+ * @interface ListProjectAndSettings
+ */
+export interface ListProjectAndSettings {
 	/**
 	 *
 	 * @type {string}
@@ -6274,7 +6652,12 @@ interface ListProjectAndSettings {
 	 */
 	restUrl?: string;
 }
-interface LogLevel {
+/**
+ *
+ * @export
+ * @interface LogLevel
+ */
+export interface LogLevel {
 	/**
 	 *
 	 * @type {string}
@@ -6282,7 +6665,12 @@ interface LogLevel {
 	 */
 	level?: string;
 }
-interface MainAndBranch {
+/**
+ *
+ * @export
+ * @interface MainAndBranch
+ */
+export interface MainAndBranch {
 	/**
 	 *
 	 * @type {string}
@@ -6344,7 +6732,12 @@ interface MainAndBranch {
 	 */
 	lastMergeUser?: string;
 }
-interface MatrixLicense {
+/**
+ *
+ * @export
+ * @interface MatrixLicense
+ */
+export interface MatrixLicense {
 	/**
 	 *
 	 * @type {string}
@@ -6442,7 +6835,12 @@ interface MatrixLicense {
 	 */
 	MAX_USERS?: number;
 }
-interface MergeAction {
+/**
+ *
+ * @export
+ * @interface MergeAction
+ */
+export interface MergeAction {
 	/**
 	 *
 	 * @type {string}
@@ -6492,7 +6890,12 @@ interface MergeAction {
 	 */
 	error?: string;
 }
-interface MergeEntry {
+/**
+ *
+ * @export
+ * @interface MergeEntry
+ */
+export interface MergeEntry {
 	/**
 	 *
 	 * @type {number}
@@ -6554,7 +6957,12 @@ interface MergeEntry {
 	 */
 	details?: Array<MergeAction>;
 }
-interface MergeHistory {
+/**
+ *
+ * @export
+ * @interface MergeHistory
+ */
+export interface MergeHistory {
 	/**
 	 *
 	 * @type {Array<MergeEntry>}
@@ -6562,7 +6970,12 @@ interface MergeHistory {
 	 */
 	entries?: Array<MergeEntry>;
 }
-interface MergeInfo {
+/**
+ *
+ * @export
+ * @interface MergeInfo
+ */
+export interface MergeInfo {
 	/**
 	 *
 	 * @type {MergeInfoPoint}
@@ -6606,7 +7019,12 @@ interface MergeInfo {
 	 */
 	linksDeleted?: Array<MergeItemLink>;
 }
-interface MergeInfoPoint {
+/**
+ *
+ * @export
+ * @interface MergeInfoPoint
+ */
+export interface MergeInfoPoint {
 	/**
 	 *
 	 * @type {string}
@@ -6626,7 +7044,12 @@ interface MergeInfoPoint {
 	 */
 	items?: Array<MergeItem>;
 }
-interface MergeItem {
+/**
+ *
+ * @export
+ * @interface MergeItem
+ */
+export interface MergeItem {
 	/**
 	 *
 	 * @type {string}
@@ -6664,7 +7087,12 @@ interface MergeItem {
 	 */
 	itemId?: number;
 }
-interface MergeItemLink {
+/**
+ *
+ * @export
+ * @interface MergeItemLink
+ */
+export interface MergeItemLink {
 	/**
 	 *
 	 * @type {string}
@@ -6678,7 +7106,12 @@ interface MergeItemLink {
 	 */
 	downItemRef?: string;
 }
-interface MergeParam {
+/**
+ *
+ * @export
+ * @interface MergeParam
+ */
+export interface MergeParam {
 	/**
 	 *
 	 * @type {Array<string>}
@@ -6722,7 +7155,12 @@ interface MergeParam {
 	 */
 	push?: number;
 }
-interface MonitorAction {
+/**
+ *
+ * @export
+ * @interface MonitorAction
+ */
+export interface MonitorAction {
 	/**
 	 *
 	 * @type {string}
@@ -6736,7 +7174,12 @@ interface MonitorAction {
 	 */
 	done?: boolean;
 }
-interface OneItem {
+/**
+ *
+ * @export
+ * @interface OneItem
+ */
+export interface OneItem {
 	/**
 	 *
 	 * @type {number}
@@ -6768,7 +7211,12 @@ interface OneItem {
 	 */
 	itemTitle?: string;
 }
-interface PluginCapabilities {
+/**
+ *
+ * @export
+ * @interface PluginCapabilities
+ */
+export interface PluginCapabilities {
 	/**
 	 *
 	 * @type {boolean}
@@ -6842,7 +7290,12 @@ interface PluginCapabilities {
 	 */
 	hideInProjectSettings?: boolean;
 }
-interface PluginSetting {
+/**
+ *
+ * @export
+ * @interface PluginSetting
+ */
+export interface PluginSetting {
 	/**
 	 *
 	 * @type {number}
@@ -6880,7 +7333,12 @@ interface PluginSetting {
 	 */
 	capabilities?: PluginCapabilities;
 }
-interface ProjectAndAccess {
+/**
+ *
+ * @export
+ * @interface ProjectAndAccess
+ */
+export interface ProjectAndAccess {
 	/**
 	 *
 	 * @type {number}
@@ -6906,7 +7364,12 @@ interface ProjectAndAccess {
 	 */
 	accesses?: Array<Access>;
 }
-interface ProjectFileType {
+/**
+ *
+ * @export
+ * @interface ProjectFileType
+ */
+export interface ProjectFileType {
 	/**
 	 *
 	 * @type {number}
@@ -6938,7 +7401,12 @@ interface ProjectFileType {
 	 */
 	key?: string;
 }
-interface ProjectInfo {
+/**
+ *
+ * @export
+ * @interface ProjectInfo
+ */
+export interface ProjectInfo {
 	/**
 	 *
 	 * @type {Array<UserPermissionType>}
@@ -7006,7 +7474,12 @@ interface ProjectInfo {
 	 */
 	todos?: Array<Todo>;
 }
-interface ProjectItemBody {
+/**
+ *
+ * @export
+ * @interface ProjectItemBody
+ */
+export interface ProjectItemBody {
 	/**
 	 * Item title
 	 * @type {string}
@@ -7064,7 +7537,12 @@ interface ProjectItemBody {
 	 */
 	failOnCleanup?: number;
 }
-interface ProjectNeedleBody {
+/**
+ *
+ * @export
+ * @interface ProjectNeedleBody
+ */
+export interface ProjectNeedleBody {
 	/**
 	 * search term
 	 * @type {string}
@@ -7108,7 +7586,12 @@ interface ProjectNeedleBody {
 	 */
 	links?: string;
 }
-interface ProjectNeedleminimalBody {
+/**
+ *
+ * @export
+ * @interface ProjectNeedleminimalBody
+ */
+export interface ProjectNeedleminimalBody {
 	/**
 	 * search term
 	 * @type {string}
@@ -7122,7 +7605,12 @@ interface ProjectNeedleminimalBody {
 	 */
 	filter?: string;
 }
-interface ProjectPermissionType {
+/**
+ *
+ * @export
+ * @interface ProjectPermissionType
+ */
+export interface ProjectPermissionType {
 	/**
 	 *
 	 * @type {ProjectType}
@@ -7136,7 +7624,12 @@ interface ProjectPermissionType {
 	 */
 	access?: Access;
 }
-interface ProjectType {
+/**
+ *
+ * @export
+ * @interface ProjectType
+ */
+export interface ProjectType {
 	/**
 	 *
 	 * @type {number}
@@ -7180,7 +7673,12 @@ interface ProjectType {
 	 */
 	uniqueIds?: boolean;
 }
-interface Protocol {
+/**
+ *
+ * @export
+ * @interface Protocol
+ */
+export interface Protocol {
 	/**
 	 *
 	 * @type {string}
@@ -7200,7 +7698,12 @@ interface Protocol {
 	 */
 	protocols?: Array<string>;
 }
-interface ReportTarget {
+/**
+ *
+ * @export
+ * @interface ReportTarget
+ */
+export interface ReportTarget {
 	/**
 	 *
 	 * @type {string}
@@ -7214,7 +7717,12 @@ interface ReportTarget {
 	 */
 	targetText?: string;
 }
-interface ReportType {
+/**
+ *
+ * @export
+ * @interface ReportType
+ */
+export interface ReportType {
 	/**
 	 *
 	 * @type {string}
@@ -7282,7 +7790,12 @@ interface ReportType {
 	 */
 	targets?: Array<ReportTarget>;
 }
-interface RestField {
+/**
+ *
+ * @export
+ * @interface RestField
+ */
+export interface RestField {
 	/**
 	 *
 	 * @type {number}
@@ -7320,7 +7833,12 @@ interface RestField {
 	 */
 	testExecParam?: string;
 }
-interface SendmailParam {
+/**
+ *
+ * @export
+ * @interface SendmailParam
+ */
+export interface SendmailParam {
 	/**
 	 *
 	 * @type {string}
@@ -7358,7 +7876,12 @@ interface SendmailParam {
 	 */
 	bcc?: Array<string>;
 }
-interface ServerStatus {
+/**
+ *
+ * @export
+ * @interface ServerStatus
+ */
+export interface ServerStatus {
 	/**
 	 *
 	 * @type {ExceptionStatus}
@@ -7378,7 +7901,12 @@ interface ServerStatus {
 	 */
 	publicUrl?: string;
 }
-interface ServiceDeskParam {
+/**
+ *
+ * @export
+ * @interface ServiceDeskParam
+ */
+export interface ServiceDeskParam {
 	/**
 	 *
 	 * @type {string}
@@ -7416,7 +7944,12 @@ interface ServiceDeskParam {
 	 */
 	log?: string;
 }
-interface SettingAndValue {
+/**
+ *
+ * @export
+ * @interface SettingAndValue
+ */
+export interface SettingAndValue {
 	/**
 	 *
 	 * @type {string}
@@ -7436,7 +7969,12 @@ interface SettingAndValue {
 	 */
 	encrypted?: boolean;
 }
-interface SettingType {
+/**
+ *
+ * @export
+ * @interface SettingType
+ */
+export interface SettingType {
 	/**
 	 *
 	 * @type {string}
@@ -7456,7 +7994,12 @@ interface SettingType {
 	 */
 	secret?: boolean;
 }
-interface SignItemAck {
+/**
+ *
+ * @export
+ * @interface SignItemAck
+ */
+export interface SignItemAck {
 	/**
 	 *
 	 * @type {string}
@@ -7470,7 +8013,12 @@ interface SignItemAck {
 	 */
 	ok?: boolean;
 }
-interface Tag {
+/**
+ *
+ * @export
+ * @interface Tag
+ */
+export interface Tag {
 	/**
 	 *
 	 * @type {number}
@@ -7550,7 +8098,12 @@ interface Tag {
 	 */
 	baseAuditId?: number;
 }
-interface TechAuditType {
+/**
+ *
+ * @export
+ * @interface TechAuditType
+ */
+export interface TechAuditType {
 	/**
 	 *
 	 * @type {number}
@@ -7582,7 +8135,12 @@ interface TechAuditType {
 	 */
 	ref?: string;
 }
-interface Todo {
+/**
+ *
+ * @export
+ * @interface Todo
+ */
+export interface Todo {
 	/**
 	 *
 	 * @type {number}
@@ -7680,7 +8238,12 @@ interface Todo {
 	 */
 	future?: boolean;
 }
-interface TodoAction {
+/**
+ *
+ * @export
+ * @interface TodoAction
+ */
+export interface TodoAction {
 	/**
 	 *
 	 * @type {string}
@@ -7694,7 +8257,12 @@ interface TodoAction {
 	 */
 	todoType?: string;
 }
-interface TodoCount {
+/**
+ *
+ * @export
+ * @interface TodoCount
+ */
+export interface TodoCount {
 	/**
 	 *
 	 * @type {number}
@@ -7732,7 +8300,12 @@ interface TodoCount {
 	 */
 	firstTodos?: Array<Todo>;
 }
-interface TokenType {
+/**
+ *
+ * @export
+ * @interface TokenType
+ */
+export interface TokenType {
 	/**
 	 *
 	 * @type {number}
@@ -7776,7 +8349,12 @@ interface TokenType {
 	 */
 	validToUserFormat?: string;
 }
-interface TrimAudit {
+/**
+ *
+ * @export
+ * @interface TrimAudit
+ */
+export interface TrimAudit {
 	/**
 	 *
 	 * @type {string}
@@ -7886,7 +8464,12 @@ interface TrimAudit {
 	 */
 	itemsDeletedByMerge?: Array<ItemSimpleType>;
 }
-interface TrimAuditList {
+/**
+ *
+ * @export
+ * @interface TrimAuditList
+ */
+export interface TrimAuditList {
 	/**
 	 *
 	 * @type {number}
@@ -7912,7 +8495,12 @@ interface TrimAuditList {
 	 */
 	audit?: Array<TrimAudit>;
 }
-interface TrimFolder {
+/**
+ *
+ * @export
+ * @interface TrimFolder
+ */
+export interface TrimFolder {
 	/**
 	 *
 	 * @type {string}
@@ -8004,7 +8592,12 @@ interface TrimFolder {
 	 */
 	crossLinks?: Array<CrossProjectLink>;
 }
-interface TrimItem {
+/**
+ *
+ * @export
+ * @interface TrimItem
+ */
+export interface TrimItem {
 	/**
 	 *
 	 * @type {string}
@@ -8144,7 +8737,12 @@ interface TrimItem {
 	 */
 	crossLinks?: Array<CrossProjectLink>;
 }
-interface TrimLink {
+/**
+ *
+ * @export
+ * @interface TrimLink
+ */
+export interface TrimLink {
 	/**
 	 *
 	 * @type {Array<TrimLink>}
@@ -8182,7 +8780,12 @@ interface TrimLink {
 	 */
 	modDateUserFormat?: string;
 }
-interface TrimNeedle {
+/**
+ *
+ * @export
+ * @interface TrimNeedle
+ */
+export interface TrimNeedle {
 	/**
 	 *
 	 * @type {number}
@@ -8214,7 +8817,12 @@ interface TrimNeedle {
 	 */
 	needles?: Array<TrimNeedleItem>;
 }
-interface TrimNeedleItem {
+/**
+ *
+ * @export
+ * @interface TrimNeedleItem
+ */
+export interface TrimNeedleItem {
 	/**
 	 *
 	 * @type {string}
@@ -8270,7 +8878,12 @@ interface TrimNeedleItem {
 	 */
 	downLinkList?: Array<TrimLink>;
 }
-interface UndeleteAnswer {
+/**
+ *
+ * @export
+ * @interface UndeleteAnswer
+ */
+export interface UndeleteAnswer {
 	/**
 	 *
 	 * @type {string}
@@ -8284,7 +8897,12 @@ interface UndeleteAnswer {
 	 */
 	newOrder?: number;
 }
-interface UserAndTime {
+/**
+ *
+ * @export
+ * @interface UserAndTime
+ */
+export interface UserAndTime {
 	/**
 	 *
 	 * @type {number}
@@ -8328,7 +8946,12 @@ interface UserAndTime {
 	 */
 	dateUserFormat?: string;
 }
-interface UserDetails {
+/**
+ *
+ * @export
+ * @interface UserDetails
+ */
+export interface UserDetails {
 	/**
 	 *
 	 * @type {string}
@@ -8372,7 +8995,12 @@ interface UserDetails {
 	 */
 	userStatus?: string;
 }
-interface UserInfo {
+/**
+ *
+ * @export
+ * @interface UserInfo
+ */
+export interface UserInfo {
 	/**
 	 *
 	 * @type {string}
@@ -8422,7 +9050,12 @@ interface UserInfo {
 	 */
 	lastName?: string;
 }
-interface UserPermissionType {
+/**
+ *
+ * @export
+ * @interface UserPermissionType
+ */
+export interface UserPermissionType {
 	/**
 	 *
 	 * @type {number}
@@ -8460,7 +9093,12 @@ interface UserPermissionType {
 	 */
 	lastName?: string;
 }
-interface UserType {
+/**
+ *
+ * @export
+ * @interface UserType
+ */
+export interface UserType {
 	/**
 	 *
 	 * @type {number}
@@ -8558,7 +9196,12 @@ interface UserType {
 	 */
 	groupList?: Array<number>;
 }
-interface UserTypeSimple {
+/**
+ *
+ * @export
+ * @interface UserTypeSimple
+ */
+export interface UserTypeSimple {
 	/**
 	 *
 	 * @type {number}
@@ -8590,7 +9233,12 @@ interface UserTypeSimple {
 	 */
 	lastName?: string;
 }
-interface VerifiedAuth {
+/**
+ *
+ * @export
+ * @interface VerifiedAuth
+ */
+export interface VerifiedAuth {
 	/**
 	 *
 	 * @type {string}
@@ -10094,7 +10742,7 @@ export interface IItemSelectionParams {
 	crossProjectHideDelete?: boolean;
 	crossProjectAsList?: boolean;
 }
-interface INotificationTableOptions {
+export interface INotificationTableOptions {
 	allowDelete: boolean;
 	selectable: boolean;
 	forColumn: boolean;
@@ -10116,7 +10764,6 @@ export declare class Notifications implements IPlugin {
 	private projectCount;
 	isDefault: boolean;
 	previousNotificationsIds: number[];
-	private options;
 	constructor();
 	onUpdate(ui: JQuery, config: IContextPageConfigTab, context: IContextInformation): void;
 	init(): void;
@@ -10152,9 +10799,9 @@ export declare class Notifications implements IPlugin {
 	static anchorTimer: any;
 	static anchorNotifications(): void;
 }
-interface IPrintMacro {
+export interface IPrintMacro {
 }
-interface IPrintFieldParams extends IPrintMacro {
+export interface IPrintFieldParams extends IPrintMacro {
 	fieldInfo?: IPrintFieldInfo;
 }
 /**
@@ -10406,7 +11053,7 @@ export declare class PluginCore implements IPlugin {
 	getPluginName(): string;
 	getPluginVersion(): string;
 }
-interface IValidationSpec {
+export interface IValidationSpec {
 	validationFunction?: JsonEditorValidation | null | any;
 	schema?: string;
 	apiHelp?: string;
@@ -10428,18 +11075,18 @@ declare class ConfigPageFactory extends Application {
 	insertProjectExtension(projectId: string, parentId: string, plugin: any): void;
 	insertCategory(projectId: string, categories: XRCategoryExtendedType[]): void;
 }
-interface IActualSetting {
+export interface IActualSetting {
 	projectId: number;
 	projectName: string;
 	settingName: string;
 	settingValue: any;
 }
-interface ISetupSetting {
+export interface ISetupSetting {
 	key: string;
 	type: string;
 	userTitle: string;
 }
-interface IProjectPlugin {
+export interface IProjectPlugin {
 	owner: string;
 	projectId: number;
 	projectName: string;
@@ -10447,7 +11094,7 @@ interface IProjectPlugin {
 	repo: string;
 	user: string;
 }
-interface IServerPluginSettings {
+export interface IServerPluginSettings {
 	pluginName: string;
 	displayName: string;
 	capabilities: IGenericMap;
@@ -10512,7 +11159,7 @@ export interface IConfigApp extends IBaseApp {
 	signOut(): void;
 	initConfigPages(): void;
 }
-interface IConfigPage {
+export interface IConfigPage {
 	getNode(): IDB;
 	saveAsync(): JQueryDeferred<unknown>;
 	load(pageId: string): void;
@@ -10652,7 +11299,11 @@ export interface ITitleAndId {
 	id: string;
 	isFolder: boolean;
 }
-interface IProjectSearchOptions {
+/**
+ * IProjectSearchOptions is a helper interface which describes options to a search
+ * within a given project.
+ */
+export interface IProjectSearchOptions {
 	/**
 	 * Specifies a search filter. Default value empty string.
 	 */
@@ -10709,7 +11360,10 @@ export interface IProjectNeeds {
 	deleteJobForProject(project: string, jobId: number, reason: string): Promise<string>;
 	createTodo(project: string, users: string[], type: TodoTypes | string, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
 }
-interface ITreeFolderNeeds {
+/**
+ * Implemented by Project
+ */
+export interface ITreeFolderNeeds {
 	parseRef(id: string): IItemIdParts;
 	getItem(id: string): Promise<Item>;
 	putItem(parentFolderId: string, item: Item): Promise<Item>;
@@ -11159,28 +11813,28 @@ export interface IReviewConfig {
 	createDoc?: ICreateDoc;
 	hide_UI?: boolean;
 }
-interface ICreateDoc {
+export interface ICreateDoc {
 	template: string;
 	section: string;
 	pasteTo: string;
 	hide?: string[];
 }
-interface IReviewAction {
+export interface IReviewAction {
 	buttonName: string;
 	users: string[];
 }
-interface IMailAction extends IReviewAction {
+export interface IMailAction extends IReviewAction {
 	mailSubject: string;
 }
-interface ILockAction extends IReviewAction {
+export interface ILockAction extends IReviewAction {
 	label: string;
 }
-interface IReviewStatusUpdate extends IReviewAction {
+export interface IReviewStatusUpdate extends IReviewAction {
 	passedLabel?: string;
 	failedLabel?: string;
 	todoLabel?: string;
 }
-interface IReviewConfigTask {
+export interface IReviewConfigTask {
 	buttonName: string;
 	users: string[];
 	taskPluginId: number;
@@ -11448,6 +12102,49 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	createTodo(project: string, users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
 	rootGet(adminUI?: number, output?: string, options?: unknown): Promise<ListProjectAndSettings>;
 	validateSdkVersion(): Promise<boolean>;
+}
+export interface IItemSelectDialogOptions {
+	linkTypes: ILinkType[];
+	getSelectedItems: () => Promise<IReference[]>;
+	selectionChange: (newSelection: IReference[]) => void;
+	crossProjectInit?: Function;
+	crossProject?: boolean;
+	crossProjectProject?: string;
+	crossProjectFilter?: string;
+	crossProjectFilterStrict?: boolean;
+	allowedProjects?: XRProjectType[];
+	allowedCategories?: string[];
+	selectMode?: SelectMode;
+	selectOptions?: JQuery;
+	allowAutoDownlinkSelection?: boolean;
+	dialogTitle?: string;
+	focusOn?: string;
+	height?: number;
+	autoScroll?: boolean;
+}
+export interface IItemSelectButtonOptions extends IItemSelectDialogOptions {
+	buttonName?: string;
+	smallbutton?: boolean;
+	isRiskControl?: boolean;
+	control: JQuery;
+	tinybutton?: boolean;
+}
+declare class ItemSelectionTools {
+	constructor();
+	showDialog(options: IItemSelectDialogOptions): void;
+	renderButtons(options: IItemSelectButtonOptions): void;
+	private showSelectDialog;
+	private toggleSelect;
+	showCrossProjectDialog(options: IItemSelectDialogOptions): void;
+	private removeHidden;
+}
+export interface IReferenceToolsOptions {
+	item: IItem;
+	canEdit: boolean;
+	callback?: (item: IItem) => void;
+}
+export declare class ReferenceTools {
+	showReferenceDialog(options: IReferenceToolsOptions): void;
 }
 declare class MatrixSDK {
 	protected config: Configuration;
@@ -11901,7 +12598,10 @@ export declare class Item {
 	 */
 	toDocItem(): Promise<DocItem>;
 }
-interface IFieldMaskOptions {
+/**
+ * Options for creating a field mask for search functions.
+ */
+export interface IFieldMaskOptions {
 	/**
 	 * includeFields true by default. If false, no fields will be retrieved from the server.
 	 */
@@ -11919,7 +12619,7 @@ interface IFieldMaskOptions {
 	 */
 	includeUplinks?: boolean;
 }
-interface ICategoryItemOptions {
+export interface ICategoryItemOptions {
 	filter?: string;
 	treeOrder?: boolean;
 	mask?: ItemsFieldMask;
@@ -12085,6 +12785,8 @@ export interface ClientMatrixSdk {
 	MR1: MR1Impl;
 	matrixApplicationUI: Application;
 	matrixsdk: MatrixSDK;
+	ItemSelectionTools: typeof ItemSelectionTools;
+	ReferenceTools: typeof ReferenceTools;
 	ConfigPage: typeof ConfigPage;
 	PluginCore: typeof PluginCore;
 	PrintProcessor: typeof PrintProcessor;

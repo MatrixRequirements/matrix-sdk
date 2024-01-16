@@ -1,5 +1,8 @@
 # Release Notes
 
+## 2.4.0-rc.0
+
+First official release.
 
 ## 2.4.0-alpha.16
 

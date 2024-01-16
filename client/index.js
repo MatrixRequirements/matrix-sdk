@@ -257,15 +257,25 @@ class PluginManager {
      */
     init(item) {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].initItem) {
-                this._plugins[idx].initItem(item, this._jui);
+            try {
+                if (this._plugins[idx].initItem) {
+                    this._plugins[idx].initItem(item, this._jui);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to init for plugin : " + e.toString());
             }
         }
     }
     async initPrinting() {
         for (let idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].initPrintingAsync) {
-                await this._plugins[idx].initPrintingAsync();
+            try {
+                if (this._plugins[idx].initPrintingAsync) {
+                    await this._plugins[idx].initPrintingAsync();
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to initPrinting for plugin : " + e.toString());
             }
         }
     }
@@ -295,45 +305,70 @@ class PluginManager {
      */
     updateMenu(hook, ul) {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].updateMenu) {
-                this._plugins[idx].updateMenu(ul, hook);
+            try {
+                if (this._plugins[idx].updateMenu) {
+                    this._plugins[idx].updateMenu(ul, hook);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to updateMenu for plugin : " + e.toString());
             }
         }
     }
     getFieldConfigOptions() {
         let fco = [];
         for (let idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].getFieldConfigOptions && this._plugins[idx].supportsControl) {
-                const fieldConfig = this._plugins[idx].getFieldConfigOptions();
-                for (let i = 0; i < fieldConfig.length; i++) {
-                    if (this._plugins[idx].supportsControl(fieldConfig[i].id)) {
-                        fco.push(fieldConfig[i]);
+            try {
+                if (this._plugins[idx].getFieldConfigOptions && this._plugins[idx].supportsControl) {
+                    const fieldConfig = this._plugins[idx].getFieldConfigOptions();
+                    for (let i = 0; i < fieldConfig.length; i++) {
+                        if (this._plugins[idx].supportsControl(fieldConfig[i].id)) {
+                            fco.push(fieldConfig[i]);
+                        }
                     }
                 }
+            }
+            catch (e) {
+                console.error("error: Fail to getFieldConfigOptions for plugin : " + e.toString());
             }
         }
         return fco;
     }
     addFieldSettings(configApp, project, pageId, fieldType, fieldParams, ui, paramChanged, canBePublished) {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].addFieldSettings) {
-                this._plugins[idx].addFieldSettings(configApp, project, pageId, fieldType, fieldParams, ui, () => paramChanged(), canBePublished);
+            try {
+                if (this._plugins[idx].addFieldSettings) {
+                    this._plugins[idx].addFieldSettings(configApp, project, pageId, fieldType, fieldParams, ui, () => paramChanged(), canBePublished);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to addFieldSettings for plugin : " + e.toString());
             }
         }
     }
     supportsControl(fieldType) {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].supportsControl && this._plugins[idx].supportsControl(fieldType)) {
-                return true;
+            try {
+                if (this._plugins[idx].supportsControl && this._plugins[idx].supportsControl(fieldType)) {
+                    return true;
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to supportsControl for plugin : " + e.toString());
             }
         }
         return false;
     }
     createControl(ctrlObj, settings) {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].supportsControl && this._plugins[idx].supportsControl(settings.fieldType)) {
-                this._plugins[idx].createControl(ctrlObj, settings);
-                return;
+            try {
+                if (this._plugins[idx].supportsControl && this._plugins[idx].supportsControl(settings.fieldType)) {
+                    this._plugins[idx].createControl(ctrlObj, settings);
+                    return;
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to createControl for plugin : " + e.toString());
             }
         }
     }
@@ -345,15 +380,14 @@ class PluginManager {
             }
         }
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].initProject) {
-                // TODO: Catch and log exceptions here so other plugins can load.
-                try {
+            try {
+                if (this._plugins[idx].initProject) {
                     this._plugins[idx].initProject(project);
                 }
-                catch (e) {
-                    //Display error message to user in the console.
-                    console.error(e);
-                }
+            }
+            catch (e) {
+                //Display error message to user in the console.
+                console.error(e);
             }
         }
         this.initPrinting();
@@ -361,40 +395,65 @@ class PluginManager {
     // to modify db tree after it has been created
     filterProject(db) {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].filterProject) {
-                this._plugins[idx].filterProject(db);
+            try {
+                if (this._plugins[idx].filterProject) {
+                    this._plugins[idx].filterProject(db);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to filterProject for plugin : " + e.toString());
             }
         }
     }
     // to modify search panel on left after it has been rendered
     updateSearchPanel() {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].updateSearchPanel) {
-                this._plugins[idx].updateSearchPanel();
+            try {
+                if (this._plugins[idx].updateSearchPanel) {
+                    this._plugins[idx].updateSearchPanel();
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to updateSearchPanel for plugin : " + e.toString());
             }
         }
     }
     // to modify item on left after it has been rendered
     updateItemPanel() {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].updateItemPanel) {
-                this._plugins[idx].updateItemPanel();
+            try {
+                if (this._plugins[idx].updateItemPanel) {
+                    this._plugins[idx].updateItemPanel();
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to updateItemPanel for plugin : " + e.toString());
             }
         }
     }
     // notify plugins that links of item changed
     updateItem(updates) {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].updateItem) {
-                this._plugins[idx].updateItem(updates);
+            try {
+                if (this._plugins[idx].updateItem) {
+                    this._plugins[idx].updateItem(updates);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to updateItem for plugin : " + e.toString());
             }
         }
     }
     ;
     updateTree() {
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].updateTree) {
-                this._plugins[idx].updateTree();
+            try {
+                if (this._plugins[idx].updateTree) {
+                    this._plugins[idx].updateTree();
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to updateTree for plugin : " + e.toString());
             }
         }
         return;
@@ -402,10 +461,15 @@ class PluginManager {
     getTinyMenus(editor) {
         let list = [];
         for (let plugin of this._plugins) {
-            if (plugin.getTinyMenuItems) {
-                let menuItems = plugin.getTinyMenuItems(editor);
-                if (menuItems && menuItems.length > 0)
-                    list.push(...menuItems);
+            try {
+                if (plugin.getTinyMenuItems) {
+                    let menuItems = plugin.getTinyMenuItems(editor);
+                    if (menuItems && menuItems.length > 0)
+                        list.push(...menuItems);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to getTinyMenus for plugin : " + e.toString());
             }
         }
         return list;
@@ -413,10 +477,15 @@ class PluginManager {
     getCustomSearches() {
         let list = [];
         for (let plugin of this._plugins) {
-            if (plugin.getCustomSearches) {
-                let menuItems = plugin.getCustomSearches();
-                if (menuItems && menuItems.length > 0)
-                    list.push(...menuItems);
+            try {
+                if (plugin.getCustomSearches) {
+                    let menuItems = plugin.getCustomSearches();
+                    if (menuItems && menuItems.length > 0)
+                        list.push(...menuItems);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to getCustomSearches for plugin : " + e.toString());
             }
         }
         return list;
@@ -424,10 +493,15 @@ class PluginManager {
     getUserMenuItems() {
         let list = [];
         for (let plugin of this._plugins) {
-            if (plugin.getUserMenuItems) {
-                let menuItems = plugin.getUserMenuItems();
-                if (menuItems && menuItems.length > 0)
-                    list.push(...menuItems);
+            try {
+                if (plugin.getUserMenuItems) {
+                    let menuItems = plugin.getUserMenuItems();
+                    if (menuItems && menuItems.length > 0)
+                        list.push(...menuItems);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to getUserMenuItems for plugin : " + e.toString());
             }
         }
         return list;
@@ -435,10 +509,15 @@ class PluginManager {
     getQMSUserMenuItems() {
         let list = [];
         for (let plugin of this._plugins) {
-            if (plugin.getQMSUserMenuItems) {
-                let menuItems = plugin.getQMSUserMenuItems();
-                if (menuItems && menuItems.length > 0)
-                    list.push(...menuItems);
+            try {
+                if (plugin.getQMSUserMenuItems) {
+                    let menuItems = plugin.getQMSUserMenuItems();
+                    if (menuItems && menuItems.length > 0)
+                        list.push(...menuItems);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to getQMSUserMenuItems for plugin : " + e.toString());
             }
         }
         return list;
@@ -446,10 +525,15 @@ class PluginManager {
     getConfigUserMenuItems() {
         let list = [];
         for (let plugin of this._plugins) {
-            if (plugin.getConfigUserMenuItems) {
-                let menuItems = plugin.getConfigUserMenuItems();
-                if (menuItems && menuItems.length > 0)
-                    list.push(...menuItems);
+            try {
+                if (plugin.getConfigUserMenuItems) {
+                    let menuItems = plugin.getConfigUserMenuItems();
+                    if (menuItems && menuItems.length > 0)
+                        list.push(...menuItems);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to getConfigUserMenuItems for plugin : " + e.toString());
             }
         }
         return list;
@@ -457,10 +541,15 @@ class PluginManager {
     getProjectMenuItems() {
         let list = [];
         for (let plugin of this._plugins) {
-            if (plugin.getProjectMenuItems) {
-                let menuItems = plugin.getProjectMenuItems();
-                if (menuItems && menuItems.length > 0)
-                    list.push(...menuItems);
+            try {
+                if (plugin.getProjectMenuItems) {
+                    let menuItems = plugin.getProjectMenuItems();
+                    if (menuItems && menuItems.length > 0)
+                        list.push(...menuItems);
+                }
+            }
+            catch (e) {
+                console.error("error: Fail to getProjectMenuItems for plugin : " + e.toString());
             }
         }
         return list;
@@ -469,15 +558,20 @@ class PluginManager {
         let that = this;
         let allPages = [];
         for (let idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].getProjectPagesAsync) {
-                let pages = await this._plugins[idx].getProjectPagesAsync();
-                for (let page of pages) {
-                    allPages.push(page);
-                    that.controls["_" + page.id] = page.render;
-                    that.destructors["_" + page.id] = page.destroy;
-                    that.titles["_" + page.id] = page.title;
-                    that.usesFilters["_" + page.id] = page.usesFilters;
+            try {
+                if (this._plugins[idx].getProjectPagesAsync) {
+                    let pages = await this._plugins[idx].getProjectPagesAsync();
+                    for (let page of pages) {
+                        allPages.push(page);
+                        that.controls["_" + page.id] = page.render;
+                        that.destructors["_" + page.id] = page.destroy;
+                        that.titles["_" + page.id] = page.title;
+                        that.usesFilters["_" + page.id] = page.usesFilters;
+                    }
                 }
+            }
+            catch (e) {
+                console.error("error: Fail to getProjectPages for plugin : " + e.toString());
             }
         }
         return allPages;
@@ -550,10 +644,15 @@ class PluginManager {
     renderActionButtons(options, body, controls) {
         var done = false;
         for (var idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].renderActionButtons) {
-                if (this._plugins[idx].renderActionButtons(options, body, controls)) {
-                    done = true;
+            try {
+                if (this._plugins[idx].renderActionButtons) {
+                    if (this._plugins[idx].renderActionButtons(options, body, controls)) {
+                        done = true;
+                    }
                 }
+            }
+            catch (e) {
+                console.error("error: Fail to renderActionButtons for plugin : " + e.toString());
             }
         }
         // return true if at least on plugin is owner
