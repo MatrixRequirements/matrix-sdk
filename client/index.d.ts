@@ -1825,6 +1825,7 @@ export interface IBaseDropdownFieldParams {
 export declare class DropdownFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
+	private lt;
 	protected params: IBaseDropdownFieldParams;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, itemConfig: ItemConfiguration): void;
@@ -1996,6 +1997,7 @@ export interface IRichTextParams {
 	widthViewer?: string;
 	initialContent?: string;
 	visibleOption?: string;
+	autoFocus?: boolean;
 }
 export interface IThemeSelector {
 	themeSelectorAdded: boolean;
@@ -4281,7 +4283,7 @@ export declare enum ControlState {
 	DialogEdit = 7,
 	Review = 8
 }
-declare enum LineType {
+export declare enum LineType {
 	textline = "textline",
 	id = "id",
 	uppercase = "uppercase",
@@ -12792,6 +12794,7 @@ export interface ClientMatrixSdk {
 	PrintProcessor: typeof PrintProcessor;
 	ControlCore: typeof ControlCore;
 	UIToolsConstants: typeof UIToolsConstants;
+	LineEditor: typeof LineEditor;
 }
 export declare function getSdkInstance(): ClientMatrixSdk;
 export declare function registerPlugin(plugin: PluginCore): void;
