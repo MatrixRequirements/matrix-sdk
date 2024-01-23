@@ -812,6 +812,34 @@ function applyResponsiveView() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   LineType: () => (/* binding */ LineType)
+/* harmony export */ });
+var LineType;
+(function (LineType) {
+    LineType["textline"] = "textline";
+    LineType["id"] = "id";
+    LineType["uppercase"] = "uppercase";
+    LineType["number"] = "number";
+    LineType["select"] = "select";
+    LineType["table"] = "table";
+    LineType["json"] = "json";
+    LineType["color"] = "color";
+    LineType["id_"] = "id_";
+    LineType["richtext"] = "richtext";
+    LineType["readonly"] = "readonly";
+    LineType["boolean"] = "boolean";
+    LineType["multiselect"] = "multiselect";
+    LineType["folderselect"] = "folderselect";
+    LineType["userAndGroupSelect"] = "userAndGroupSelect";
+})(LineType || (LineType = {}));
+
+
+/***/ }),
+/* 6 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SearchState: () => (/* binding */ SearchState),
 /* harmony export */   SearchUpdate: () => (/* binding */ SearchUpdate),
 /* harmony export */   SelectMode: () => (/* binding */ SelectMode)
@@ -910,14 +938,17 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FieldDescriptions: () => (/* reexport safe */ _core_common_businesslogic_FieldDescriptions__WEBPACK_IMPORTED_MODULE_1__.FieldDescriptions),
+/* harmony export */   LineType: () => (/* reexport safe */ _core_common_UI_LineType__WEBPACK_IMPORTED_MODULE_2__.LineType),
 /* harmony export */   ReviewControlColumns: () => (/* reexport safe */ _core_client_plugins_ScheduleReviewDefines__WEBPACK_IMPORTED_MODULE_0__.ReviewControlColumns),
-/* harmony export */   SelectMode: () => (/* reexport safe */ _core_common_UI_Components_ProjectViewDefines__WEBPACK_IMPORTED_MODULE_2__.SelectMode),
+/* harmony export */   SelectMode: () => (/* reexport safe */ _core_common_UI_Components_ProjectViewDefines__WEBPACK_IMPORTED_MODULE_3__.SelectMode),
 /* harmony export */   getSdkInstance: () => (/* binding */ getSdkInstance),
 /* harmony export */   registerPlugin: () => (/* binding */ registerPlugin)
 /* harmony export */ });
 /* harmony import */ var _core_client_plugins_ScheduleReviewDefines__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _core_common_businesslogic_FieldDescriptions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony import */ var _core_common_UI_Components_ProjectViewDefines__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
+/* harmony import */ var _core_common_UI_LineType__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
+/* harmony import */ var _core_common_UI_Components_ProjectViewDefines__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
+
 
 
 
