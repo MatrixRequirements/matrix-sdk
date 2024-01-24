@@ -2544,6 +2544,9 @@ export interface IApp extends IBaseApp {
 	canSeeField(category: string, field: number): boolean;
 	canEditField(category: string, field: number): boolean;
 	evaluateTraceRule(item: IItem, checkDownRule: boolean): ITraceRules;
+	isConfigApp(): false;
+	isConfigApplication: false;
+	isClientApplication: true;
 	dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
 }
 export interface IBaseApp {
@@ -2562,7 +2565,6 @@ export interface IBaseApp {
 	printForm: JQuery;
 	dlgForm: JQuery;
 	postLogin(user: string): void;
-	isConfigApp(): boolean;
 }
 export interface ISearchResult {
 	itemId: string;
@@ -11160,6 +11162,9 @@ export interface IConfigApp extends IBaseApp {
 	reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
 	signOut(): void;
 	initConfigPages(): void;
+	isConfigApp(): true;
+	isConfigApplication: true;
+	isClientApplication: false;
 }
 export interface IConfigPage {
 	getNode(): IDB;
@@ -12779,7 +12784,7 @@ export interface ClientMatrixSdk {
 	plugins: PluginManager;
 	globalMatrix: GlobalMatrix;
 	matrixSession: MatrixSession;
-	app: IApp;
+	app: IConfigApp | IApp;
 	ml: IMatrix;
 	notificationSetting: string;
 	defaultNotificationConfig: INotificationConfig;
