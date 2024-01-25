@@ -1661,7 +1661,6 @@ export interface IBaseDropdownFieldParams {
 export declare class DropdownFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
-	private lt;
 	protected params: IBaseDropdownFieldParams;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, itemConfig: ItemConfiguration): void;

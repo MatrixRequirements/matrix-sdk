@@ -1825,7 +1825,6 @@ export interface IBaseDropdownFieldParams {
 export declare class DropdownFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
-	private lt;
 	protected params: IBaseDropdownFieldParams;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, itemConfig: ItemConfiguration): void;
@@ -1997,7 +1996,6 @@ export interface IRichTextParams {
 	widthViewer?: string;
 	initialContent?: string;
 	visibleOption?: string;
-	autoFocus?: boolean;
 }
 export interface IThemeSelector {
 	themeSelectorAdded: boolean;
@@ -2544,9 +2542,6 @@ export interface IApp extends IBaseApp {
 	canSeeField(category: string, field: number): boolean;
 	canEditField(category: string, field: number): boolean;
 	evaluateTraceRule(item: IItem, checkDownRule: boolean): ITraceRules;
-	isConfigApp(): false;
-	isConfigApplication: false;
-	isClientApplication: true;
 	dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
 }
 export interface IBaseApp {
@@ -2565,6 +2560,7 @@ export interface IBaseApp {
 	printForm: JQuery;
 	dlgForm: JQuery;
 	postLogin(user: string): void;
+	isConfigApp(): boolean;
 }
 export interface ISearchResult {
 	itemId: string;
@@ -4285,7 +4281,7 @@ export declare enum ControlState {
 	DialogEdit = 7,
 	Review = 8
 }
-export declare enum LineType {
+declare enum LineType {
 	textline = "textline",
 	id = "id",
 	uppercase = "uppercase",
@@ -11162,9 +11158,6 @@ export interface IConfigApp extends IBaseApp {
 	reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
 	signOut(): void;
 	initConfigPages(): void;
-	isConfigApp(): true;
-	isConfigApplication: true;
-	isClientApplication: false;
 }
 export interface IConfigPage {
 	getNode(): IDB;
@@ -12784,7 +12777,7 @@ export interface ClientMatrixSdk {
 	plugins: PluginManager;
 	globalMatrix: GlobalMatrix;
 	matrixSession: MatrixSession;
-	app: IConfigApp | IApp;
+	app: IApp;
 	ml: IMatrix;
 	notificationSetting: string;
 	defaultNotificationConfig: INotificationConfig;
@@ -12799,7 +12792,6 @@ export interface ClientMatrixSdk {
 	PrintProcessor: typeof PrintProcessor;
 	ControlCore: typeof ControlCore;
 	UIToolsConstants: typeof UIToolsConstants;
-	LineEditor: typeof LineEditor;
 }
 export declare function getSdkInstance(): ClientMatrixSdk;
 export declare function registerPlugin(plugin: PluginCore): void;
