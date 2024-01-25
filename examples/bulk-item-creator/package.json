@@ -31,7 +31,7 @@
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
     "eslint": "^8.11.0",
-    "matrix-requirements-sdk": "^2.4.0-rc.0",
+    "matrix-requirements-sdk": "^2.4.0-rc.4",
     "matrixrequirements-type-declarations": "^2.4.0-rc.0",
     "prettier": "^2.2.1",
     "ts-loader": "^9.4.2",
