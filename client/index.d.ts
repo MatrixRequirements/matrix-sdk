@@ -928,6 +928,10 @@ export interface IPrintFunctionParamsOverwrites {
 	debug: number;
 	[key: string]: IPrintFunctionParams;
 }
+export interface IPrePostProcessorExecParams {
+	processor: string;
+	[key: string]: any;
+}
 export interface IGlobalPrintFunctionParams {
 	outputFormat: string;
 	customer: IPrintFunctionParamsOverwrites;
@@ -4449,6 +4453,30 @@ export declare class PrintProcessor implements IPrintProcessor {
 	static getCdataAsText(node: Element, escapeHtmlEntities: boolean): string;
 	static getUserName(user: string, mf: JQuery, first: boolean, last: boolean, login: boolean, email: boolean): string;
 	static getFieldAndLabelsIteratorsDropdown(): IDropdownOption[];
+}
+export interface PostProcessor {
+	run: (rendering: string, params: IPrintFunctionParams) => string;
+}
+export interface PreProcessor {
+	run: (mf: JQuery, params: IPrintFunctionParams) => void;
+}
+export interface PostProcessorMap {
+	[key: string]: PostProcessor;
+}
+export interface PreProcessorMap {
+	[key: string]: PreProcessor;
+}
+declare class PrintProcessorRegistry {
+	private postProcessors;
+	private preProcessors;
+	executePost(params: IPrePostProcessorExecParams, rendering: string): string;
+	executePre(params: IPrePostProcessorExecParams, mf: JQuery): void;
+	registerPostProcessor(name: string, processor: PostProcessor): void;
+	registerPreProcessor(name: string, processor: PreProcessor): void;
+	getRegisteredProcessors(): {
+		preProcessors: PreProcessorMap;
+		postProcessors: PostProcessorMap;
+	};
 }
 /**
  * A Field represents a field in an Item in a Project on a Matrix Instance. The Field contains
@@ -12800,6 +12828,7 @@ export interface ClientMatrixSdk {
 	ControlCore: typeof ControlCore;
 	UIToolsConstants: typeof UIToolsConstants;
 	LineEditor: typeof LineEditor;
+	printProcessorRegistry: typeof PrintProcessorRegistry;
 }
 export declare function getSdkInstance(): ClientMatrixSdk;
 export declare function registerPlugin(plugin: PluginCore): void;
