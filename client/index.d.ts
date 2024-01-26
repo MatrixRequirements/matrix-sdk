@@ -12828,7 +12828,7 @@ export interface ClientMatrixSdk {
 	ControlCore: typeof ControlCore;
 	UIToolsConstants: typeof UIToolsConstants;
 	LineEditor: typeof LineEditor;
-	printProcessorRegistry: typeof PrintProcessorRegistry;
+	printProcessorRegistry: PrintProcessorRegistry;
 }
 export declare function getSdkInstance(): ClientMatrixSdk;
 export declare function registerPlugin(plugin: PluginCore): void;
