@@ -1761,6 +1761,16 @@ export interface IFieldHandler {
 	 */
 	setData(value: string, doValidation?: boolean): any;
 }
+export interface ITableParams {
+	canBeModified?: boolean;
+	create?: boolean;
+	showLineNumbers?: boolean;
+	maxRows?: number;
+	fixRows?: number;
+	readonly_allowfocus?: boolean;
+	columns: any;
+	onCellChanged?: Function;
+}
 export interface IBaseControl {
 	getFieldHandler(): IFieldHandler;
 	setFieldHandler(IFieldHandler: any): void;
@@ -2002,12 +2012,6 @@ export interface IRichTextParams {
 	initialContent?: string;
 	visibleOption?: string;
 	autoFocus?: boolean;
-}
-export interface IThemeSelector {
-	themeSelectorAdded: boolean;
-	loadTheme(themeName: string): any;
-	init(): any;
-	renderThemeSelectorControl(help: string, table: JQuery): any;
 }
 export interface IContextInformation {
 	project: string;
@@ -2258,7 +2262,6 @@ export interface IUIToolsEnum {
 	SelectUserOrGroup: ISelectUserOrGroupUI;
 	lt: ILT;
 	Progress: IProgressUI;
-	ThemeSelector: IThemeSelector;
 	fixC3ForCopy(copied: JQuery): any;
 	createDropDownButton(defaultText: string, options: IDropDownButtonOption[], isUp: boolean, buttonId?: string, disableDefaultButtonClick?: boolean): JQuery;
 	getNiceDialogSize(minWidth: number, minHeight: number): {
@@ -3633,6 +3636,22 @@ export interface IDHFControlDefinitionValue {
 	name?: string;
 	type?: string;
 	ctrlConfig?: IDHFSectionOptions;
+}
+export interface ITableDataRow {
+	[key: string]: number | string;
+}
+export interface ITableFunction {
+	(table: ITableDataRow[], parameterJson: ITableParams): string;
+}
+export interface ITableFunctions {
+	[key: string]: ITableFunction;
+}
+declare class TableMath {
+	protected functions: ITableFunctions;
+	/** allow to add new functions:  */
+	registerFunction(functionId: string, execute: ITableFunction): void;
+	/** executes function on a table */
+	execute(functionId: string, table: ITableDataRow[], parameterJson: ITableParams): string;
 }
 export interface ITestFieldParam extends XRFieldTypeAnnotatedParamJson {
 	fieldMeaning: string;
@@ -12820,6 +12839,7 @@ export interface ClientMatrixSdk {
 	MR1: MR1Impl;
 	matrixApplicationUI: Application;
 	matrixsdk: MatrixSDK;
+	tableMath: TableMath;
 	ItemSelectionTools: typeof ItemSelectionTools;
 	ReferenceTools: typeof ReferenceTools;
 	ConfigPage: typeof ConfigPage;
