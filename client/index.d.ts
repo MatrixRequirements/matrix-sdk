@@ -10772,6 +10772,131 @@ export declare enum refLinkTooltip {
 	none = 1,
 	html = 2
 }
+export interface IRiskControlOptions extends IBaseControlOptions {
+	controlState?: ControlState;
+	canEdit?: boolean;
+	help?: string;
+	fieldValue?: string;
+	valueChanged?: Function;
+	parameter?: IRiskParameter;
+	links?: IReference[];
+	hideReadonlyColumns?: boolean;
+}
+export interface IRiskParameter {
+	riskConfig?: IRiskConfig;
+	showAttributeNames?: boolean;
+	forceAfterWeightsInPrint?: boolean;
+	hide_UI?: boolean;
+}
+export interface IRiskValue {
+	factors: IRiskValueFactor[];
+	mitigations: IRiskValueMitigation[];
+	postWeights?: IRiskValueFactorWeight[];
+}
+export interface IRiskValueFactor {
+	label: string;
+	type: string;
+	value: string;
+	inputType?: string;
+	weights: IRiskValueFactorWeight[];
+}
+export interface IRiskValueFactorWeight {
+	description: string;
+	label: string;
+	type: string;
+	value: number;
+}
+export interface IRiskValueMitigation {
+	to: string;
+	title: string;
+	changes: IRiskValueMitigationChange[];
+}
+export interface IRiskValueMitigationChange {
+	by: number;
+	changes: string;
+	description: string;
+	name: string;
+}
+export interface IRiskValueMap {
+	[key: string]: number;
+}
+export interface IRiskRender {
+	text: string;
+	foregroundColor: string;
+	backgroundColor: string;
+	css: string;
+}
+export declare class RiskCalculator {
+	private riskValue;
+	private config;
+	constructor(config: IRiskConfig);
+	parse(fieldValue: string): void;
+	updateMitigations(possibleRefs: IReference[]): boolean;
+	updateMitigationTitles(possibleLinks: IReference[]): void;
+	init(riskValue: IRiskValue): void;
+	/** get the value */
+	getValue(): IRiskValue;
+	getAttributeHTML(attributeIn: string): string;
+	getWeight(factorType: string, weightType: string): number;
+	getRBM(): IRiskValueMap;
+	getRAMByMath(rbm: IRiskValueMap): IRiskValueMap;
+	getRAMByUser(rbm: IRiskValueMap): IRiskValueMap;
+	getRAM(rbm: IRiskValueMap): IRiskValueMap;
+	getRiskSumText(riskValues: IRiskValueMap): {
+		text: string;
+		foregroundColor: string;
+		backgroundColor: string;
+		css: string;
+	};
+	getRiskSumSpan(riskValues: IRiskValueMap): string;
+	getColor(riskValues: IRiskValueMap, foreground: boolean): string;
+	static labelDisplay(weightValue: IRiskConfigFactorWeightValue): string;
+}
+export declare class RiskControlImpl extends BaseControl<GenericFieldHandler> {
+	private settings;
+	private config;
+	private risk;
+	private mitbody;
+	private isPrint;
+	private riskCalculator;
+	private mitigationsRemoved;
+	constructor(control: JQuery, fieldHandler: GenericFieldHandler);
+	init(options: IRiskControlOptions): void;
+	hasChangedAsync(): Promise<boolean>;
+	getValueAsync(): Promise<string>;
+	destroy(): void;
+	resizeItem(): void;
+	private syncTheLinks;
+	private controlsFromTable;
+	private controlsToTable;
+	private renderFactorWithWeightsLine;
+	private editRichText;
+	private setFactorRichValue;
+	private renderWeight;
+	private setWeight;
+	private setFactor;
+	riskChange(): void;
+	private mitigationChanged;
+	private getLabelFactor;
+	private getLabelWeight;
+	private getLabelWeightFactor;
+	private createMitigationSelect;
+	private mitigationRenderer;
+	private setSelectValues;
+	private setSelectValue;
+	private canBeMitigation;
+	/********************************
+	 * render as table control
+	 ********************************/
+	private renderTableBodyRow;
+	/********************************
+	 * user inputs
+	 ********************************/
+	private renderFactorInput;
+	private renderWeightInput;
+	highlightReferences(): void;
+	private renderMitigationSelect;
+}
 export declare class ProjectStorage implements IDataStorage {
 	Project: string;
 	DOMPurify: any;
@@ -12840,6 +12965,8 @@ export interface ClientMatrixSdk {
 	matrixApplicationUI: Application;
 	matrixsdk: MatrixSDK;
 	tableMath: TableMath;
+	RiskCalculator: RiskCalculator;
+	RiskControlImpl: RiskControlImpl;
 	ItemSelectionTools: typeof ItemSelectionTools;
 	ReferenceTools: typeof ReferenceTools;
 	ConfigPage: typeof ConfigPage;
