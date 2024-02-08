@@ -7876,7 +7876,7 @@ declare class DefaultApi extends BaseAPI {
 	 * @throws {RequiredError}
 	 * @memberof DefaultApi
 	 */
-	projectFileFilenoGet(project: string, fileno: number, key: string, disposition?: string, options?: any): Promise<string>;
+	projectFileFilenoGet(project: string, fileno: number, key: string, disposition?: string, options?: any): Promise<ArrayBuffer>;
 	/**
 	 * Permissions - Must have a valid authentication. Valid from version 2.1
 	 * @summary Retrieve list of all files owned by a project
@@ -8135,7 +8135,7 @@ declare class DefaultApi extends BaseAPI {
 	 * @throws {RequiredError}
 	 * @memberof DefaultApi
 	 */
-	projectJobJobFilenoGet(project: string, job: number, fileno: number, mode?: string, format?: string, disposition?: string, options?: any): Promise<string>;
+	projectJobJobFilenoGet(project: string, job: number, fileno: number, mode?: string, format?: string, disposition?: string, options?: any): Promise<ArrayBuffer>;
 	/**
 	 * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
 	 * @summary Get a job status, including generated files. The variable part is the jobID (a number)
@@ -8858,6 +8858,7 @@ export interface IProjectNeeds {
 	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
 	runHookInProject(project: string, itemId: string, hookName: string, body: string): Promise<string>;
 	getJobStatus(project: string, jobId: number, options?: unknown): Promise<JobsStatusWithUrl>;
+	downloadJobResult(project: string, jobId: number, fileno: number, mode?: string, format?: string, disposition?: string, options?: unknown): Promise<ArrayBuffer>;
 	postJobProgressForProject(project: string, jobId: number, progress: number, status?: string): Promise<string>;
 	deleteJobForProject(project: string, jobId: number, reason: string): Promise<string>;
 	createTodo(project: string, users: string[], type: TodoTypes | string, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
@@ -9255,6 +9256,17 @@ export declare class Project {
 	 * @returns a pointer to the location on the server where the file can be downloaded
 	 */
 	generateDocument(type: "pdf" | "html" | "docx" | "odt", docId: string, progressReporter?: (jobId: number, jobDetails: JobsStatusWithUrl) => void): Promise<JobFileWithUrl[]>;
+	/**
+	 * Download a job result
+	 * @param jobId
+	 * @param fileno
+	 * @param mode
+	 * @param format
+	 * @param disposition
+	 * @param options
+	 * @returns An ArrayBuffer
+	 */
+	downloadJobResult(jobId: number, fileno: number, mode?: string, format?: string, disposition?: string, options?: unknown): Promise<ArrayBuffer>;
 	private sleep;
 	createTodo(users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
 }
@@ -10050,6 +10062,18 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	getProjectTodos(project: string, itemRef?: string, includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
 	postProjectReport(project: string, item: string, format: string): Promise<CreateReportJobAck>;
 	getJobStatus(project: string, jobId: number, options?: unknown): Promise<JobsStatusWithUrl>;
+	/**
+	 * Actually download a job file
+	 * @param project
+	 * @param jobId
+	 * @param fileno
+	 * @param mode
+	 * @param format
+	 * @param disposition
+	 * @param options
+	 * @returns An ArrayBuffer
+	 */
+	downloadJobResult(project: string, jobId: number, fileno: number, mode?: string, format?: string, disposition?: string, options?: unknown): Promise<ArrayBuffer>;
 	postJobProgressForProject(project: string, jobId: number, progress: number, status?: string): Promise<string>;
 	deleteJobForProject(project: string, jobId: number, reason: string): Promise<string>;
 	createTodo(project: string, users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
