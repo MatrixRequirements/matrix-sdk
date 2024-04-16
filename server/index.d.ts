@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+
 export declare enum TodoTypes {
 	needSignature = "needSignature",
 	needReview = "needReview",
@@ -332,8 +334,7 @@ export interface XRFieldType {
 	label: string;
 }
 export type JsonEditorValidation = (json: unknown) => Promise<string | null>;
-export interface IPrintFunctionParams {
-}
+export type IPrintFunctionParams = any;
 export interface IPrintFunctionParamsOverwrites {
 	debug: number;
 	[key: string]: IPrintFunctionParams;
@@ -362,6 +363,7 @@ declare enum EnumItemPublish {
 	Never = 2
 }
 export interface IQMSConfig {
+	userMode?: string;
 	/** there's only one publication in the array supported */
 	publications: IPublication[];
 	rolesTargetProjects?: string[];
@@ -370,6 +372,7 @@ export interface IQMSConfig {
 	training?: ITraining;
 	/** Experimental: comma separated list of labels to show in published site -> if they are set */
 	showLabels?: string;
+	allowExport: boolean;
 	/** obsolete */
 	legacyRoles: boolean;
 }
@@ -1024,16 +1027,16 @@ export interface IFieldDescription {
 	capabilities: IFieldCapabilities;
 }
 export interface ICleanup {
-	"cleanup": boolean;
-	"tags": string[];
-	"attributes": IStringStringArrayMap;
-	"enforcedAttributes": IStringStringArrayMap;
-	"protocolAttributes": ICleanupProtocol[];
+	cleanup: boolean;
+	tags: string[];
+	attributes: IStringStringArrayMap;
+	enforcedAttributes: IStringStringArrayMap;
+	protocolAttributes: ICleanupProtocol[];
 }
 export interface ICleanupProtocol {
-	"element": string;
-	"attribute": string;
-	"protocols": string[];
+	element: string;
+	attribute: string;
+	protocols: string[];
 }
 /** defines parameters for imports */
 export interface IImportConfig {
@@ -1047,6 +1050,8 @@ export interface IImportConfigDetails {
 	lockLabel: string;
 	/** there can be a list of users who can import (if there's nobody in there, or no list is defined: everybody can) */
 	importMasters?: string[];
+	/** ItemParentMode for new includes or copies. By default "orphan", otherwise "preserve" */
+	itemParentMode?: string;
 }
 /**
  * There should be an implementation of IFieldHandler for each type of field matrix supports.
@@ -1058,7 +1063,7 @@ export interface IFieldHandler {
 	 * Initializes the field handler with the raw string data, or undefined if there is
 	 * not yet any representation in the db.
 	 */
-	initData(serializedFieldData: string | undefined): any;
+	initData(serializedFieldData: string | undefined): void;
 	/**
 	 * getData() returns a string representing the data in the database. It may be
 	 * a JSON object, in which case use JSON.parse() to manipulate it. It may also be
@@ -1072,7 +1077,7 @@ export interface IFieldHandler {
 	 * @param value
 	 * @param doValidation If not specified, the default is false (no validation)
 	 */
-	setData(value: string, doValidation?: boolean): any;
+	setData(value: string, doValidation?: boolean): void;
 }
 export interface IBaseControlOptions {
 	[key: string]: any;
@@ -1110,9 +1115,9 @@ export interface IItemControlOptions extends IBaseControlOptions {
 	control?: JQuery;
 	type?: string;
 	item?: IItemGet;
-	dummyData?: {};
+	dummyData?: unknown;
 	parent?: string;
-	changed?: Function;
+	changed?: (needsSave: boolean) => void;
 	isForm?: boolean;
 	isItem?: boolean;
 	isPrint?: boolean;
@@ -1121,6 +1126,7 @@ export interface IItemControlOptions extends IBaseControlOptions {
 	canEdit?: boolean;
 	canEditLabels?: boolean;
 	canEditTitle?: boolean;
+	disableTinyMce?: boolean;
 }
 declare class ItemControl {
 	private settings;
@@ -1267,6 +1273,10 @@ export interface IPlugin {
 	 * Returns a list of menu items to be added to the QMS user profile menu in the liveqms.
 	 */
 	getQMSUserMenuItems?(): IPluginMenuAction[];
+	/**
+	 * Return a list of react components to be displayed in the dashboard analytics page.
+	 */
+	getTilesAsync?: () => Promise<React.ReactElement[]>;
 }
 export interface ISettingPage {
 	id: string;
@@ -1306,7 +1316,7 @@ export interface ITinyMenu {
 }
 export interface IPluginSearch {
 	menu: string;
-	search: (selectItems: (string: any) => void) => Promise<void>;
+	search: (selectItems: (selectedItems: string[]) => void) => Promise<void>;
 }
 export interface IPluginMenuAction {
 	icon: string;
@@ -1540,7 +1550,7 @@ export declare class Tasks implements IPlugin {
 	createControl(ctrl: JQuery, options: IBaseControlOptions): void;
 	initProject(): void;
 	getProjectPagesAsync(): Promise<IProjectPageParam[]>;
-	preSaveHookAsync(isItem: boolean, type: string, controls: IControlDefinition[]): Promise<unknown>;
+	preSaveHookAsync(isItem: boolean, type: string, controls: IControlDefinition[]): Promise<{}>;
 	isPluginEnabled(pluginId: number): boolean;
 	evaluateTaskIds(comment: string): string[];
 	static externalItemFromUrl(url: string): IExternalItem;
@@ -1680,14 +1690,14 @@ export declare class DropdownFieldHandler implements IFieldHandler {
 	getHuman(): string;
 }
 export declare class RichtextFieldHandler implements IFieldHandler {
-	private data;
+	private data?;
 	private config;
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string | undefined): void;
 	getData(): string | undefined;
 	setData(value: string, doValidation?: boolean): void;
-	getHtml(): string;
+	getHtml(): string | undefined;
 	setHtml(str: string): RichtextFieldHandler;
 }
 export interface IContextInformation {
@@ -1706,10 +1716,10 @@ export interface ISimpleItemTools {
 	getCreator(item: IItem): string;
 	getLastEditor(item: IItem): string;
 	refListToDisplayString(inputItems: IReference[] | null, prefix: string, getTitleFunction: GetTitleFunction, shorten?: number): string;
-	renderLink(itemId: string, itemTitle: string, newWindow?: boolean): any;
+	renderLink(itemId: string, itemTitle: string, newWindow?: boolean): JQuery;
 	updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
 	clone(item: IItemGet, copyLabels: boolean): IItemPut;
-	sort(a: string, b: string, project: string, matrixBaseUrl: string): any;
+	sort(a: string, b: string, project: string, matrixBaseUrl: string): number;
 }
 export interface IJSONTools {
 	mergeOptions(defaultOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
@@ -1734,13 +1744,13 @@ export interface ILabelManager {
 	ignoreProjectFilter: boolean;
 	getFilterColor(): string;
 	getFilter(): string;
-	getDisplayName(labelId: string): any;
-	getFilterName(labelId: string): any;
+	getDisplayName(labelId: string): string;
+	getFilterName(labelId: string): string;
 	getLabelDefinitions(categories: string[]): ILabel[];
-	setFilter(filter: string[]): any;
+	setFilter(filter: string[]): void;
 	resetReviewLabels(labelIds: string[], category: string, addXor?: boolean): string[];
 	getDefaultLabels(category: string): string[];
-	hasLabels(): any;
+	hasLabels(): boolean;
 	setLabels(oldLabelIds: string, labels: string[]): string;
 	setLabel(oldLabelIds: string[], label: string): string[];
 	unsetLabel(oldLabelIds: string[], label: string): string[];
@@ -1763,7 +1773,7 @@ export interface ILabelManager {
 	decipherLastTimeLabelWasSet(labelHistory: XRLabelHistory, itemId: string, label: string, beforeRevision: number): number;
 }
 export interface ILoggerTools {
-	log(id: string, msg: string): any;
+	log(id: string, msg: string): void;
 	debug(message: string): void;
 	info(message: string): void;
 	warning(message: string): void;
@@ -2478,7 +2488,7 @@ export declare class Field {
 	private item;
 	private config;
 	private handler;
-	private oldData;
+	private oldData?;
 	constructor(item: Item, config: XRFieldTypeAnnotated, handler: IFieldHandler);
 	/**
 	 * Get the Item which contains this field.
@@ -8729,7 +8739,12 @@ declare class DefaultApi extends BaseAPI {
 	 */
 	userUserTokenPost(user: string, purpose: string, value?: string, reason?: string, validity?: number, options?: any): Promise<string>;
 }
+export interface IFromStringResult {
+	status: "empty" | "ok" | "error";
+	value: object;
+}
 export declare class JSONTools implements IJSONTools {
+	private fromStringCache;
 	private logger;
 	constructor(logger: ILoggerTools);
 	private cloner2;
@@ -8737,10 +8752,7 @@ export declare class JSONTools implements IJSONTools {
 	setOptions(newOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
 	isTrue(obj: undefined | null | boolean | string | number): boolean;
 	isFalse(obj: undefined | null | boolean | string | number): boolean;
-	fromString(str: null | string): {
-		status: string;
-		value: {};
-	};
+	fromString(str: null | string): IFromStringResult;
 	clone(src: any): any;
 	escapeJson(code: string): string;
 	/** MATRIX-5951: json lint and JSON.parse( ) don't handle backslashes ( "a":"\s" )*/
@@ -8889,7 +8901,7 @@ export declare class TreeFolder {
 	isRoot(): boolean;
 	getId(): string;
 	getTitle(): string;
-	getParent(): TreeFolder;
+	getParent(): TreeFolder | null;
 	/**
 	 * Creates a path string including all ancestor folder titles, separated by "/".
 	 * @returns the folder path
@@ -8900,13 +8912,13 @@ export declare class TreeFolder {
 	 * @param folderId
 	 * @returns null if folderId cannot be found.
 	 */
-	findFolder(folderId: string): TreeFolder;
+	findFolder(folderId: string): TreeFolder | null;
 	/**
 	 * Find a TreeFolder with the given name in this folder.
 	 * @param folderTitle
 	 * @returns A valid TreeFolder object or null if not found.
 	 */
-	findDirectFolderByTitle(folderTitle: string): TreeFolder;
+	findDirectFolderByTitle(folderTitle: string): TreeFolder | null;
 	/**
 	 * Save an item with this folder as the parent folder.
 	 * @param item An item that hasn't yet been saved on the server
@@ -9513,7 +9525,7 @@ export declare class Item {
 	 * @throws if the fieldId is already in the ItemFieldMask, or if the fieldId is not valid for the Category.
 	 * @returns the Field object
 	 */
-	expandFieldMaskWithEmptyField(fieldId: number): Field;
+	expandFieldMaskWithEmptyField(fieldId: number): Field | undefined;
 	/**
 	 * Export the data from this item into an IItemPut structure
 	 * @returns An IItemPut structure, filled in from the current state of the Item.
@@ -9612,7 +9624,7 @@ export declare class Item {
 	 * @returns true if the Item's mask allows for this field.
 	 */
 	hasFieldId(fieldId: number): boolean;
-	getFieldById(fieldId: number): Field;
+	getFieldById(fieldId: number): Field | undefined;
 	/**
 	 * Returns all fields within the mask which match the fieldName.
 	 * @param fieldName
@@ -9734,7 +9746,7 @@ declare class ItemsFieldMask {
 	 * @param categoryId
 	 * @returns null if there is no mask for the given Category.
 	 */
-	getCategoryMask(categoryId: string): ItemFieldMask;
+	getCategoryMask(categoryId: string): ItemFieldMask | null;
 	/**
 	 * Suitable to send to the server for a search query.
 	 * @returns A comma-seperated string of ids or "*" (which means all fields accepted)
@@ -9815,7 +9827,7 @@ export interface ISimpleSessionControl {
 	 * provided. It provides "live" access to globals of the current project.
 	 * @returns A valid IProjectContext or null if none is available.
 	 */
-	getDefaultProjectContext(): IProjectContext;
+	getDefaultProjectContext(): IProjectContext | null;
 }
 export interface ICreateConsoleAPIArgs {
 	token: string;
@@ -9843,7 +9855,7 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	protected json: IJSONTools;
 	protected simpleItemTools: ISimpleItemTools;
 	protected instance: DefaultApi;
-	private ItemConfig;
+	private ItemConfig?;
 	protected labelManager: ILabelManager;
 	protected baseRestUrl: string;
 	debug: boolean;
@@ -9961,7 +9973,7 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * This convenience method calls openProject() with that string.
 	 * @returns A valid Project object, or null if the session has no project.
 	 */
-	openCurrentProjectFromSession(): Promise<Project>;
+	openCurrentProjectFromSession(): Promise<Project | null>;
 	/**
 	 * Retrieve or create a Project object for the given project name.  The method is
 	 * asynchronous because it may require a trip to the server to retrieve project
@@ -9969,7 +9981,7 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * @param project a valid string.
 	 * @returns A valid Project object, or null if the project name is undefined.
 	 */
-	openProject(project: string): Promise<Project>;
+	openProject(project: string): Promise<Project | null>;
 	private parseSearchResult;
 	private appSearchAsync;
 	getItemIdsInCategory(category: string): Promise<string[]>;

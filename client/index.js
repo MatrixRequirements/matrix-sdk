@@ -19,8 +19,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ReviewControlColumns: () => (/* binding */ ReviewControlColumns)
 /* harmony export */ });
-;
-;
 class ReviewControlColumns {
 }
 ReviewControlColumns.COL_COMMENT_LOG = "commentlog";
@@ -62,7 +60,9 @@ class FieldDescriptions {
             }
         }
     }
-    static get() { return FieldDescriptions.descriptions; }
+    static get() {
+        return FieldDescriptions.descriptions;
+    }
     static setValidationFunction(fieldId, validator) {
         let fieldDesc = FieldDescriptions.findById(fieldId);
         if (!fieldDesc) {
@@ -137,48 +137,319 @@ FieldDescriptions.descriptions = [
     // [ "richtext",  "user" , "date", "text", "textline" ,"test_result",
     //         "crosslinks", "gateControl","fileManager", "reviewControl"];
     // docs and sign
-    { id: FieldDescriptions.Field_sourceref, capabilities: { canImportedFromExcel: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Source (Original Document) [sourceref]", class: "docsign", help: "keeps a reference to original document when copying and pasting" },
-    { id: FieldDescriptions.Field_markAsTemplate, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Mark as template [markAsTemplate]", class: "docsign", help: "allows to define DOC templates which can be used in other projects" },
-    { id: FieldDescriptions.Field_dhf, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "DFH field  [dhf]", class: "docs", help: "for documents only: holds a section in a document" },
-    { id: FieldDescriptions.Field_docFilter, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Label Filter in DOCs [docFilter]", class: "docs", help: "a special field for Document categories to filter documents by label" },
+    {
+        id: FieldDescriptions.Field_sourceref,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Source (Original Document) [sourceref]",
+        class: "docsign",
+        help: "keeps a reference to original document when copying and pasting",
+    },
+    {
+        id: FieldDescriptions.Field_markAsTemplate,
+        capabilities: {
+            canBeUsedInDocs: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Mark as template [markAsTemplate]",
+        class: "docsign",
+        help: "allows to define DOC templates which can be used in other projects",
+    },
+    {
+        id: FieldDescriptions.Field_dhf,
+        capabilities: {
+            canBeUsedInDocs: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "DFH field  [dhf]",
+        class: "docs",
+        help: "for documents only: holds a section in a document",
+    },
+    {
+        id: FieldDescriptions.Field_docFilter,
+        capabilities: {
+            canBeUsedInDocs: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Label Filter in DOCs [docFilter]",
+        class: "docs",
+        help: "a special field for Document categories to filter documents by label",
+    },
     // normal fields
-    { id: FieldDescriptions.Field_richtext, capabilities: { canImportedFromExcel: true, canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Rich Text Control [richtext]", class: "all", help: "a rich text editor field (with formatting)" },
-    { id: FieldDescriptions.Field_text, capabilities: { canImportedFromExcel: true, canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Plain Text Control [text]", class: "all", help: "a text editor field (no formatting)" },
-    { id: FieldDescriptions.Field_section, capabilities: { canBeUsedInDocs: false, canHideInDoc: false, canBeXtcPreset: false, canBePublished: true, canBeReadonly: false, canRequireContent: false }, label: "Section with explanation [section]", class: "all", help: "a title with some explanation to separate fields" },
-    { id: FieldDescriptions.Field_fileManager, capabilities: { canImportedFromExcel: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "File Manager Control [fileManager]", class: "all", help: "a control which allows to attach files by browsing or drag and drop" },
-    { id: FieldDescriptions.Field_tasksControl, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Tasks Control [tasksControl]", class: "all", help: "a field which shows links to external systems, like JIRA, github etc. (eg extensions folder)" },
-    { id: FieldDescriptions.Field_textline, capabilities: { canImportedFromExcel: true, canBeUnsafe: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Text Line Control [textline]", class: "all", help: "a field for one line of text" },
-    { id: FieldDescriptions.Field_user, capabilities: { canImportedFromExcel: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "User Select Control [user]", class: "all", help: "a drop down to select a user in the project" },
-    { id: FieldDescriptions.Field_date, capabilities: { canImportedFromExcel: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Date Select Control [date]", class: "all", help: "a field to select a date" },
-    { id: FieldDescriptions.Field_dropdown, capabilities: { canBeUnsafe: true, needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Drop Down Control [dropdown]", class: "all", help: "a drop-down selection field" },
-    { id: FieldDescriptions.Field_links, capabilities: { canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Down Traces Control [links]", class: "all", help: "a field to show and edit down traces as defined in the traceability configuration" },
-    { id: FieldDescriptions.Field_uplinkinfo, capabilities: { schema: "IUpLinkDetails", needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Uplink information [uplinkinfo]", class: "all", help: "a field to show information about up traces in the user interface" },
-    { id: FieldDescriptions.Field_crosslinks, capabilities: { canImportedFromExcel: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Cross Project Link Control [crosslinks]", class: "all", help: "a field to add links to other matrix projects" },
-    { id: FieldDescriptions.Field_risk2, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Risk Control [risk2]", class: "all", help: "a field rendering an FMEA-type risk field" },
-    { id: FieldDescriptions.Field_checkbox, capabilities: { canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "Checkbox Control [checkbox]", class: "all", help: "a checkbox field" },
-    { id: FieldDescriptions.Field_hyperlink, capabilities: { canImportedFromExcel: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: true, canBeReadonly: true, canRequireContent: true }, label: "Hyperlink Control [hyperlink]", class: "all", help: "a field holding a hyperlink (url)" },
+    {
+        id: FieldDescriptions.Field_richtext,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUnsafe: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+            canRequireContent: true,
+        },
+        label: "Rich Text Control [richtext]",
+        class: "all",
+        help: "a rich text editor field (with formatting)",
+    },
+    {
+        id: FieldDescriptions.Field_text,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUnsafe: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+            canRequireContent: true,
+        },
+        label: "Plain Text Control [text]",
+        class: "all",
+        help: "a text editor field (no formatting)",
+    },
+    {
+        id: FieldDescriptions.Field_section,
+        capabilities: {
+            canBeUsedInDocs: false,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: true,
+            canBeReadonly: false,
+            canRequireContent: false,
+        },
+        label: "Section with explanation [section]",
+        class: "all",
+        help: "a title with some explanation to separate fields",
+    },
+    {
+        id: FieldDescriptions.Field_fileManager,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+        },
+        label: "File Manager Control [fileManager]",
+        class: "all",
+        help: "a control which allows to attach files by browsing or drag and drop",
+    },
+    {
+        id: FieldDescriptions.Field_tasksControl,
+        capabilities: {
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Tasks Control [tasksControl]",
+        class: "all",
+        help: "a field which shows links to external systems, like JIRA, github etc. (eg extensions folder)",
+    },
+    {
+        id: FieldDescriptions.Field_textline,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUnsafe: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+            canRequireContent: true,
+        },
+        label: "Text Line Control [textline]",
+        class: "all",
+        help: "a field for one line of text",
+    },
+    {
+        id: FieldDescriptions.Field_user,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+            canRequireContent: true,
+        },
+        label: "User Select Control [user]",
+        class: "all",
+        help: "a drop down to select a user in the project",
+    },
+    {
+        id: FieldDescriptions.Field_date,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+            canRequireContent: true,
+        },
+        label: "Date Select Control [date]",
+        class: "all",
+        help: "a field to select a date",
+    },
+    {
+        id: FieldDescriptions.Field_dropdown,
+        capabilities: {
+            canBeUnsafe: true,
+            needsConfiguration: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+            canRequireContent: true,
+        },
+        label: "Drop Down Control [dropdown]",
+        class: "all",
+        help: "a drop-down selection field",
+    },
+    {
+        id: FieldDescriptions.Field_links,
+        capabilities: {
+            canBeUsedInDocs: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Down Traces Control [links]",
+        class: "all",
+        help: "a field to show and edit down traces as defined in the traceability configuration",
+    },
+    {
+        id: FieldDescriptions.Field_uplinkinfo,
+        capabilities: {
+            schema: "IUpLinkDetails",
+            needsConfiguration: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Uplink information [uplinkinfo]",
+        class: "all",
+        help: "a field to show information about up traces in the user interface",
+    },
+    {
+        id: FieldDescriptions.Field_crosslinks,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Cross Project Link Control [crosslinks]",
+        class: "all",
+        help: "a field to add links to other matrix projects",
+    },
+    {
+        id: FieldDescriptions.Field_risk2,
+        capabilities: {
+            canBeUnsafe: true,
+            onlyOne: true,
+            canHideInDoc: true,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Risk Control [risk2]",
+        class: "all",
+        help: "a field rendering an FMEA-type risk field",
+    },
+    {
+        id: FieldDescriptions.Field_checkbox,
+        capabilities: {
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+        },
+        label: "Checkbox Control [checkbox]",
+        class: "all",
+        help: "a checkbox field",
+    },
+    {
+        id: FieldDescriptions.Field_hyperlink,
+        capabilities: {
+            canImportedFromExcel: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: false,
+            canBePublished: true,
+            canBeReadonly: true,
+            canRequireContent: true,
+        },
+        label: "Hyperlink Control [hyperlink]",
+        class: "all",
+        help: "a field holding a hyperlink (url)",
+    },
     {
         id: FieldDescriptions.Field_gateControl,
         capabilities: {
             canImportedFromExcel: true,
-            canBeUnsafe: true, needsConfiguration: true, canHideInDoc: true, canBeXtcPreset: true, canBePublished: false,
-            canBeReadonly: true, schema: "IGate"
+            canBeUnsafe: true,
+            needsConfiguration: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: false,
+            canBeReadonly: true,
+            schema: "IGate",
         },
-        label: "Gate Control [gateControl]", class: "all", help: "a quality gate field"
+        label: "Gate Control [gateControl]",
+        class: "all",
+        help: "a quality gate field",
     },
     {
         id: FieldDescriptions.Field_colorPicker,
         capabilities: {
-            canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: true,
-            canBePublished: true, canBeReadonly: true, canRequireContent: true
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: true,
+            canBePublished: true,
+            canBeReadonly: true,
+            canRequireContent: true,
         },
-        label: "Color picker [colorPicker]", class: "super", help: "a color picker field"
+        label: "Color picker [colorPicker]",
+        class: "super",
+        help: "a color picker field",
     },
     {
         id: FieldDescriptions.Field_steplist,
         capabilities: {
-            needsConfiguration: true, canBeUsedInDocs: true, canHideInDoc: true, canBeXtcPreset: false,
-            canBePublished: true, canBeReadonly: true, canBeUnsafe: true,
+            needsConfiguration: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: true,
+            canBeXtcPreset: false,
+            canBePublished: true,
+            canBeReadonly: true,
+            canBeUnsafe: true,
             schema: "IFieldParameter",
         },
         label: "Table Control [steplist]",
@@ -186,23 +457,172 @@ FieldDescriptions.descriptions = [
         help: "a field rendered as a table",
     },
     // toolbar
-    { id: FieldDescriptions.Field_labels, capabilities: { onlyOne: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Labels [labels]", class: "toolbar", help: "shows defined labels in the item's tool bar" },
-    { id: FieldDescriptions.Field_workflow, capabilities: { onlyOne: true, canBeUsedInDocs: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "One2One Issue Mapping [workflow]", class: "toolbar", help: "a field shown in the item's tool bar showing the status of an external ticket (i.e. jira)" },
+    {
+        id: FieldDescriptions.Field_labels,
+        capabilities: {
+            onlyOne: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Labels [labels]",
+        class: "toolbar",
+        help: "shows defined labels in the item's tool bar",
+    },
+    {
+        id: FieldDescriptions.Field_workflow,
+        capabilities: {
+            onlyOne: true,
+            canBeUsedInDocs: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "One2One Issue Mapping [workflow]",
+        class: "toolbar",
+        help: "a field shown in the item's tool bar showing the status of an external ticket (i.e. jira)",
+    },
     // tests and xtcs
-    { id: FieldDescriptions.Field_test_steps, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Table [test_steps]", class: "tests", help: "a special table control to define tests (see test configuration)" },
-    { id: FieldDescriptions.Field_test_steps_result, capabilities: { canBeUnsafe: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Result Table [test_steps_result]", class: "xtcs", help: "a special table control to define tests with results (see test configuration)" },
-    { id: FieldDescriptions.Field_test_result, capabilities: { canImportedFromExcel: true, onlyOne: true, canHideInDoc: true, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Test Result Summary [test_result]", class: "xtcs", help: "a special field to compute or specify the overall test result" },
+    {
+        id: FieldDescriptions.Field_test_steps,
+        capabilities: {
+            canBeUnsafe: true,
+            onlyOne: true,
+            canHideInDoc: true,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Test Table [test_steps]",
+        class: "tests",
+        help: "a special table control to define tests (see test configuration)",
+    },
+    {
+        id: FieldDescriptions.Field_test_steps_result,
+        capabilities: {
+            canBeUnsafe: true,
+            onlyOne: true,
+            canHideInDoc: true,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Test Result Table [test_steps_result]",
+        class: "xtcs",
+        help: "a special table control to define tests with results (see test configuration)",
+    },
+    {
+        id: FieldDescriptions.Field_test_result,
+        capabilities: {
+            canImportedFromExcel: true,
+            onlyOne: true,
+            canHideInDoc: true,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Test Result Summary [test_result]",
+        class: "xtcs",
+        help: "a special field to compute or specify the overall test result",
+    },
     // agile sync
-    { id: FieldDescriptions.Field_syncStatus, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "SYNC Status [syncStatus]", class: "sync", help: "control to hold the information about synced external items " },
-    { id: FieldDescriptions.Field_syncSourceInfo, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "SYNC Source Info [syncSourceInfo]", class: "sync", help: "a control to show control syncing of external items" },
+    {
+        id: FieldDescriptions.Field_syncStatus,
+        capabilities: {
+            onlyOne: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "SYNC Status [syncStatus]",
+        class: "sync",
+        help: "control to hold the information about synced external items ",
+    },
+    {
+        id: FieldDescriptions.Field_syncSourceInfo,
+        capabilities: {
+            onlyOne: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "SYNC Source Info [syncSourceInfo]",
+        class: "sync",
+        help: "a control to show control syncing of external items",
+    },
     // beta should not be used really
-    { id: FieldDescriptions.Field_report, capabilities: { canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Embedded Report [report]", class: "beta", help: "allows to embed a standard report" },
-    { id: FieldDescriptions.Field_cascadingSelect, capabilities: { canHideInDoc: false, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true }, label: "Cascading Select [cascadingSelect]", class: "beta", help: "a field to select values from hierachies of drop downs" },
+    {
+        id: FieldDescriptions.Field_report,
+        capabilities: { canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true },
+        label: "Embedded Report [report]",
+        class: "beta",
+        help: "allows to embed a standard report",
+    },
+    {
+        id: FieldDescriptions.Field_cascadingSelect,
+        capabilities: { canHideInDoc: false, canBeXtcPreset: true, canBePublished: true, canBeReadonly: true },
+        label: "Cascading Select [cascadingSelect]",
+        class: "beta",
+        help: "a field to select values from hierachies of drop downs",
+    },
     // technical - these need to be added once when creating a new DOC category or something special like this
-    { id: FieldDescriptions.Field_reportId, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "report ID [reportId]", class: "super", help: "contains the id of the xslt template for reports" },
-    { id: FieldDescriptions.Field_filter_file, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "filter_file [filter_file]", class: "super", help: "internal field required for documents" },
-    { id: FieldDescriptions.Field_signature, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Signature Table [signature]", class: "super", help: "field showing signature in documents" },
-    { id: FieldDescriptions.Field_signatureControl, capabilities: { onlyOne: true, canHideInDoc: false, canBeXtcPreset: false, canBePublished: false, canBeReadonly: true }, label: "Signature Password Field [signatureControl]", class: "super", help: "field with control for signatures" }
+    {
+        id: FieldDescriptions.Field_reportId,
+        capabilities: {
+            onlyOne: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "report ID [reportId]",
+        class: "super",
+        help: "contains the id of the xslt template for reports",
+    },
+    {
+        id: FieldDescriptions.Field_filter_file,
+        capabilities: {
+            onlyOne: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "filter_file [filter_file]",
+        class: "super",
+        help: "internal field required for documents",
+    },
+    {
+        id: FieldDescriptions.Field_signature,
+        capabilities: {
+            onlyOne: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Signature Table [signature]",
+        class: "super",
+        help: "field showing signature in documents",
+    },
+    {
+        id: FieldDescriptions.Field_signatureControl,
+        capabilities: {
+            onlyOne: true,
+            canHideInDoc: false,
+            canBeXtcPreset: false,
+            canBePublished: false,
+            canBeReadonly: true,
+        },
+        label: "Signature Password Field [signatureControl]",
+        class: "super",
+        help: "field with control for signatures",
+    },
 ];
 
 
@@ -256,7 +676,7 @@ class PluginManager {
      * @returns {undefined}
      */
     init(item) {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].initItem) {
                     this._plugins[idx].initItem(item, this._jui);
@@ -285,7 +705,7 @@ class PluginManager {
      * @returns {undefined}
      */
     initServerSettings(serverSettings) {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].initServerSettings) {
                     this._plugins[idx].initServerSettings(serverSettings);
@@ -304,7 +724,7 @@ class PluginManager {
      * @returns {undefined}
      */
     updateMenu(hook, ul) {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateMenu) {
                     this._plugins[idx].updateMenu(ul, hook);
@@ -335,7 +755,7 @@ class PluginManager {
         return fco;
     }
     addFieldSettings(configApp, project, pageId, fieldType, fieldParams, ui, paramChanged, canBePublished) {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].addFieldSettings) {
                     this._plugins[idx].addFieldSettings(configApp, project, pageId, fieldType, fieldParams, ui, () => paramChanged(), canBePublished);
@@ -347,7 +767,7 @@ class PluginManager {
         }
     }
     supportsControl(fieldType) {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].supportsControl && this._plugins[idx].supportsControl(fieldType)) {
                     return true;
@@ -360,7 +780,7 @@ class PluginManager {
         return false;
     }
     createControl(ctrlObj, settings) {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].supportsControl && this._plugins[idx].supportsControl(settings.fieldType)) {
                     this._plugins[idx].createControl(ctrlObj, settings);
@@ -374,12 +794,12 @@ class PluginManager {
     }
     initProject(project) {
         // delete all non default plugins === custom
-        for (var idx = this._plugins.length - 1; idx >= 0; idx--) {
+        for (let idx = this._plugins.length - 1; idx >= 0; idx--) {
             if (!this._plugins[idx].isDefault) {
                 this._plugins.splice(idx, 1);
             }
         }
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].initProject) {
                     this._plugins[idx].initProject(project);
@@ -394,7 +814,7 @@ class PluginManager {
     }
     // to modify db tree after it has been created
     filterProject(db) {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].filterProject) {
                     this._plugins[idx].filterProject(db);
@@ -407,7 +827,7 @@ class PluginManager {
     }
     // to modify search panel on left after it has been rendered
     updateSearchPanel() {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateSearchPanel) {
                     this._plugins[idx].updateSearchPanel();
@@ -420,7 +840,7 @@ class PluginManager {
     }
     // to modify item on left after it has been rendered
     updateItemPanel() {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateItemPanel) {
                     this._plugins[idx].updateItemPanel();
@@ -433,7 +853,7 @@ class PluginManager {
     }
     // notify plugins that links of item changed
     updateItem(updates) {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateItem) {
                     this._plugins[idx].updateItem(updates);
@@ -444,9 +864,8 @@ class PluginManager {
             }
         }
     }
-    ;
     updateTree() {
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateTree) {
                     this._plugins[idx].updateTree();
@@ -576,6 +995,20 @@ class PluginManager {
         }
         return allPages;
     }
+    async getAllTilesAsync() {
+        let tiles = [];
+        for (let idx = 0; idx < this._plugins.length; idx++) {
+            if (this._plugins[idx].getTilesAsync) {
+                let tile = await this._plugins[idx].getTilesAsync();
+                if (tile && tile.length > 0) {
+                    for (let t of tile) {
+                        tiles.push(t);
+                    }
+                }
+            }
+        }
+        return tiles;
+    }
     supportsControlPage(controlType) {
         return !!this.controls[controlType];
     }
@@ -611,28 +1044,35 @@ class PluginManager {
     callPreSaveHook(isItem, type, controls) {
         let that = this;
         function callRec(idx) {
-            var res = $.Deferred();
+            let res = $.Deferred();
             if (idx >= that._plugins.length) {
                 res.resolve();
                 return res;
             }
             if (that._plugins[idx].preSaveHookAsync) {
-                that._plugins[idx].preSaveHookAsync(isItem, type, controls).then(function () {
-                    callRec(idx + 1).done(function () {
+                that._plugins[idx]
+                    .preSaveHookAsync(isItem, type, controls)
+                    .then(function () {
+                    callRec(idx + 1)
+                        .done(function () {
                         res.resolve();
-                    }).fail(function () {
+                    })
+                        .fail(function () {
                         res.reject();
                     });
-                }).catch(function () {
+                })
+                    .catch(function () {
                     callRec(idx + 1).always(function () {
                         res.reject();
                     });
                 });
             }
             else {
-                callRec(idx + 1).done(function () {
+                callRec(idx + 1)
+                    .done(function () {
                     res.resolve();
-                }).fail(function () {
+                })
+                    .fail(function () {
                     res.reject();
                 });
             }
@@ -642,8 +1082,8 @@ class PluginManager {
     }
     // return true for handled, false for not  handled
     renderActionButtons(options, body, controls) {
-        var done = false;
-        for (var idx = 0; idx < this._plugins.length; idx++) {
+        let done = false;
+        for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].renderActionButtons) {
                     if (this._plugins[idx].renderActionButtons(options, body, controls)) {
@@ -658,16 +1098,17 @@ class PluginManager {
         // return true if at least on plugin is owner
         return done;
     }
-    ;
     /******************** admin function  */
     getPlugins() {
         return this._plugins;
     }
 }
-var plugins;
+let plugins;
 function InitializePluginManager() {
     plugins = new PluginManager(); // plugin manager
+    // @ts-ignore TODO: get rid of globals
     globalThis.plugins = plugins;
+    // @ts-ignore TODO: get rid of globals
     globalThis.pluginHooks = pluginHooks;
 }
 
@@ -697,7 +1138,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-;
 class GlobalMatrix {
     constructor() {
         this.ITEM_DOES_NOT_EXIST = "";
@@ -707,36 +1147,51 @@ class GlobalMatrix {
         this.mobileApp = undefined;
     }
     installLegacyAdaptor() {
+        // @ts-ignore have to live with it for now
         globalThis.ITEM_DOES_NOT_EXIST = this.ITEM_DOES_NOT_EXIST;
+        // @ts-ignore have to live with it for now
         globalThis.matrixRestUrl = this.matrixRestUrl;
+        // @ts-ignore have to live with it for now
         globalThis.matrixBaseUrl = this.matrixBaseUrl;
+        // @ts-ignore have to live with it for now
         globalThis.matrixWfgw = this.matrixWfgw;
+        // @ts-ignore have to live with it for now
         globalThis.matrixExpress = this.matrixExpress;
+        // @ts-ignore have to live with it for now
         globalThis.matrixProduct = this.matrixProduct;
+        // @ts-ignore have to live with it for now
         globalThis.mxOauth = this.mxOauth;
+        // @ts-ignore have to live with it for now
         globalThis.mxOauthLoginUrl = this.mxOauthLoginUrl;
+        // @ts-ignore have to live with it for now
         globalThis.serverStorage = this.serverStorage;
+        // @ts-ignore have to live with it for now
         globalThis.projectStorage = this.projectStorage;
+        // @ts-ignore have to live with it for now
         globalThis.wfgwConnection = this.wfgwConnection;
+        // @ts-ignore have to live with it for now
         globalThis.globalShiftDown = this.globalShiftDown;
+        // @ts-ignore have to live with it for now
         globalThis.globalCtrlDown = this.globalCtrlDown;
+        // @ts-ignore have to live with it for now
         globalThis.jsonValidator = this.jsonValidator;
     }
 }
-var globalMatrix = new GlobalMatrix();
+const globalMatrix = new GlobalMatrix();
 function setIC(newIC) {
     globalMatrix.ItemConfig = newIC; // To use in matrixSdk
+    // @ts-ignore have to live with it for now
     globalThis.IC = newIC; // legacy support
 }
-var matrixSession;
+let matrixSession;
 function setMatrixSession(session) {
     matrixSession = session;
 }
-var restConnection; // global rest connection
+let restConnection; // global rest connection
 function setRestConnection(rc) {
     restConnection = rc;
 }
-var matrixApplicationUI; // the application
+let matrixApplicationUI; // the application
 function setMatrixApplicationUI(ui) {
     matrixApplicationUI = ui;
 }
@@ -744,11 +1199,10 @@ function setMatrixApplicationUI(ui) {
 // assigned to a variable of type businesslogic/UI/MatrixReq. We just opt out of typing for
 // this variable and ideally we should fix that with a real interface. I changed the type to
 // any to make the true situation easier to see.
-var app; // main application
+let app; // main application
 function setApp(newApp) {
     app = newApp;
 }
-;
 var ControlState;
 (function (ControlState) {
     ControlState[ControlState["FormEdit"] = 0] = "FormEdit";
@@ -759,48 +1213,58 @@ var ControlState;
     ControlState[ControlState["Print"] = 5] = "Print";
     ControlState[ControlState["Report"] = 6] = "Report";
     ControlState[ControlState["DialogEdit"] = 7] = "DialogEdit";
-    ControlState[ControlState["Review"] = 8] = "Review"; // special mode for design reviews
+    ControlState[ControlState["Review"] = 8] = "Review";
 })(ControlState || (ControlState = {}));
-;
 // This is so that old legacy scripts can "just work" to a degree.
 function InstallLegacyAdaptor() {
+    // @ts-ignore have to live with it for now
     globalThis.ControlState = ControlState;
+    // @ts-ignore have to live with it for now
     globalThis.IC = globalMatrix.ItemConfig;
+    // @ts-ignore have to live with it for now
     globalThis.matrixSession = matrixSession;
+    // @ts-ignore have to live with it for now
     globalThis.restConnection = restConnection;
+    // @ts-ignore have to live with it for now
     globalThis.app = app;
+    // @ts-ignore have to live with it for now
     globalThis.matrixApplicationUI = matrixApplicationUI;
     globalMatrix.installLegacyAdaptor();
+    // @ts-ignore have to live with it for now
     globalThis.applyResponsiveView = applyResponsiveView;
 }
 function applyResponsiveView() {
     let mobileView = localStorage.getItem("mobileLayout");
     let x = $(window).width();
     if (mobileView) {
-        $('#contextframesizer').css("display", "none");
-        $('#dragbar').css("display", "none");
-        $('#sidebar').css("max-width", "none");
+        $("#contextframesizer").css("display", "none");
+        $("#dragbar").css("display", "none");
+        $("#sidebar").css("max-width", "none");
     }
-    if (mobileView == "0") { // see item
-        $('#sidebar').css("display", "none");
+    if (mobileView == "0") {
+        // see item
+        $("#sidebar").css("display", "none");
         $("#navLeft").css("display", "none");
-        $('#main').css("display", "block");
+        $("#main").css("display", "block");
     }
-    else if (mobileView == "1") { // see navigation tree
-        $('#sidebar').css("width", x).css("display", "block");
-        $('#main').css("display", "none");
+    else if (mobileView == "1") {
+        // see navigation tree
+        $("#sidebar").css("width", x).css("display", "block");
+        $("#main").css("display", "none");
         $("#navLeft").css("display", "");
     }
-    else if (mobileView == "2") { // see both
-        $('#sidebar').css("width", (x / 2) + "px");
+    else if (mobileView == "2") {
+        // see both
+        $("#sidebar").css("width", x / 2 + "px");
         $("#navLeft").css("display", "");
-        $('#main').css("display", "block");
+        $("#main").css("display", "block");
     }
-    else { // not mobile
-        $('#dragbar').css("display", "block");
-        $('#contextframesizer').css("display", "block");
+    else {
+        // not mobile
+        $("#dragbar").css("display", "block");
+        $("#contextframesizer").css("display", "block");
         $("#navLeft").css("display", "");
-        $('#main').css("display", "block");
+        $("#main").css("display", "block");
     }
     app.resizeItem(true);
 }
@@ -856,14 +1320,14 @@ var SelectMode;
     SelectMode[SelectMode["independent"] = 5] = "independent";
     SelectMode[SelectMode["auto"] = 6] = "auto";
     SelectMode[SelectMode["independentAuto"] = 7] = "independentAuto";
-    SelectMode[SelectMode["autoPrecise"] = 8] = "autoPrecise"; //  if you select a folder it select everything within, if you unselect something it unselects all parents
+    SelectMode[SelectMode["autoPrecise"] = 8] = "autoPrecise";
 })(SelectMode || (SelectMode = {}));
 var SearchState;
 (function (SearchState) {
     SearchState[SearchState["NoSearch"] = 0] = "NoSearch";
     SearchState[SearchState["FilterDone"] = 1] = "FilterDone";
     SearchState[SearchState["ServerRunning"] = 2] = "ServerRunning";
-    SearchState[SearchState["ServerDone"] = 3] = "ServerDone"; // the search results returned
+    SearchState[SearchState["ServerDone"] = 3] = "ServerDone";
 })(SearchState || (SearchState = {}));
 var SearchUpdate;
 (function (SearchUpdate) {
@@ -871,7 +1335,7 @@ var SearchUpdate;
     SearchUpdate[SearchUpdate["updated_rec"] = 2] = "updated_rec";
     SearchUpdate[SearchUpdate["filter_status_changed"] = 3] = "filter_status_changed";
     SearchUpdate[SearchUpdate["title_changed"] = 4] = "title_changed";
-    SearchUpdate[SearchUpdate["item_dropped"] = 5] = "item_dropped"; // an item was draged and dropped to a new place (if this happens after creating it , it must be refreshed)
+    SearchUpdate[SearchUpdate["item_dropped"] = 5] = "item_dropped";
 })(SearchUpdate || (SearchUpdate = {}));
 
 

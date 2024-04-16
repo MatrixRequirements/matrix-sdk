@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+
 export declare enum TodoTypes {
 	needSignature = "needSignature",
 	needReview = "needReview",
@@ -495,16 +497,16 @@ export interface IDBParent {
 	item: IItem;
 }
 export interface IDBCache {
-	sortChildren(itemId: string): any;
-	initMatrixTree(init: IDB[], includeActivity: boolean): any;
-	initConfigTree(init: IDB[]): any;
+	sortChildren(itemId: string): void;
+	initMatrixTree(init: IDB[], includeActivity: boolean): void;
+	initConfigTree(init: IDB[]): void;
 	getTree(subtreeFilter: string[]): IDB[];
 	getParentId(itemId: string): string;
-	getCategoryBreadcrumbs(category: string): any;
+	getCategoryBreadcrumbs(category: string): string[];
 	getBreadcrumbs(itemId: string): string[];
 	getType(itemId: string): string;
 	getIcon(itemId: string): string;
-	setStyle(itemIds: string[], style: string, computeFolder: number): any;
+	setStyle(itemIds: string[], style: string, computeFolder: number): void;
 	setStyleRec(folder: IDB[], itemIds: string[], style: string, computeFolder: number): boolean;
 	isFolder(itemId: string): boolean;
 	getItemTitle(itemId: string): string;
@@ -517,7 +519,7 @@ export interface IDBCache {
 	copyFrom(target: string, source: IDB): boolean;
 	getRootOfType(category: string): string;
 	deleteItem(itemId: string): IDB;
-	moveItem(itemId: string, newFolder: string, newPosition: number): any;
+	moveItem(itemId: string, newFolder: string, newPosition: number): void;
 	updateItem(itemJson: IItem): void;
 	getChildrenIds(parentId: string): string[];
 	getItemFromCache(itemId: string): IDB;
@@ -764,6 +766,7 @@ export interface IPrintIteratorMap {
 export interface IPrintItemIteratorParams {
 	maxDepth?: number;
 	sorting?: IPrintSortParams[];
+	direction?: "up" | "down";
 }
 export interface IPrintIterator extends IPrintBaseFunction {
 	worksOnItem: boolean;
@@ -835,7 +838,7 @@ export interface IPrintFormatter {
 	deleted?: boolean;
 	/**
 	 * last modification date of print item
-	*/
+	 */
 	modDate?: string;
 }
 export interface IPrintCustomFormatter {
@@ -870,7 +873,7 @@ export interface IProcessResult {
 	redlining: string[];
 }
 export interface IPrintProcessor {
-	prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): any;
+	prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): void;
 	processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): Promise<IProcessResult>;
 	getCustomStylesheet(): string;
 	/**
@@ -880,7 +883,7 @@ export interface IPrintProcessor {
 	 * @param selection The selection to use as the root
 	 */
 	getTableData(tableId: string, selection: string[]): Promise<string>;
-	globals: IPrintGlobals;
+	globals?: IPrintGlobals;
 }
 export interface IStringRiskConfigMap {
 	[key: string]: IRiskConfig;
@@ -918,12 +921,12 @@ export interface IPrintBaseFunctionMap {
 	[key: string]: IPrintBaseFunction;
 }
 export interface IPrintFunction extends IPrintBaseFunction {
+	getTemplate?: () => string;
 	getGroup: () => string;
 	getSubGroup?: () => string;
 	renderAsync: (overwrites: IGlobalPrintFunctionParams, params: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void, printProcessor?: IPrintProcessor) => Promise<string>;
 }
-export interface IPrintFunctionParams {
-}
+export type IPrintFunctionParams = any;
 export interface IPrintFunctionParamsOverwrites {
 	debug: number;
 	[key: string]: IPrintFunctionParams;
@@ -941,7 +944,7 @@ export interface IGlobalPrintFunctionParams {
 }
 export interface IConditionFunction extends IPrintBaseFunction {
 	itemOrFolder: boolean;
-	evaluate: (overwrites: IGlobalPrintFunctionParams, params: any, itemOrFolderRef: any, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<boolean>;
+	evaluate: (overwrites: IGlobalPrintFunctionParams, params: any, itemOrFolderRef: string, object: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<boolean>;
 }
 export interface ITraceConfig {
 	rules: ITraceConfigDetails[];
@@ -967,6 +970,7 @@ declare enum EnumItemPublish {
 	Never = 2
 }
 export interface IQMSConfig {
+	userMode?: string;
 	/** there's only one publication in the array supported */
 	publications: IPublication[];
 	rolesTargetProjects?: string[];
@@ -975,6 +979,7 @@ export interface IQMSConfig {
 	training?: ITraining;
 	/** Experimental: comma separated list of labels to show in published site -> if they are set */
 	showLabels?: string;
+	allowExport: boolean;
 	/** obsolete */
 	legacyRoles: boolean;
 }
@@ -1636,16 +1641,16 @@ export interface INotificationConfig {
 	browserNotificationAutoCloseAfter?: number;
 }
 export interface ICleanup {
-	"cleanup": boolean;
-	"tags": string[];
-	"attributes": IStringStringArrayMap;
-	"enforcedAttributes": IStringStringArrayMap;
-	"protocolAttributes": ICleanupProtocol[];
+	cleanup: boolean;
+	tags: string[];
+	attributes: IStringStringArrayMap;
+	enforcedAttributes: IStringStringArrayMap;
+	protocolAttributes: ICleanupProtocol[];
 }
 export interface ICleanupProtocol {
-	"element": string;
-	"attribute": string;
-	"protocols": string[];
+	element: string;
+	attribute: string;
+	protocols: string[];
 }
 /** defines parameters for imports */
 export interface IImportConfig {
@@ -1659,6 +1664,8 @@ export interface IImportConfigDetails {
 	lockLabel: string;
 	/** there can be a list of users who can import (if there's nobody in there, or no list is defined: everybody can) */
 	importMasters?: string[];
+	/** ItemParentMode for new includes or copies. By default "orphan", otherwise "preserve" */
+	itemParentMode?: string;
 }
 export interface IDisplayedWidget {
 	id: string;
@@ -1702,8 +1709,8 @@ export interface IWidgetPlugin {
 	defaultParameters(): IWidgetParameters;
 	mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
 	render(root: JQuery, displayedWidget: IDisplayedWidget): void;
-	updatePosition(w: number, h: number, x: number, y: number): any;
-	hide(showConfirm: boolean): any;
+	updatePosition(w: number, h: number, x: number, y: number): void;
+	hide(showConfirm: boolean): void;
 	unload?(): void;
 	scrollIntoView?(): void;
 	clicked?(): void;
@@ -1725,15 +1732,15 @@ export declare class WidgetPluginsConstants {
 export interface IWidgetPluginsContainer {
 	visible: boolean;
 	previousUrl: string;
-	toggle(): any;
-	addNewWidget(): any;
-	render(dashboardId: string): any;
-	loadServerSettingWidgets(loadAllUser: boolean): any;
-	exit(destination: string): any;
-	hideWidget(id: string): any;
-	unhide(id: string): any;
-	deleteWidget(displayedWidget: IDisplayedWidget): any;
-	showUpdateShowHiddenButton(): any;
+	toggle(): void;
+	addNewWidget(): void;
+	render(dashboardId: string): void;
+	loadServerSettingWidgets(loadAllUser: boolean): void;
+	exit(destination: string): void;
+	hideWidget(id: string): void;
+	unhide(id: string): void;
+	deleteWidget(displayedWidget: IDisplayedWidget): void;
+	showUpdateShowHiddenButton(): void;
 }
 /**
  * There should be an implementation of IFieldHandler for each type of field matrix supports.
@@ -1745,7 +1752,7 @@ export interface IFieldHandler {
 	 * Initializes the field handler with the raw string data, or undefined if there is
 	 * not yet any representation in the db.
 	 */
-	initData(serializedFieldData: string | undefined): any;
+	initData(serializedFieldData: string | undefined): void;
 	/**
 	 * getData() returns a string representing the data in the database. It may be
 	 * a JSON object, in which case use JSON.parse() to manipulate it. It may also be
@@ -1759,7 +1766,7 @@ export interface IFieldHandler {
 	 * @param value
 	 * @param doValidation If not specified, the default is false (no validation)
 	 */
-	setData(value: string, doValidation?: boolean): any;
+	setData(value: string, doValidation?: boolean): void;
 }
 export interface ITableParams {
 	canBeModified?: boolean;
@@ -1773,7 +1780,7 @@ export interface ITableParams {
 }
 export interface IBaseControl {
 	getFieldHandler(): IFieldHandler;
-	setFieldHandler(IFieldHandler: any): void;
+	setFieldHandler(fieldHandler: IFieldHandler): void;
 	getValueAsync: (latestItem?: IItemGet) => Promise<unknown>;
 	hasChangedAsync: () => Promise<boolean>;
 	resizeItem: (width?: number, forceRedraw?: boolean) => void;
@@ -1790,6 +1797,7 @@ export interface IBaseControl {
 	refresh?: Function;
 	needsLatest: boolean;
 	requiresContent?: () => boolean;
+	afterRendering?: () => void;
 	disableDelayedShow?: boolean;
 }
 export interface IBaseControlOptions {
@@ -1827,6 +1835,7 @@ declare abstract class BaseControl<T extends IFieldHandler> implements IBaseCont
 	abstract hasChangedAsync(): Promise<boolean>;
 	abstract resizeItem(newWidth?: number, force?: boolean): void;
 	abstract destroy(): void;
+	afterRendering(): void;
 }
 export interface IBaseDropdownFieldParams {
 	splitHuman?: boolean;
@@ -1915,9 +1924,9 @@ export interface IItemControlOptions extends IBaseControlOptions {
 	control?: JQuery;
 	type?: string;
 	item?: IItemGet;
-	dummyData?: {};
+	dummyData?: unknown;
 	parent?: string;
-	changed?: Function;
+	changed?: (needsSave: boolean) => void;
 	isForm?: boolean;
 	isItem?: boolean;
 	isPrint?: boolean;
@@ -1926,6 +1935,7 @@ export interface IItemControlOptions extends IBaseControlOptions {
 	canEdit?: boolean;
 	canEditLabels?: boolean;
 	canEditTitle?: boolean;
+	disableTinyMce?: boolean;
 }
 export interface ILinkType {
 	type: string;
@@ -1985,14 +1995,14 @@ declare class ItemControl {
 	private renderActionButtonsReport;
 }
 export declare class RichtextFieldHandler implements IFieldHandler {
-	private data;
+	private data?;
 	private config;
 	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	getFieldType(): string;
 	initData(serializedFieldData: string | undefined): void;
 	getData(): string | undefined;
 	setData(value: string, doValidation?: boolean): void;
-	getHtml(): string;
+	getHtml(): string | undefined;
 	setHtml(str: string): RichtextFieldHandler;
 }
 export interface IRichTextParams {
@@ -2024,14 +2034,14 @@ export interface IContextInformation {
 	fieldList: string;
 }
 export interface IContextFramesTools {
-	showContextFrame(tabType: string, makeVisible: boolean): any;
-	getExpender(): any;
-	visibility(enabled: boolean): any;
-	hideContextFrames(): any;
-	showContextFrames(): any;
-	renderContextFrames(): any;
-	fillContextFrame(_data: IItem, itemId: string): any;
-	init(): any;
+	showContextFrame(tabType: string, makeVisible: boolean): boolean;
+	getExpender(): JQuery;
+	visibility(enabled: boolean): void;
+	hideContextFrames(): void;
+	showContextFrames(): void;
+	renderContextFrames(): void;
+	fillContextFrame(_data: IItem, itemId: string): void;
+	init(): void;
 }
 export interface IUploadedFileInfo {
 	fileName: string;
@@ -2050,20 +2060,20 @@ export interface ISimpleItemTools {
 	getCreator(item: IItem): string;
 	getLastEditor(item: IItem): string;
 	refListToDisplayString(inputItems: IReference[] | null, prefix: string, getTitleFunction: GetTitleFunction, shorten?: number): string;
-	renderLink(itemId: string, itemTitle: string, newWindow?: boolean): any;
+	renderLink(itemId: string, itemTitle: string, newWindow?: boolean): JQuery;
 	updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
 	clone(item: IItemGet, copyLabels: boolean): IItemPut;
-	sort(a: string, b: string, project: string, matrixBaseUrl: string): any;
+	sort(a: string, b: string, project: string, matrixBaseUrl: string): number;
 }
 export interface IItemTools {
 	parseRef(itemRef: string): IItemIdParts;
 	getCreator(item: IItem): string;
 	getLastEditor(item: IItem): string;
 	refListToDisplayString(inputItems: IReference[] | null, prefix: string, shorten?: number): string;
-	renderLink(itemId: string, itemTitle?: string, newWindow?: boolean): any;
+	renderLink(itemId: string, itemTitle?: string, newWindow?: boolean): JQuery;
 	updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
 	clone(item: IItemGet, copyLabels: boolean): IItemPut;
-	sort(a: string, b: string): any;
+	sort(a: string, b: string): number;
 }
 export interface IJSONTools {
 	mergeOptions(defaultOptions: IBaseControlOptions, options: IBaseControlOptions): IBaseControlOptions;
@@ -2096,6 +2106,9 @@ export interface IReportTransferField {
 	fromId: string;
 	toId: string;
 }
+export interface IPostCreateSignOrDocResult {
+	jobId: number;
+}
 export interface IReportInput {
 	to: string;
 }
@@ -2105,7 +2118,7 @@ export interface IReportGeneratorTools {
 	createSIGN(target: string, comment: string, docId: string, signatures: string[], signedDocumentsControl: JQuery, labelFilter: string, signName: string, transferFields: IReportTransferField[], defaultLabels: string[], docUpdateCb: (createdDocumentId: string) => void): void;
 	CreateDoc(docId: string, format: IReportOptions, labelFilter: string): void;
 	CreateReport(reportId: string, format: IReportOptions, inputItems?: IReportInput[], requiredItems?: IReportInput[]): void;
-	DownloadSignedDoc(signedId: string, format: IReportOptions): any;
+	DownloadSignedDoc(signedId: string, format: IReportOptions): void;
 }
 export interface IChangedLabels {
 	changed: boolean;
@@ -2117,13 +2130,13 @@ export interface ILabelManager {
 	ignoreProjectFilter: boolean;
 	getFilterColor(): string;
 	getFilter(): string;
-	getDisplayName(labelId: string): any;
-	getFilterName(labelId: string): any;
+	getDisplayName(labelId: string): string;
+	getFilterName(labelId: string): string;
 	getLabelDefinitions(categories: string[]): ILabel[];
-	setFilter(filter: string[]): any;
+	setFilter(filter: string[]): void;
 	resetReviewLabels(labelIds: string[], category: string, addXor?: boolean): string[];
 	getDefaultLabels(category: string): string[];
-	hasLabels(): any;
+	hasLabels(): boolean;
 	setLabels(oldLabelIds: string, labels: string[]): string;
 	setLabel(oldLabelIds: string[], label: string): string[];
 	unsetLabel(oldLabelIds: string[], label: string): string[];
@@ -2160,7 +2173,7 @@ export interface ILabelTools extends ILabelManager {
 	getLastTimeLabelWasSet(itemId: string, label: string, beforeRevision: number): Promise<number>;
 }
 export interface ILoggerTools {
-	log(id: string, msg: string): any;
+	log(id: string, msg: string): void;
 	debug(message: string): void;
 	info(message: string): void;
 	warning(message: string): void;
@@ -2169,15 +2182,15 @@ export interface ILoggerTools {
 }
 export interface IMailTools {
 	/** send mail
-	* @param {type} to comma separated list of user ids
-	* @param {type} cc comma separated  list of user ids
-	* @param {type} bcc comma separated  list of user ids
-	* @param {type} subject default subject
-	* @param {type} body default body
-	* @param {type} systemMail set to 1 to send mail in name of system rather than user
-	*
-	* @returns {undefined} nothing
-	*/
+	 * @param {type} to comma separated list of user ids
+	 * @param {type} cc comma separated  list of user ids
+	 * @param {type} bcc comma separated  list of user ids
+	 * @param {type} subject default subject
+	 * @param {type} body default body
+	 * @param {type} systemMail set to 1 to send mail in name of system rather than user
+	 *
+	 * @returns {undefined} nothing
+	 */
 	sendMail(to: string, cc: string, bcc: string, subject: string, body: string, systemMail?: number, noSuccess?: boolean, noReply?: number): JQueryDeferred<{}>;
 	/** show send mail dialog and send mail
 	* @param {type} sendTo comma separated list of user ids
@@ -2198,34 +2211,34 @@ export interface IMailTools {
 	 * @returns {undefined}
 	 */
 	getCannedMessage(messageId: string, to: string, itemId: string, custom?: string, body?: string): string;
-	sendMails(sendTos: string[], subject: string, messages: string[]): any;
+	sendMails(sendTos: string[], subject: string, messages: string[]): void;
 }
 export interface ICancelSearchEvent {
 }
 export interface ISearchTools {
 	OnCancelSearch: IEvent<ICancelSearchEvent, void>;
-	getFilter(): any;
-	cancelSearch(): any;
-	searchInDialog(): any;
-	endSearchInDialog(): any;
-	highlight(term: string): any;
-	hideHighlight(): any;
-	renderHighlight(): any;
+	getFilter(): string;
+	cancelSearch(): void;
+	searchInDialog(): void;
+	endSearchInDialog(): void;
+	highlight(term: string): void;
+	hideHighlight(): void;
+	renderHighlight(): void;
 }
 export interface ISmartTextTools {
 	createMenu(docMode: boolean, tableMode: boolean): void;
 	deleteTag(what: string): void;
-	insertFigReference(reference: string, editor: any, editable: any): any;
-	insertTabReference(reference: string, editor: any, editable: any): any;
-	pasteBuffer(editor: any, editable: any): any;
-	createCaption(isTable: boolean, editor: Summernote.editor, editable: any): any;
-	updateCaptionsAndReferences(): any;
-	createEditTag(tagType: number, what: string, data?: ISmartTextConfigReplacement, saveFct?: Function, forceTiny?: boolean): void;
-	selectEditCreateTag(mode: number, tagType: number, tagSelected: Function): void;
-	removeOuterParagraph(edit: string): any;
+	insertFigReference(reference: string, editor: any, editable: any): void;
+	insertTabReference(reference: string, editor: any, editable: any): void;
+	pasteBuffer(editor: any, editable: any): void;
+	createCaption(isTable: boolean, editor: Summernote.editor, editable: any): void;
+	updateCaptionsAndReferences(): void;
+	createEditTag(tagType: number, what: string, data?: ISmartTextConfigReplacement, saveFct?: (newFct: ISmartTextConfigReplacement) => boolean, forceTiny?: boolean): void;
+	selectEditCreateTag(mode: number, tagType: number, tagSelected: (tag: ISmartTextConfigReplacement) => void): void;
+	removeOuterParagraph(edit: string): string;
 	replaceTextFragments(text: string, showTooltips?: boolean, encoded?: boolean): string;
-	showTooltips(node: JQuery, noContainer?: boolean): any;
-	prepareForReadReadRender(itemDetails: JQuery): any;
+	showTooltips(node: JQuery, noContainer?: boolean): void;
+	prepareForReadReadRender(itemDetails: JQuery): void;
 }
 export interface IDropDownButtonOption {
 	name: string;
@@ -2262,7 +2275,7 @@ export interface IUIToolsEnum {
 	SelectUserOrGroup: ISelectUserOrGroupUI;
 	lt: ILT;
 	Progress: IProgressUI;
-	fixC3ForCopy(copied: JQuery): any;
+	fixC3ForCopy(copied: JQuery): void;
 	createDropDownButton(defaultText: string, options: IDropDownButtonOption[], isUp: boolean, buttonId?: string, disableDefaultButtonClick?: boolean): JQuery;
 	getNiceDialogSize(minWidth: number, minHeight: number): {
 		width: number;
@@ -2279,18 +2292,18 @@ export interface IUIToolsEnum {
 		nok?: string;
 		third?: string;
 	}, confFunction: Function, noConfFunction: Function, thirdFunction?: Function): void;
-	confirmSpinningWait(message: string): any;
-	closeConfirmSpinningWait(): any;
+	confirmSpinningWait(message: string): void;
+	closeConfirmSpinningWait(): void;
 	showTooltip(itemId: string, target: JQuery, event: Event, crossProject?: string): void;
 	showTaskAsTooltip(id: string, title: string, url: string, htmlContent: string, target: JQuery): void;
 	hideTooltip(now?: boolean): void;
 	updateTooltip(): void;
 	spaceMessage(userHasSpaces: boolean, passwordHasSpaces: boolean): string;
 	getSpinningWait(message?: string): JQuery;
-	setEnabled(button: JQuery, enabled: boolean): any;
-	getDisplayError(jqxhr: IJcxhr, textStatus: string, error: string): any;
+	setEnabled(button: JQuery, enabled: boolean): void;
+	getDisplayError(jqxhr: IJcxhr, textStatus: string, error: string): string;
 	showDialog(dlg: JQuery, title: string, content: JQuery, minMaxWidth: number, minMaxHeight: number, buttons: any[], // DialogButtonOptions
-	scrolling: UIToolsConstants.Scroll, autoResize?: boolean, maximizeButton?: boolean, close?: Function, open?: Function, resize?: Function, noCloseOnEscape?: boolean): any;
+	scrolling: UIToolsConstants.Scroll, autoResize?: boolean, maximizeButton?: boolean, close?: Function, open?: Function, resize?: Function, noCloseOnEscape?: boolean): void;
 	showDialogDes({ maximizeButton, // = false
 	noXButton, // = false
 	autoResize, // = false
@@ -2302,33 +2315,33 @@ export interface IUIToolsEnum {
 	minMaxHeight, // = app.itemForm.height() * 0.9
 	scrolling, // = UIToolsConstants.Scroll.None
 	content, // = null
-	container, title, buttons }: IDialogOptions): any;
-	pushDialog(thisDialog: JQuery): any;
-	popDialog(thisDialog: JQuery): any;
+	container, title, buttons, }: IDialogOptions): void;
+	pushDialog(thisDialog: JQuery): void;
+	popDialog(thisDialog: JQuery): void;
 	serverHtmlCleanupBlob(content: JQuery): JQueryDeferred<string>;
-	copyBuffer(anchor: JQuery, tooltip: string, content: JQuery, catchKey?: JQuery, onProcessCopy?: Function, btnText?: string, beforeCopy?: Function, afterCopy?: Function): any;
-	getIconOptions(): any;
+	copyBuffer(anchor: JQuery, tooltip: string, content: JQuery, catchKey?: JQuery, onProcessCopy?: Function, btnText?: string, beforeCopy?: Function, afterCopy?: Function): void;
+	getIconOptions(): IDropdownOption[];
 	calculateColorFrom(input: string): ICIColor;
 	getAvatar(info: string, size: number): JQuery;
-	doCopy(content: JQuery, onProcessCopy: Function): any;
-	addChevronSection(container: JQuery, text: string, help: string, open?: boolean): any;
-	enableIf(cb: JQuery, state: boolean, ctrls: JQuery[]): any;
-	addCheckboxD(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, defaultValue: string): any;
-	addCheckbox(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
-	addCheckboxIsTrue(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
-	addCheckboxIsFalse(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): any;
-	addPassInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onUnFocus?: Function): any;
-	addTextInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function, isPass?: boolean, help?: string, readonly?: boolean, rows?: number, allowResize?: boolean): any;
-	addRichTextInput(ui: JQuery, params: IRichTextParams, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function): any;
-	addDateSelect(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, help?: string, readonly?: boolean): any;
-	addIconInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function, isPass?: boolean): any;
-	addDropdownToArray(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, options: IDropdownOption[], grouping: IDropdownGroup[], maxItems: number, create: boolean, sort: boolean, onChange: Function, placeholder?: string): any;
-	addDropdownNumber(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, first: number, last: number, onChange: Function, placeholder?: string, paramsBase?: IDropdownParams): any;
-	addDropdownToValue(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, options: IDropdownOption[], create: boolean, sort: boolean, onChange: Function, placeholder?: string, paramsBase?: IDropdownParams): any;
+	doCopy(content: JQuery, onProcessCopy: Function): void;
+	addChevronSection(container: JQuery, text: string, help: string, open?: boolean): JQuery;
+	enableIf(cb: JQuery, state: boolean, ctrls: JQuery[]): void;
+	addCheckboxD(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, defaultValue: string): JQuery;
+	addCheckbox(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): JQuery;
+	addCheckboxIsTrue(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): JQuery;
+	addCheckboxIsFalse(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function): JQuery;
+	addPassInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onUnFocus?: Function): JQuery;
+	addTextInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function, isPass?: boolean, help?: string, readonly?: boolean, rows?: number, allowResize?: boolean): JQuery;
+	addRichTextInput(ui: JQuery, params: IRichTextParams, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function): JQuery;
+	addDateSelect(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, help?: string, readonly?: boolean): JQuery;
+	addIconInput(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, onChange: Function, onFocusOut?: Function, isPass?: boolean): JQuery;
+	addDropdownToArray(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, options: IDropdownOption[], grouping: IDropdownGroup[], maxItems: number, create: boolean, sort: boolean, onChange: Function, placeholder?: string): JQuery;
+	addDropdownNumber(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, first: number, last: number, onChange: Function, placeholder?: string, paramsBase?: IDropdownParams): void;
+	addDropdownToValue(ui: JQuery, text: string, fieldParams: IGenericMap, propertyName: string, options: IDropdownOption[], create: boolean, sort: boolean, onChange: Function, placeholder?: string, paramsBase?: IDropdownParams): JQuery;
 	getPageTitle(title: string, getPanel?: () => JQuery, resize?: () => void): JQuery;
-	createConfigLine(lineId: string, linePrefix: string, lineName: string, lineArray: any[], idProp: string, onChangedOrder: () => void, onEdit: (lineId: string) => void, needsEdit: boolean, onDelete: (lineId: string) => void): any;
-	fixArrows(ul: JQuery): any;
-	createConfigAddLine(action: string, onAdd: () => void): any;
+	createConfigLine(lineId: string, linePrefix: string, lineName: string, lineArray: any[], idProp: string, onChangedOrder: () => void, onEdit: (lineId: string) => void, needsEdit: boolean, onDelete: (lineId: string) => void): JQuery;
+	fixArrows(ul: JQuery): void;
+	createConfigAddLine(action: string, onAdd: () => void): JQuery;
 	standardizeColor(fieldValue: string, alpha?: number): string;
 	toggleFilters(filterOn: boolean): void;
 	changeGlobalFilterSelectionEnabled(isEnabled: boolean): void;
@@ -2361,8 +2374,8 @@ export interface IDateTimeUI {
 	requiresTimeZoneWarning(): boolean;
 	getTimeZoneCTA(): JQuery;
 	getSimpleDateFormat(): string;
-	getSimpleDateFormatMoment(): any;
-	getSimpleDateTimeFormatMoment(): any;
+	getSimpleDateFormatMoment(): string;
+	getSimpleDateTimeFormatMoment(): string;
 }
 export interface IBlockingProgressUITask {
 	name: string;
@@ -2380,21 +2393,21 @@ export interface IProgressUI {
 	ErrorHide(message: string, ms: number): void;
 }
 export interface ISelectUserOrGroupUI {
-	showMultiUserSelect(container: JQuery, help: string, selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): any;
-	getUsersInSelection(selection: string[]): any;
-	getGroupId(group: XRGroupPermissionType | XRGroupType): any;
-	getGroupDisplayNameFromId(groupOrUserId: string): any;
-	isGroup(groupOrUserId: string): any;
-	exists(groupOrUserId: string): any;
-	showSelectDialog(selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): any;
+	showMultiUserSelect(container: JQuery, help: string, selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): void;
+	getUsersInSelection(selection: string[]): string[];
+	getGroupId(group: XRGroupPermissionType | XRGroupType): string;
+	getGroupDisplayNameFromId(groupOrUserId: string): string;
+	isGroup(groupOrUserId: string): boolean;
+	exists(groupOrUserId: string): boolean;
+	showSelectDialog(selected: string[], title: string, selectFrom: string, selectTo: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string[]) => void, preSelectedUsers?: XRUserPermissionType[]): void;
 	getUserDropDownOptions(showUsers: boolean, showGroups: boolean, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUsername?: string): IDropdownOption[];
-	showSingleSelect(control: JQuery, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUsername?: string): any;
+	showSingleSelect(control: JQuery, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUsername?: string): void;
 	getAllUsersAndGroups(): JQueryDeferred<IDropdownOption[]>;
-	showSingleSelectDialog(selected: string, title: string, help: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[]): any;
+	showSingleSelectDialog(selected: string, title: string, help: string, showUsers: boolean, showGroups: boolean, onSelect: (selection: string) => void, preSelectedUsers?: XRUserPermissionType[]): void;
 }
 export interface ILT {
-	forDB(code: string, fieldId: number): any;
-	forUI(code: string, fieldId: number): any;
+	forDB(code: string, fieldId: number): string;
+	forUI(code: string, fieldId: number): string;
 }
 export interface IMatrixUrlParts {
 	project: string;
@@ -2403,11 +2416,11 @@ export interface IMatrixUrlParts {
 }
 export interface IURLTools {
 	getParameterByName(url: string, name: string): string | null;
-	parseUrl(url: String): IMatrixUrlParts;
+	parseUrl(url: string): IMatrixUrlParts;
 }
 export interface IXPathTools {
-	get(node: JQuery): any;
-	hardCopy(element: JQuery): any;
+	get(node: JQuery): string;
+	hardCopy(element: JQuery): string;
 }
 export interface IMatrix {
 	Search: ISearchTools;
@@ -2454,7 +2467,7 @@ export interface IApp extends IBaseApp {
 	getBreadcrumbs(itemId: string): string[];
 	setStyle(itemIds: string[], style: string, computeFolder: number): void;
 	getRootOfType(category: string): string;
-	startReportAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<{}>;
+	startReportAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<IPostCreateSignOrDocResult>;
 	canLaunchReport(): JQueryDeferred<boolean>;
 	startCreateDocumentAsync(itemId: string, reportOptions: IReportOptions): JQueryDeferred<XRPostProject_LaunchReport_CreateReportJobAck>;
 	getReportDetails(jobId: number): JQueryDeferred<XRGetProject_JobStatus_JobsStatusWithUrl>;
@@ -2486,9 +2499,9 @@ export interface IApp extends IBaseApp {
 	addDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
 	removeDownLinkAsync(fromId: string, toId: string): JQueryDeferred<{}>;
 	setSettingJSON(key: string, valueJSON: {}): JQueryDeferred<{}>;
-	readSettingJSONAsync(key: string, otherProject?: string, noRetry?: boolean): JQueryDeferred<{}>;
+	readSettingJSONAsync(key: string, otherProject?: string, noRetry?: boolean): JQueryDeferred<any>;
 	setSettingCustomerJSON(key: string, valueJSON: {}): JQueryDeferred<unknown>;
-	readSettingCustomerJSONAsync(key: string): JQueryDeferred<{}>;
+	readSettingCustomerJSONAsync(key: string): JQueryDeferred<any>;
 	getMissingUpLinks(item: IItem): string[];
 	isUpLinkMissing(item: IItem): boolean;
 	getMissingDownLinks(item: IItem): string[];
@@ -2879,6 +2892,10 @@ export interface IPlugin {
 	 * Returns a list of menu items to be added to the QMS user profile menu in the liveqms.
 	 */
 	getQMSUserMenuItems?(): IPluginMenuAction[];
+	/**
+	 * Return a list of react components to be displayed in the dashboard analytics page.
+	 */
+	getTilesAsync?: () => Promise<React.ReactElement[]>;
 }
 export interface IPluginHooks {
 	shares: number;
@@ -2981,7 +2998,7 @@ export interface IPluginPanelOptions {
 }
 export interface IPluginSearch {
 	menu: string;
-	search: (selectItems: (string: any) => void) => Promise<void>;
+	search: (selectItems: (selectedItems: string[]) => void) => Promise<void>;
 }
 export interface IPluginMenuAction {
 	icon: string;
@@ -3048,8 +3065,9 @@ declare class PluginManager {
 	getConfigUserMenuItems(): IPluginMenuAction[];
 	getProjectMenuItems(): IPluginMenuAction[];
 	getProjectPages(): Promise<IProjectPageParam[]>;
+	getAllTilesAsync(): Promise<ReactElement<any, string | import("react").JSXElementConstructor<any>>[]>;
 	supportsControlPage(controlType: string): boolean;
-	createControlPage(options: IPluginPanelOptions, toggleFilters?: (boolean: any) => void): void;
+	createControlPage(options: IPluginPanelOptions, toggleFilters?: (toggle: boolean) => void): void;
 	destroyActiveControlPage(): void;
 	callPreSaveHook(isItem: boolean, type: string, controls: IControlDefinition[]): JQueryDeferred<{}>;
 	renderActionButtons(options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]): boolean;
@@ -3232,7 +3250,7 @@ export declare class Tasks implements IPlugin {
 	createControl(ctrl: JQuery, options: IBaseControlOptions): void;
 	initProject(): void;
 	getProjectPagesAsync(): Promise<IProjectPageParam[]>;
-	preSaveHookAsync(isItem: boolean, type: string, controls: IControlDefinition[]): Promise<unknown>;
+	preSaveHookAsync(isItem: boolean, type: string, controls: IControlDefinition[]): Promise<{}>;
 	isPluginEnabled(pluginId: number): boolean;
 	evaluateTaskIds(comment: string): string[];
 	static externalItemFromUrl(url: string): IExternalItem;
@@ -3600,7 +3618,6 @@ declare class MatrixSession {
 	hideLoginWindow(): void;
 	private requestLogin;
 	private receiveMessage;
-	private addHelpButton;
 	getHelpButton(): string;
 	private showUserMenu;
 	initPushMessaging(): JQueryDeferred<{}>;
@@ -4127,9 +4144,9 @@ export declare class GateFieldHandler implements IFieldHandler {
 	setGateValue(gateValue: IGateStatus): void;
 }
 export interface IPanel {
-	destroy: Function;
+	destroy: () => void;
 	title: string;
-	toggleZen?: Function;
+	toggleZen?: () => void;
 }
 declare class Application {
 	lastMainItemForm: ItemControl;
@@ -4384,9 +4401,9 @@ export interface IReplaceParam {
 export declare class PrintProcessor implements IPrintProcessor {
 	private onError;
 	private possibleTargets;
-	private mf;
-	globals: IPrintGlobals;
-	private functionDefaults;
+	private mf?;
+	globals?: IPrintGlobals;
+	private functionDefaults?;
 	static itemIterators: IPrintIteratorMap;
 	static labelIterators: IPrintIteratorMap;
 	static fieldIterators: IPrintIteratorMap;
@@ -4415,21 +4432,21 @@ export declare class PrintProcessor implements IPrintProcessor {
 	private processListFormatter;
 	private processTableFormatter;
 	/********************************************************************************
-	*  processing of "json" macros like {execute:"function", parameters:{...}}
-	********************************************************************************/
+	 *  processing of "json" macros like {execute:"function", parameters:{...}}
+	 ********************************************************************************/
 	private processMacros;
 	private processPrintFormatterMacro;
 	private processFunctionMacro;
 	/********************************************************************************
-	*  Helper for building tables
-	********************************************************************************/
+	 *  Helper for building tables
+	 ********************************************************************************/
 	private mergeCells;
 	private extractClassesFromTable;
 	private addRows;
 	private getSubTableCells;
 	/********************************************************************************
-	*  Misc helper
-	********************************************************************************/
+	 *  Misc helper
+	 ********************************************************************************/
 	getCustomStylesheet(): string;
 	private applyDepth;
 	private hasMergeMacro;
@@ -4510,7 +4527,7 @@ export declare class Field {
 	private item;
 	private config;
 	private handler;
-	private oldData;
+	private oldData?;
 	constructor(item: Item, config: XRFieldTypeAnnotated, handler: IFieldHandler);
 	/**
 	 * Get the Item which contains this field.
@@ -10783,6 +10800,7 @@ export interface IRiskControlOptions extends IBaseControlOptions {
 	hideReadonlyColumns?: boolean;
 }
 export interface IRiskParameter {
+	reviewMode?: boolean;
 	riskConfig?: IRiskConfig;
 	showAttributeNames?: boolean;
 	forceAfterWeightsInPrint?: boolean;
@@ -10962,7 +10980,7 @@ export declare class Notifications implements IPlugin {
 	protected indicateNotificationChange(): void;
 	protected closeNotifications(notifications: JQuery, deleteThem: boolean): void;
 	protected updateProjectMenu(): void;
-	protected showCreateNotificationDialog(): JQueryDeferred<unknown>;
+	protected showCreateNotificationDialog(): JQueryDeferred<XRTodo[]>;
 	protected showAllNotificationsDialog(): void;
 	private showNotifications;
 	protected filterNotifications(ui: JQuery, cbs: any): void;
@@ -10972,7 +10990,7 @@ export declare class Notifications implements IPlugin {
 	protected updateCounters(): void;
 	protected getNotificationCount(itemId: string): number;
 	private addFancyTreeNotificationCounterPlugin;
-	static anchorTimer: any;
+	static anchorTimer: number;
 	static anchorNotifications(): void;
 }
 export interface IPrintMacro {
@@ -11127,6 +11145,10 @@ export interface IExternalPlugin<SERVERSETTINGS extends IServerSettingsBase, PRO
 	 * return the plugin configuration.
 	 */
 	getConfig(): IPluginConfig<SERVERSETTINGS, PROJECTSETTINGS>;
+	/**
+	 * Return a list of tiles to be added to the analytics dashboard.
+	 */
+	getTilesAsync?(): Promise<React.ReactElement[]>;
 }
 export interface IDashboardParameters extends IDashboardParametersBase {
 }
@@ -11153,11 +11175,11 @@ export interface IControlOptions extends IBaseControlOptions {
 }
 export interface IPluginFieldHandler<T> extends IFieldHandler {
 	getValueAsync(): Promise<T>;
-	setValue(T: any): void;
+	setValue(value: T): void;
 }
 export declare abstract class ControlCoreBase<T extends IPluginFieldHandler<AAA>, AAA extends IPluginFieldValueBase> extends BaseControl<T> implements IPrintFunction {
-	protected settings: IControlOptions;
-	protected editor: JQuery;
+	protected settings?: IControlOptions;
+	protected editor: JQuery | null;
 	static defaultOptions: IControlOptions;
 	pluginConfig: IPluginConfig<IServerSettingsBase, IProjectSettingsBase>;
 	constructor(pluginConfig: IPluginConfig<IServerSettingsBase, IProjectSettingsBase>, fieldHandler: T, control?: JQuery);
@@ -11166,17 +11188,17 @@ export declare abstract class ControlCoreBase<T extends IPluginFieldHandler<AAA>
 	protected initEditor(): void;
 	/** this method is called by the UI to retrieve the string to be saved in the database */
 	getValueAsync(): Promise<string>;
-	protected originalValue: IPluginFieldValueBase;
+	protected originalValue?: IPluginFieldValueBase;
 	/** this method renders a user input field in an item.
 	 * @readOnly is set to true if the user cannot edit the data (e.g. in history or while printing)
 	 * @params are can be parameter added by the printing configuration, to configure how something should be printed
 	 */
-	protected abstract renderControl(readOnly: boolean, params?: IPluginPrintParamsBase): JQuery;
+	protected abstract renderControl(readOnly: boolean, params?: IPluginPrintParamsBase | null): JQuery;
 	protected abstract renderPrint(fieldId: string, value: IPluginFieldValueBase, options: IPluginFieldOptionsBase, params: IPluginPrintParamsBase): JQuery;
 	protected abstract renderEditor(fieldId: string, value: IPluginFieldValueBase, options: IPluginFieldOptionsBase): JQuery;
 	/** this method is called by the UI to figure out if the control's value changed */
 	hasChangedAsync(): Promise<boolean>;
-	protected abstract isSame(a: IPluginFieldValueBase, b: IPluginFieldValueBase): any;
+	protected abstract isSame(a: IPluginFieldValueBase, b: IPluginFieldValueBase): boolean;
 	refresh(): void;
 	setValue(newValue: string, reset?: boolean): void;
 	destroy(): void;
@@ -11188,7 +11210,7 @@ export declare abstract class ControlCoreBase<T extends IPluginFieldHandler<AAA>
 	renderAsync(overwrites: IGlobalPrintFunctionParams, paramsIn: IPrintFunctionParams, itemOrFolderRef: string, itemOrFolder: JQuery, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void): Promise<string>;
 }
 export declare abstract class ControlCore<T extends IPluginFieldOptionsBase, F extends IPluginFieldHandler<A>, A extends IPluginFieldValueBase> extends ControlCoreBase<F, A> {
-	protected controlConfig: IPluginFieldParameterBase<T>;
+	protected controlConfig?: IPluginFieldParameterBase<T>;
 	protected renderControl(readOnly: boolean, params?: IPluginPrintParamsBase): JQuery;
 }
 export declare class PluginCore implements IPlugin {
@@ -11228,6 +11250,7 @@ export declare class PluginCore implements IPlugin {
 	getCustomSearches(): IPluginSearch[];
 	getPluginName(): string;
 	getPluginVersion(): string;
+	getTilesAsync(): Promise<React.ReactElement[]>;
 }
 export interface IValidationSpec {
 	validationFunction?: JsonEditorValidation | null | any;
@@ -11282,11 +11305,11 @@ export interface IServerPluginSettings {
 	setupSettings: ISetupSetting[];
 }
 export interface IConfigApp extends IBaseApp {
-	configPages: ConfigPageFactory;
+	configPages?: ConfigPageFactory;
 	plugins: IServerPluginSettings[];
 	getConfigPages(): ConfigPageFactory;
 	init(itemForm: JQuery, dlgForm: JQuery): void;
-	getUser(): string;
+	getUser(): string | null;
 	getVersion(): string;
 	getVersionQualifier(): string;
 	getNeedsSave(): boolean;
@@ -11312,28 +11335,27 @@ export interface IConfigApp extends IBaseApp {
 	dragEnter(dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode): string[] | boolean;
 	getJSONProjectSettings(projectId: string, settingId: string): IJsonSetting[];
 	settingExists(projectId: string, settingId: string): boolean;
-	setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<IRestResult>;
-	setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<IRestResult>;
+	setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<unknown>;
+	setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<unknown>;
 	setServerSettingAsync(settingId: string, settingValue: string): JQueryDeferred<any>;
 	getServerSetting(settingId: string, defaultValue: any): any;
 	setServerSetting(settingId: string, property: string, newValue: any): void;
 	getCustomerSetting(setting: string): string;
 	setCategorySettingAsync(projectId: string, category: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<any>;
 	getProjectConfig(projectId: string): XRGetProject_ProjectInfo_ProjectInfo;
-	getCatgegoryConfig(projectId: string, category: string): XRCategoryExtendedType;
+	getCatgegoryConfig(projectId: string, category: string): XRCategoryExtendedType | null;
 	getCategories(projectId: string): string[];
 	getUserPermission(projectId: string): XRUserPermissionType[];
 	getGroupPermission(projectId: string): XRGroupPermissionType[];
 	canUserWrite(projectId: string, login: string): boolean;
 	canGroupWrite(projectId: string, groupId: number): boolean;
-	getFieldConfig(projectId: string, category: string, field: string): XRFieldType;
+	getFieldConfig(projectId: string, category: string, field: string): XRFieldType | null;
 	updateFieldConfig(projectId: string, category: string, field: string, newConfig: XRFieldType): void;
 	removedFromTree(itemId: string, newId: string): void;
 	renamePage(pageId: string, label: string, parent: string): void;
 	updateProjectData(projectId: string): JQueryDeferred<IRestResult>;
 	reloadProject(project: string, pageId: string, parentFolderId: string): JQueryDeferred<any>;
 	signOut(): void;
-	initConfigPages(): void;
 	isConfigApp(): true;
 	isConfigApplication: true;
 	isClientApplication: false;
@@ -11376,7 +11398,7 @@ export declare class ConfigPage implements IConfigPage {
 	protected getCategorySettingLink(): string;
 	protected getTraceSettingLink(): string;
 	protected getPluginLink(): string;
-	protected getGroupId(group: XRGroupType): any;
+	protected getGroupId(group: XRGroupType): string;
 	protected getGroupDisplayNameFromId(groupOrUserId: string): string;
 	protected combinedName(user: XRUserType): string;
 	private resizeUserSelectDlg;
@@ -11384,7 +11406,7 @@ export declare class ConfigPage implements IConfigPage {
 	protected showSelectDialog(selectedIn: string[], showUsers: boolean, showGroups: boolean, dialogTitle: string, onSelect: (selection: string[]) => void): void;
 	protected markUsersWithoutAccess(lis: JQuery): void;
 	protected filterGroupsAndUsers(lis: JQuery, sex: string, writeOnly: boolean): void;
-	protected updateUsersAndGroups(withDetails: boolean): JQueryDeferred<{}>;
+	protected updateUsersAndGroups(withDetails: boolean): JQueryDeferred<void>;
 	initMeta(users: XRUserType[], groups: XRGroupType[], pageId: string): void;
 }
 export declare class LineEditor {
@@ -11566,7 +11588,7 @@ export declare class TreeFolder {
 	isRoot(): boolean;
 	getId(): string;
 	getTitle(): string;
-	getParent(): TreeFolder;
+	getParent(): TreeFolder | null;
 	/**
 	 * Creates a path string including all ancestor folder titles, separated by "/".
 	 * @returns the folder path
@@ -11577,13 +11599,13 @@ export declare class TreeFolder {
 	 * @param folderId
 	 * @returns null if folderId cannot be found.
 	 */
-	findFolder(folderId: string): TreeFolder;
+	findFolder(folderId: string): TreeFolder | null;
 	/**
 	 * Find a TreeFolder with the given name in this folder.
 	 * @param folderTitle
 	 * @returns A valid TreeFolder object or null if not found.
 	 */
-	findDirectFolderByTitle(folderTitle: string): TreeFolder;
+	findDirectFolderByTitle(folderTitle: string): TreeFolder | null;
 	/**
 	 * Save an item with this folder as the parent folder.
 	 * @param item An item that hasn't yet been saved on the server
@@ -12003,6 +12025,8 @@ export interface IReviewConfig {
 	autoshowContext?: boolean;
 	createDoc?: ICreateDoc;
 	hide_UI?: boolean;
+	autoLock?: boolean;
+	autoComment?: boolean;
 }
 export interface ICreateDoc {
 	template: string;
@@ -12054,7 +12078,7 @@ export interface ISimpleSessionControl {
 	 * provided. It provides "live" access to globals of the current project.
 	 * @returns A valid IProjectContext or null if none is available.
 	 */
-	getDefaultProjectContext(): IProjectContext;
+	getDefaultProjectContext(): IProjectContext | null;
 }
 /**
  * StandaloneMatrixSDK is a connection to a Matrix Instance. It offers services to interact
@@ -12069,7 +12093,7 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	protected json: IJSONTools;
 	protected simpleItemTools: ISimpleItemTools;
 	protected instance: DefaultApi;
-	private ItemConfig;
+	private ItemConfig?;
 	protected labelManager: ILabelManager;
 	protected baseRestUrl: string;
 	debug: boolean;
@@ -12187,7 +12211,7 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * This convenience method calls openProject() with that string.
 	 * @returns A valid Project object, or null if the session has no project.
 	 */
-	openCurrentProjectFromSession(): Promise<Project>;
+	openCurrentProjectFromSession(): Promise<Project | null>;
 	/**
 	 * Retrieve or create a Project object for the given project name.  The method is
 	 * asynchronous because it may require a trip to the server to retrieve project
@@ -12195,7 +12219,7 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * @param project a valid string.
 	 * @returns A valid Project object, or null if the project name is undefined.
 	 */
-	openProject(project: string): Promise<Project>;
+	openProject(project: string): Promise<Project | null>;
 	private parseSearchResult;
 	private appSearchAsync;
 	getItemIdsInCategory(category: string): Promise<string[]>;
@@ -12370,7 +12394,7 @@ declare class MatrixSDK {
 	 * This convenience method calls openProject() with that string.
 	 * @returns A valid Project object.
 	 */
-	openCurrentProjectFromSession(): Promise<Project>;
+	openCurrentProjectFromSession(): Promise<Project | null>;
 	/**
 	 * Retrieve or create a Project object for the given project name.  The method is
 	 * asynchronous because it may require a trip to the server to retrieve project
@@ -12378,7 +12402,7 @@ declare class MatrixSDK {
 	 * @param project
 	 * @returns A valid Project object
 	 */
-	openProject(project: string): Promise<Project>;
+	openProject(project: string): Promise<Project | null>;
 	/**
 	 * Return server settings (also called customer settings).
 	 * @returns A GetSettingAck object describing all the server settings
@@ -12426,7 +12450,7 @@ declare class MatrixSDK {
 	 */
 	search(term: string, includeFields?: boolean, includeLinks?: boolean, includeLabels?: boolean, filter?: string): Promise<ISearchResult[]>;
 	uploadProjectFile(url: string): Promise<AddFileAck>;
-	execute(payload: unknown): Promise<FolderAnswer>;
+	execute(payload: ExecuteParam): Promise<FolderAnswer>;
 	getItemIdsInCategory(category: string): Promise<string[]>;
 	/**
 	 * gets the value of a field of an item from the database
@@ -12497,11 +12521,11 @@ declare class MatrixSDK {
 	createFolder(parent: string, title: string, data?: ISetField[]): Promise<string>;
 	getItemIdByTitle(category: string, title: string): Promise<string | null>;
 	copyItem(fromProject: string, fromItem: string, toProject: string, toFolder: string, copyLabels: boolean): Promise<CopyItemAck>;
-	getRestProject(restQuery: any): JQueryDeferred<IRestResult>;
-	getRestServer(restQuery: any): JQueryDeferred<IRestResult>;
+	getRestProject(restQuery: string): JQueryDeferred<IRestResult>;
+	getRestServer(restQuery: string): JQueryDeferred<IRestResult>;
 	isQMSProject(project: string): boolean;
 	getUser(): string;
-	getCustomerSettingJSON(s: string, defaultValue?: unknown): unknown;
+	getCustomerSettingJSON(s: string, defaultValue?: any): unknown;
 	serverConfig(): XRGetProject_StartupInfo_ListProjectAndSettings;
 	getImgFromProject(pref: string): string;
 	getProjectList(readOrWriteOnly: boolean): XRProjectType[];
@@ -12653,7 +12677,7 @@ export declare class Item {
 	 * @throws if the fieldId is already in the ItemFieldMask, or if the fieldId is not valid for the Category.
 	 * @returns the Field object
 	 */
-	expandFieldMaskWithEmptyField(fieldId: number): Field;
+	expandFieldMaskWithEmptyField(fieldId: number): Field | undefined;
 	/**
 	 * Export the data from this item into an IItemPut structure
 	 * @returns An IItemPut structure, filled in from the current state of the Item.
@@ -12752,7 +12776,7 @@ export declare class Item {
 	 * @returns true if the Item's mask allows for this field.
 	 */
 	hasFieldId(fieldId: number): boolean;
-	getFieldById(fieldId: number): Field;
+	getFieldById(fieldId: number): Field | undefined;
 	/**
 	 * Returns all fields within the mask which match the fieldName.
 	 * @param fieldName
@@ -12874,7 +12898,7 @@ declare class ItemsFieldMask {
 	 * @param categoryId
 	 * @returns null if there is no mask for the given Category.
 	 */
-	getCategoryMask(categoryId: string): ItemFieldMask;
+	getCategoryMask(categoryId: string): ItemFieldMask | null;
 	/**
 	 * Suitable to send to the server for a search query.
 	 * @returns A comma-seperated string of ids or "*" (which means all fields accepted)
