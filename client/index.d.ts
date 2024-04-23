@@ -12456,9 +12456,10 @@ declare class MatrixSDK {
 	 * @param includeFields true to include fields
 	 * @param includeLinks true to include links
 	 * @param includeLabels true to include labels
+	 * @param useCachedResults true to allow the server to return cached results
 	 * @returns An array of ISearchResult results.
 	 */
-	search(term: string, includeFields?: boolean, includeLinks?: boolean, includeLabels?: boolean, filter?: string): Promise<ISearchResult[]>;
+	search(term: string, includeFields?: boolean, includeLinks?: boolean, includeLabels?: boolean, filter?: string, useCachedResults?: boolean): Promise<ISearchResult[]>;
 	uploadProjectFile(url: string): Promise<AddFileAck>;
 	execute(payload: ExecuteParam): Promise<FolderAnswer>;
 	getItemIdsInCategory(category: string): Promise<string[]>;
