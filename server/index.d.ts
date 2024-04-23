@@ -9119,9 +9119,10 @@ export declare class Project {
 	 * @param filter by default empty string
 	 * @param treeOrder return results in tree order (by default false)
 	 * @param mask an optional mask
+	 * @param useCachedResults if true, allow the server to return cached results
 	 * @returns an array of filled-in Item objects.
 	 */
-	searchForItems(term: string, filter?: string, treeOrder?: boolean, mask?: ItemsFieldMask): Promise<Item[]>;
+	searchForItems(term: string, filter?: string, treeOrder?: boolean, mask?: ItemsFieldMask, useCachedResults?: boolean): Promise<Item[]>;
 	/**
 	 * Create an ItemsFieldMask for use with search functions.
 	 *
@@ -9943,9 +9944,10 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * @param includeFields true to include fields
 	 * @param includeLinks true to include links
 	 * @param includeLabels true to include labels
+	 * @param useCachedResults true to allow the server to return cached results
 	 * @returns search results
 	 */
-	search(term: string, includeFields?: boolean, includeLinks?: boolean, includeLabels?: boolean, filter?: string): Promise<ISearchResult[]>;
+	search(term: string, includeFields?: boolean, includeLinks?: boolean, includeLabels?: boolean, filter?: string, useCachedResults?: boolean): Promise<ISearchResult[]>;
 	/**
 	 * Move items to a particular folder.
 	 * @param project a valid project on the instance
