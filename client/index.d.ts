@@ -7653,6 +7653,10 @@ export interface ProjectNeedleBody {
 	 * @memberof ProjectNeedleBody
 	 */
 	links?: string;
+	/**
+	 * (optional) set to 1 to allow the server to return cached results
+	 */
+	useCachedResults?: number;
 }
 /**
  *
@@ -11530,6 +11534,10 @@ export interface IProjectSearchOptions {
 	 * Return the array of results in tree order. By default false.
 	 */
 	treeOrder?: boolean;
+	/**
+	 * Allow the server to return cached results. By default false.
+	 */
+	useCachedResults?: boolean;
 }
 export interface IProjectNeeds {
 	/**
