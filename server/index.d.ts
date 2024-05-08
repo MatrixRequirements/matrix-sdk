@@ -1524,6 +1524,7 @@ export interface IExternalItem {
 	externalItemTitle: string;
 	externalItemUrl: string;
 	externalDescription: string;
+	externalLinkCreationDate?: string;
 	externalDone: boolean;
 	externalUser?: string;
 	externalProject?: string;
@@ -1535,6 +1536,13 @@ export interface IExternalItem {
 export interface IMoreInfo {
 	key: string;
 	value: string;
+}
+export interface ITaskPart {
+	icon: JQuery;
+	id: JQuery;
+	ticketTitle: JQuery;
+	externalUser: JQuery;
+	actions: JQuery;
 }
 export declare class Tasks implements IPlugin {
 	private item;
@@ -1582,6 +1590,7 @@ export declare class Tasks implements IPlugin {
 	private static getTaskDefinition;
 	static renderTasks(itemId: string, linkedTasks: IExternalItem[], root: JQuery, canEdit: boolean, fullWidth: boolean): void;
 	private static escapeHtml;
+	static renderTaskParts(itemId: string, task: IExternalItem, unlink: boolean, fullWidth: boolean, tinyLink?: boolean): ITaskPart;
 	static renderTask(itemId: string, task: IExternalItem, unlink: boolean, fullWidth: boolean, tinyLink?: boolean): JQuery;
 	private getSearchField;
 	private createLinksAsync;
@@ -1944,6 +1953,7 @@ export declare class TestStepsResultFieldHandler extends BaseValidatedTableField
 	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, testConfig: TestManagerConfiguration): void;
 	constructor(options: ITableControlBaseParams);
 	getFieldType(): string;
+	setDataAsArray(dataIn: any[], fixData?: boolean): void;
 	validate(): void;
 }
 export declare class TestResultFieldHandler implements IFieldHandler {
@@ -8874,6 +8884,9 @@ export interface IProjectNeeds {
 	postJobProgressForProject(project: string, jobId: number, progress: number, status?: string): Promise<string>;
 	deleteJobForProject(project: string, jobId: number, reason: string): Promise<string>;
 	createTodo(project: string, users: string[], type: TodoTypes | string, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
+	getProjectAudit(project: string, startAt?: number, maxResults?: number, deleteOnly?: boolean, tech?: boolean, auditIdMin?: number, auditIdMax?: number, noReport?: boolean, noImport?: boolean, include?: string, resolveRef?: boolean, itemRef?: string): Promise<TrimAuditList>;
+	getProjectSettings(project: string): Promise<GetProjectSettingAck>;
+	putProjectSetting(project: string, key: string, value: string): Promise<string>;
 }
 /**
  * Implemented by Project
@@ -8920,10 +8933,9 @@ export declare class TreeFolder {
 	 */
 	findDirectFolderByTitle(folderTitle: string): TreeFolder | null;
 	/**
-	 * Save an item with this folder as the parent folder.
-	 * @param item An item that hasn't yet been saved on the server
-	 * @returns An Item object which corresponds to the newly created Item on the server.
-	 * @throws throws Error if your item already has an id (was already created on the server).
+	 * Save an item with this folder as the parent folder. If the item already exists it will be moved there.
+	 * @param item An item
+	 * @returns An Item object which corresponds to the newly created or moved Item on the server.
 	 */
 	saveInFolder(item: Item): Promise<Item>;
 	/**
@@ -9281,6 +9293,33 @@ export declare class Project {
 	downloadJobResult(jobId: number, fileno: number, mode?: string, format?: string, disposition?: string, options?: unknown): Promise<ArrayBuffer>;
 	private sleep;
 	createTodo(users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
+	/**
+	 * Retrieve all changes in a project
+	 * @param startAt - (optional) start the audit after N records
+	 * @param maxResults - (optional) retrieve N results per page
+	 * @param deleteOnly - (optional) if true, only returns actions of type delete
+	 * @param tech - (optional) if true, returns the underneath changes
+	 * @param auditIdMin - (optional) sets a minimum ID for audits as returned by GET calendar
+	 * @param auditIdMax - (optional) sets a maximum ID for audits
+	 * @param noReport - (optional) if true, avoid reports in the output
+	 * @param noImport - (optional) if true, avoid imports in the output
+	 * @param include - (optional) a comma-seperated list of actions to include (delete,undelete,add,edit,...)
+	 * @param resolveRef - (optional) if true, resolve item IDs into refs
+	 * @param itemRef - (optional) restrict the audit to only those mentioning this item
+	 * @returns a TrimAuditList structure
+	 */
+	getAudit(startAt?: number, maxResults?: number, deleteOnly?: boolean, tech?: boolean, auditIdMin?: number, auditIdMax?: number, noReport?: boolean, noImport?: boolean, include?: string, resolveRef?: boolean, itemRef?: string): Promise<TrimAuditList>;
+	/**
+	 * Return settings for this project.
+	 * @returns a GetProjectSettingAck object describing all the project settings
+	 */
+	getSettings(): Promise<GetProjectSettingAck>;
+	/**
+	 * Put a project setting.
+	 * @param key the key to save the setting under
+	 * @param value the value of the setting
+	 */
+	putSetting(key: string, value: string): Promise<string>;
 }
 export declare class FieldDescriptions {
 	static Field_sourceref: string;
@@ -9894,6 +9933,19 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * @param value the value of the setting
 	 */
 	putServerSetting(key: string, value: string): Promise<string>;
+	/**
+	 * Return settings for a given project.
+	 * @param project The project name
+	 * @returns a GetProjectSettingAck object describing all the project settings
+	 */
+	getProjectSettings(project: string): Promise<GetProjectSettingAck>;
+	/**
+	 * Put a project setting.
+	 * @param project the project
+	 * @param key the key to save the setting under
+	 * @param value the value of the setting
+	 */
+	putProjectSetting(project: string, key: string, value: string): Promise<string>;
 	protected parseRef(itemId: string): IItemIdParts;
 	private getType;
 	/**
@@ -10089,6 +10141,23 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	postJobProgressForProject(project: string, jobId: number, progress: number, status?: string): Promise<string>;
 	deleteJobForProject(project: string, jobId: number, reason: string): Promise<string>;
 	createTodo(project: string, users: string[], type: TodoTypes, text: string, itemId: string, fieldId: number | null, atDate: Date): Promise<string>;
+	/**
+	 * Retrieve all changes in a project
+	 * @param project - project name
+	 * @param startAt - (optional) start the audit after N records
+	 * @param maxResults - (optional) retrieve N results per page
+	 * @param deleteOnly - (optional) if true, only returns actions of type delete
+	 * @param tech - (optional) if true, returns the underneath changes
+	 * @param auditIdMin - (optional) sets a minimum ID for audits as returned by GET calendar
+	 * @param auditIdMax - (optional) sets a maximum ID for audits
+	 * @param noReport - (optional) if true, avoid reports in the output
+	 * @param noImport - (optional) if true, avoid imports in the output
+	 * @param include - (optional) a comma-seperated list of actions to include (delete,undelete,add,edit,...)
+	 * @param resolveRef - (optional) if true, resolve item IDs into refs
+	 * @param itemRef - (optional) restrict the audit to only those mentioning this item
+	 * @returns a TrimAuditList structure
+	 */
+	getProjectAudit(project: string, startAt?: number, maxResults?: number, deleteOnly?: boolean, tech?: boolean, auditIdMin?: number, auditIdMax?: number, noReport?: boolean, noImport?: boolean, include?: string, resolveRef?: boolean, itemRef?: string): Promise<TrimAuditList>;
 	rootGet(adminUI?: number, output?: string, options?: unknown): Promise<ListProjectAndSettings>;
 	validateSdkVersion(): Promise<boolean>;
 }
