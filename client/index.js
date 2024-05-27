@@ -1039,15 +1039,27 @@ class PluginManager {
     /**
      * Return a list of plugins that can be displayed in the dashboard analytics page.
      * */
-    getAllTilePlugins() {
+    getAllTiles() {
         let tiles = [];
         for (let idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].renderTile) {
-                let tile = this._plugins[idx];
-                tiles.push(tile);
+            let plugin = this._plugins[idx];
+            if (plugin.getTiles != undefined) {
+                let tile = plugin.getTiles();
+                tiles.push(...tile);
             }
         }
         return tiles;
+    }
+    async getAllDashboardLinksForAnalyticsAsync() {
+        let allLinks = [];
+        for (let idx = 0; idx < this._plugins.length; idx++) {
+            let plugin = this._plugins[idx];
+            if (plugin && plugin.getDashboardLinksForAnalyticsAsync != undefined) {
+                let links = await plugin.getDashboardLinksForAnalyticsAsync();
+                allLinks.push(...links);
+            }
+        }
+        return allLinks;
     }
     supportsControlPage(controlType) {
         return !!this.controls[controlType];

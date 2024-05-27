@@ -2839,1723 +2839,6 @@ declare class MR1Impl {
 }
 export interface IDashboardParametersBase {
 }
-export interface IPlugin {
-	initItem?: (item: IItem, jui: JQuery) => void;
-	initServerSettings?: (serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings) => void;
-	updateMenu?: (ul: JQuery, hook: number) => void;
-	/**
-	 * Returns true if the plugin offers a control that can display fields of type {fieldType}.
-	 */
-	supportsControl?: (fieldType: string) => boolean;
-	createControl?: (ctrlObj: JQuery, settings: IBaseControlOptions) => void;
-	initProject?: (project: string) => void;
-	isDefault?: boolean;
-	filterProject?: (db: IDB[]) => void;
-	updateSearchPanel?: () => void;
-	updateItemPanel?: () => void;
-	updateItem?: (item: IItem) => void;
-	getProjectPagesAsync?: () => Promise<IProjectPageParam[]>;
-	preSaveHookAsync?: (isItem: boolean, type: string, controls: IControlDefinition[]) => Promise<{}>;
-	renderActionButtons?: (options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]) => boolean;
-	updateTree?: () => void;
-	getFieldConfigOptions?: () => IFieldDescription[];
-	addFieldSettings?: (configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean) => void;
-	getProjectSettingPagesAsync?: () => Promise<ISettingPage[]>;
-	getCustomerSettingPagesAsync?: () => Promise<ISettingPage[]>;
-	getPluginName?: () => string;
-	getPluginVersion?: () => string;
-	categorySetting?: (key: string) => string;
-	editCategorySetting?: (key: string, category: string) => void;
-	helpUrl?: string;
-	initPrintingAsync?: () => Promise<void>;
-	/**
-	 * Returns a list of TinyMCE menu items to be added to the editor.
-	 * @param editor
-	 */
-	getTinyMenuItems?(editor: any): ITinyMenu[];
-	/**
-	 * Returns a list of menu items to be added to the user profile menu in the main app.
-	 */
-	getUserMenuItems?(): IPluginMenuAction[];
-	/**
-	 * Returns a list of menu items to be added to the user profile menu of the config page.
-	 */
-	getConfigUserMenuItems?(): IPluginMenuAction[];
-	/**
-	 * Returns a list of menu items to be added to the project list.
-	 */
-	getProjectMenuItems?(): IPluginMenuAction[];
-	/**
-	 * Returns a list of custom searches to be added to the search drowpdown.
-	 */
-	getCustomSearches?(): IPluginSearch[];
-	/**
-	 * Returns a list of menu items to be added to the QMS user profile menu in the liveqms.
-	 */
-	getQMSUserMenuItems?(): IPluginMenuAction[];
-	/**
-	 *  Notify the plugin to render itself in the element passed.
-	 */
-	renderTile?: (analyticsContainer: HTMLElement) => void;
-}
-export interface IPluginHooks {
-	shares: number;
-}
-export interface ISettingPage {
-	id: string;
-	title: string;
-	type?: string;
-	help?: string;
-	externalHelp?: string;
-	render: (ui: JQuery) => void;
-	advanced?: () => void;
-	del?: () => void;
-	saveAsync?: () => JQueryDeferred<unknown>;
-	getNode?: () => IDB;
-}
-export interface IProjectPageParam {
-	id: string;
-	title: string;
-	render: any;
-	destroy?: any;
-	folder?: string;
-	order: number;
-	folderTitle?: string;
-	icon?: string;
-	usesFilters: boolean;
-}
-export interface IPluginCoreForDashboard<DASHBOARDPARAMS extends IDashboardParametersBase> {
-	getDashboardAsync(): Promise<IDashboardPage<DASHBOARDPARAMS>>;
-	getConfig(): IPluginConfigForDashboard;
-}
-export interface IPluginConfigForDashboard {
-	dashboard: IPluginFeatureDashboard;
-}
-export interface IDashboardPage<T extends IDashboardParametersBase> {
-	renderProjectPage(): void;
-	renderProjectPageWithParams?(params: T, interactive: boolean): Promise<JQuery>;
-	onResize(): void;
-}
-export interface IPluginFeatureBase {
-	/** Whether to show the page */
-	enabled: boolean;
-	/** Id of the page in the tree/url */
-	id?: string;
-	/** Title of the page in the tree and of the page when displayed */
-	title?: string;
-}
-/** interface for the value to be stored by custom field */
-export interface IPluginFieldValueBase {
-	/**
-	 *  html to be rendered to support the field printing outside of custom section
-	 */
-	html: string;
-	/**
-	 * value to be stored and used by the control
-	 */
-	value: unknown;
-}
-export interface IPluginFeatureDashboard extends IPluginFeatureBase {
-	/** Icon of the dashboard (See font awesome) */
-	icon: string;
-	/** Parent of the dashboard (It should exists)) */
-	parent: string;
-	/** Whether using filter when searching.*/
-	usefilter: boolean;
-	/** Order in the tree */
-	order: number;
-}
-export interface ITinySubMenuItem {
-	type: string;
-	text: string;
-	onAction: () => void;
-}
-export interface ITinyMenuItem {
-	text: string;
-	getSubmenuItems: () => ITinySubMenuItem[];
-}
-export interface ITinyMenu {
-	id: string;
-	menuItem: ITinyMenuItem;
-}
-/** Server setting for plugin.
- *
- * This you can use to save setting on an instance level (for all projects)
- * The user can edit these in the admin through the Server Setting Page
- */
-export interface IServerSettingsBase {
-}
-/** Project setting for plugin
- *
- * This you can use to save setting for one specific project.
- * The user can edit these in the admin through the Project Setting Page
- */
-export interface IProjectSettingsBase {
-}
-export interface IPluginPanelOptions {
-	type: string;
-	control: JQuery;
-	controlState: number;
-}
-export interface IPluginSearch {
-	menu: string;
-	search: (selectItems: (selectedItems: string[]) => void) => Promise<void>;
-}
-export interface IPluginMenuAction {
-	icon: string;
-	title: string;
-	action: () => Promise<void>;
-}
-declare class PluginManager {
-	private _jui;
-	private _plugins;
-	private controls;
-	private destructors;
-	private titles;
-	private usesFilters;
-	private activeControlPage;
-	/** Called by the main UI handing over a div which can be used inside a plugin
-	 * to display modal popups
-	 *
-	 * @param {jquery object} jui a $("<div />") object
-	 * @returns {undefined}
-	 */
-	setUI(jui: JQuery): void;
-	/** function to register a plugin for a specific menu (specified by the hook)
-	 *
-	 * @param {instance of plugin} plugin
-	 * @returns {undefined}
-	 */
-	register(plugin: IPlugin): void;
-	/** this method is called from the main UI whenever an item is selected to be
-	 * displayed. The information is forwarded to all plugins
-	 *
-	 * @param {json object} item for example a requirement. see the json documention of item types
-	 * @returns {undefined}
-	 */
-	init(item: IItem): void;
-	initPrinting(): Promise<void>;
-	/** this method is called after connecting to server using getServer ("")
-	 *
-	 * @param {json serverSettings} serverSettings or null after unsucessful login
-	 * @returns {undefined}
-	 */
-	initServerSettings(serverSettings?: XRGetProject_StartupInfo_ListProjectAndSettings): void;
-	/** this method is called when creating a menu which has a hook. it allows the plugins to add
-	 * li's to the ul supplied
-	 *
-	 * @param {number} hook identifies the menu
-	 * @param {jquery object} ul  a $("<ul />) object
-	 * @returns {undefined}
-	 */
-	updateMenu(hook: number, ul: JQuery): void;
-	getFieldConfigOptions(): IFieldDescription[];
-	addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean): void;
-	supportsControl(fieldType: string): boolean;
-	createControl(ctrlObj: JQuery, settings: IBaseControlOptions): void;
-	initProject(project: string): void;
-	filterProject(db: IDB[]): void;
-	updateSearchPanel(): void;
-	updateItemPanel(): void;
-	updateItem(updates: IItem): void;
-	updateTree(): void;
-	getTinyMenus(editor: any): ITinyMenu[];
-	getCustomSearches(): IPluginSearch[];
-	getUserMenuItems(): IPluginMenuAction[];
-	getQMSUserMenuItems(): IPluginMenuAction[];
-	getConfigUserMenuItems(): IPluginMenuAction[];
-	getProjectMenuItems(): IPluginMenuAction[];
-	getProjectPages(): Promise<IProjectPageParam[]>;
-	/**
-	 * Return a list of plugins that can be displayed in the dashboard analytics page.
-	 * */
-	getAllTilePlugins(): IPlugin[];
-	supportsControlPage(controlType: string): boolean;
-	createControlPage(options: IPluginPanelOptions, toggleFilters?: (toggle: boolean) => void): void;
-	destroyActiveControlPage(): void;
-	callPreSaveHook(isItem: boolean, type: string, controls: IControlDefinition[]): JQueryDeferred<{}>;
-	renderActionButtons(options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]): boolean;
-	/******************** admin function  */
-	getPlugins(): IPlugin[];
-}
-/*** config
- *
- */
-export interface ITasksConfiguration {
-	config: ITaskConfiguration[];
-}
-export type FolderItem = Folder | IWltItemWithLinks;
-export type Folder = {
-	name: string;
-	id: string;
-	children: FolderItem[];
-};
-export interface IPFExternalField {
-	/**  Jira field id something like custom_... or assignee or ...*/
-	extFieldId: string;
-	/** converter which specified how to convert matrix field into jira field */
-	converter: string;
-	/** mapping for drop down from Matrix to Jira drop downs  */
-	ddMapping?: IStringMap;
-	[key: string]: any;
-}
-export interface ICatFieldMapping {
-	/** map from category to the fields in the category. The matrixFieldName is the name of the field in Matrix  */
-	[key: string]: {
-		[matrixFieldName: string]: IPFExternalField;
-	};
-}
-export interface ITaskConfiguration {
-	/** defaultSearches: can be used to define default search expressions, (e.g. shortcuts to search task changed in last x hours, server plugin must understand these...) */
-	defaultSearches?: ITaskSearch[];
-	/** one2OneMapping: #
-	 * requires one2one capability. defines how external items are shown
-	 * the first search in the list will be executed automatically when the dialog is opened
-	 * in order not to run an automatic search define first element in array with name=""
-	 */
-	one2OneMapping?: IOne2OneMapping;
-	/** allowEmptySearches: can be set to true if plugin can handle it */
-	allowEmptySearches?: boolean;
-	/** searchHelp: can be an url to any website to explain search options (e.g. jql https://..atlassian.. /jql) */
-	searchHelp?: string;
-	/** autoSearch: can be set to true to start default search (when opening dialog)*/
-	autoSearch?: boolean;
-	/** smartLinks: a set of rules to automatically show hyperlinks to items -> note these are available only in the client, in documents the same rules will not be applied! */
-	smartLinks?: ISmartTask[];
-	/** smartUrls: a set of rules to automatically detect dropped links*/
-	smartUrls?: ISmartUrls[];
-	/** projectsCreate: there must be at least one default project in which tasks can be created */
-	projectsCreate: ITaksProjects[];
-	/** projectFilter: filter for projects of which items are displayed in workflow control, if not set all tasks are shown */
-	projectFilter?: string[];
-	/** useAsDescription: defines if and what to use as default description -> default is empty (an empty description box) */
-	useAsDescription?: ITaskTaskDescription;
-	/** useEmptyTitle: by default the title of new task is the current item title, true leaves it empty */
-	useEmptyTitle?: boolean;
-	/** requireCommitTicket: set to true if saving should requires a task id (requires smartLinks to be configured)*/
-	requireCommitTicket?: boolean;
-	/** catFieldMapping: mapping from Matrix fields to jira fields per category  */
-	catFieldMapping?: ICatFieldMapping;
-	/** userMapping: mapping from Matrix users to jira users  */
-	userMapping?: IStringMap;
-	/** defaultComment: when updating the matrix item this comment is added to the linked jira tickets as prefix to the details of which item was changed */
-	defaultComment?: string;
-	/** if autoAddCommentOnSave is to true it adds a comment to all linked items*/
-	autoAddCommentOnSave?: boolean;
-	/** showStatus: if set to true it will request from server the meta info for each linked ticket. If there's a status property in the meta it's displayed a string*/
-	showStatus?: boolean;
-	/** pluginName: as shown in UI e.g. JIRA, GitHub, ...*/
-	pluginName?: string;
-	/** pluginLongName: as shown in UI e.g. JIRA Server Plugin, GitHub Plugin, ... */
-	pluginLongName?: string;
-	/** hideCreateTask: overwrites canCreate capability*/
-	hideCreateTask?: boolean;
-	/** hideSearchTasks: overwrites canFind capability */
-	hideSearchTasks?: boolean;
-	/** handleAsLink: should not be changed - if true links are treated like URLs*/
-	handleAsLink?: boolean;
-	/** hasMeta: should not be changed - if true external items have a description and a status*/
-	hasMeta?: boolean;
-	/** nativeCreateUrl: overwrites nativeCreateUrl*/
-	nativeCreateUrl?: string;
-	/** nativeCreateSearch:  overwrites nativeCreateSearch*/
-	nativeCreateSearch?: string;
-	/** pluginId: 'internal id provided by server'*/
-	pluginId?: number;
-}
-export type ITaskTaskDescription = "hide" | "empty" | "text";
-export interface IOne2OneMapping {
-	projectId: string;
-	taskTypeId: string;
-	showId?: boolean;
-	statusOverwrites: IOne2OneMappingStatus[];
-}
-export interface IOne2OneMappingStatus extends ITaskRenderInfo {
-	externalStatusName: string;
-	text: string;
-}
-export interface ITaskRenderInfo {
-	text: string;
-	color?: string;
-	background?: string;
-	strikethrough?: boolean;
-}
-export interface ITaskSearch {
-	name: string;
-	expression: string;
-}
-export interface ITaksProjects {
-	projectId: string;
-	projectName: string;
-	taskTypes: ITaskType[];
-}
-export interface ITaskType {
-	taskTypeId: string;
-	taskTypeName: string;
-	iconUrl?: string;
-	iconClass?: string;
-}
-export interface ISmartTask {
-	regex: string;
-	issueProjectId: string;
-	issueId: string;
-	title: string;
-	url?: string;
-}
-export interface ISmartUrls {
-	regex: string;
-	issueProjectId: string;
-	issueId: string;
-	title: string;
-	priority?: number;
-}
-/*** wlt interface
- *
- */
-export interface IWltItemWithLinks {
-	matrixItem: IWltMatrixItem;
-	links: IExternalItem[];
-}
-export interface IWltMatrixItem {
-	itemId: number;
-	projectId: number;
-	title: string;
-	matrixItem: string;
-	project: string;
-}
-export interface IExternalItem {
-	externalItemId: string;
-	externalItemTitle: string;
-	externalItemUrl: string;
-	externalDescription: string;
-	externalLinkCreationDate?: string;
-	externalDone: boolean;
-	externalUser?: string;
-	externalProject?: string;
-	externalType?: string;
-	externalMeta?: string;
-	plugin: number;
-	more?: IMoreInfo[];
-}
-export interface IMoreInfo {
-	key: string;
-	value: string;
-}
-export interface ITaskPart {
-	icon: JQuery;
-	id: JQuery;
-	ticketTitle: JQuery;
-	externalUser: JQuery;
-	actions: JQuery;
-}
-export declare class Tasks implements IPlugin {
-	private item;
-	private jui;
-	static tasksConfiguration: ITaskConfiguration[];
-	isDefault: boolean;
-	constructor();
-	initItem(_item: IItem, _jui: JQuery): void;
-	reset(): void;
-	initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
-	updateMenu(ul: JQuery, hook: number): void;
-	supportsControl(fieldType: string): boolean;
-	createControl(ctrl: JQuery, options: IBaseControlOptions): void;
-	initProject(): void;
-	getProjectPagesAsync(): Promise<IProjectPageParam[]>;
-	preSaveHookAsync(isItem: boolean, type: string, controls: IControlDefinition[]): Promise<{}>;
-	isPluginEnabled(pluginId: number): boolean;
-	evaluateTaskIds(comment: string): string[];
-	static externalItemFromUrl(url: string): IExternalItem;
-	private addCommentToAllLinkedIssues;
-	/** this creates a new item and jira and sets the define fields with values coming from Matrix */
-	private pushIssueDlg;
-	static postPushIssue(pluginId: number, itemId: string, title: string, description: string, projectId: string, taskTypeId: string): Promise<IExternalItem[]>;
-	subscribe(): void;
-	afterSaveHookAddComment(event: IItemChangeEvent): void;
-	static createTaskFromUrl(itemId: string, url: string): void;
-	static isTaskId(someId: string): boolean;
-	static getOne2OneTask(externalItemId: string): JQueryDeferred<IExternalItem>;
-	static createOne2OneTask(itemId: string): JQueryDeferred<IExternalItem>;
-	static getOne2OneRenderInfo(task?: IExternalItem): ITaskRenderInfo;
-	static showTasks(itemId: string, control: JQuery, canEdit: boolean, pluginFilter?: number[]): void;
-	/*** UI
-	 *
-	 */
-	private createAndLinkIssueDlg;
-	private static createAndLinkWebDlg;
-	private createSearchAndLinkIssueDlg;
-	private waitForNewTaskOrWindowCloseActive;
-	private waitForNewTaskOrWindowCloseTimer;
-	private waitForNewTaskOrWindowClose;
-	private searchAndLinkIssueDlg;
-	static getConfig(pluginId: number): ITaskConfiguration | null;
-	private renderProjectPage;
-	private updateUI;
-	private static getTaskDefinition;
-	static renderTasks(itemId: string, linkedTasks: IExternalItem[], root: JQuery, canEdit: boolean, fullWidth: boolean): void;
-	private static escapeHtml;
-	static renderTaskParts(itemId: string, task: IExternalItem, unlink: boolean, fullWidth: boolean, tinyLink?: boolean): ITaskPart;
-	static renderTask(itemId: string, task: IExternalItem, unlink: boolean, fullWidth: boolean, tinyLink?: boolean): JQuery;
-	private getSearchField;
-	private createLinksAsync;
-	/** rest api */
-	static postCreateLinks(itemId: string, tasksToLink: IExternalItem[]): JQueryDeferred<IExternalItem[]>;
-	static postCreateIssue(pluginId: number, itemId: string, title: string, description: string, projectId: string, taskTypeId: string): JQueryDeferred<IExternalItem[]>;
-	static getTasks(itemId?: string, pluginFilter?: number[]): JQueryDeferred<IExternalItem[]>;
-	static getAllTasksProject(plugin: number): JQueryDeferred<IWltItemWithLinks[]>;
-	private static getFindTasks;
-	static showError(text: string, jqxhr: IJcxhr, textStatus: string, error: string): void;
-	static deleteLink(itemId: string, task: IExternalItem): JQueryDeferred<{}>;
-	static getMeta(pluginId: number, externalItemId: string): JQueryDeferred<IExternalItem>;
-	static fillTree(tree: IDB[], alltasks: IWltItemWithLinks[]): FolderItem[];
-	static isFolder(item: FolderItem): item is Folder;
-	static appendIssueItems(parentElement: JQuery, folderItems: FolderItem[], selectedFolders: string[], folderChangeCallback: (folder: Folder) => void, folders?: Folder[]): void;
-	private static renderTasksInTable;
-	private static expandFolders;
-	private static thisFolderPathIsInSelection;
-}
-export interface ICategoryConfig {
-	fieldList: XRFieldTypeAnnotated[];
-	label: string;
-	downLinksRequired: string[];
-	downLinksOptional: string[];
-	enable: string[];
-}
-export interface XRFieldTypeAnnotated extends XRFieldType {
-	parameterJson?: XRFieldTypeAnnotatedParamJson;
-}
-export interface XRFieldTypeAnnotatedParamJson extends IFieldParameter {
-	linkTypes?: XRFieldTypeAnnotatedParamJsonLinkType[];
-}
-export interface XRFieldTypeAnnotatedParamJsonLinkType {
-	required: boolean;
-	type: string;
-}
-export interface IFieldsOfType {
-	category: string;
-	field: XRFieldTypeAnnotated;
-}
-export interface IDropDownInfo {
-	id: string;
-	label: string;
-	value: IDropDownConfig;
-}
-export declare class ItemConfiguration {
-	private configuration;
-	private settings;
-	private settingsString;
-	private settingsJSON;
-	private users;
-	private userList;
-	private userGroups;
-	private timewarpDate;
-	private logger;
-	private json;
-	constructor(logger: ILoggerTools, json: IJSONTools);
-	isConfigured(): boolean;
-	addUsers(userPermission: XRUserPermissionType[], groupPermission: XRGroupPermissionType[]): void;
-	getUserInfo(login: string): XRUserPermissionType;
-	getCombinedName(user: XRUserPermissionType | XRUserType): string;
-	getFullName(login: string): string;
-	groupIdToName(groupId: number): string;
-	hasGroupInfo(group: string): boolean;
-	hasUserInfo(login: string): boolean;
-	getUserIds(): string[];
-	getEmail(user: string): string;
-	activateTimewarp(date: string): void;
-	getTimeWarp(): string;
-	isAfterTimeWarp(date: string): boolean | "";
-	hasWriteAccess(user: string): boolean;
-	private getPermission;
-	getUserNames(sorted?: boolean): XRUserPermissionType[];
-	getUserGroups(): XRGroupPermissionType[];
-	/**
-	 * getValidUserOptions returns an array of option values that describe
-	 * the users and groups available as values for a user field in the
-	 * database (fields of type {@link FieldDescriptions.Field_user}).
-	 *
-	 * @param showUsers - pass true to include users
-	 * @param showGroups - pass true to include groups
-	 * @param preSelectedUsers - if present, the list of users will be limited
-	 *     to this subset and the full user list will not be consulted to
-	 *     construct the return value.
-	 * @param possiblyDeletedUserGroupNames - if present, a comma-separated
-	 *     list of user and group names. The returned options will include
-	 *     these values, and mark deleted user and groups as disabled.
-	 * @returns An array of {@link IDropdownOptions} configured according to
-	 *     the input parameters and the users and groups of the current project.
-	 */
-	getValidUserOptions(showUsers: boolean, showGroups: boolean, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUserGroupNames?: string): IDropdownOption[];
-	addGroupMember(gid: number, user: string): void;
-	removeGroupMember(gid: number, user: string): void;
-	addSettings(s: XRGetProject_ProjectInfo_ProjectInfo | XRGetProject_ProjectSettingAll_GetSettingAck): void;
-	getSettings(): XRSettingType[];
-	getSetting(s: string): string;
-	getSettingJSON(s: string, def?: {}): {};
-	getDropDowns(dropdownId?: string): IDropDownInfo[];
-	getTasksConfig(): ITasksConfiguration;
-	getDHFConfig(): IDHFConfig;
-	getExtrasConfig(): IExtras;
-	getLabelsConfig(): ILabelsConfig;
-	getIncludeConfig(): IImportConfig;
-	getQMSConfig(): IQMSConfig;
-	getRiskConfig(): IRiskConfig;
-	getCategoryGroupConfig(): ICategoryGroups;
-	getACLConfig(): IACL;
-	getTraceConfig(): ITraceConfig;
-	getNavigationBarConfig(): INavigationBar;
-	getContextPagesConfig(): IContextPageConfig;
-	getMailConfig(): IMailConfig;
-	getSearchConfig(): ISearchConfig;
-	getLabelLockConfig(): ILabelLockConfig;
-	getTestConfig(): ITestConfig;
-	setSettingJSON(key: string, valueJSON: {}): void;
-	getSmartText(): ISmartTextConfig;
-	addCategorySetting(categorySetting: XRCategoryAndSettingListType): void;
-	getCategorySettings(category: string): XRSettingType[];
-	getPluginSetting(pluginId: number, setting: string): string;
-	getPluginSettings(): XRPluginSetting[];
-	getFieldsOfType(fieldType: string, categoryType?: string): IFieldsOfType[];
-	getCategorySetting(category: string, setting: string): ICategorySetting;
-	getCategories(noFolders?: boolean): string[];
-	getCategoryLabel(category: string): string;
-	getCategoryId(category: string): string;
-	getDownLinkTypes(category: string, required: boolean): string[];
-	getUpLinkTypes(category: string, required: boolean): string[];
-	addCategories(config: XRGetProject_ProjectInfo_ProjectInfo | XRGetProject_CategoryList_GetProjectStructAck): void;
-	init(config: XRGetProject_ProjectInfo_ProjectInfo): void;
-	canEdit(category: string): boolean;
-	canEditTitle(category: string): boolean;
-	canMove(category: string): boolean;
-	canCreate(category: string): boolean;
-	canDelete(category: string): boolean;
-	canModifyLabels(category: string): boolean;
-	canSign(category: string): boolean;
-	canReport(category: string): boolean;
-	private canDo;
-	private addCategory;
-	getItemConfiguration(category: string): ICategoryConfig;
-	getFieldId(category: string, fieldLabel: string): number;
-	getFields(category: string): XRFieldTypeAnnotated[] | null;
-	getFieldByName(category: string, name: string): XRFieldTypeAnnotated;
-	getFieldById(category: string, fieldId: number): XRFieldTypeAnnotated | null;
-	getFieldConfig(fieldId: number): XRFieldTypeAnnotatedParamJson;
-	getFieldName(fieldId: number): string;
-	getFieldType(category: string, fieldId: number): string;
-	getLinkTypes(category: string, down: boolean, required: boolean): string[];
-	getLinkInfo(category: string, down: boolean, required: boolean, groupByRule: boolean): ILinkInfo[];
-	getMitigations(): IStringStringArrayMap;
-	/** return cleanup rules, if there's a project setting that wins, if there's no rules or it's disabled it returns -1 */
-	getCleanupRules(): ICleanup;
-}
-export interface IGetProjectResultDateInfo {
-	timeformat: string;
-	dateformat: string;
-	timeZone: string;
-	customerDateformat: string;
-	customerTimeformat: string;
-	customerTimezone: string;
-	dateIso8601: string;
-	timeUserFormat: string;
-}
-export interface ICompanyUISettings {
-	/** allow to add links to locked items */
-	allowAddLinkToLocked?: boolean;
-	/** if true the save button is always on the left */
-	saveLeft?: boolean;
-	/** if set to true, auto clean the input of text fields */
-	purify?: boolean;
-	/** editor setting */
-	tiny?: ICompanyTiny;
-	/** always use new editor (also for old projects) */
-	tinyAsDefault?: boolean;
-	/** true if user should be able to switch from editor to tiny per field */
-	tinyUpgradeOption?: boolean;
-	/** how many items to show in list view (after running searches, default 200) */
-	maxHits?: number;
-	/** bigger scale = sharper drawio images in PDF, default is 3 */
-	drawIOScale?: boolean;
-	/** @experimental: Enable the widget dashboard on instance root */
-	widgetDashboardOption?: boolean;
-	/** internal: url of draw io editor */
-	drawioURL?: string;
-	/** @experimental: if set to anything > 0 the fields in a form are rendered in a non blocking way if there are more than largeFormRender fields */
-	largeFormRender?: number;
-	/** @internal beta - do not auto select parents if single item is selected for DOC */
-	preciseDocSelect?: boolean;
-	/** @internal obsolete */
-	legacyPrint?: boolean;
-	/** @internal obsolete */
-	legacyUserDropdown?: number;
-	/** @internal obsolete */
-	legacyKeepFolder?: boolean;
-}
-export interface ICompanyTiny {
-	/** true if browser context menu should be used as default */
-	tinyHideMenu?: boolean;
-	/** enable or disable editor plugins */
-	plugins?: string[];
-	extraPlugins?: string[];
-	/** toolbar definition */
-	toolbar?: string;
-	/** menubar definition  default: edit view insert format table matrix */
-	menubar?: string;
-	/** menu entries can be used to change default menus or add details of new menu bar */
-	menu?: ICompanyTinyMenuMap;
-	/** allows to overwrite any default setting (e.g. misc: { "table_toolbar": ""} )  to hide table toolbar */
-	misc?: any;
-	/** html entities to accept in text */
-	extended_valid_elements?: string;
-	/**  optional: formats in Paragraph menu (for docs) */
-	block_formats_doc?: any;
-	/** optional: rules for formats (for docs) */
-	apply_formats_doc?: any;
-	/** optional: formats in style menu (for docs) */
-	style_formats_doc?: any;
-	/** optional: formats in Paragraph menu (for items) */
-	block_formats?: any;
-	/** optional: rules for formats (for items)  */
-	apply_formats?: any;
-	/** optional: formats in style menu (for items) */
-	style_formats?: any;
-	/** elements which don't need content (e.g. a TD cell can be empty, needs to be the complete list) */
-	short_ended_elements?: string;
-	/** a custom css name/path */
-	css?: string;
-	/** if true it used dom purify to super clean the html */
-	dompurify?: boolean;
-	/** Obsolete */
-	textpattern_patterns?: any[];
-	/** define auto replacement in tiny editor - see https://www.tiny.cloud/docs/tinymce/6/content-behavior-options/#text_patterns */
-	text_patterns?: any[];
-}
-export interface ICompanyTinyMenuMap {
-	[key: string]: ICompanyTinyMenu;
-}
-export interface ICompanyTinyMenu {
-	/** display name of menu */
-	title: string;
-	/** items to show */
-	items: string;
-}
-declare class MatrixSession {
-	private CurrentUser;
-	private CurrentProject;
-	private CurrentComment;
-	private customerAdmin;
-	private superAdmin;
-	private dateInfo;
-	private customerSettingsString;
-	private customerSettingsJSON;
-	private ProjectList;
-	private CommitTransaction;
-	private CommitTransactionComment;
-	private CommitTransactionCancelled;
-	private postConnect;
-	duringBrowserNavigation: boolean;
-	private userPermissions;
-	private licensedModules;
-	lastManualComment: string;
-	serverConfig: XRGetProject_StartupInfo_ListProjectAndSettings;
-	pushMessages: PushMessages;
-	private customParams;
-	private branches;
-	quiet(): boolean;
-	constructor();
-	getCsrfCookie(): string;
-	startCommitTransaction(): void;
-	stopCommitTransaction(): void;
-	getUser(): string;
-	setUser(login: string): void;
-	private setDateInfo;
-	getDateInfo(): IGetProjectResultDateInfo;
-	private setCustomerSettings;
-	setCustomerSettingJSON(s: string, setting: {}): void;
-	getCustomerSetting(s: string): string;
-	getCustomerSettingJSON(s: string, defaultValue?: {}): any;
-	getMailSettings(): IMailConfig;
-	getUISettings(defaultValues?: {}): ICompanyUISettings;
-	setUISetting(setting: string, value: any): void;
-	showUISettings(): void;
-	isEditor(): boolean;
-	isCustomerAdmin(): boolean;
-	isSuperAdmin(): boolean;
-	isAdmin(): boolean;
-	getProject(): string;
-	setProject(projectId: string): void;
-	getCommentAsync(): JQueryDeferred<string>;
-	getComment(): string;
-	private makeTeaser;
-	getCommentTeaser(): string;
-	setComment(comment?: string, internal?: boolean): void;
-	isGroup(): boolean;
-	isQMS(): boolean;
-	isCompose(): boolean;
-	isUnique(): boolean;
-	isMerge(): boolean;
-	isReview(): boolean;
-	isACL(): boolean;
-	isQMSProject(project?: string): boolean;
-	limitAdmin(): boolean;
-	hasRisks(): boolean;
-	hasVariants(): boolean;
-	hasDocs(): boolean;
-	hasAgileSync(): boolean;
-	private setModules;
-	private getLastComments;
-	tryReconnect(): JQueryDeferred<{}>;
-	signInAfterTimeout(): JQueryDeferred<{}>;
-	triggerLoginWithDialog(): void;
-	changePassword(): void;
-	getProjectList(readOrWriteOnly: boolean): XRProjectType[];
-	canSeeProject(project: string): boolean;
-	private changeToken;
-	setProjectColor(projectShort: string, color: string): void;
-	getProjectColor(projectShort: string): string;
-	getImgFromProject(pRef: string): string;
-	private createProjectSelectLink;
-	amIAllowedUser(limitedTo: string[]): boolean;
-	updateUI(afterTimeout?: boolean): void;
-	addLiveQMSProjects(): 0 | 1;
-	updateCommentCheckboxBoxVisibility(): any;
-	loadProject(projectId: string, projectURL?: string, setAsProjectUrl?: boolean): void;
-	oAuthOnly(): boolean;
-	private showProjectSelectMessage;
-	private filterProjects;
-	private getItemFromUrlOrStorage;
-	private getProjectFromUrlOrStorage;
-	browserNavigation(): void;
-	signOut(requestAdminRights: boolean): void;
-	editComment(): void;
-	showLoginWindow(): void;
-	hideLoginWindow(): void;
-	private requestLogin;
-	private receiveMessage;
-	getHelpButton(): string;
-	private showUserMenu;
-	initPushMessaging(): JQueryDeferred<{}>;
-	private lastWatchInfo;
-	updateWatchItemVersion(itemId: string, newVersion: number): void;
-	isConfigClient(): boolean;
-	private updateSettings;
-	getBranches(mainline: string, branch: string): XRMainAndBranch[];
-	private signOutCleanUp;
-	getCustomParams(): IStringMap;
-	getDashboardConfig(): IDashboardConfig;
-}
-export interface IDocFieldHandler extends IFieldHandler {
-	dhfFieldConfig: IAnyMap;
-	setDHFConfig(config: IAnyMap): void;
-	getDefaultConfig(): any;
-	getXmlValue(): string;
-	getFieldName(): string;
-	setFieldName(value: string): void;
-	addSignatures(signatures: string[], includeAll?: boolean): void;
-}
-export interface IDHFSectionOptions {
-	globalOptions?: boolean;
-	show_section_title?: string;
-	automation?: string;
-	page_break?: string;
-	landscape?: boolean;
-	sub_section?: string;
-}
-export interface IDHFControlDefinitionValue {
-	fieldValue?: string;
-	fieldValueXML?: string;
-	name?: string;
-	type?: string;
-	ctrlConfig?: IDHFSectionOptions;
-}
-export interface ITableDataRow {
-	[key: string]: number | string;
-}
-export interface ITableFunction {
-	(table: ITableDataRow[], parameterJson: ITableParams): string;
-}
-export interface ITableFunctions {
-	[key: string]: ITableFunction;
-}
-declare class TableMath {
-	protected functions: ITableFunctions;
-	/** allow to add new functions:  */
-	registerFunction(functionId: string, execute: ITableFunction): void;
-	/** executes function on a table */
-	execute(functionId: string, table: ITableDataRow[], parameterJson: ITableParams): string;
-}
-export interface ITestFieldParam extends XRFieldTypeAnnotatedParamJson {
-	fieldMeaning: string;
-}
-export interface ITestStepsResultOption {
-	id: string;
-	label: string;
-}
-export interface ITestStepsResultsConfig {
-	canBeModified: boolean;
-	columns: ITestConfigTablesColumn[];
-	passFailEditorConfig: ITestRuleStep[];
-}
-declare class TestManagerConfiguration {
-	XTCconfig: ITestConfig;
-	constructor();
-	initialize(itemConfig: ItemConfiguration): void;
-	getTestRunResultOptions(): ITestStepsResultOption[];
-	getTestStepsConfig(category: string): ITestConfigTablesColumns;
-	getTestStepsResultsConfig(): ITestStepsResultsConfig;
-	isXTC(type: string): boolean;
-	isTC(type: string): boolean;
-	getXTCType(): string;
-	getCloneSources(): string[];
-	getTestRunResultPlaceholder(value: string): string;
-	isCloneSource(category: string): boolean;
-}
-export interface IFieldMapping {
-	fromId: number;
-	toId: number;
-}
-export declare class TestManager {
-	private testConfig;
-	private lookup;
-	isDefault: boolean;
-	constructor();
-	getConfiguration(): TestManagerConfiguration;
-	UpdateFolderMenu(ul: JQuery, item: IItem): void;
-	InitializeProject(): void;
-	PreSaveHook(isItem: boolean, item: IItem, type: string, controls: IControlDefinition[]): Promise<void>;
-	RenderActionButtons(options: IItemControlOptions, body: JQuery): boolean;
-	isXTC(type: string): boolean;
-	isTC(type: string): boolean;
-	getXTCType(): string;
-	getCloneSources(): string[];
-	private redoFailed;
-	private ConvertAll;
-	getTestStepsConfig(category: string): ITestConfigTablesColumns;
-	getTestStepsResultsConfig(): ITestStepsResultsConfig;
-	getTestRunResultOptions(): ITestStepsResultOption[];
-	getTestRunResultPlaceholder(value: string): string;
-	getSearchExpression(resultType: string, notEqual: boolean): string;
-	private prepareMapping;
-	getMappingItems(): IFieldMapping[];
-	private getResultInfo;
-	private allTestSteps;
-	private oneTestStep;
-	private computeOverallResult;
-	private createHumanValues;
-}
-declare enum ColumnEditor {
-	none = "none",
-	number = "number",
-	textline = "textline",
-	select = "select",
-	commentlog = "commentlog",
-	colorPicker = "colorPicker",
-	category = "category",
-	readonly = "readonly",
-	selectIcon = "selectIcon",
-	text = "text",
-	date_today = "date_today",
-	date = "date",
-	today = "today",
-	current_version = "current_version",
-	versionletter = "versionletter",
-	signaturemeaning = "signaturemeaning",
-	user = "user",
-	user_self = "user_self",
-	self = "self",
-	group = "group",
-	revision = "revision",
-	result = "result",
-	design = "design",
-	uprules = "uprules",
-	downrules = "downrules",
-	ecocapa = "ecocapa",
-	eco = "eco",
-	uid = "uid",
-	rules = "rules"
-}
-export interface ITableControlOptionsColumn {
-	name: string;
-	field: string;
-	editor: ColumnEditor;
-	options?: {
-		[key: string]: string;
-	} | IDropdownOption[];
-	relativeWidth?: number;
-	headerCssClass?: string;
-	cssClass?: string;
-}
-export interface ITableControlBaseParams {
-	columns?: ITableControlOptionsColumn[];
-	initialContent?: any[];
-}
-export declare class BaseTableFieldHandler implements IFieldHandler {
-	protected data: any[];
-	protected tableConfig: ITableControlBaseParams;
-	constructor(configIn: ITableControlBaseParams);
-	getFieldType(): string;
-	protected getColumnByField(fieldId: string): ITableControlOptionsColumn | undefined;
-	columnNumberToFieldId(columnNumber: number): string;
-	validate(): void;
-	initData(serializedFieldData: string | undefined): void;
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-	setDataAsArray(dataIn: any[], fixData?: boolean): void;
-	getRowCount(): number;
-	deleteRow(rowNumber: number): void;
-	insertRow(rowNumber: number, columnData: Array<any>): void;
-	clear(): void;
-	getColumnCount(): number;
-	/**
-	 * Set data for a particular cell in the table given by a row number and
-	 * a column name.
-	 * @param row the zero-based row number.
-	 * @param columnId the column name.
-	 * @param data
-	 */
-	setColumnData(row: number, columnId: string, data: any): void;
-	getColumnData(row: number, columnId: string): any;
-	getRowData(row: number): Array<any>;
-}
-export declare class BaseValidatedTableFieldHandler extends BaseTableFieldHandler {
-	constructor(configIn: ITableControlBaseParams);
-	validate(): void;
-	setDataAsArray(dataIn: any[], fixData?: boolean): void;
-}
-export declare class CheckboxFieldHandler implements IFieldHandler {
-	private data;
-	private config;
-	constructor(configIn: XRFieldTypeAnnotatedParamJson);
-	getFieldType(): string;
-	initData(serializedFieldData: string | undefined): void;
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-	getValue(): boolean | undefined;
-	setValue(value: boolean): void;
-}
-/**
- * GenericFieldHandler is a field handler which does no validation on the field
- * data. It simply stores the data as a string.
- */
-export declare class GenericFieldHandler implements IFieldHandler {
-	protected fieldType: string;
-	protected data: string;
-	private config;
-	constructor(fieldTypeIn: string, configIn: XRFieldTypeAnnotatedParamJson);
-	/**
-	 * Return the field type of this field as a string.
-	 * @returns string
-	 */
-	getFieldType(): string;
-	/**
-	 * initData will set the data of the field handler to the passed-in parameter,
-	 * or, if it is undefined, consult the initialContent key of the configuration
-	 * object. If this key is defined, then the data of the field handler will
-	 * be set to that value.
-	 * @param serializedFieldData
-	 */
-	initData(serializedFieldData: string | undefined): void;
-	/**
-	 * Get the data for the field.
-	 * @returns a string or undefined.
-	 */
-	getData(): string | undefined;
-	/**
-	 * Set the field data to the input string.
-	 * @param value
-	 * @param doValidation
-	 */
-	setData(value: string, doValidation?: boolean): void;
-}
-export interface IDHFControlDefinition extends IControlDefinition {
-	dhfValue?: IDHFControlDefinitionValue;
-	configTouched?: boolean;
-}
-/**
- * The FieldHandler for all DOC fields.
- */
-export declare class DHFFieldHandler extends GenericFieldHandler {
-	private itemConfig;
-	private fieldConfig;
-	innerDataHandler: IDocFieldHandler;
-	constructor(itemConfig: ItemConfiguration, fieldConfig: IDHFControlDefinition);
-	getData(): string | undefined;
-	initData(fieldValue: string | undefined): void;
-	setInnerFieldHandler(docFieldHandler: IDocFieldHandler): void;
-}
-export declare class SteplistFieldHandler extends BaseValidatedTableFieldHandler {
-	constructor(configIn: ITableControlBaseParams);
-}
-export declare class TextlineFieldHandler implements IFieldHandler {
-	private data;
-	private config;
-	private fieldType;
-	constructor(fieldType: string, configIn: XRFieldTypeAnnotatedParamJson);
-	getFieldType(): string;
-	initData(serializedFieldData: string | undefined): void;
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-	getText(): string;
-	setText(str: string): void;
-}
-export declare class TestStepsFieldHandler extends BaseValidatedTableFieldHandler {
-	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, itemType: string, testConfig: TestManagerConfiguration): void;
-	constructor(options: ITableControlBaseParams);
-	getFieldType(): string;
-}
-export declare class TestStepsResultFieldHandler extends BaseValidatedTableFieldHandler {
-	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, testConfig: TestManagerConfiguration): void;
-	constructor(options: ITableControlBaseParams);
-	getFieldType(): string;
-	setDataAsArray(dataIn: any[], fixData?: boolean): void;
-	validate(): void;
-}
-export declare class TestResultFieldHandler implements IFieldHandler {
-	private rawData;
-	private human;
-	private params;
-	static UpdateFieldConfig(params: IBaseDropdownFieldParams, testConfig: TestManagerConfiguration): void;
-	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
-	getFieldType(): string;
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-	initData(serializedFieldData: string | undefined): void;
-	getValues(filterOnOptions?: boolean): string[];
-	getHuman(): string;
-}
-export interface IUserFieldHandlerParams extends Omit<IBaseDropdownFieldParams, "splitHuman"> {
-}
-export declare class UserFieldHandler implements IFieldHandler {
-	private rawData;
-	private params;
-	constructor(params: IUserFieldHandlerParams, initialValue?: string);
-	static UpdateFieldConfig(params: ITestFieldParam, fieldValue: string, itemConfig: ItemConfiguration): void;
-	getData(): string | undefined;
-	setData(value: string): void;
-	getFieldType(): string;
-	initData(serializedFieldData: string): void;
-	getValues(filterOnOptions?: boolean): string[];
-	private getMaxItems;
-	setValues(values: string[]): void;
-	getHuman(): string;
-}
-export declare class DateFieldHandler implements IFieldHandler {
-	private date;
-	private config;
-	constructor(config: IAnyMap);
-	getData(): string | undefined;
-	getFieldType(): string;
-	initData(serializedFieldData: string | undefined): void;
-	setData(value: string, doValidation?: boolean): void;
-	static getDateFromString(dateStr: string): Date | null;
-	setDate(date: Date): void;
-	getDate(): Date | undefined;
-}
-export declare class ItemSelectionFieldHandler implements IFieldHandler {
-	protected fieldType: string;
-	protected data: string;
-	protected config: XRFieldTypeAnnotatedParamJson;
-	constructor(configIn: XRFieldTypeAnnotatedParamJson, fieldTypeIn?: string);
-	addSignatures(signatures: string[], includeAll: boolean): void;
-	getFieldType(): string;
-	initData(serializedFieldData: string | undefined): void;
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-	getItems(): IReference[];
-	getItemCount(): number;
-	hasItems(): boolean;
-	hasItem(itemId: string, projectShortLabel?: string): boolean;
-	insertItem(position: number, item: IReference): ItemSelectionFieldHandler;
-	appendItem(item: IReference): ItemSelectionFieldHandler;
-	removeItem(position: number): ItemSelectionFieldHandler;
-	clear(): ItemSelectionFieldHandler;
-	setItems(selectedItems: IReference[]): void;
-	protected name: string;
-	getFieldName(): string;
-	setFieldName(value: string): void;
-}
-export declare class CrosslinksFieldHandler extends ItemSelectionFieldHandler {
-	static UpdateFieldConfig(params: XRFieldTypeAnnotatedParamJson): void;
-	constructor(configIn: XRFieldTypeAnnotatedParamJson);
-	/**
-	 * Add an item to the list at the given position
-	 * @param position
-	 * @param item
-	 * @returns the field handler
-	 * @throws Error in case a projectShortLabel doesn't exist in the item.
-	 */
-	insertItem(position: number, item: IReference): CrosslinksFieldHandler;
-	/**
-	 * Append the given item to the end of the list of items.
-	 * @param item
-	 * @returns the field handler.
-	 * @throws Error in case a projectShort label doesn't exist in the item.
-	 */
-	appendItem(item: IReference): CrosslinksFieldHandler;
-}
-export declare class HyperlinkFieldHandler implements IFieldHandler {
-	private data;
-	private config;
-	constructor(configIn: XRFieldTypeAnnotatedParamJson);
-	getFieldType(): string;
-	initData(serializedFieldData: string | undefined): void;
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-}
-export interface IFromToSelection {
-	from: IReference[];
-	to: IReference[];
-}
-export declare class ItemSelectionFieldHandlerFromTo implements IFieldHandler {
-	protected config: XRFieldTypeAnnotatedParamJson;
-	private fieldType;
-	private selectedItems;
-	private defaultSelection;
-	constructor(configIn: XRFieldTypeAnnotatedParamJson, fieldTypeIn?: string);
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-	getFieldType(): string;
-	initData(serializedFieldData: string | undefined): void;
-	getSelectedItems(): IFromToSelection;
-	setSelectedItems(data: IFromToSelection): void;
-	setFromSelectiont(newSelection: IReference[]): void;
-	setToSelectiont(newSelection: IReference[]): void;
-	isDefaultSelection(): boolean;
-	setDefaultSelection(map: IReference[]): void;
-	setConfig(config: IAnyMap): void;
-}
-export interface INotificationsChanges {
-	total: number;
-	allNotifications: XRGetTodosAck;
-}
-declare class NotificationsCache {
-	private myTodoCount;
-	private myTodos;
-	private isEnabled;
-	setNotificationCounts(todos: XRTodoCount[]): void;
-	getNotificationCounts(): XRTodoCount[];
-	getNotifications(): XRTodo[];
-	setNotifications(todos: XRTodo[]): void;
-	private notificationUpdateTimer;
-	/**
-	 * Update the notifications cache  for the provided list of projects
-	 * @param projects
-	 */
-	update(projects: string[]): Promise<INotificationsChanges>;
-	setEnabled(isEnabled: boolean): void;
-	/**
-	 * Return the total number of notifications for a specific project from the cache
-	 * @param project
-	 */
-	getTotalNotificationsProject(project: string): XRTodoCount | null;
-	/**
-	 * Return the total number of notifications from the cache
-	 */
-	getTotalNotifications(): number;
-	/**
-	 * Return the notifications for a specific project and item from the cache
-	 * @param project
-	 * @param item
-	 */
-	getProjectNotifications(project: string, item: string): XRTodo[];
-	private getAllNotificationsAndUpdateCache;
-}
-export declare class NotificationsBL {
-	static NoticationCache: NotificationsCache;
-	/**
-	 * Returns the message of the notification. either the message is plain text or some formatted json object
-	 * @param todo
-	 */
-	static getMessage(todo: XRTodo): any;
-	/**
-	 * Returns the field of the notification. either the message is plain text or some formatted json object: the anchor is a place in the UI
-	 * @param todo
-	 */
-	static getField(todo: XRTodo): any;
-	/**
-	 *  either the message is plain text or some formatted json object: the reply is a reference to another todo - for which this is a replyTo
-	 * @param todo
-	 */
-	static getReply(todo: XRTodo): any;
-	/**
-	 * Create a notification for a list of users on a specific item in a project. The notification will be due to a specific date
-	 * @param users
-	 * @param project
-	 * @param item
-	 * @param text
-	 * @param type
-	 * @param atDate
-	 */
-	static createNotification(users: string[], project: string, item: string, text: string, type: string, atDate: Date): Promise<XRTodo[]>;
-	/**
-	 * Remove a notification by its id
-	 * @param project
-	 * @param todoId
-	 * @param deleteThem
-	 */
-	static deleteNotificationId(project: string, todoId: number, deleteThem: boolean): Promise<void>;
-	/**
-	 * Remove a notification
-	 * @param notification Notif to remove
-	 */
-	static deleteNotification(notification: XRTodo): Promise<void>;
-	/**
-	 * Return all notifications (for all projects)
-	 */
-	static getAllNotifications(): Promise<XRGetTodosAck>;
-	/**
-	 * Return all notifications for a specific project. The notifications are divided into two groups: for now and for later
-	 * @param project
-	 */
-	static getGetNotificationsNowAndFuture(project: string): Promise<{
-		todosForLater: XRTodo[];
-		todosForNow: XRTodo[];
-	}>;
-	/**
-	 * Return all notifications for a specific project and a specific item
-	 * @param project
-	 * @param currentItemId
-	 */
-	static getAllNotificationForItem(project: string, currentItemId: string): Promise<XRGetTodosAck>;
-}
-export interface IBaseGateOptions {
-	/** define different reviews/approvals which need to be made for gate to pass */
-	lines?: IGateLineBase[];
-}
-export interface IGateLineBase {
-	/** a unique id for the line */
-	id: string;
-	/** define which users can approve */
-	users: string[];
-}
-export interface IGateStatus {
-	passed: boolean;
-	failed: boolean;
-	lines?: IGateStatusLine[];
-	search: string;
-}
-export interface IGateStatusLine {
-	id: string;
-	passed: boolean;
-	failed: boolean;
-	user: string;
-	date: string;
-	dateUser: string;
-	comment: string;
-}
-export declare class GateFieldHandler implements IFieldHandler {
-	private config;
-	private currentValue;
-	constructor(config: IBaseGateOptions);
-	getData(): string | undefined;
-	setData(value: string, doValidation?: boolean): void;
-	getFieldType(): string;
-	initData(serializedFieldData: string | undefined): void;
-	private defautValue;
-	parseFieldValue(stored: string): IGateStatus;
-	updateOverallStatus(): void;
-	private updateOverallStatusInternal;
-	getGateValue(): IGateStatus | undefined;
-	setGateValue(gateValue: IGateStatus): void;
-}
-export interface IPanel {
-	destroy: () => void;
-	title: string;
-	toggleZen?: () => void;
-}
-declare class Application {
-	lastMainItemForm: ItemControl;
-	currentPanel: IPanel;
-	protected currentPrintPanel: IPanel;
-	protected saveEnabled: boolean;
-	currentItem: IItem;
-	protected currentItemForcedReadonly: boolean;
-	protected isSaving: boolean;
-	private latestUpdateControlEventId;
-	constructor();
-	saveSave(): void;
-	updateMainUI(disabled?: boolean): void;
-	setSaveCancelState(enabled: boolean, quietCancel: boolean): void;
-	editConfiguration(): void;
-	destroyOldControls(): void;
-	refreshLinks(): void;
-	updateControl(watcherInfo: IItemWatched, itemChanged: (needsSave: boolean) => void): void;
-	forceReadonly(itemId: string): void;
-	highlightReferences(): void;
-	createControl(folderType: string, itemId: string, itemChanged?: (needsSave: boolean) => void, cachedItem?: IItem): void;
-	renderErrorControl(control: JQuery, header: string, text: string, contextFrame?: boolean): void;
-	private createItemControlCached;
-	private createItemControl;
-}
-export interface IControlDefinition {
-	name?: string;
-	control?: JQuery;
-	fieldId?: number;
-	isDhfType?: boolean;
-	/**
-	 * fieldType is set if this control supports displaying a particular kind of field.
-	 * See FieldDescriptions for a list of many of the field types.
-	 */
-	fieldType?: string;
-}
-export interface IGenericMap {
-	[key: string]: any;
-}
-export interface IAnyMap {
-	[key: string]: any;
-}
-export interface IStringMap {
-	[key: string]: string;
-}
-export interface IStringNumberMap {
-	[key: string]: number;
-}
-export interface IStringStringArrayMap {
-	[key: string]: string[];
-}
-export interface IStringJQueryMap {
-	[key: string]: JQuery;
-}
-export interface IJsonSetting {
-	id: string;
-	value: any;
-}
-export interface IRestParam extends Object {
-	td?: number;
-	reason?: string;
-	filter?: string;
-	[key: string]: any;
-}
-export type IRestResult = {} | string;
-declare class GlobalMatrix {
-	verbose: boolean;
-	ItemConfig: ItemConfiguration;
-	PopulateProjects: Function;
-	mobileApp: {
-		Login: Function;
-		ShowLoginScreen: Function;
-		ShowMobileUI: Function;
-	};
-	jiraPlugin: any;
-	Admin: any;
-	doc: any;
-	ITEM_DOES_NOT_EXIST: string;
-	matrixRestUrl: string;
-	matrixBaseUrl: string;
-	matrixWfgw: string;
-	matrixExpress: boolean;
-	matrixProduct: string;
-	matrixUniqueSerial: string;
-	mxOauth: string;
-	mxOauthLoginUrl: string;
-	serverStorage: IDataStorage;
-	projectStorage: IDataStorage;
-	wfgwConnection: RestConnector;
-	globalShiftDown: boolean;
-	globalCtrlDown: boolean;
-	jsonValidator: JsonValidator;
-	historyFilter: string;
-	EmbeddedReport: any;
-	constructor();
-	installLegacyAdaptor(): void;
-}
-export interface IReference {
-	projectShortLabel?: string;
-	to: string;
-	title: string;
-	modDate?: string;
-	isIndirect?: boolean;
-}
-export interface IItemIdParts {
-	id: string;
-	version: number;
-	type: string;
-	isFolder: boolean;
-	url: string;
-	link: string;
-	linkv: string;
-	number: number;
-}
-export interface IReferenceChange {
-	action: string;
-	fromId: string;
-	toId: string;
-}
-export interface IItem {
-	upLinks?: IReference[];
-	upLinkList?: XRTrimLink[];
-	downLinks?: IReference[];
-	children?: IItem[];
-	history?: IItemHistory[];
-	modDate?: string;
-	isUnselected?: number;
-	availableFormats?: string[];
-	selectSubTree?: XRCategoryAndRoot[];
-	requireSubTree?: XRCategoryAndRoot[];
-	icon?: string;
-	type?: string;
-	id?: string;
-	title?: string;
-	linksUp?: string;
-	linksDown?: string;
-	isFolder?: boolean;
-	isDeleted?: boolean;
-	maxVersion?: number;
-	docHasPackage?: boolean;
-	[key: string]: any;
-}
-export interface IItemGet extends IItem {
-	labels?: string[];
-	crossLinks?: XRCrossProjectLink[];
-}
-export interface IItemPut extends IItem {
-	labels?: string;
-	onlyThoseFields?: number;
-	onlyThoseLabels?: number;
-}
-export interface IItemHistory {
-	action: string;
-	user: string;
-	dateUserFormat: string;
-	comment: string;
-	id: string;
-	version: number;
-	date: string;
-	title: string;
-	deletedate?: string;
-}
-export interface IDataStorage {
-	setItem: (itemKey: string, itemVal: string, sanitize?: boolean) => void;
-	getItem: (itemKey: string, dontSanitize?: boolean) => string;
-	getItemDefault: (itemKey: string, defaultValue: string) => string;
-}
-export declare enum ControlState {
-	FormEdit = 0,//this is a embedded form which allows the user to modify the content
-	FormView = 1,//this is read only version with (some) read only tools enabled (e.g. history)
-	DialogCreate = 2,//this allows the user to modify the content, usually to create new elements. No tools
-	HistoryView = 3,//is a read only version, e.g. used for the history where smart text and smart link is not resolved
-	Tooltip = 4,// most things will not shown as tooltip...
-	Print = 5,// for printing ...
-	Report = 6,// special to render report into page
-	DialogEdit = 7,// between FormEdit and DialogCreate to edit an item in popup
-	Review = 8
-}
-export declare enum LineType {
-	textline = "textline",
-	id = "id",
-	uppercase = "uppercase",
-	number = "number",
-	select = "select",
-	table = "table",
-	json = "json",
-	color = "color",
-	id_ = "id_",
-	richtext = "richtext",
-	readonly = "readonly",
-	boolean = "boolean",
-	multiselect = "multiselect",
-	folderselect = "folderselect",
-	userAndGroupSelect = "userAndGroupSelect"
-}
-export interface ILineEditorLine {
-	id?: string;
-	key?: number;
-	help: string;
-	explanation?: string;
-	value: string;
-	type: LineType;
-	options?: IDropdownOption[];
-	multiple?: boolean;
-	groups?: IDropdownGroup[];
-	columns?: ITableControlOptionsColumn[];
-	noEdit?: boolean;
-	readonly?: boolean;
-	hide?: boolean;
-	required?: boolean;
-	extraOptions?: IAnyMap;
-}
-declare class LineEditorExt {
-	constructor();
-	showDialog(title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number, showUserAndGroupsSelectWithDialog?: (container: JQuery, showUsers: boolean, showGroups: boolean, help: string, empty: string, selected: string[], dialogTitle: string, onSelect: (selection: string[]) => void) => void): JQueryDeferred<any>;
-	static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
-	private setEnabled;
-	private getValue;
-	private isEnabled;
-}
-export declare abstract class BaseWidget implements IWidgetPlugin {
-	abstract _root: JQuery | undefined;
-	abstract id: string;
-	abstract defaultParameters(): IWidgetParameters;
-	abstract displayedWidget: IDisplayedWidget | undefined;
-	abstract getBoxConfigurator(): ILineEditorLine[];
-	abstract help: string;
-	abstract render(root: JQuery, arg0: IDisplayedWidget): void;
-	abstract renderOn: widgetRenderEvent | undefined;
-	pluginName(): string;
-	mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
-	addContainer(root: JQuery, displayedWidget: IDisplayedWidget): JQuery;
-	updateHideUnHideButton(): void;
-	protected addToToolbar(iconName: string, onClick: () => void, tooltip?: string): void;
-	showWidgetSettingEditor(displayedWidget: IDisplayedWidget): Promise<void>;
-	calculateHeight(configurator: ILineEditorLine[]): number;
-	updatePosition(w: number, h: number, x: number, y: number): void;
-	hide(showConfirm?: boolean): void;
-	unhide(showConfirm: boolean): void;
-}
-export interface IAttributePrimitiveParams {
-	attributeName?: string;
-	path?: string;
-	class?: string;
-	replace?: IReplaceParam;
-}
-export interface IReplaceParam {
-	match: string;
-	with: string;
-}
-/************************************** Processor class  ********************************************/
-export declare class PrintProcessor implements IPrintProcessor {
-	private onError;
-	private possibleTargets;
-	private mf?;
-	globals?: IPrintGlobals;
-	private functionDefaults?;
-	static itemIterators: IPrintIteratorMap;
-	static labelIterators: IPrintIteratorMap;
-	static fieldIterators: IPrintIteratorMap;
-	static itemSorter: IPrintSorterMap;
-	static functions: IPrintFunctionMap;
-	static conditions: IConditionFunctionMap;
-	private formatter;
-	constructor();
-	private stylesheets;
-	/*******************************************************************************
-	 *
-	 *  Iterator Blocks
-	 *
-	 ***************************************************************************** */
-	prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): void;
-	private getRiskControlCategories;
-	processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): Promise<IProcessResult>;
-	getTableData(tableId: string, selection: string[]): Promise<string>;
-	/********************************************************************************
-	 *  Main Processing functions to handle items from the print project
-	 ********************************************************************************/
-	private processItem;
-	private processBlockFormatter;
-	private processFieldsFormatter;
-	private processTraceFormatter;
-	private processListFormatter;
-	private processTableFormatter;
-	/********************************************************************************
-	 *  processing of "json" macros like {execute:"function", parameters:{...}}
-	 ********************************************************************************/
-	private processMacros;
-	private processPrintFormatterMacro;
-	private processFunctionMacro;
-	/********************************************************************************
-	 *  Helper for building tables
-	 ********************************************************************************/
-	private mergeCells;
-	private extractClassesFromTable;
-	private addRows;
-	private getSubTableCells;
-	/********************************************************************************
-	 *  Misc helper
-	 ********************************************************************************/
-	getCustomStylesheet(): string;
-	private applyDepth;
-	private hasMergeMacro;
-	private addScriptInfo;
-	private evaluateCondition;
-	private enumeratePossibleTargets;
-	private sortItems;
-	/*********************************** manage formatters ************************************/
-	static getFunctions(group: string): IPrintFunctionMap;
-	static functionHasOptions(functionUid: string): boolean;
-	static editFunctionOptions(currentValue: string, onUpdate: (newOptions: string) => void): void;
-	static showOptionsEditor(fctName: string, currentValue: string, onUpdate: (newValue: string) => void): void;
-	static openEditor(fct: IPrintBaseFunction, params: IAttributePrimitiveParams, onUpdate: (newParams: IAttributePrimitiveParams) => void): boolean;
-	static editStyle(wrap: JQuery): void;
-	private getItemFormatter;
-	static addItemSorter(uid: string, sorter: IPrintSorter): void;
-	static getItemSorters(): IPrintSorterMap;
-	static getItemSorter(uid: string): IPrintSorter | null;
-	static getItemSorterDropdown(): IDropdownOption[];
-	static addItemIterator(uid: string, iterator: IPrintIterator): void;
-	static getItemIterator(uid: string, quiet?: boolean): IPrintItemIterator | null;
-	static getItemIteratorsDropdown(items: boolean, folders: boolean, allowNoIterator: boolean): IDropdownOption[];
-	static addLabelIterator(uid: string, iterator: IPrintIterator): void;
-	static getLabelIterator(uid: string): IPrintLabelIterator | null;
-	static addFieldIterator(uid: string, iterator: IPrintIterator): void;
-	static getFieldIterator(uid: string): IPrintFieldIterator | null;
-	static addFunction(uid: string, fctn: IPrintFunction): void;
-	static getFunction(uid: string): IPrintFunction | null;
-	static FIELD_FUNCTION_TYPE: string;
-	static FIELD_FUNCTION_PREFIX: string;
-	static getFieldFunctionId(uid: string): string;
-	static getFieldFunction(uid: string): IPrintFunction | null;
-	static addConditionFunction(uid: string, fctn: IConditionFunction): void;
-	static getConditionFunction(uid: string): IConditionFunction | null;
-	static getItemConditionDropdown(): IDropdownOption[];
-	static getAllFunctions(): IPrintBaseFunctionMap;
-	static getAllIterators(): IPrintBaseFunctionMap;
-	static getJsonConfig(config: string, mf: JQuery): any;
-	static getCdataAsJSON(node: Element): any;
-	static getCdataAsText(node: Element, escapeHtmlEntities: boolean): string;
-	static getUserName(user: string, mf: JQuery, first: boolean, last: boolean, login: boolean, email: boolean): string;
-	static getFieldAndLabelsIteratorsDropdown(): IDropdownOption[];
-}
-export interface PostProcessor {
-	run: (rendering: string, params: IPrintFunctionParams) => string;
-}
-export interface PreProcessor {
-	run: (mf: JQuery, params: IPrintFunctionParams) => void;
-}
-export interface PostProcessorMap {
-	[key: string]: PostProcessor;
-}
-export interface PreProcessorMap {
-	[key: string]: PreProcessor;
-}
-declare class PrintProcessorRegistry {
-	private postProcessors;
-	private preProcessors;
-	executePost(params: IPrePostProcessorExecParams, rendering: string): string;
-	executePre(params: IPrePostProcessorExecParams, mf: JQuery): void;
-	registerPostProcessor(name: string, processor: PostProcessor): void;
-	registerPreProcessor(name: string, processor: PreProcessor): void;
-	getRegisteredProcessors(): {
-		preProcessors: PreProcessorMap;
-		postProcessors: PostProcessorMap;
-	};
-}
-/**
- * A Field represents a field in an Item in a Project on a Matrix Instance. The Field contains
- * the data for a given field, along with knowledge about the configuration of that field, as
- * given by the Category settings for Items of that particular category.
- *
- * The end user reads and changes the data in a field through a Field Handler. There is a
- * unique field handler for each field type. Consult documentation for a table mapping field
- * types to field handlers.
- */
-export declare class Field {
-	private item;
-	private config;
-	private handler;
-	private oldData?;
-	constructor(item: Item, config: XRFieldTypeAnnotated, handler: IFieldHandler);
-	/**
-	 * Get the Item which contains this field.
-	 * @returns the containing Item
-	 */
-	getItem(): Item;
-	getHandlerRaw(): IFieldHandler;
-	getHandler<T>(): T;
-	getFieldType(): string;
-	getFieldId(): number;
-	getFieldName(): string;
-	getFieldConfigParameter(name: string): unknown;
-	needsSave(): boolean;
-}
 /**
  * MatrixALM and MatrixQMS REST API
  * Feel free to make a copy of this definition and change the url below to your instance of MatrixALM or MatrixQMS. For the authentication, create  a token for an admin to try out all the methods. Use at your own risks! Any question? ask us on https://support.matrixreq.com
@@ -10803,6 +9086,40 @@ export declare enum refLinkTooltip {
 	none = 1,// no tooltip
 	html = 2
 }
+/**
+ * GenericFieldHandler is a field handler which does no validation on the field
+ * data. It simply stores the data as a string.
+ */
+export declare class GenericFieldHandler implements IFieldHandler {
+	protected fieldType: string;
+	protected data: string;
+	private config;
+	constructor(fieldTypeIn: string, configIn: XRFieldTypeAnnotatedParamJson);
+	/**
+	 * Return the field type of this field as a string.
+	 * @returns string
+	 */
+	getFieldType(): string;
+	/**
+	 * initData will set the data of the field handler to the passed-in parameter,
+	 * or, if it is undefined, consult the initialContent key of the configuration
+	 * object. If this key is defined, then the data of the field handler will
+	 * be set to that value.
+	 * @param serializedFieldData
+	 */
+	initData(serializedFieldData: string | undefined): void;
+	/**
+	 * Get the data for the field.
+	 * @returns a string or undefined.
+	 */
+	getData(): string | undefined;
+	/**
+	 * Set the field data to the input string.
+	 * @param value
+	 * @param doValidation
+	 */
+	setData(value: string, doValidation?: boolean): void;
+}
 export interface IRiskControlOptions extends IBaseControlOptions {
 	controlState?: ControlState;
 	canEdit?: boolean;
@@ -10937,6 +9254,29 @@ export declare class ProjectStorage implements IDataStorage {
 	getItem(itemKey: string, dontSanitize?: boolean): string;
 	getItemDefault(itemKey: string, defaultValue: string): string;
 }
+export declare class ItemSelectionFieldHandler implements IFieldHandler {
+	protected fieldType: string;
+	protected data: string;
+	protected config: XRFieldTypeAnnotatedParamJson;
+	constructor(configIn: XRFieldTypeAnnotatedParamJson, fieldTypeIn?: string);
+	addSignatures(signatures: string[], includeAll: boolean): void;
+	getFieldType(): string;
+	initData(serializedFieldData: string | undefined): void;
+	getData(): string | undefined;
+	setData(value: string, doValidation?: boolean): void;
+	getItems(): IReference[];
+	getItemCount(): number;
+	hasItems(): boolean;
+	hasItem(itemId: string, projectShortLabel?: string): boolean;
+	insertItem(position: number, item: IReference): ItemSelectionFieldHandler;
+	appendItem(item: IReference): ItemSelectionFieldHandler;
+	removeItem(position: number): ItemSelectionFieldHandler;
+	clear(): ItemSelectionFieldHandler;
+	setItems(selectedItems: IReference[]): void;
+	protected name: string;
+	getFieldName(): string;
+	setFieldName(value: string): void;
+}
 export interface IItemSelectionParams {
 	prefix?: string;
 	buttonName?: string;
@@ -10949,6 +9289,42 @@ export interface IItemSelectionParams {
 	readonly?: boolean;
 	crossProjectHideDelete?: boolean;
 	crossProjectAsList?: boolean;
+}
+export interface INotificationsChanges {
+	total: number;
+	allNotifications: XRGetTodosAck;
+}
+declare class NotificationsCache {
+	private myTodoCount;
+	private myTodos;
+	private isEnabled;
+	setNotificationCounts(todos: XRTodoCount[]): void;
+	getNotificationCounts(): XRTodoCount[];
+	getNotifications(): XRTodo[];
+	setNotifications(todos: XRTodo[]): void;
+	private notificationUpdateTimer;
+	/**
+	 * Update the notifications cache  for the provided list of projects
+	 * @param projects
+	 */
+	update(projects: string[]): Promise<INotificationsChanges>;
+	setEnabled(isEnabled: boolean): void;
+	/**
+	 * Return the total number of notifications for a specific project from the cache
+	 * @param project
+	 */
+	getTotalNotificationsProject(project: string): XRTodoCount | null;
+	/**
+	 * Return the total number of notifications from the cache
+	 */
+	getTotalNotifications(): number;
+	/**
+	 * Return the notifications for a specific project and item from the cache
+	 * @param project
+	 * @param item
+	 */
+	getProjectNotifications(project: string, item: string): XRTodo[];
+	private getAllNotificationsAndUpdateCache;
 }
 export interface INotificationTableOptions {
 	allowDelete: boolean;
@@ -11007,164 +9383,137 @@ export declare class Notifications implements IPlugin {
 	static anchorTimer: number;
 	static anchorNotifications(): void;
 }
+export interface IAttributePrimitiveParams {
+	attributeName?: string;
+	path?: string;
+	class?: string;
+	replace?: IReplaceParam;
+}
+export interface IReplaceParam {
+	match: string;
+	with: string;
+}
+/************************************** Processor class  ********************************************/
+export declare class PrintProcessor implements IPrintProcessor {
+	private onError;
+	private possibleTargets;
+	private mf?;
+	globals?: IPrintGlobals;
+	private functionDefaults?;
+	static itemIterators: IPrintIteratorMap;
+	static labelIterators: IPrintIteratorMap;
+	static fieldIterators: IPrintIteratorMap;
+	static itemSorter: IPrintSorterMap;
+	static functions: IPrintFunctionMap;
+	static conditions: IConditionFunctionMap;
+	private formatter;
+	constructor();
+	private stylesheets;
+	/*******************************************************************************
+	 *
+	 *  Iterator Blocks
+	 *
+	 ***************************************************************************** */
+	prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): void;
+	private getRiskControlCategories;
+	processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): Promise<IProcessResult>;
+	getTableData(tableId: string, selection: string[]): Promise<string>;
+	/********************************************************************************
+	 *  Main Processing functions to handle items from the print project
+	 ********************************************************************************/
+	private processItem;
+	private processBlockFormatter;
+	private processFieldsFormatter;
+	private processTraceFormatter;
+	private processListFormatter;
+	private processTableFormatter;
+	/********************************************************************************
+	 *  processing of "json" macros like {execute:"function", parameters:{...}}
+	 ********************************************************************************/
+	private processMacros;
+	private processPrintFormatterMacro;
+	private processFunctionMacro;
+	/********************************************************************************
+	 *  Helper for building tables
+	 ********************************************************************************/
+	private mergeCells;
+	private extractClassesFromTable;
+	private addRows;
+	private getSubTableCells;
+	/********************************************************************************
+	 *  Misc helper
+	 ********************************************************************************/
+	getCustomStylesheet(): string;
+	private applyDepth;
+	private hasMergeMacro;
+	private addScriptInfo;
+	private evaluateCondition;
+	private enumeratePossibleTargets;
+	private sortItems;
+	/*********************************** manage formatters ************************************/
+	static getFunctions(group: string): IPrintFunctionMap;
+	static functionHasOptions(functionUid: string): boolean;
+	static editFunctionOptions(currentValue: string, onUpdate: (newOptions: string) => void): void;
+	static showOptionsEditor(fctName: string, currentValue: string, onUpdate: (newValue: string) => void): void;
+	static openEditor(fct: IPrintBaseFunction, params: IAttributePrimitiveParams, onUpdate: (newParams: IAttributePrimitiveParams) => void): boolean;
+	static editStyle(wrap: JQuery): void;
+	private getItemFormatter;
+	static addItemSorter(uid: string, sorter: IPrintSorter): void;
+	static getItemSorters(): IPrintSorterMap;
+	static getItemSorter(uid: string): IPrintSorter | null;
+	static getItemSorterDropdown(): IDropdownOption[];
+	static addItemIterator(uid: string, iterator: IPrintIterator): void;
+	static getItemIterator(uid: string, quiet?: boolean): IPrintItemIterator | null;
+	static getItemIteratorsDropdown(items: boolean, folders: boolean, allowNoIterator: boolean): IDropdownOption[];
+	static addLabelIterator(uid: string, iterator: IPrintIterator): void;
+	static getLabelIterator(uid: string): IPrintLabelIterator | null;
+	static addFieldIterator(uid: string, iterator: IPrintIterator): void;
+	static getFieldIterator(uid: string): IPrintFieldIterator | null;
+	static addFunction(uid: string, fctn: IPrintFunction): void;
+	static getFunction(uid: string): IPrintFunction | null;
+	static FIELD_FUNCTION_TYPE: string;
+	static FIELD_FUNCTION_PREFIX: string;
+	static getFieldFunctionId(uid: string): string;
+	static getFieldFunction(uid: string): IPrintFunction | null;
+	static addConditionFunction(uid: string, fctn: IConditionFunction): void;
+	static getConditionFunction(uid: string): IConditionFunction | null;
+	static getItemConditionDropdown(): IDropdownOption[];
+	static getAllFunctions(): IPrintBaseFunctionMap;
+	static getAllIterators(): IPrintBaseFunctionMap;
+	static getJsonConfig(config: string, mf: JQuery): any;
+	static getCdataAsJSON(node: Element): any;
+	static getCdataAsText(node: Element, escapeHtmlEntities: boolean): string;
+	static getUserName(user: string, mf: JQuery, first: boolean, last: boolean, login: boolean, email: boolean): string;
+	static getFieldAndLabelsIteratorsDropdown(): IDropdownOption[];
+}
+export interface PostProcessor {
+	run: (rendering: string, params: IPrintFunctionParams) => string;
+}
+export interface PreProcessor {
+	run: (mf: JQuery, params: IPrintFunctionParams) => void;
+}
+export interface PostProcessorMap {
+	[key: string]: PostProcessor;
+}
+export interface PreProcessorMap {
+	[key: string]: PreProcessor;
+}
+declare class PrintProcessorRegistry {
+	private postProcessors;
+	private preProcessors;
+	executePost(params: IPrePostProcessorExecParams, rendering: string): string;
+	executePre(params: IPrePostProcessorExecParams, mf: JQuery): void;
+	registerPostProcessor(name: string, processor: PostProcessor): void;
+	registerPreProcessor(name: string, processor: PreProcessor): void;
+	getRegisteredProcessors(): {
+		preProcessors: PreProcessorMap;
+		postProcessors: PostProcessorMap;
+	};
+}
 export interface IPrintMacro {
 }
 export interface IPrintFieldParams extends IPrintMacro {
 	fieldInfo?: IPrintFieldInfo;
-}
-/**
- * This file defines all the data structures which might be shared between UI components and printing
- *
- */
-/** Setting for custom fields
- *
- * These allow a user to add parameters to custom field defined by the plugin
- * each time it is added to a category
- */
-export interface IPluginFieldParameterBase<T extends IPluginFieldOptionsBase> extends IFieldParameter {
-	/** see below */
-	options: T;
-}
-/**  interface for the configuration options of field */
-export interface IPluginFieldOptionsBase {
-}
-/** this allows to store parameters for printing
- *
- * This parameters can be overwritten in the layout and are used by the custom section printing
- */
-export interface IPluginPrintParamsBase extends IPrintFieldParams {
-	class: string;
-}
-/** Description of the current plugin. Each feature can be activated/deactivated using the configuration object */
-export interface IPluginConfig<SERVERSETTINGS extends IServerSettingsBase, PROJECTSETTINGS extends IProjectSettingsBase> extends IPluginConfigForDashboard {
-	/** Field. This will add a new field type that can be used for data rendering in the main app */
-	field: IPluginFeatureField;
-	/** Menu tool item. This will add a new menu item in the tools menu  in the main app.*/
-	menuToolItem: IPluginFeatureBase;
-	/** Menu tool item. This will add a new dashboard in the main app.*/
-	dashboard: IPluginFeatureDashboard;
-	/** Customer setting page parameter. This will add a page in the server config in the adminConfig */
-	customerSettingsPage: IPluginFeature<SERVERSETTINGS>;
-	/** project setting page parameter. This will add a page per project in the adminConfig */
-	projectSettingsPage: IPluginFeature<PROJECTSETTINGS>;
-}
-export interface IPluginFeature<T> extends IPluginFeatureBase {
-	/** Type is used to determine node type in the setting tree */
-	type: string;
-	/** Setting name that's used by REST api to persist settings */
-	settingName: string;
-	/** Default settings when nothing has been save yet*/
-	defaultSettings?: T;
-	/** Optional help text shown under the title */
-	help?: string;
-	/** Optional URL describing this page */
-	helpUrl?: string;
-}
-export interface IPluginFeatureField extends IPluginFeatureBase {
-	/**  Field type id that will be use when rendering the data */
-	fieldType: string;
-	/**  description of  field  capabilities*/
-	fieldConfigOptions: IFieldDescription;
-}
-export interface IPluginSettingPage<T> {
-	renderSettingPage?: () => void;
-	showAdvanced?: () => void;
-	showSimple?: () => void;
-	getSettingsDOM?: (_setting?: T) => JQuery;
-	settings?: () => T;
-	saveAsync?: () => JQueryDeferred<unknown>;
-	paramChanged?: () => void;
-	settingsOriginal?: T;
-	settingsChanged?: T;
-	getProject?: () => string;
-}
-/**
- * Interface for the tool menu item
- */
-export interface ITool {
-	/**
-	 * function called when the menu item is clicked
-	 * @param itemId
-	 */
-	menuClicked(itemId: string): void;
-	/**
-	 * functino to decide whether the menu item should be shown or not based on the currently displayed item
-	 * @param itemId
-	 */
-	showMenu(itemId: string): boolean;
-}
-/**
- * This is the interface that plugin that use our boilerplate template must implement.
- * It is used to define the plugin capabilities and to configure the plugin.
- * The plugin is instantiated once.
- * @param SERVERSETTINGS  The type of the server settings
- * @param PROJECTSETTINGS The type of the project settings
- * @param FIELDHANDLER The fieldhandle that will be responsible for the field data validation
- * @param FIELDVALUETYPE The type of the field value. This is the type of the data that will be stored in the database
- * @param DASHBOARDPARAMS The type of the dashboard parameters that will be used to render the dashboard.
- */
-export interface IExternalPlugin<SERVERSETTINGS extends IServerSettingsBase, PROJECTSETTINGS extends IProjectSettingsBase, FIELDHANDLER extends IPluginFieldHandler<FIELDVALUETYPE>, FIELDVALUETYPE extends IPluginFieldValueBase, DASHBOARDPARAMS extends IDashboardParametersBase> extends IPluginCoreForDashboard<DASHBOARDPARAMS> {
-	enableToolMenu(ul: JQuery, _hook: number): unknown;
-	onInitItem(_item: IItem): unknown;
-	onInitProject(project: string): unknown;
-	PLUGIN_VERSION: string;
-	PLUGIN_NAME: string;
-	/**
-	 * Returns a page to be added to the dashboard in the main app.
-	 */
-	getDashboardAsync(): Promise<IDashboardPage<DASHBOARDPARAMS>>;
-	/**
-	 * Returns a page to be added to the customer settings page in the adminConfig.
-	 */
-	getProjectSettingsPageAsync(): Promise<IPluginSettingPage<PROJECTSETTINGS>>;
-	/**
-	 * Returns a page to be added to the server settings page in the adminConfig.
-	 */
-	getServerSettingsPageAsync(): Promise<IPluginSettingPage<SERVERSETTINGS>>;
-	/**
-	 * Returns a control object for a given field type. This is used to render the field in the main app.
-	 * @param ctrlObj
-	 */
-	getControlAsync(ctrlObj: JQuery): Promise<ControlCoreBase<FIELDHANDLER, FIELDVALUETYPE>>;
-	/**
-	 * Returns a tool to be added to the tools menu in the main app.
-	 */
-	getToolAsync(): Promise<ITool>;
-	/**
-	 * Returns a list of TinyMCE menu items to be added to the editor.
-	 * @param editor
-	 */
-	getTinyMenuItems?(editor: unknown): ITinyMenu[];
-	/**
-	 * Returns a list of menu items to be added to the user profile menu in the main app.
-	 */
-	getUserMenuItems?(): IPluginMenuAction[];
-	/**
-	 * Returns a list of menu items to be added to the user profile menu of the config page.
-	 */
-	getConfigUserMenuItems?(): IPluginMenuAction[];
-	/**
-	 * Returns a list of menu items to be added to the project list.
-	 */
-	getProjectMenuItems?(): IPluginMenuAction[];
-	/**
-	 * Returns a list of custom searches to be added to the search drowpdown.
-	 */
-	getCustomSearches?(): IPluginSearch[];
-	/**
-	 * Returns a list of menu items to be added to the QMS user profile menu in the liveqms.
-	 */
-	getQMSUserMenuItems?(): IPluginMenuAction[];
-	/**
-	 * return the plugin configuration.
-	 */
-	getConfig(): IPluginConfig<SERVERSETTINGS, PROJECTSETTINGS>;
-	/**
-	 * Return a list of tiles to be added to the analytics dashboard.
-	 */
-	renderTile?(root: HTMLElement): void;
-}
-export interface IDashboardParameters extends IDashboardParametersBase {
 }
 /** this is info delivered by the UI when rendering the control */
 export interface IControlOptions extends IBaseControlOptions {
@@ -11265,12 +9614,42 @@ export declare class PluginCore implements IPlugin {
 	getConfig(): IPluginConfig<IServerSettingsBase, IProjectSettingsBase>;
 	getPluginName(): string;
 	getPluginVersion(): string;
-	renderTile(root: HTMLElement): void;
+	getTiles(): ITile[];
+	getDashboardLinksForAnalyticsAsync(): Promise<IDashboardParametersBase[]>;
 }
 export interface IValidationSpec {
 	validationFunction?: JsonEditorValidation | null | any;
 	schema?: string;
 	apiHelp?: string;
+}
+export interface IPanel {
+	destroy: () => void;
+	title: string;
+	toggleZen?: () => void;
+}
+declare class Application {
+	lastMainItemForm: ItemControl;
+	currentPanel: IPanel;
+	protected currentPrintPanel: IPanel;
+	protected saveEnabled: boolean;
+	currentItem: IItem;
+	protected currentItemForcedReadonly: boolean;
+	protected isSaving: boolean;
+	private latestUpdateControlEventId;
+	constructor();
+	saveSave(): void;
+	updateMainUI(disabled?: boolean): void;
+	setSaveCancelState(enabled: boolean, quietCancel: boolean): void;
+	editConfiguration(): void;
+	destroyOldControls(): void;
+	refreshLinks(): void;
+	updateControl(watcherInfo: IItemWatched, itemChanged: (needsSave: boolean) => void): void;
+	forceReadonly(itemId: string): void;
+	highlightReferences(): void;
+	createControl(folderType: string, itemId: string, itemChanged?: (needsSave: boolean) => void, cachedItem?: IItem): void;
+	renderErrorControl(control: JQuery, header: string, text: string, contextFrame?: boolean): void;
+	private createItemControlCached;
+	private createItemControl;
 }
 declare class ConfigPageFactory extends Application {
 	private registered_pages;
@@ -11430,6 +9809,100 @@ export declare class LineEditor {
 	showDialog(configPage: ConfigPage, title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number): void;
 	static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
 }
+export interface ITestFieldParam extends XRFieldTypeAnnotatedParamJson {
+	fieldMeaning: string;
+}
+export interface ITestStepsResultOption {
+	id: string;
+	label: string;
+}
+export interface ITestStepsResultsConfig {
+	canBeModified: boolean;
+	columns: ITestConfigTablesColumn[];
+	passFailEditorConfig: ITestRuleStep[];
+}
+declare class TestManagerConfiguration {
+	XTCconfig: ITestConfig;
+	constructor();
+	initialize(itemConfig: ItemConfiguration): void;
+	getTestRunResultOptions(): ITestStepsResultOption[];
+	getTestStepsConfig(category: string): ITestConfigTablesColumns;
+	getTestStepsResultsConfig(): ITestStepsResultsConfig;
+	isXTC(type: string): boolean;
+	isTC(type: string): boolean;
+	getXTCType(): string;
+	getCloneSources(): string[];
+	getTestRunResultPlaceholder(value: string): string;
+	isCloneSource(category: string): boolean;
+}
+/**
+ * A Field represents a field in an Item in a Project on a Matrix Instance. The Field contains
+ * the data for a given field, along with knowledge about the configuration of that field, as
+ * given by the Category settings for Items of that particular category.
+ *
+ * The end user reads and changes the data in a field through a Field Handler. There is a
+ * unique field handler for each field type. Consult documentation for a table mapping field
+ * types to field handlers.
+ */
+export declare class Field {
+	private item;
+	private config;
+	private handler;
+	private oldData?;
+	constructor(item: Item, config: XRFieldTypeAnnotated, handler: IFieldHandler);
+	/**
+	 * Get the Item which contains this field.
+	 * @returns the containing Item
+	 */
+	getItem(): Item;
+	getHandlerRaw(): IFieldHandler;
+	getHandler<T>(): T;
+	getFieldType(): string;
+	getFieldId(): number;
+	getFieldName(): string;
+	getFieldConfigParameter(name: string): unknown;
+	needsSave(): boolean;
+}
+export interface IDocFieldHandler extends IFieldHandler {
+	dhfFieldConfig: IAnyMap;
+	setDHFConfig(config: IAnyMap): void;
+	getDefaultConfig(): any;
+	getXmlValue(): string;
+	getFieldName(): string;
+	setFieldName(value: string): void;
+	addSignatures(signatures: string[], includeAll?: boolean): void;
+}
+export interface IDHFSectionOptions {
+	globalOptions?: boolean;
+	show_section_title?: string;
+	automation?: string;
+	page_break?: string;
+	landscape?: boolean;
+	sub_section?: string;
+}
+export interface IDHFControlDefinitionValue {
+	fieldValue?: string;
+	fieldValueXML?: string;
+	name?: string;
+	type?: string;
+	ctrlConfig?: IDHFSectionOptions;
+}
+export interface IDHFControlDefinition extends IControlDefinition {
+	dhfValue?: IDHFControlDefinitionValue;
+	configTouched?: boolean;
+}
+/**
+ * The FieldHandler for all DOC fields.
+ */
+export declare class DHFFieldHandler extends GenericFieldHandler {
+	private itemConfig;
+	private fieldConfig;
+	innerDataHandler: IDocFieldHandler;
+	constructor(itemConfig: ItemConfiguration, fieldConfig: IDHFControlDefinition);
+	getData(): string | undefined;
+	initData(fieldValue: string | undefined): void;
+	setInnerFieldHandler(docFieldHandler: IDocFieldHandler): void;
+}
 /**
  * DocItem is a subclass of Item which provides additional helper functions for managing a
  * Document (Items of Category DOC in a Matrix Instance).
@@ -11509,6 +9982,296 @@ export declare class DocItem extends Item {
 	toDOCx(progressReporter?: (jobId: number, jobDetails: JobsStatusWithUrl) => void): Promise<string>;
 	private addMandatoryFields;
 	private addDocumentOptions;
+}
+/**
+ * An Item represents a database item. Every Item must have at least a category.
+ * If it has an id, then it was retrieved from the database and may be altered and later
+ * saved (use needsSave() to determine if the Item needs saving). If it doesn't have
+ * an id, it needs to be saved. When an item is saved, it's data is re-initialized from
+ * the database.
+ */
+export declare class Item {
+	private category;
+	/**
+	 * Construct an Item
+	 * @param category
+	 * @param item
+	 * @param fieldMask
+	 */
+	constructor(category: Category, item?: IItemGet, fieldMask?: ItemFieldMask);
+	private fieldMask;
+	private fieldMap;
+	private dirty;
+	private id;
+	private type;
+	private title;
+	private labels;
+	private isFolderProperty;
+	private downLinks;
+	private upLinks;
+	private creationDate;
+	private maxVersion;
+	private history;
+	protected toBeIntegrated: IItemGet;
+	private setDirty;
+	/**
+	 * Gets the ItemFieldMask which specifies which fields are loaded
+	 * @returns on ItemFieldMask object
+	 */
+	getFieldMask(): ItemFieldMask;
+	/**
+	 * Read-only.
+	 * @returns The highest version reached for this item, or undefined if the
+	 *     item hasn't yet been saved on the server.
+	 */
+	getMaxVersion(): number | undefined;
+	/**
+	 * Return the history for an item, if present.
+	 * @returns an IItemHistory array
+	 */
+	getHistory(): IItemHistory[];
+	private hasLink;
+	private addLink;
+	private removeLink;
+	/**
+	 * Return any downlinks.
+	 * @returns An array of downlinks (may be undefined)
+	 */
+	getDownlinks(): IReference[];
+	/**
+	 * Check if there is a downlink to another item
+	 * @param id
+	 * @returns true if this item links to the item given by {id}
+	 */
+	hasDownlink(id: string): boolean;
+	/**
+	 * Replace the current array of downlinks with a new one.
+	 * @param downLinks
+	 * @returns the Item itself
+	 */
+	setDownlinks(downLinks: IReference[]): Item;
+	/**
+	 * Add a new downlink to the item. Does nothing if the item is
+	 * already represented
+	 * @param id - the id of the item to add.
+	 * @param title - optional. The title is just for convenience.
+	 *     It is neither saved nor representative of the actual title of the item.
+	 * @throws Error if the passed id matches the id of the current item.
+	 * @returns the Item
+	 */
+	addDownlink(id: string, title?: string): Item;
+	/**
+	 * Remove a link given by {id} if it exists.
+	 * @param id  the id of the downlinked item to remove
+	 * @returns the current Item
+	 */
+	removeDownlink(id: string): Item;
+	/**
+	 * Return any uplinks.
+	 * @returns An array of uplinks (may be undefined)
+	 */
+	getUplinks(): IReference[];
+	/**
+	 * Check if there is an uplink to another item
+	 * @param id
+	 * @returns true if this item links to the item given by {id}
+	 */
+	hasUplink(id: string): boolean;
+	/**
+	 * Replace the current array of uplinks with a new one.
+	 * @param upLinks
+	 * @returns the Item itself
+	 */
+	setUplinks(upLinks: IReference[]): Item;
+	/**
+	 * Add a new uplink to the item. Does nothing if the item is
+	 * already represented
+	 * @param id - the id of the item to add.
+	 * @param title - optional. The title is just for convenience.
+	 *     It is neither saved nor representative of the actual title of the item.
+	 * @throws Error if the passed id matches the id of the current item.
+	 * @returns the Item
+	 */
+	addUplink(id: string, title?: string): Item;
+	/**
+	 * Remove a link given by {id} if it exists.
+	 * @param id  the id of the uplinked item to remove
+	 * @returns the current Item
+	 */
+	removeUplink(id: string): Item;
+	/**
+	 * Helper method to test if a field id is valid within the Item Category, irrespective of
+	 * whether or not it is specified in the mask.
+	 * @param fieldId
+	 * @returns true if fieldId is valid within the Category.
+	 */
+	private isValidFieldId;
+	/**
+	 * Initializes the data fields for the item from an IItemGet structure
+	 * @param item
+	 */
+	private setData;
+	/**
+	 * Sometimes you've been given an Item with a restrictive ItemFieldMask, however, you'd
+	 * like to set a value for a field that was not in the mask. With this method, you can
+	 * expand the field mask to include the field given by the fieldId (easily obtained
+	 * from the Category object).
+	 *
+	 * This field will be added to the mask, and the associated Field object will be returned
+	 * with an empty value, which you could set. The object will be marked as "dirty" at this point,
+	 * because we don't know if the server has an empty value for this field or not, so we assume
+	 * the pessimistic case.
+	 * @param fieldId a valid fieldId from the Category of the item.
+	 * @throws if the fieldId is already in the ItemFieldMask, or if the fieldId is not valid for the Category.
+	 * @returns the Field object
+	 */
+	expandFieldMaskWithEmptyField(fieldId: number): Field | undefined;
+	/**
+	 * Export the data from this item into an IItemPut structure
+	 * @returns An IItemPut structure, filled in from the current state of the Item.
+	 */
+	extractData(): IItemPut;
+	/**
+	 * Get the unique Id of the Item within the Project.
+	 * @returns a string value containing the Item Id.
+	 */
+	getId(): string;
+	/**
+	 * isFolder returns true if the Item is of Category FOLDER.
+	 * @returns true if a FOLDER, false otherwise
+	 */
+	isFolder(): boolean;
+	/**
+	 * Returns the type (Category) of the Item.
+	 * @returns the Item type
+	 */
+	getType(): string;
+	/**
+	 * Get the creation date of the item
+	 * @returns a string date value or undefined
+	 */
+	getCreationDate(): string | undefined;
+	/**
+	 * Set the creation date.
+	 * @param creationDate
+	 * @returns the Item itself.
+	 */
+	setCreationDate(creationDate: string): Item;
+	/**
+	 * Get the Item title
+	 * @returns the Item title
+	 */
+	getTitle(): string;
+	/**
+	 * Set the title of the Item
+	 * @param title
+	 * @returns the Item itself
+	 */
+	setTitle(title: string): Item;
+	/**
+	 * Returns an array of labels set for the Item.
+	 * @returns array of strings
+	 */
+	getLabels(): string[];
+	private labelsToString;
+	private stringToLabels;
+	private verifyLabelsAllowed;
+	/**
+	 * Sets the labels for an Item, overwriting any previous labels
+	 * @param newLabels
+	 * @returns Item
+	 * @throws throws error if the Item category doesn't allow labels
+	 */
+	setLabels(newLabels: string[]): Item;
+	/**
+	 * Adds one label to the item if it isn't already set. Note that if the
+	 * label is in an XOR group with another set label, that label will be
+	 * removed.
+	 * @param labelToSet
+	 * @returns Item
+	 * @throws throws error if the Item category doesn't allow labels
+	 */
+	setLabel(labelToSet: string): Item;
+	/**
+	 * Unsets one label if it exists.
+	 * @param labelToUnset
+	 * @returns Item
+	 * @throws throws error if the Item category doesn't allow labels
+	 */
+	unsetLabel(labelToUnset: string): Item;
+	/**
+	 * Return the Category for the current item
+	 * @returns Category
+	 */
+	getCategory(): Category;
+	/**
+	 * needsSave() checks the Fields of the Category to which the Item belongs to see if they've
+	 * been changed. If so it marks the Item as dirty.
+	 * @returns true if the Item has changes that should be propped to the server
+	 */
+	needsSave(): boolean;
+	/**
+	 * An Item can be complete or partial, based on the ItemFieldMask passed in
+	 * at construction.
+	 * @returns true if the item has all of its Category fields.
+	 */
+	hasAllFields(): boolean;
+	/**
+	 * In case the Item is masked (hasAllFields() returns false), one or more Fields may
+	 * not be tracked. hasFieldId() allows you to check if the field is present.
+	 * @param fieldId a valid field id within the Category
+	 * @throws Error if fieldId is not valid within the Category
+	 * @returns true if the Item's mask allows for this field.
+	 */
+	hasFieldId(fieldId: number): boolean;
+	getFieldById(fieldId: number): Field | undefined;
+	/**
+	 * Returns all fields within the mask which match the fieldName.
+	 * @param fieldName
+	 * @returns an array of Fields. Note that if the mask has limited the set of fields from
+	 *     the Category which are tracked for this particular item, the number of returned Field
+	 *     objects may be less than you expect.
+	 */
+	getFieldByName(fieldName: string): Field[];
+	/**
+	 * Returns a Field matching the field name. The field should exist and be within the mask.
+	 * @param fieldName
+	 * @throws Error if there is no such field, either because the name is invalid or it is not within
+	 *     the mask for the Item.
+	 * @returns a valid Field.
+	 */
+	getSingleFieldByName(fieldName: string): Field;
+	/**
+	 * Returns all fields within the mask which match the fieldType.
+	 * @param fieldType
+	 * @returns an array of Fields. Note that if the mask has limited the set of fields from
+	 *     the Category which are tracked for this particular item, the number of returned Field
+	 *     objects may be less than you expect.
+	 */
+	getFieldsByType(fieldType: string): Field[];
+	/**
+	 * Create a Todo attached to this item.
+	 * @param users an array of user names
+	 * @param type
+	 * @param text
+	 * @param atDate
+	 * @returns A comma-separated list of Todo ids (integers), relative to the Item.
+	 */
+	createTodo(users: string[], type: TodoTypes, text: string, atDate: Date): Promise<string>;
+	/**
+	 * Return the Todos associated with this item.
+	 * @param includeDone - if true, includes done todos
+	 * @param includeAllUsers - if true, includes all todos for all users.
+	 * @param includeFuture - false by default. If true, includes future todos.
+	 * @returns Information on the Todos
+	 */
+	getTodos(includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
+	/**
+	 * Visit the server and get this Item as a DocItem.
+	 * @throws Error if the fields of this Item are dirty.
+	 * @returns a DocItem.
+	 */
+	toDocItem(): Promise<DocItem>;
 }
 export interface ITitleAndId {
 	title: string;
@@ -11932,6 +10695,132 @@ export declare class Project {
 	 * @param value the value of the setting
 	 */
 	putSetting(key: string, value: string): Promise<string>;
+}
+/**
+ * Options for creating a field mask for search functions.
+ */
+export interface IFieldMaskOptions {
+	/**
+	 * includeFields true by default. If false, no fields will be retrieved from the server.
+	 */
+	includeFields?: boolean;
+	/**
+	 * includeLabels true by default. If false, no label information will be retrieved from the server.
+	 */
+	includeLabels?: boolean;
+	/**
+	 * includeDownlinks false by default. If false, no information about downlinks will come from the server.
+	 */
+	includeDownlinks?: boolean;
+	/**
+	 * includeUplinks false by default. If false, no information about uplinks will come from the server.
+	 */
+	includeUplinks?: boolean;
+}
+export interface ICategoryItemOptions {
+	filter?: string;
+	treeOrder?: boolean;
+	mask?: ItemsFieldMask;
+}
+declare class ItemFieldMask {
+	private fieldIds;
+	constructor(fieldIds: number[]);
+	hasFieldId(fieldId: number): boolean;
+	getFieldIds(): number[];
+	/**
+	 * Combine the other ItemFieldMask with this one.
+	 * @param other an ItemFieldMask
+	 */
+	union(other: ItemFieldMask): void;
+	toString(): string;
+}
+declare class ItemsFieldMask {
+	private masks;
+	private includeFields;
+	private includeLabels;
+	private includeDownlinks;
+	private includeUplinks;
+	constructor(options?: IFieldMaskOptions);
+	getIncludeFields(): boolean;
+	getIncludeLabels(): boolean;
+	getIncludeDownlinks(): boolean;
+	getIncludeUplinks(): boolean;
+	/**
+	 * Add fields to the mask for the given Category. If there is already a field mask for the
+	 * Category, its values will be combined with the new information via set union.
+	 * @param category
+	 * @param fieldIdsOrItemFieldMask either an ItemFieldMask object or an array of Category field ids
+	 * @throws Error if getIncludeFields() is false.
+	 * @returns this
+	 */
+	addMask(category: Category, fieldIdsOrItemFieldMask: number[] | ItemFieldMask): ItemsFieldMask;
+	/**
+	 * Adds fields to the Category mask by name. If the name doesn't exist or if there are more
+	 * than one fields with the name, an Error is thrown.
+	 * @param category
+	 * @param fieldNames
+	 * @throws Error if a field name exists more than once in the given Category or not at all.
+	 *         Also throws Error if getIncludeFields() is false.
+	 * @returns this
+	 */
+	addMaskByNames(category: Category, fieldNames: string[]): ItemsFieldMask;
+	/**
+	 * Returns an ItemFieldMask for the given Category if it exists
+	 * @param categoryId
+	 * @returns null if there is no mask for the given Category.
+	 */
+	getCategoryMask(categoryId: string): ItemFieldMask | null;
+	/**
+	 * Suitable to send to the server for a search query.
+	 * @returns A comma-seperated string of ids or "*" (which means all fields accepted)
+	 */
+	getFieldMaskString(): string;
+}
+/**
+ * A Category represents a category within a project. It has various configuration
+ * settings. It also has a list of fields for that category.
+ */
+export declare class Category {
+	private category;
+	private project;
+	private allFieldsFieldMask;
+	constructor(category: string, project: Project);
+	getProject(): Project;
+	getItemConfig(): ItemConfiguration;
+	getTestConfig(): TestManagerConfiguration;
+	getId(): string;
+	getConfig(): ICategoryConfig;
+	getFields(): XRFieldTypeAnnotated[];
+	/**
+	 * Return field ids from the Category which match the given label.
+	 * These labels are searched in a case-insensitive way.
+	 * @param label
+	 * @returns a non-empty array of field ids if the label is present in the Category.
+	 */
+	getFieldIdFromLabel(label: string): number[];
+	isFolderCategory(): boolean;
+	/**
+	 * An ItemFieldMask allows you to specify which fields out of the Category
+	 * fields of an Item should be considered valid.
+	 * @param fieldIds If specified, a valid set of field ids for this Category. Otherwise,
+	 *        the returned ItemFieldMask expresses that all fields in the Item are to be
+	 *        considered valid.
+	 * @throws throws an Error if any of the field ids specified in fieldIds do not exist in the Category.
+	 * @returns an ItemFieldMask.
+	 */
+	createFieldMask(fieldIds?: number[]): ItemFieldMask;
+	/**
+	 * Construct a search mask from chosen options
+	 * @param options
+	 * @returns an ItemsFieldMask object
+	 */
+	constructSearchFieldMask(options: IFieldMaskOptions): ItemsFieldMask;
+	/**
+	 * Get all of the items of this Category.
+	 * @param options An optional ICategoryItemOptions describing search options.
+	 * @returns An array of Items of this Category, configured according to the options given.
+	 */
+	getItems(options?: ICategoryItemOptions): Promise<Item[]>;
 }
 export declare class FieldDescriptions {
 	static Field_sourceref: string;
@@ -12627,420 +11516,1563 @@ declare class MatrixSDK {
 	setItemConfig(newItemConfig: ItemConfiguration): void;
 }
 /**
- * An Item represents a database item. Every Item must have at least a category.
- * If it has an id, then it was retrieved from the database and may be altered and later
- * saved (use needsSave() to determine if the Item needs saving). If it doesn't have
- * an id, it needs to be saved. When an item is saved, it's data is re-initialized from
- * the database.
+ * This file defines all the data structures which might be shared between UI components and printing
+ *
  */
-export declare class Item {
-	private category;
+/** Setting for custom fields
+ *
+ * These allow a user to add parameters to custom field defined by the plugin
+ * each time it is added to a category
+ */
+export interface IPluginFieldParameterBase<T extends IPluginFieldOptionsBase> extends IFieldParameter {
+	/** see below */
+	options: T;
+}
+/**  interface for the configuration options of field */
+export interface IPluginFieldOptionsBase {
+}
+/** this allows to store parameters for printing
+ *
+ * This parameters can be overwritten in the layout and are used by the custom section printing
+ */
+export interface IPluginPrintParamsBase extends IPrintFieldParams {
+	class: string;
+}
+/** Description of the current plugin. Each feature can be activated/deactivated using the configuration object */
+export interface IPluginConfig<SERVERSETTINGS extends IServerSettingsBase, PROJECTSETTINGS extends IProjectSettingsBase> extends IPluginConfigForDashboard {
+	/** Field. This will add a new field type that can be used for data rendering in the main app */
+	field: IPluginFeatureField;
+	/** Menu tool item. This will add a new menu item in the tools menu  in the main app.*/
+	menuToolItem: IPluginFeatureBase;
+	/** Menu tool item. This will add a new dashboard in the main app.*/
+	dashboard: IPluginFeatureDashboard;
+	/** Customer setting page parameter. This will add a page in the server config in the adminConfig */
+	customerSettingsPage: IPluginFeature<SERVERSETTINGS>;
+	/** project setting page parameter. This will add a page per project in the adminConfig */
+	projectSettingsPage: IPluginFeature<PROJECTSETTINGS>;
+}
+export interface IPluginFeature<T> extends IPluginFeatureBase {
+	/** Type is used to determine node type in the setting tree */
+	type: string;
+	/** Setting name that's used by REST api to persist settings */
+	settingName: string;
+	/** Default settings when nothing has been save yet*/
+	defaultSettings?: T;
+	/** Optional help text shown under the title */
+	help?: string;
+	/** Optional URL describing this page */
+	helpUrl?: string;
+}
+export interface IPluginFeatureField extends IPluginFeatureBase {
+	/**  Field type id that will be use when rendering the data */
+	fieldType: string;
+	/**  description of  field  capabilities*/
+	fieldConfigOptions: IFieldDescription;
+}
+export interface IPluginSettingPage<T> {
+	renderSettingPage?: () => void;
+	showAdvanced?: () => void;
+	showSimple?: () => void;
+	getSettingsDOM?: (_setting?: T) => JQuery;
+	settings?: () => T;
+	saveAsync?: () => JQueryDeferred<unknown>;
+	paramChanged?: () => void;
+	settingsOriginal?: T;
+	settingsChanged?: T;
+	getProject?: () => string;
+}
+/**
+ * Interface for the tool menu item
+ */
+export interface ITool {
 	/**
-	 * Construct an Item
-	 * @param category
-	 * @param item
-	 * @param fieldMask
+	 * function called when the menu item is clicked
+	 * @param itemId
 	 */
-	constructor(category: Category, item?: IItemGet, fieldMask?: ItemFieldMask);
-	private fieldMask;
-	private fieldMap;
-	private dirty;
-	private id;
-	private type;
-	private title;
-	private labels;
-	private isFolderProperty;
-	private downLinks;
-	private upLinks;
-	private creationDate;
-	private maxVersion;
-	private history;
-	protected toBeIntegrated: IItemGet;
-	private setDirty;
+	menuClicked(itemId: string): void;
 	/**
-	 * Gets the ItemFieldMask which specifies which fields are loaded
-	 * @returns on ItemFieldMask object
+	 * functino to decide whether the menu item should be shown or not based on the currently displayed item
+	 * @param itemId
 	 */
-	getFieldMask(): ItemFieldMask;
+	showMenu(itemId: string): boolean;
+}
+/**
+ * This is the interface that plugin that use our boilerplate template must implement.
+ * It is used to define the plugin capabilities and to configure the plugin.
+ * The plugin is instantiated once.
+ * @param SERVERSETTINGS  The type of the server settings
+ * @param PROJECTSETTINGS The type of the project settings
+ * @param FIELDHANDLER The fieldhandle that will be responsible for the field data validation
+ * @param FIELDVALUETYPE The type of the field value. This is the type of the data that will be stored in the database
+ * @param DASHBOARDPARAMS The type of the dashboard parameters that will be used to render the dashboard.
+ */
+export interface IExternalPlugin<SERVERSETTINGS extends IServerSettingsBase, PROJECTSETTINGS extends IProjectSettingsBase, FIELDHANDLER extends IPluginFieldHandler<FIELDVALUETYPE>, FIELDVALUETYPE extends IPluginFieldValueBase, DASHBOARDPARAMS extends IDashboardParametersBase> extends IPluginCoreForDashboard<DASHBOARDPARAMS> {
+	enableToolMenu(ul: JQuery, _hook: number): unknown;
+	onInitItem(_item: IItem): unknown;
+	onInitProject(project: string): unknown;
+	PLUGIN_VERSION: string;
+	PLUGIN_NAME: string;
 	/**
-	 * Read-only.
-	 * @returns The highest version reached for this item, or undefined if the
-	 *     item hasn't yet been saved on the server.
+	 * Returns a page to be added to the dashboard in the main app.
 	 */
-	getMaxVersion(): number | undefined;
+	getDashboardAsync(): Promise<IDashboardPage<DASHBOARDPARAMS>>;
 	/**
-	 * Return the history for an item, if present.
-	 * @returns an IItemHistory array
+	 * Returns a page to be added to the customer settings page in the adminConfig.
 	 */
-	getHistory(): IItemHistory[];
-	private hasLink;
-	private addLink;
-	private removeLink;
+	getProjectSettingsPageAsync(): Promise<IPluginSettingPage<PROJECTSETTINGS>>;
 	/**
-	 * Return any downlinks.
-	 * @returns An array of downlinks (may be undefined)
+	 * Returns a page to be added to the server settings page in the adminConfig.
 	 */
-	getDownlinks(): IReference[];
+	getServerSettingsPageAsync(): Promise<IPluginSettingPage<SERVERSETTINGS>>;
 	/**
-	 * Check if there is a downlink to another item
-	 * @param id
-	 * @returns true if this item links to the item given by {id}
+	 * Returns a control object for a given field type. This is used to render the field in the main app.
+	 * @param ctrlObj
 	 */
-	hasDownlink(id: string): boolean;
+	getControlAsync(ctrlObj: JQuery): Promise<ControlCoreBase<FIELDHANDLER, FIELDVALUETYPE>>;
 	/**
-	 * Replace the current array of downlinks with a new one.
-	 * @param downLinks
-	 * @returns the Item itself
+	 * Returns a tool to be added to the tools menu in the main app.
 	 */
-	setDownlinks(downLinks: IReference[]): Item;
+	getToolAsync(): Promise<ITool>;
 	/**
-	 * Add a new downlink to the item. Does nothing if the item is
-	 * already represented
-	 * @param id - the id of the item to add.
-	 * @param title - optional. The title is just for convenience.
-	 *     It is neither saved nor representative of the actual title of the item.
-	 * @throws Error if the passed id matches the id of the current item.
-	 * @returns the Item
+	 * Returns a list of TinyMCE menu items to be added to the editor.
+	 * @param editor
 	 */
-	addDownlink(id: string, title?: string): Item;
+	getTinyMenuItems?(editor: unknown): ITinyMenu[];
 	/**
-	 * Remove a link given by {id} if it exists.
-	 * @param id  the id of the downlinked item to remove
-	 * @returns the current Item
+	 * Returns a list of menu items to be added to the user profile menu in the main app.
 	 */
-	removeDownlink(id: string): Item;
+	getUserMenuItems?(): IPluginMenuAction[];
 	/**
-	 * Return any uplinks.
-	 * @returns An array of uplinks (may be undefined)
+	 * Returns a list of menu items to be added to the user profile menu of the config page.
 	 */
-	getUplinks(): IReference[];
+	getConfigUserMenuItems?(): IPluginMenuAction[];
 	/**
-	 * Check if there is an uplink to another item
-	 * @param id
-	 * @returns true if this item links to the item given by {id}
+	 * Returns a list of menu items to be added to the project list.
 	 */
-	hasUplink(id: string): boolean;
+	getProjectMenuItems?(): IPluginMenuAction[];
 	/**
-	 * Replace the current array of uplinks with a new one.
-	 * @param upLinks
-	 * @returns the Item itself
+	 * Returns a list of custom searches to be added to the search drowpdown.
 	 */
-	setUplinks(upLinks: IReference[]): Item;
+	getCustomSearches?(): IPluginSearch[];
 	/**
-	 * Add a new uplink to the item. Does nothing if the item is
-	 * already represented
-	 * @param id - the id of the item to add.
-	 * @param title - optional. The title is just for convenience.
-	 *     It is neither saved nor representative of the actual title of the item.
-	 * @throws Error if the passed id matches the id of the current item.
-	 * @returns the Item
+	 * Returns a list of menu items to be added to the QMS user profile menu in the liveqms.
 	 */
-	addUplink(id: string, title?: string): Item;
+	getQMSUserMenuItems?(): IPluginMenuAction[];
 	/**
-	 * Remove a link given by {id} if it exists.
-	 * @param id  the id of the uplinked item to remove
-	 * @returns the current Item
+	 * return the plugin configuration.
 	 */
-	removeUplink(id: string): Item;
+	getConfig(): IPluginConfig<SERVERSETTINGS, PROJECTSETTINGS>;
 	/**
-	 * Helper method to test if a field id is valid within the Item Category, irrespective of
-	 * whether or not it is specified in the mask.
-	 * @param fieldId
-	 * @returns true if fieldId is valid within the Category.
+	 * Return a list of tiles to be added to the analytics dashboard
 	 */
-	private isValidFieldId;
+	getTiles?(): ITile[];
 	/**
-	 * Initializes the data fields for the item from an IItemGet structure
-	 * @param item
+	 * This returns a list of links to dashboards for the analytics homepage
+	 * */
+	getDashboardLinksForAnalyticsAsync?: () => Promise<IDashboardLinkForAnalytics[]>;
+}
+export interface ITile {
+	getTitle: () => string;
+	/**
+	 * Render the tile in the container
 	 */
-	private setData;
+	render: (container: HTMLElement) => Promise<void>;
 	/**
-	 * Sometimes you've been given an Item with a restrictive ItemFieldMask, however, you'd
-	 * like to set a value for a field that was not in the mask. With this method, you can
-	 * expand the field mask to include the field given by the fieldId (easily obtained
-	 * from the Category object).
+	 * Refresh the tile
+	 */
+	refresh: () => void;
+	/**
+	 * Can the tile be rendered? */
+	canBeRenderedAsync: () => Promise<boolean>;
+	/**
+	 * Return the order of the tile among the other tiles
+	 */
+	getOrder: () => number;
+}
+export interface IDashboardLinkForAnalytics {
+	/** The page id of the dashboard */
+	pageId: string;
+	/** The title of the dashboard */
+	title: string;
+	/** Optional order of the dashboard */
+	order?: number;
+}
+export interface IDashboardParameters extends IDashboardParametersBase {
+}
+export interface IPlugin {
+	initItem?: (item: IItem, jui: JQuery) => void;
+	initServerSettings?: (serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings) => void;
+	updateMenu?: (ul: JQuery, hook: number) => void;
+	/**
+	 * Returns true if the plugin offers a control that can display fields of type {fieldType}.
+	 */
+	supportsControl?: (fieldType: string) => boolean;
+	createControl?: (ctrlObj: JQuery, settings: IBaseControlOptions) => void;
+	initProject?: (project: string) => void;
+	isDefault?: boolean;
+	filterProject?: (db: IDB[]) => void;
+	updateSearchPanel?: () => void;
+	updateItemPanel?: () => void;
+	updateItem?: (item: IItem) => void;
+	getProjectPagesAsync?: () => Promise<IProjectPageParam[]>;
+	preSaveHookAsync?: (isItem: boolean, type: string, controls: IControlDefinition[]) => Promise<{}>;
+	renderActionButtons?: (options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]) => boolean;
+	updateTree?: () => void;
+	getFieldConfigOptions?: () => IFieldDescription[];
+	addFieldSettings?: (configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean) => void;
+	getProjectSettingPagesAsync?: () => Promise<ISettingPage[]>;
+	getCustomerSettingPagesAsync?: () => Promise<ISettingPage[]>;
+	getPluginName?: () => string;
+	getPluginVersion?: () => string;
+	categorySetting?: (key: string) => string;
+	editCategorySetting?: (key: string, category: string) => void;
+	helpUrl?: string;
+	initPrintingAsync?: () => Promise<void>;
+	/**
+	 * Returns a list of TinyMCE menu items to be added to the editor.
+	 * @param editor
+	 */
+	getTinyMenuItems?(editor: any): ITinyMenu[];
+	/**
+	 * Returns a list of menu items to be added to the user profile menu in the main app.
+	 */
+	getUserMenuItems?(): IPluginMenuAction[];
+	/**
+	 * Returns a list of menu items to be added to the user profile menu of the config page.
+	 */
+	getConfigUserMenuItems?(): IPluginMenuAction[];
+	/**
+	 * Returns a list of menu items to be added to the project list.
+	 */
+	getProjectMenuItems?(): IPluginMenuAction[];
+	/**
+	 * Returns a list of custom searches to be added to the search drowpdown.
+	 */
+	getCustomSearches?(): IPluginSearch[];
+	/**
+	 * Returns a list of menu items to be added to the QMS user profile menu in the liveqms.
+	 */
+	getQMSUserMenuItems?(): IPluginMenuAction[];
+	/**
+	 *  Notify the plugin to render itself in the element passed.
+	 */
+	getTiles?: () => ITile[];
+}
+export interface IPluginHooks {
+	shares: number;
+}
+export interface ISettingPage {
+	id: string;
+	title: string;
+	type?: string;
+	help?: string;
+	externalHelp?: string;
+	render: (ui: JQuery) => void;
+	advanced?: () => void;
+	del?: () => void;
+	saveAsync?: () => JQueryDeferred<unknown>;
+	getNode?: () => IDB;
+}
+export interface IProjectPageParam {
+	id: string;
+	title: string;
+	render: any;
+	destroy?: any;
+	folder?: string;
+	order: number;
+	folderTitle?: string;
+	icon?: string;
+	usesFilters: boolean;
+}
+export interface IPluginCoreForDashboard<DASHBOARDPARAMS extends IDashboardParametersBase> {
+	getDashboardAsync(): Promise<IDashboardPage<DASHBOARDPARAMS>>;
+	getConfig(): IPluginConfigForDashboard;
+}
+export interface IPluginConfigForDashboard {
+	dashboard: IPluginFeatureDashboard;
+}
+export interface IDashboardPage<T extends IDashboardParametersBase> {
+	renderProjectPage(): void;
+	renderProjectPageWithParams?(params: T, interactive: boolean): Promise<JQuery>;
+	onResize(): void;
+}
+export interface IPluginFeatureBase {
+	/** Whether to show the page */
+	enabled: boolean;
+	/** Id of the page in the tree/url */
+	id?: string;
+	/** Title of the page in the tree and of the page when displayed */
+	title?: string;
+}
+/** interface for the value to be stored by custom field */
+export interface IPluginFieldValueBase {
+	/**
+	 *  html to be rendered to support the field printing outside of custom section
+	 */
+	html: string;
+	/**
+	 * value to be stored and used by the control
+	 */
+	value: unknown;
+}
+export interface IPluginFeatureDashboard extends IPluginFeatureBase {
+	/** Icon of the dashboard (See font awesome) */
+	icon: string;
+	/** Parent of the dashboard (It should exists)) */
+	parent: string;
+	/** Whether using filter when searching.*/
+	usefilter: boolean;
+	/** Order in the tree */
+	order: number;
+}
+export interface ITinySubMenuItem {
+	type: string;
+	text: string;
+	onAction: () => void;
+}
+export interface ITinyMenuItem {
+	text: string;
+	getSubmenuItems: () => ITinySubMenuItem[];
+}
+export interface ITinyMenu {
+	id: string;
+	menuItem: ITinyMenuItem;
+}
+/** Server setting for plugin.
+ *
+ * This you can use to save setting on an instance level (for all projects)
+ * The user can edit these in the admin through the Server Setting Page
+ */
+export interface IServerSettingsBase {
+}
+/** Project setting for plugin
+ *
+ * This you can use to save setting for one specific project.
+ * The user can edit these in the admin through the Project Setting Page
+ */
+export interface IProjectSettingsBase {
+}
+export interface IPluginPanelOptions {
+	type: string;
+	control: JQuery;
+	controlState: number;
+}
+export interface IPluginSearch {
+	menu: string;
+	search: (selectItems: (selectedItems: string[]) => void) => Promise<void>;
+}
+export interface IPluginMenuAction {
+	icon: string;
+	title: string;
+	action: () => Promise<void>;
+}
+declare class PluginManager {
+	private _jui;
+	private _plugins;
+	private controls;
+	private destructors;
+	private titles;
+	private usesFilters;
+	private activeControlPage;
+	/** Called by the main UI handing over a div which can be used inside a plugin
+	 * to display modal popups
 	 *
-	 * This field will be added to the mask, and the associated Field object will be returned
-	 * with an empty value, which you could set. The object will be marked as "dirty" at this point,
-	 * because we don't know if the server has an empty value for this field or not, so we assume
-	 * the pessimistic case.
-	 * @param fieldId a valid fieldId from the Category of the item.
-	 * @throws if the fieldId is already in the ItemFieldMask, or if the fieldId is not valid for the Category.
-	 * @returns the Field object
+	 * @param {jquery object} jui a $("<div />") object
+	 * @returns {undefined}
 	 */
-	expandFieldMaskWithEmptyField(fieldId: number): Field | undefined;
-	/**
-	 * Export the data from this item into an IItemPut structure
-	 * @returns An IItemPut structure, filled in from the current state of the Item.
+	setUI(jui: JQuery): void;
+	/** function to register a plugin for a specific menu (specified by the hook)
+	 *
+	 * @param {instance of plugin} plugin
+	 * @returns {undefined}
 	 */
-	extractData(): IItemPut;
-	/**
-	 * Get the unique Id of the Item within the Project.
-	 * @returns a string value containing the Item Id.
+	register(plugin: IPlugin): void;
+	/** this method is called from the main UI whenever an item is selected to be
+	 * displayed. The information is forwarded to all plugins
+	 *
+	 * @param {json object} item for example a requirement. see the json documention of item types
+	 * @returns {undefined}
 	 */
-	getId(): string;
-	/**
-	 * isFolder returns true if the Item is of Category FOLDER.
-	 * @returns true if a FOLDER, false otherwise
+	init(item: IItem): void;
+	initPrinting(): Promise<void>;
+	/** this method is called after connecting to server using getServer ("")
+	 *
+	 * @param {json serverSettings} serverSettings or null after unsucessful login
+	 * @returns {undefined}
 	 */
-	isFolder(): boolean;
-	/**
-	 * Returns the type (Category) of the Item.
-	 * @returns the Item type
+	initServerSettings(serverSettings?: XRGetProject_StartupInfo_ListProjectAndSettings): void;
+	/** this method is called when creating a menu which has a hook. it allows the plugins to add
+	 * li's to the ul supplied
+	 *
+	 * @param {number} hook identifies the menu
+	 * @param {jquery object} ul  a $("<ul />) object
+	 * @returns {undefined}
 	 */
-	getType(): string;
+	updateMenu(hook: number, ul: JQuery): void;
+	getFieldConfigOptions(): IFieldDescription[];
+	addFieldSettings(configApp: any, project: string, pageId: string, fieldType: string, fieldParams: IFieldParameter, ui: JQuery, paramChanged: () => void, canBePublished?: boolean): void;
+	supportsControl(fieldType: string): boolean;
+	createControl(ctrlObj: JQuery, settings: IBaseControlOptions): void;
+	initProject(project: string): void;
+	filterProject(db: IDB[]): void;
+	updateSearchPanel(): void;
+	updateItemPanel(): void;
+	updateItem(updates: IItem): void;
+	updateTree(): void;
+	getTinyMenus(editor: any): ITinyMenu[];
+	getCustomSearches(): IPluginSearch[];
+	getUserMenuItems(): IPluginMenuAction[];
+	getQMSUserMenuItems(): IPluginMenuAction[];
+	getConfigUserMenuItems(): IPluginMenuAction[];
+	getProjectMenuItems(): IPluginMenuAction[];
+	getProjectPages(): Promise<IProjectPageParam[]>;
 	/**
-	 * Get the creation date of the item
-	 * @returns a string date value or undefined
+	 * Return a list of plugins that can be displayed in the dashboard analytics page.
+	 * */
+	getAllTiles(): ITile[];
+	getAllDashboardLinksForAnalyticsAsync(): Promise<IDashboardLinkForAnalytics[]>;
+	supportsControlPage(controlType: string): boolean;
+	createControlPage(options: IPluginPanelOptions, toggleFilters?: (toggle: boolean) => void): void;
+	destroyActiveControlPage(): void;
+	callPreSaveHook(isItem: boolean, type: string, controls: IControlDefinition[]): JQueryDeferred<{}>;
+	renderActionButtons(options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]): boolean;
+	/******************** admin function  */
+	getPlugins(): IPlugin[];
+}
+/*** config
+ *
+ */
+export interface ITasksConfiguration {
+	config: ITaskConfiguration[];
+}
+export type FolderItem = Folder | IWltItemWithLinks;
+export type Folder = {
+	name: string;
+	id: string;
+	children: FolderItem[];
+};
+export interface IPFExternalField {
+	/**  Jira field id something like custom_... or assignee or ...*/
+	extFieldId: string;
+	/** converter which specified how to convert matrix field into jira field */
+	converter: string;
+	/** mapping for drop down from Matrix to Jira drop downs  */
+	ddMapping?: IStringMap;
+	[key: string]: any;
+}
+export interface ICatFieldMapping {
+	/** map from category to the fields in the category. The matrixFieldName is the name of the field in Matrix  */
+	[key: string]: {
+		[matrixFieldName: string]: IPFExternalField;
+	};
+}
+export interface ITaskConfiguration {
+	/** defaultSearches: can be used to define default search expressions, (e.g. shortcuts to search task changed in last x hours, server plugin must understand these...) */
+	defaultSearches?: ITaskSearch[];
+	/** one2OneMapping: #
+	 * requires one2one capability. defines how external items are shown
+	 * the first search in the list will be executed automatically when the dialog is opened
+	 * in order not to run an automatic search define first element in array with name=""
 	 */
-	getCreationDate(): string | undefined;
-	/**
-	 * Set the creation date.
-	 * @param creationDate
-	 * @returns the Item itself.
+	one2OneMapping?: IOne2OneMapping;
+	/** allowEmptySearches: can be set to true if plugin can handle it */
+	allowEmptySearches?: boolean;
+	/** searchHelp: can be an url to any website to explain search options (e.g. jql https://..atlassian.. /jql) */
+	searchHelp?: string;
+	/** autoSearch: can be set to true to start default search (when opening dialog)*/
+	autoSearch?: boolean;
+	/** smartLinks: a set of rules to automatically show hyperlinks to items -> note these are available only in the client, in documents the same rules will not be applied! */
+	smartLinks?: ISmartTask[];
+	/** smartUrls: a set of rules to automatically detect dropped links*/
+	smartUrls?: ISmartUrls[];
+	/** projectsCreate: there must be at least one default project in which tasks can be created */
+	projectsCreate: ITaksProjects[];
+	/** projectFilter: filter for projects of which items are displayed in workflow control, if not set all tasks are shown */
+	projectFilter?: string[];
+	/** useAsDescription: defines if and what to use as default description -> default is empty (an empty description box) */
+	useAsDescription?: ITaskTaskDescription;
+	/** useEmptyTitle: by default the title of new task is the current item title, true leaves it empty */
+	useEmptyTitle?: boolean;
+	/** requireCommitTicket: set to true if saving should requires a task id (requires smartLinks to be configured)*/
+	requireCommitTicket?: boolean;
+	/** catFieldMapping: mapping from Matrix fields to jira fields per category  */
+	catFieldMapping?: ICatFieldMapping;
+	/** userMapping: mapping from Matrix users to jira users  */
+	userMapping?: IStringMap;
+	/** defaultComment: when updating the matrix item this comment is added to the linked jira tickets as prefix to the details of which item was changed */
+	defaultComment?: string;
+	/** if autoAddCommentOnSave is to true it adds a comment to all linked items*/
+	autoAddCommentOnSave?: boolean;
+	/** showStatus: if set to true it will request from server the meta info for each linked ticket. If there's a status property in the meta it's displayed a string*/
+	showStatus?: boolean;
+	/** pluginName: as shown in UI e.g. JIRA, GitHub, ...*/
+	pluginName?: string;
+	/** pluginLongName: as shown in UI e.g. JIRA Server Plugin, GitHub Plugin, ... */
+	pluginLongName?: string;
+	/** hideCreateTask: overwrites canCreate capability*/
+	hideCreateTask?: boolean;
+	/** hideSearchTasks: overwrites canFind capability */
+	hideSearchTasks?: boolean;
+	/** handleAsLink: should not be changed - if true links are treated like URLs*/
+	handleAsLink?: boolean;
+	/** hasMeta: should not be changed - if true external items have a description and a status*/
+	hasMeta?: boolean;
+	/** nativeCreateUrl: overwrites nativeCreateUrl*/
+	nativeCreateUrl?: string;
+	/** nativeCreateSearch:  overwrites nativeCreateSearch*/
+	nativeCreateSearch?: string;
+	/** pluginId: 'internal id provided by server'*/
+	pluginId?: number;
+}
+export type ITaskTaskDescription = "hide" | "empty" | "text";
+export interface IOne2OneMapping {
+	projectId: string;
+	taskTypeId: string;
+	showId?: boolean;
+	statusOverwrites: IOne2OneMappingStatus[];
+}
+export interface IOne2OneMappingStatus extends ITaskRenderInfo {
+	externalStatusName: string;
+	text: string;
+}
+export interface ITaskRenderInfo {
+	text: string;
+	color?: string;
+	background?: string;
+	strikethrough?: boolean;
+}
+export interface ITaskSearch {
+	name: string;
+	expression: string;
+}
+export interface ITaksProjects {
+	projectId: string;
+	projectName: string;
+	taskTypes: ITaskType[];
+}
+export interface ITaskType {
+	taskTypeId: string;
+	taskTypeName: string;
+	iconUrl?: string;
+	iconClass?: string;
+}
+export interface ISmartTask {
+	regex: string;
+	issueProjectId: string;
+	issueId: string;
+	title: string;
+	url?: string;
+}
+export interface ISmartUrls {
+	regex: string;
+	issueProjectId: string;
+	issueId: string;
+	title: string;
+	priority?: number;
+}
+/*** wlt interface
+ *
+ */
+export interface IWltItemWithLinks {
+	matrixItem: IWltMatrixItem;
+	links: IExternalItem[];
+}
+export interface IWltMatrixItem {
+	itemId: number;
+	projectId: number;
+	title: string;
+	matrixItem: string;
+	project: string;
+}
+export interface IExternalItem {
+	externalItemId: string;
+	externalItemTitle: string;
+	externalItemUrl: string;
+	externalDescription: string;
+	externalLinkCreationDate?: string;
+	externalDone: boolean;
+	externalUser?: string;
+	externalProject?: string;
+	externalType?: string;
+	externalMeta?: string;
+	plugin: number;
+	more?: IMoreInfo[];
+}
+export interface IMoreInfo {
+	key: string;
+	value: string;
+}
+export interface ITaskPart {
+	icon: JQuery;
+	id: JQuery;
+	ticketTitle: JQuery;
+	externalUser: JQuery;
+	actions: JQuery;
+}
+export declare class Tasks implements IPlugin {
+	private item;
+	private jui;
+	static tasksConfiguration: ITaskConfiguration[];
+	isDefault: boolean;
+	constructor();
+	initItem(_item: IItem, _jui: JQuery): void;
+	reset(): void;
+	initServerSettings(serverSettings: XRGetProject_StartupInfo_ListProjectAndSettings): void;
+	updateMenu(ul: JQuery, hook: number): void;
+	supportsControl(fieldType: string): boolean;
+	createControl(ctrl: JQuery, options: IBaseControlOptions): void;
+	initProject(): void;
+	getProjectPagesAsync(): Promise<IProjectPageParam[]>;
+	preSaveHookAsync(isItem: boolean, type: string, controls: IControlDefinition[]): Promise<{}>;
+	isPluginEnabled(pluginId: number): boolean;
+	evaluateTaskIds(comment: string): string[];
+	static externalItemFromUrl(url: string): IExternalItem;
+	private addCommentToAllLinkedIssues;
+	/** this creates a new item and jira and sets the define fields with values coming from Matrix */
+	private pushIssueDlg;
+	static postPushIssue(pluginId: number, itemId: string, title: string, description: string, projectId: string, taskTypeId: string): Promise<IExternalItem[]>;
+	subscribe(): void;
+	afterSaveHookAddComment(event: IItemChangeEvent): void;
+	static createTaskFromUrl(itemId: string, url: string): void;
+	static isTaskId(someId: string): boolean;
+	static getOne2OneTask(externalItemId: string): JQueryDeferred<IExternalItem>;
+	static createOne2OneTask(itemId: string): JQueryDeferred<IExternalItem>;
+	static getOne2OneRenderInfo(task?: IExternalItem): ITaskRenderInfo;
+	static showTasks(itemId: string, control: JQuery, canEdit: boolean, pluginFilter?: number[]): void;
+	/*** UI
+	 *
 	 */
-	setCreationDate(creationDate: string): Item;
+	private createAndLinkIssueDlg;
+	private static createAndLinkWebDlg;
+	private createSearchAndLinkIssueDlg;
+	private waitForNewTaskOrWindowCloseActive;
+	private waitForNewTaskOrWindowCloseTimer;
+	private waitForNewTaskOrWindowClose;
+	private searchAndLinkIssueDlg;
+	static getConfig(pluginId: number): ITaskConfiguration | null;
+	private renderProjectPage;
+	private updateUI;
+	private static getTaskDefinition;
+	static renderTasks(itemId: string, linkedTasks: IExternalItem[], root: JQuery, canEdit: boolean, fullWidth: boolean): void;
+	private static escapeHtml;
+	static renderTaskParts(itemId: string, task: IExternalItem, unlink: boolean, fullWidth: boolean, tinyLink?: boolean): ITaskPart;
+	static renderTask(itemId: string, task: IExternalItem, unlink: boolean, fullWidth: boolean, tinyLink?: boolean): JQuery;
+	private getSearchField;
+	private createLinksAsync;
+	/** rest api */
+	static postCreateLinks(itemId: string, tasksToLink: IExternalItem[]): JQueryDeferred<IExternalItem[]>;
+	static postCreateIssue(pluginId: number, itemId: string, title: string, description: string, projectId: string, taskTypeId: string): JQueryDeferred<IExternalItem[]>;
+	static getTasks(itemId?: string, pluginFilter?: number[]): JQueryDeferred<IExternalItem[]>;
+	static getAllTasksProject(plugin: number): JQueryDeferred<IWltItemWithLinks[]>;
+	private static getFindTasks;
+	static showError(text: string, jqxhr: IJcxhr, textStatus: string, error: string): void;
+	static deleteLink(itemId: string, task: IExternalItem): JQueryDeferred<{}>;
+	static getMeta(pluginId: number, externalItemId: string): JQueryDeferred<IExternalItem>;
+	static fillTree(tree: IDB[], alltasks: IWltItemWithLinks[]): FolderItem[];
+	static isFolder(item: FolderItem): item is Folder;
+	static appendIssueItems(parentElement: JQuery, folderItems: FolderItem[], selectedFolders: string[], folderChangeCallback: (folder: Folder) => void, folders?: Folder[]): void;
+	private static renderTasksInTable;
+	private static expandFolders;
+	private static thisFolderPathIsInSelection;
+}
+export interface ICategoryConfig {
+	fieldList: XRFieldTypeAnnotated[];
+	label: string;
+	downLinksRequired: string[];
+	downLinksOptional: string[];
+	enable: string[];
+}
+export interface XRFieldTypeAnnotated extends XRFieldType {
+	parameterJson?: XRFieldTypeAnnotatedParamJson;
+}
+export interface XRFieldTypeAnnotatedParamJson extends IFieldParameter {
+	linkTypes?: XRFieldTypeAnnotatedParamJsonLinkType[];
+}
+export interface XRFieldTypeAnnotatedParamJsonLinkType {
+	required: boolean;
+	type: string;
+}
+export interface IFieldsOfType {
+	category: string;
+	field: XRFieldTypeAnnotated;
+}
+export interface IDropDownInfo {
+	id: string;
+	label: string;
+	value: IDropDownConfig;
+}
+export declare class ItemConfiguration {
+	private configuration;
+	private settings;
+	private settingsString;
+	private settingsJSON;
+	private users;
+	private userList;
+	private userGroups;
+	private timewarpDate;
+	private logger;
+	private json;
+	constructor(logger: ILoggerTools, json: IJSONTools);
+	isConfigured(): boolean;
+	addUsers(userPermission: XRUserPermissionType[], groupPermission: XRGroupPermissionType[]): void;
+	getUserInfo(login: string): XRUserPermissionType;
+	getCombinedName(user: XRUserPermissionType | XRUserType): string;
+	getFullName(login: string): string;
+	groupIdToName(groupId: number): string;
+	hasGroupInfo(group: string): boolean;
+	hasUserInfo(login: string): boolean;
+	getUserIds(): string[];
+	getEmail(user: string): string;
+	activateTimewarp(date: string): void;
+	getTimeWarp(): string;
+	isAfterTimeWarp(date: string): boolean | "";
+	hasWriteAccess(user: string): boolean;
+	private getPermission;
+	getUserNames(sorted?: boolean): XRUserPermissionType[];
+	getUserGroups(): XRGroupPermissionType[];
 	/**
-	 * Get the Item title
-	 * @returns the Item title
+	 * getValidUserOptions returns an array of option values that describe
+	 * the users and groups available as values for a user field in the
+	 * database (fields of type {@link FieldDescriptions.Field_user}).
+	 *
+	 * @param showUsers - pass true to include users
+	 * @param showGroups - pass true to include groups
+	 * @param preSelectedUsers - if present, the list of users will be limited
+	 *     to this subset and the full user list will not be consulted to
+	 *     construct the return value.
+	 * @param possiblyDeletedUserGroupNames - if present, a comma-separated
+	 *     list of user and group names. The returned options will include
+	 *     these values, and mark deleted user and groups as disabled.
+	 * @returns An array of {@link IDropdownOptions} configured according to
+	 *     the input parameters and the users and groups of the current project.
 	 */
-	getTitle(): string;
+	getValidUserOptions(showUsers: boolean, showGroups: boolean, preSelectedUsers?: XRUserPermissionType[], possiblyDeletedUserGroupNames?: string): IDropdownOption[];
+	addGroupMember(gid: number, user: string): void;
+	removeGroupMember(gid: number, user: string): void;
+	addSettings(s: XRGetProject_ProjectInfo_ProjectInfo | XRGetProject_ProjectSettingAll_GetSettingAck): void;
+	getSettings(): XRSettingType[];
+	getSetting(s: string): string;
+	getSettingJSON(s: string, def?: {}): {};
+	getDropDowns(dropdownId?: string): IDropDownInfo[];
+	getTasksConfig(): ITasksConfiguration;
+	getDHFConfig(): IDHFConfig;
+	getExtrasConfig(): IExtras;
+	getLabelsConfig(): ILabelsConfig;
+	getIncludeConfig(): IImportConfig;
+	getQMSConfig(): IQMSConfig;
+	getRiskConfig(): IRiskConfig;
+	getCategoryGroupConfig(): ICategoryGroups;
+	getACLConfig(): IACL;
+	getTraceConfig(): ITraceConfig;
+	getNavigationBarConfig(): INavigationBar;
+	getContextPagesConfig(): IContextPageConfig;
+	getMailConfig(): IMailConfig;
+	getSearchConfig(): ISearchConfig;
+	getLabelLockConfig(): ILabelLockConfig;
+	getTestConfig(): ITestConfig;
+	setSettingJSON(key: string, valueJSON: {}): void;
+	getSmartText(): ISmartTextConfig;
+	addCategorySetting(categorySetting: XRCategoryAndSettingListType): void;
+	getCategorySettings(category: string): XRSettingType[];
+	getPluginSetting(pluginId: number, setting: string): string;
+	getPluginSettings(): XRPluginSetting[];
+	getFieldsOfType(fieldType: string, categoryType?: string): IFieldsOfType[];
+	getCategorySetting(category: string, setting: string): ICategorySetting;
+	getCategories(noFolders?: boolean): string[];
+	getCategoryLabel(category: string): string;
+	getCategoryId(category: string): string;
+	getDownLinkTypes(category: string, required: boolean): string[];
+	getUpLinkTypes(category: string, required: boolean): string[];
+	addCategories(config: XRGetProject_ProjectInfo_ProjectInfo | XRGetProject_CategoryList_GetProjectStructAck): void;
+	init(config: XRGetProject_ProjectInfo_ProjectInfo): void;
+	canEdit(category: string): boolean;
+	canEditTitle(category: string): boolean;
+	canMove(category: string): boolean;
+	canCreate(category: string): boolean;
+	canDelete(category: string): boolean;
+	canModifyLabels(category: string): boolean;
+	canSign(category: string): boolean;
+	canReport(category: string): boolean;
+	private canDo;
+	private addCategory;
+	getItemConfiguration(category: string): ICategoryConfig;
+	getFieldId(category: string, fieldLabel: string): number;
+	getFields(category: string): XRFieldTypeAnnotated[] | null;
+	getFieldByName(category: string, name: string): XRFieldTypeAnnotated;
+	getFieldById(category: string, fieldId: number): XRFieldTypeAnnotated | null;
+	getFieldConfig(fieldId: number): XRFieldTypeAnnotatedParamJson;
+	getFieldName(fieldId: number): string;
+	getFieldType(category: string, fieldId: number): string;
+	getLinkTypes(category: string, down: boolean, required: boolean): string[];
+	getLinkInfo(category: string, down: boolean, required: boolean, groupByRule: boolean): ILinkInfo[];
+	getMitigations(): IStringStringArrayMap;
+	/** return cleanup rules, if there's a project setting that wins, if there's no rules or it's disabled it returns -1 */
+	getCleanupRules(): ICleanup;
+}
+export interface IGetProjectResultDateInfo {
+	timeformat: string;
+	dateformat: string;
+	timeZone: string;
+	customerDateformat: string;
+	customerTimeformat: string;
+	customerTimezone: string;
+	dateIso8601: string;
+	timeUserFormat: string;
+}
+export interface ICompanyUISettings {
+	/** allow to add links to locked items */
+	allowAddLinkToLocked?: boolean;
+	/** if true the save button is always on the left */
+	saveLeft?: boolean;
+	/** if set to true, auto clean the input of text fields */
+	purify?: boolean;
+	/** editor setting */
+	tiny?: ICompanyTiny;
+	/** always use new editor (also for old projects) */
+	tinyAsDefault?: boolean;
+	/** true if user should be able to switch from editor to tiny per field */
+	tinyUpgradeOption?: boolean;
+	/** how many items to show in list view (after running searches, default 200) */
+	maxHits?: number;
+	/** bigger scale = sharper drawio images in PDF, default is 3 */
+	drawIOScale?: boolean;
+	/** @experimental: Enable the widget dashboard on instance root */
+	widgetDashboardOption?: boolean;
+	/** internal: url of draw io editor */
+	drawioURL?: string;
+	/** @experimental: if set to anything > 0 the fields in a form are rendered in a non blocking way if there are more than largeFormRender fields */
+	largeFormRender?: number;
+	/** @internal beta - do not auto select parents if single item is selected for DOC */
+	preciseDocSelect?: boolean;
+	/** @internal obsolete */
+	legacyPrint?: boolean;
+	/** @internal obsolete */
+	legacyUserDropdown?: number;
+	/** @internal obsolete */
+	legacyKeepFolder?: boolean;
+}
+export interface ICompanyTiny {
+	/** true if browser context menu should be used as default */
+	tinyHideMenu?: boolean;
+	/** enable or disable editor plugins */
+	plugins?: string[];
+	extraPlugins?: string[];
+	/** toolbar definition */
+	toolbar?: string;
+	/** menubar definition  default: edit view insert format table matrix */
+	menubar?: string;
+	/** menu entries can be used to change default menus or add details of new menu bar */
+	menu?: ICompanyTinyMenuMap;
+	/** allows to overwrite any default setting (e.g. misc: { "table_toolbar": ""} )  to hide table toolbar */
+	misc?: any;
+	/** html entities to accept in text */
+	extended_valid_elements?: string;
+	/**  optional: formats in Paragraph menu (for docs) */
+	block_formats_doc?: any;
+	/** optional: rules for formats (for docs) */
+	apply_formats_doc?: any;
+	/** optional: formats in style menu (for docs) */
+	style_formats_doc?: any;
+	/** optional: formats in Paragraph menu (for items) */
+	block_formats?: any;
+	/** optional: rules for formats (for items)  */
+	apply_formats?: any;
+	/** optional: formats in style menu (for items) */
+	style_formats?: any;
+	/** elements which don't need content (e.g. a TD cell can be empty, needs to be the complete list) */
+	short_ended_elements?: string;
+	/** a custom css name/path */
+	css?: string;
+	/** if true it used dom purify to super clean the html */
+	dompurify?: boolean;
+	/** Obsolete */
+	textpattern_patterns?: any[];
+	/** define auto replacement in tiny editor - see https://www.tiny.cloud/docs/tinymce/6/content-behavior-options/#text_patterns */
+	text_patterns?: any[];
+}
+export interface ICompanyTinyMenuMap {
+	[key: string]: ICompanyTinyMenu;
+}
+export interface ICompanyTinyMenu {
+	/** display name of menu */
+	title: string;
+	/** items to show */
+	items: string;
+}
+declare class MatrixSession {
+	private CurrentUser;
+	private CurrentProject;
+	private CurrentComment;
+	private customerAdmin;
+	private superAdmin;
+	private dateInfo;
+	private customerSettingsString;
+	private customerSettingsJSON;
+	private ProjectList;
+	private CommitTransaction;
+	private CommitTransactionComment;
+	private CommitTransactionCancelled;
+	private postConnect;
+	duringBrowserNavigation: boolean;
+	private userPermissions;
+	private licensedModules;
+	lastManualComment: string;
+	serverConfig: XRGetProject_StartupInfo_ListProjectAndSettings;
+	pushMessages: PushMessages;
+	private customParams;
+	private branches;
+	quiet(): boolean;
+	constructor();
+	getCsrfCookie(): string;
+	startCommitTransaction(): void;
+	stopCommitTransaction(): void;
+	getUser(): string;
+	setUser(login: string): void;
+	private setDateInfo;
+	getDateInfo(): IGetProjectResultDateInfo;
+	private setCustomerSettings;
+	setCustomerSettingJSON(s: string, setting: {}): void;
+	getCustomerSetting(s: string): string;
+	getCustomerSettingJSON(s: string, defaultValue?: {}): any;
+	getMailSettings(): IMailConfig;
+	getUISettings(defaultValues?: {}): ICompanyUISettings;
+	setUISetting(setting: string, value: any): void;
+	showUISettings(): void;
+	isEditor(): boolean;
+	isCustomerAdmin(): boolean;
+	isSuperAdmin(): boolean;
+	isAdmin(): boolean;
+	getProject(): string;
+	setProject(projectId: string): void;
+	getCommentAsync(): JQueryDeferred<string>;
+	getComment(): string;
+	private makeTeaser;
+	getCommentTeaser(): string;
+	setComment(comment?: string, internal?: boolean): void;
+	isGroup(): boolean;
+	isQMS(): boolean;
+	isCompose(): boolean;
+	isUnique(): boolean;
+	isMerge(): boolean;
+	isReview(): boolean;
+	isACL(): boolean;
+	isQMSProject(project?: string): boolean;
+	limitAdmin(): boolean;
+	hasRisks(): boolean;
+	hasVariants(): boolean;
+	hasDocs(): boolean;
+	hasAgileSync(): boolean;
+	private setModules;
+	private getLastComments;
+	tryReconnect(): JQueryDeferred<{}>;
+	signInAfterTimeout(): JQueryDeferred<{}>;
+	triggerLoginWithDialog(): void;
+	changePassword(): void;
+	getProjectList(readOrWriteOnly: boolean): XRProjectType[];
+	canSeeProject(project: string): boolean;
+	private changeToken;
+	setProjectColor(projectShort: string, color: string): void;
+	getProjectColor(projectShort: string): string;
+	getImgFromProject(pRef: string): string;
+	private createProjectSelectLink;
+	amIAllowedUser(limitedTo: string[]): boolean;
+	updateUI(afterTimeout?: boolean): void;
+	addLiveQMSProjects(): 0 | 1;
+	updateCommentCheckboxBoxVisibility(): any;
+	loadProject(projectId: string, projectURL?: string, setAsProjectUrl?: boolean): void;
+	oAuthOnly(): boolean;
+	private showProjectSelectMessage;
+	private filterProjects;
+	private getItemFromUrlOrStorage;
+	private getProjectFromUrlOrStorage;
+	browserNavigation(): void;
+	signOut(requestAdminRights: boolean): void;
+	editComment(): void;
+	showLoginWindow(): void;
+	hideLoginWindow(): void;
+	private requestLogin;
+	private receiveMessage;
+	getHelpButton(): string;
+	private showUserMenu;
+	initPushMessaging(): JQueryDeferred<{}>;
+	private lastWatchInfo;
+	updateWatchItemVersion(itemId: string, newVersion: number): void;
+	isConfigClient(): boolean;
+	private updateSettings;
+	getBranches(mainline: string, branch: string): XRMainAndBranch[];
+	private signOutCleanUp;
+	getCustomParams(): IStringMap;
+	getDashboardConfig(): IDashboardConfig;
+}
+export interface ITableDataRow {
+	[key: string]: number | string;
+}
+export interface ITableFunction {
+	(table: ITableDataRow[], parameterJson: ITableParams): string;
+}
+export interface ITableFunctions {
+	[key: string]: ITableFunction;
+}
+declare class TableMath {
+	protected functions: ITableFunctions;
+	/** allow to add new functions:  */
+	registerFunction(functionId: string, execute: ITableFunction): void;
+	/** executes function on a table */
+	execute(functionId: string, table: ITableDataRow[], parameterJson: ITableParams): string;
+}
+export interface IFieldMapping {
+	fromId: number;
+	toId: number;
+}
+export declare class TestManager {
+	private testConfig;
+	private lookup;
+	isDefault: boolean;
+	constructor();
+	getConfiguration(): TestManagerConfiguration;
+	UpdateFolderMenu(ul: JQuery, item: IItem): void;
+	InitializeProject(): void;
+	PreSaveHook(isItem: boolean, item: IItem, type: string, controls: IControlDefinition[]): Promise<void>;
+	RenderActionButtons(options: IItemControlOptions, body: JQuery): boolean;
+	isXTC(type: string): boolean;
+	isTC(type: string): boolean;
+	getXTCType(): string;
+	getCloneSources(): string[];
+	private redoFailed;
+	private ConvertAll;
+	getTestStepsConfig(category: string): ITestConfigTablesColumns;
+	getTestStepsResultsConfig(): ITestStepsResultsConfig;
+	getTestRunResultOptions(): ITestStepsResultOption[];
+	getTestRunResultPlaceholder(value: string): string;
+	getSearchExpression(resultType: string, notEqual: boolean): string;
+	private prepareMapping;
+	getMappingItems(): IFieldMapping[];
+	private getResultInfo;
+	private allTestSteps;
+	private oneTestStep;
+	private computeOverallResult;
+	private createHumanValues;
+}
+declare enum ColumnEditor {
+	none = "none",
+	number = "number",
+	textline = "textline",
+	select = "select",
+	commentlog = "commentlog",
+	colorPicker = "colorPicker",
+	category = "category",
+	readonly = "readonly",
+	selectIcon = "selectIcon",
+	text = "text",
+	date_today = "date_today",
+	date = "date",
+	today = "today",
+	current_version = "current_version",
+	versionletter = "versionletter",
+	signaturemeaning = "signaturemeaning",
+	user = "user",
+	user_self = "user_self",
+	self = "self",
+	group = "group",
+	revision = "revision",
+	result = "result",
+	design = "design",
+	uprules = "uprules",
+	downrules = "downrules",
+	ecocapa = "ecocapa",
+	eco = "eco",
+	uid = "uid",
+	rules = "rules"
+}
+export interface ITableControlOptionsColumn {
+	name: string;
+	field: string;
+	editor: ColumnEditor;
+	options?: {
+		[key: string]: string;
+	} | IDropdownOption[];
+	relativeWidth?: number;
+	headerCssClass?: string;
+	cssClass?: string;
+}
+export interface ITableControlBaseParams {
+	columns?: ITableControlOptionsColumn[];
+	initialContent?: any[];
+}
+export declare class BaseTableFieldHandler implements IFieldHandler {
+	protected data: any[];
+	protected tableConfig: ITableControlBaseParams;
+	constructor(configIn: ITableControlBaseParams);
+	getFieldType(): string;
+	protected getColumnByField(fieldId: string): ITableControlOptionsColumn | undefined;
+	columnNumberToFieldId(columnNumber: number): string;
+	validate(): void;
+	initData(serializedFieldData: string | undefined): void;
+	getData(): string | undefined;
+	setData(value: string, doValidation?: boolean): void;
+	setDataAsArray(dataIn: any[], fixData?: boolean): void;
+	getRowCount(): number;
+	deleteRow(rowNumber: number): void;
+	insertRow(rowNumber: number, columnData: Array<any>): void;
+	clear(): void;
+	getColumnCount(): number;
 	/**
-	 * Set the title of the Item
-	 * @param title
-	 * @returns the Item itself
+	 * Set data for a particular cell in the table given by a row number and
+	 * a column name.
+	 * @param row the zero-based row number.
+	 * @param columnId the column name.
+	 * @param data
 	 */
-	setTitle(title: string): Item;
+	setColumnData(row: number, columnId: string, data: any): void;
+	getColumnData(row: number, columnId: string): any;
+	getRowData(row: number): Array<any>;
+}
+export declare class BaseValidatedTableFieldHandler extends BaseTableFieldHandler {
+	constructor(configIn: ITableControlBaseParams);
+	validate(): void;
+	setDataAsArray(dataIn: any[], fixData?: boolean): void;
+}
+export declare class CheckboxFieldHandler implements IFieldHandler {
+	private data;
+	private config;
+	constructor(configIn: XRFieldTypeAnnotatedParamJson);
+	getFieldType(): string;
+	initData(serializedFieldData: string | undefined): void;
+	getData(): string | undefined;
+	setData(value: string, doValidation?: boolean): void;
+	getValue(): boolean | undefined;
+	setValue(value: boolean): void;
+}
+export declare class SteplistFieldHandler extends BaseValidatedTableFieldHandler {
+	constructor(configIn: ITableControlBaseParams);
+}
+export declare class TextlineFieldHandler implements IFieldHandler {
+	private data;
+	private config;
+	private fieldType;
+	constructor(fieldType: string, configIn: XRFieldTypeAnnotatedParamJson);
+	getFieldType(): string;
+	initData(serializedFieldData: string | undefined): void;
+	getData(): string | undefined;
+	setData(value: string, doValidation?: boolean): void;
+	getText(): string;
+	setText(str: string): void;
+}
+export declare class TestStepsFieldHandler extends BaseValidatedTableFieldHandler {
+	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, itemType: string, testConfig: TestManagerConfiguration): void;
+	constructor(options: ITableControlBaseParams);
+	getFieldType(): string;
+}
+export declare class TestStepsResultFieldHandler extends BaseValidatedTableFieldHandler {
+	static UpdateFieldConfig(options: XRFieldTypeAnnotatedParamJson, testConfig: TestManagerConfiguration): void;
+	constructor(options: ITableControlBaseParams);
+	getFieldType(): string;
+	setDataAsArray(dataIn: any[], fixData?: boolean): void;
+	validate(): void;
+}
+export declare class TestResultFieldHandler implements IFieldHandler {
+	private rawData;
+	private human;
+	private params;
+	static UpdateFieldConfig(params: IBaseDropdownFieldParams, testConfig: TestManagerConfiguration): void;
+	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
+	getFieldType(): string;
+	getData(): string | undefined;
+	setData(value: string, doValidation?: boolean): void;
+	initData(serializedFieldData: string | undefined): void;
+	getValues(filterOnOptions?: boolean): string[];
+	getHuman(): string;
+}
+export interface IUserFieldHandlerParams extends Omit<IBaseDropdownFieldParams, "splitHuman"> {
+}
+export declare class UserFieldHandler implements IFieldHandler {
+	private rawData;
+	private params;
+	constructor(params: IUserFieldHandlerParams, initialValue?: string);
+	static UpdateFieldConfig(params: ITestFieldParam, fieldValue: string, itemConfig: ItemConfiguration): void;
+	getData(): string | undefined;
+	setData(value: string): void;
+	getFieldType(): string;
+	initData(serializedFieldData: string): void;
+	getValues(filterOnOptions?: boolean): string[];
+	private getMaxItems;
+	setValues(values: string[]): void;
+	getHuman(): string;
+}
+export declare class DateFieldHandler implements IFieldHandler {
+	private date;
+	private config;
+	constructor(config: IAnyMap);
+	getData(): string | undefined;
+	getFieldType(): string;
+	initData(serializedFieldData: string | undefined): void;
+	setData(value: string, doValidation?: boolean): void;
+	static getDateFromString(dateStr: string): Date | null;
+	setDate(date: Date): void;
+	getDate(): Date | undefined;
+}
+export declare class CrosslinksFieldHandler extends ItemSelectionFieldHandler {
+	static UpdateFieldConfig(params: XRFieldTypeAnnotatedParamJson): void;
+	constructor(configIn: XRFieldTypeAnnotatedParamJson);
 	/**
-	 * Returns an array of labels set for the Item.
-	 * @returns array of strings
+	 * Add an item to the list at the given position
+	 * @param position
+	 * @param item
+	 * @returns the field handler
+	 * @throws Error in case a projectShortLabel doesn't exist in the item.
 	 */
-	getLabels(): string[];
-	private labelsToString;
-	private stringToLabels;
-	private verifyLabelsAllowed;
+	insertItem(position: number, item: IReference): CrosslinksFieldHandler;
 	/**
-	 * Sets the labels for an Item, overwriting any previous labels
-	 * @param newLabels
-	 * @returns Item
-	 * @throws throws error if the Item category doesn't allow labels
+	 * Append the given item to the end of the list of items.
+	 * @param item
+	 * @returns the field handler.
+	 * @throws Error in case a projectShort label doesn't exist in the item.
 	 */
-	setLabels(newLabels: string[]): Item;
+	appendItem(item: IReference): CrosslinksFieldHandler;
+}
+export declare class HyperlinkFieldHandler implements IFieldHandler {
+	private data;
+	private config;
+	constructor(configIn: XRFieldTypeAnnotatedParamJson);
+	getFieldType(): string;
+	initData(serializedFieldData: string | undefined): void;
+	getData(): string | undefined;
+	setData(value: string, doValidation?: boolean): void;
+}
+export interface IFromToSelection {
+	from: IReference[];
+	to: IReference[];
+}
+export declare class ItemSelectionFieldHandlerFromTo implements IFieldHandler {
+	protected config: XRFieldTypeAnnotatedParamJson;
+	private fieldType;
+	private selectedItems;
+	private defaultSelection;
+	constructor(configIn: XRFieldTypeAnnotatedParamJson, fieldTypeIn?: string);
+	getData(): string | undefined;
+	setData(value: string, doValidation?: boolean): void;
+	getFieldType(): string;
+	initData(serializedFieldData: string | undefined): void;
+	getSelectedItems(): IFromToSelection;
+	setSelectedItems(data: IFromToSelection): void;
+	setFromSelectiont(newSelection: IReference[]): void;
+	setToSelectiont(newSelection: IReference[]): void;
+	isDefaultSelection(): boolean;
+	setDefaultSelection(map: IReference[]): void;
+	setConfig(config: IAnyMap): void;
+}
+export declare class NotificationsBL {
+	static NoticationCache: NotificationsCache;
 	/**
-	 * Adds one label to the item if it isn't already set. Note that if the
-	 * label is in an XOR group with another set label, that label will be
-	 * removed.
-	 * @param labelToSet
-	 * @returns Item
-	 * @throws throws error if the Item category doesn't allow labels
+	 * Returns the message of the notification. either the message is plain text or some formatted json object
+	 * @param todo
 	 */
-	setLabel(labelToSet: string): Item;
+	static getMessage(todo: XRTodo): any;
 	/**
-	 * Unsets one label if it exists.
-	 * @param labelToUnset
-	 * @returns Item
-	 * @throws throws error if the Item category doesn't allow labels
+	 * Returns the field of the notification. either the message is plain text or some formatted json object: the anchor is a place in the UI
+	 * @param todo
 	 */
-	unsetLabel(labelToUnset: string): Item;
+	static getField(todo: XRTodo): any;
 	/**
-	 * Return the Category for the current item
-	 * @returns Category
+	 *  either the message is plain text or some formatted json object: the reply is a reference to another todo - for which this is a replyTo
+	 * @param todo
 	 */
-	getCategory(): Category;
+	static getReply(todo: XRTodo): any;
 	/**
-	 * needsSave() checks the Fields of the Category to which the Item belongs to see if they've
-	 * been changed. If so it marks the Item as dirty.
-	 * @returns true if the Item has changes that should be propped to the server
-	 */
-	needsSave(): boolean;
-	/**
-	 * An Item can be complete or partial, based on the ItemFieldMask passed in
-	 * at construction.
-	 * @returns true if the item has all of its Category fields.
-	 */
-	hasAllFields(): boolean;
-	/**
-	 * In case the Item is masked (hasAllFields() returns false), one or more Fields may
-	 * not be tracked. hasFieldId() allows you to check if the field is present.
-	 * @param fieldId a valid field id within the Category
-	 * @throws Error if fieldId is not valid within the Category
-	 * @returns true if the Item's mask allows for this field.
-	 */
-	hasFieldId(fieldId: number): boolean;
-	getFieldById(fieldId: number): Field | undefined;
-	/**
-	 * Returns all fields within the mask which match the fieldName.
-	 * @param fieldName
-	 * @returns an array of Fields. Note that if the mask has limited the set of fields from
-	 *     the Category which are tracked for this particular item, the number of returned Field
-	 *     objects may be less than you expect.
-	 */
-	getFieldByName(fieldName: string): Field[];
-	/**
-	 * Returns a Field matching the field name. The field should exist and be within the mask.
-	 * @param fieldName
-	 * @throws Error if there is no such field, either because the name is invalid or it is not within
-	 *     the mask for the Item.
-	 * @returns a valid Field.
-	 */
-	getSingleFieldByName(fieldName: string): Field;
-	/**
-	 * Returns all fields within the mask which match the fieldType.
-	 * @param fieldType
-	 * @returns an array of Fields. Note that if the mask has limited the set of fields from
-	 *     the Category which are tracked for this particular item, the number of returned Field
-	 *     objects may be less than you expect.
-	 */
-	getFieldsByType(fieldType: string): Field[];
-	/**
-	 * Create a Todo attached to this item.
-	 * @param users an array of user names
-	 * @param type
+	 * Create a notification for a list of users on a specific item in a project. The notification will be due to a specific date
+	 * @param users
+	 * @param project
+	 * @param item
 	 * @param text
+	 * @param type
 	 * @param atDate
-	 * @returns A comma-separated list of Todo ids (integers), relative to the Item.
 	 */
-	createTodo(users: string[], type: TodoTypes, text: string, atDate: Date): Promise<string>;
+	static createNotification(users: string[], project: string, item: string, text: string, type: string, atDate: Date): Promise<XRTodo[]>;
 	/**
-	 * Return the Todos associated with this item.
-	 * @param includeDone - if true, includes done todos
-	 * @param includeAllUsers - if true, includes all todos for all users.
-	 * @param includeFuture - false by default. If true, includes future todos.
-	 * @returns Information on the Todos
+	 * Remove a notification by its id
+	 * @param project
+	 * @param todoId
+	 * @param deleteThem
 	 */
-	getTodos(includeDone?: boolean, includeAllUsers?: boolean, includeFuture?: boolean): Promise<GetTodosAck>;
+	static deleteNotificationId(project: string, todoId: number, deleteThem: boolean): Promise<void>;
 	/**
-	 * Visit the server and get this Item as a DocItem.
-	 * @throws Error if the fields of this Item are dirty.
-	 * @returns a DocItem.
+	 * Remove a notification
+	 * @param notification Notif to remove
 	 */
-	toDocItem(): Promise<DocItem>;
+	static deleteNotification(notification: XRTodo): Promise<void>;
+	/**
+	 * Return all notifications (for all projects)
+	 */
+	static getAllNotifications(): Promise<XRGetTodosAck>;
+	/**
+	 * Return all notifications for a specific project. The notifications are divided into two groups: for now and for later
+	 * @param project
+	 */
+	static getGetNotificationsNowAndFuture(project: string): Promise<{
+		todosForLater: XRTodo[];
+		todosForNow: XRTodo[];
+	}>;
+	/**
+	 * Return all notifications for a specific project and a specific item
+	 * @param project
+	 * @param currentItemId
+	 */
+	static getAllNotificationForItem(project: string, currentItemId: string): Promise<XRGetTodosAck>;
 }
-/**
- * Options for creating a field mask for search functions.
- */
-export interface IFieldMaskOptions {
-	/**
-	 * includeFields true by default. If false, no fields will be retrieved from the server.
-	 */
-	includeFields?: boolean;
-	/**
-	 * includeLabels true by default. If false, no label information will be retrieved from the server.
-	 */
-	includeLabels?: boolean;
-	/**
-	 * includeDownlinks false by default. If false, no information about downlinks will come from the server.
-	 */
-	includeDownlinks?: boolean;
-	/**
-	 * includeUplinks false by default. If false, no information about uplinks will come from the server.
-	 */
-	includeUplinks?: boolean;
+export interface IBaseGateOptions {
+	/** define different reviews/approvals which need to be made for gate to pass */
+	lines?: IGateLineBase[];
 }
-export interface ICategoryItemOptions {
+export interface IGateLineBase {
+	/** a unique id for the line */
+	id: string;
+	/** define which users can approve */
+	users: string[];
+}
+export interface IGateStatus {
+	passed: boolean;
+	failed: boolean;
+	lines?: IGateStatusLine[];
+	search: string;
+}
+export interface IGateStatusLine {
+	id: string;
+	passed: boolean;
+	failed: boolean;
+	user: string;
+	date: string;
+	dateUser: string;
+	comment: string;
+}
+export declare class GateFieldHandler implements IFieldHandler {
+	private config;
+	private currentValue;
+	constructor(config: IBaseGateOptions);
+	getData(): string | undefined;
+	setData(value: string, doValidation?: boolean): void;
+	getFieldType(): string;
+	initData(serializedFieldData: string | undefined): void;
+	private defautValue;
+	parseFieldValue(stored: string): IGateStatus;
+	updateOverallStatus(): void;
+	private updateOverallStatusInternal;
+	getGateValue(): IGateStatus | undefined;
+	setGateValue(gateValue: IGateStatus): void;
+}
+export interface IControlDefinition {
+	name?: string;
+	control?: JQuery;
+	fieldId?: number;
+	isDhfType?: boolean;
+	/**
+	 * fieldType is set if this control supports displaying a particular kind of field.
+	 * See FieldDescriptions for a list of many of the field types.
+	 */
+	fieldType?: string;
+}
+export interface IGenericMap {
+	[key: string]: any;
+}
+export interface IAnyMap {
+	[key: string]: any;
+}
+export interface IStringMap {
+	[key: string]: string;
+}
+export interface IStringNumberMap {
+	[key: string]: number;
+}
+export interface IStringStringArrayMap {
+	[key: string]: string[];
+}
+export interface IStringJQueryMap {
+	[key: string]: JQuery;
+}
+export interface IJsonSetting {
+	id: string;
+	value: any;
+}
+export interface IRestParam extends Object {
+	td?: number;
+	reason?: string;
 	filter?: string;
-	treeOrder?: boolean;
-	mask?: ItemsFieldMask;
+	[key: string]: any;
 }
-declare class ItemFieldMask {
-	private fieldIds;
-	constructor(fieldIds: number[]);
-	hasFieldId(fieldId: number): boolean;
-	getFieldIds(): number[];
-	/**
-	 * Combine the other ItemFieldMask with this one.
-	 * @param other an ItemFieldMask
-	 */
-	union(other: ItemFieldMask): void;
-	toString(): string;
+export type IRestResult = {} | string;
+declare class GlobalMatrix {
+	verbose: boolean;
+	ItemConfig: ItemConfiguration;
+	PopulateProjects: Function;
+	mobileApp: {
+		Login: Function;
+		ShowLoginScreen: Function;
+		ShowMobileUI: Function;
+	};
+	jiraPlugin: any;
+	Admin: any;
+	doc: any;
+	ITEM_DOES_NOT_EXIST: string;
+	matrixRestUrl: string;
+	matrixBaseUrl: string;
+	matrixWfgw: string;
+	matrixExpress: boolean;
+	matrixProduct: string;
+	matrixUniqueSerial: string;
+	mxOauth: string;
+	mxOauthLoginUrl: string;
+	serverStorage: IDataStorage;
+	projectStorage: IDataStorage;
+	wfgwConnection: RestConnector;
+	globalShiftDown: boolean;
+	globalCtrlDown: boolean;
+	jsonValidator: JsonValidator;
+	historyFilter: string;
+	EmbeddedReport: any;
+	constructor();
+	installLegacyAdaptor(): void;
 }
-declare class ItemsFieldMask {
-	private masks;
-	private includeFields;
-	private includeLabels;
-	private includeDownlinks;
-	private includeUplinks;
-	constructor(options?: IFieldMaskOptions);
-	getIncludeFields(): boolean;
-	getIncludeLabels(): boolean;
-	getIncludeDownlinks(): boolean;
-	getIncludeUplinks(): boolean;
-	/**
-	 * Add fields to the mask for the given Category. If there is already a field mask for the
-	 * Category, its values will be combined with the new information via set union.
-	 * @param category
-	 * @param fieldIdsOrItemFieldMask either an ItemFieldMask object or an array of Category field ids
-	 * @throws Error if getIncludeFields() is false.
-	 * @returns this
-	 */
-	addMask(category: Category, fieldIdsOrItemFieldMask: number[] | ItemFieldMask): ItemsFieldMask;
-	/**
-	 * Adds fields to the Category mask by name. If the name doesn't exist or if there are more
-	 * than one fields with the name, an Error is thrown.
-	 * @param category
-	 * @param fieldNames
-	 * @throws Error if a field name exists more than once in the given Category or not at all.
-	 *         Also throws Error if getIncludeFields() is false.
-	 * @returns this
-	 */
-	addMaskByNames(category: Category, fieldNames: string[]): ItemsFieldMask;
-	/**
-	 * Returns an ItemFieldMask for the given Category if it exists
-	 * @param categoryId
-	 * @returns null if there is no mask for the given Category.
-	 */
-	getCategoryMask(categoryId: string): ItemFieldMask | null;
-	/**
-	 * Suitable to send to the server for a search query.
-	 * @returns A comma-seperated string of ids or "*" (which means all fields accepted)
-	 */
-	getFieldMaskString(): string;
+export interface IReference {
+	projectShortLabel?: string;
+	to: string;
+	title: string;
+	modDate?: string;
+	isIndirect?: boolean;
 }
-/**
- * A Category represents a category within a project. It has various configuration
- * settings. It also has a list of fields for that category.
- */
-export declare class Category {
-	private category;
-	private project;
-	private allFieldsFieldMask;
-	constructor(category: string, project: Project);
-	getProject(): Project;
-	getItemConfig(): ItemConfiguration;
-	getTestConfig(): TestManagerConfiguration;
-	getId(): string;
-	getConfig(): ICategoryConfig;
-	getFields(): XRFieldTypeAnnotated[];
-	/**
-	 * Return field ids from the Category which match the given label.
-	 * These labels are searched in a case-insensitive way.
-	 * @param label
-	 * @returns a non-empty array of field ids if the label is present in the Category.
-	 */
-	getFieldIdFromLabel(label: string): number[];
-	isFolderCategory(): boolean;
-	/**
-	 * An ItemFieldMask allows you to specify which fields out of the Category
-	 * fields of an Item should be considered valid.
-	 * @param fieldIds If specified, a valid set of field ids for this Category. Otherwise,
-	 *        the returned ItemFieldMask expresses that all fields in the Item are to be
-	 *        considered valid.
-	 * @throws throws an Error if any of the field ids specified in fieldIds do not exist in the Category.
-	 * @returns an ItemFieldMask.
-	 */
-	createFieldMask(fieldIds?: number[]): ItemFieldMask;
-	/**
-	 * Construct a search mask from chosen options
-	 * @param options
-	 * @returns an ItemsFieldMask object
-	 */
-	constructSearchFieldMask(options: IFieldMaskOptions): ItemsFieldMask;
-	/**
-	 * Get all of the items of this Category.
-	 * @param options An optional ICategoryItemOptions describing search options.
-	 * @returns An array of Items of this Category, configured according to the options given.
-	 */
-	getItems(options?: ICategoryItemOptions): Promise<Item[]>;
+export interface IItemIdParts {
+	id: string;
+	version: number;
+	type: string;
+	isFolder: boolean;
+	url: string;
+	link: string;
+	linkv: string;
+	number: number;
+}
+export interface IReferenceChange {
+	action: string;
+	fromId: string;
+	toId: string;
+}
+export interface IItem {
+	upLinks?: IReference[];
+	upLinkList?: XRTrimLink[];
+	downLinks?: IReference[];
+	children?: IItem[];
+	history?: IItemHistory[];
+	modDate?: string;
+	isUnselected?: number;
+	availableFormats?: string[];
+	selectSubTree?: XRCategoryAndRoot[];
+	requireSubTree?: XRCategoryAndRoot[];
+	icon?: string;
+	type?: string;
+	id?: string;
+	title?: string;
+	linksUp?: string;
+	linksDown?: string;
+	isFolder?: boolean;
+	isDeleted?: boolean;
+	maxVersion?: number;
+	docHasPackage?: boolean;
+	[key: string]: any;
+}
+export interface IItemGet extends IItem {
+	labels?: string[];
+	crossLinks?: XRCrossProjectLink[];
+}
+export interface IItemPut extends IItem {
+	labels?: string;
+	onlyThoseFields?: number;
+	onlyThoseLabels?: number;
+}
+export interface IItemHistory {
+	action: string;
+	user: string;
+	dateUserFormat: string;
+	comment: string;
+	id: string;
+	version: number;
+	date: string;
+	title: string;
+	deletedate?: string;
+}
+export interface IDataStorage {
+	setItem: (itemKey: string, itemVal: string, sanitize?: boolean) => void;
+	getItem: (itemKey: string, dontSanitize?: boolean) => string;
+	getItemDefault: (itemKey: string, defaultValue: string) => string;
+}
+export declare enum ControlState {
+	FormEdit = 0,//this is a embedded form which allows the user to modify the content
+	FormView = 1,//this is read only version with (some) read only tools enabled (e.g. history)
+	DialogCreate = 2,//this allows the user to modify the content, usually to create new elements. No tools
+	HistoryView = 3,//is a read only version, e.g. used for the history where smart text and smart link is not resolved
+	Tooltip = 4,// most things will not shown as tooltip...
+	Print = 5,// for printing ...
+	Report = 6,// special to render report into page
+	DialogEdit = 7,// between FormEdit and DialogCreate to edit an item in popup
+	Review = 8
+}
+export declare enum LineType {
+	textline = "textline",
+	id = "id",
+	uppercase = "uppercase",
+	number = "number",
+	select = "select",
+	table = "table",
+	json = "json",
+	color = "color",
+	id_ = "id_",
+	richtext = "richtext",
+	readonly = "readonly",
+	boolean = "boolean",
+	multiselect = "multiselect",
+	folderselect = "folderselect",
+	userAndGroupSelect = "userAndGroupSelect"
+}
+export interface ILineEditorLine {
+	id?: string;
+	key?: number;
+	help: string;
+	explanation?: string;
+	value: string;
+	type: LineType;
+	options?: IDropdownOption[];
+	multiple?: boolean;
+	groups?: IDropdownGroup[];
+	columns?: ITableControlOptionsColumn[];
+	noEdit?: boolean;
+	readonly?: boolean;
+	hide?: boolean;
+	required?: boolean;
+	extraOptions?: IAnyMap;
+}
+declare class LineEditorExt {
+	constructor();
+	showDialog(title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number, showUserAndGroupsSelectWithDialog?: (container: JQuery, showUsers: boolean, showGroups: boolean, help: string, empty: string, selected: string[], dialogTitle: string, onSelect: (selection: string[]) => void) => void): JQueryDeferred<any>;
+	static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
+	private setEnabled;
+	private getValue;
+	private isEnabled;
+}
+export declare abstract class BaseWidget implements IWidgetPlugin {
+	abstract _root: JQuery | undefined;
+	abstract id: string;
+	abstract defaultParameters(): IWidgetParameters;
+	abstract displayedWidget: IDisplayedWidget | undefined;
+	abstract getBoxConfigurator(): ILineEditorLine[];
+	abstract help: string;
+	abstract render(root: JQuery, arg0: IDisplayedWidget): void;
+	abstract renderOn: widgetRenderEvent | undefined;
+	pluginName(): string;
+	mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
+	addContainer(root: JQuery, displayedWidget: IDisplayedWidget): JQuery;
+	updateHideUnHideButton(): void;
+	protected addToToolbar(iconName: string, onClick: () => void, tooltip?: string): void;
+	showWidgetSettingEditor(displayedWidget: IDisplayedWidget): Promise<void>;
+	calculateHeight(configurator: ILineEditorLine[]): number;
+	updatePosition(w: number, h: number, x: number, y: number): void;
+	hide(showConfirm?: boolean): void;
+	unhide(showConfirm: boolean): void;
 }
 export interface IPublishInfo {
 	target: string;
