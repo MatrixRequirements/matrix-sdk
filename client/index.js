@@ -679,10 +679,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].initItem) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].initItem(item, this._jui);
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to init for plugin : " + e.toString());
             }
         }
@@ -691,10 +693,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].initPrintingAsync) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     await this._plugins[idx].initPrintingAsync();
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to initPrinting for plugin : " + e.toString());
             }
         }
@@ -708,10 +712,13 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].initServerSettings) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].initServerSettings(serverSettings);
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.log("error " + e.toString());
             }
         }
@@ -727,10 +734,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateMenu) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].updateMenu(ul, hook);
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to updateMenu for plugin : " + e.toString());
             }
         }
@@ -740,8 +749,11 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].getFieldConfigOptions && this._plugins[idx].supportsControl) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     const fieldConfig = this._plugins[idx].getFieldConfigOptions();
                     for (let i = 0; i < fieldConfig.length; i++) {
+                        // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                         if (this._plugins[idx].supportsControl(fieldConfig[i].id)) {
                             fco.push(fieldConfig[i]);
                         }
@@ -749,6 +761,7 @@ class PluginManager {
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to getFieldConfigOptions for plugin : " + e.toString());
             }
         }
@@ -758,10 +771,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].addFieldSettings) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].addFieldSettings(configApp, project, pageId, fieldType, fieldParams, ui, () => paramChanged(), canBePublished);
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to addFieldSettings for plugin : " + e.toString());
             }
         }
@@ -769,11 +784,13 @@ class PluginManager {
     supportsControl(fieldType) {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 if (this._plugins[idx].supportsControl && this._plugins[idx].supportsControl(fieldType)) {
                     return true;
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to supportsControl for plugin : " + e.toString());
             }
         }
@@ -782,12 +799,16 @@ class PluginManager {
     createControl(ctrlObj, settings) {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 if (this._plugins[idx].supportsControl && this._plugins[idx].supportsControl(settings.fieldType)) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].createControl(ctrlObj, settings);
                     return;
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to createControl for plugin : " + e.toString());
             }
         }
@@ -802,6 +823,7 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].initProject) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].initProject(project);
                 }
             }
@@ -817,10 +839,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].filterProject) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].filterProject(db);
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to filterProject for plugin : " + e.toString());
             }
         }
@@ -830,10 +854,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateSearchPanel) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].updateSearchPanel();
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to updateSearchPanel for plugin : " + e.toString());
             }
         }
@@ -843,10 +869,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateItemPanel) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].updateItemPanel();
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to updateItemPanel for plugin : " + e.toString());
             }
         }
@@ -856,10 +884,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateItem) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].updateItem(updates);
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to updateItem for plugin : " + e.toString());
             }
         }
@@ -868,10 +898,12 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].updateTree) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     this._plugins[idx].updateTree();
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to updateTree for plugin : " + e.toString());
             }
         }
@@ -888,6 +920,7 @@ class PluginManager {
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to getTinyMenus for plugin : " + e.toString());
             }
         }
@@ -904,6 +937,7 @@ class PluginManager {
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to getCustomSearches for plugin : " + e.toString());
             }
         }
@@ -920,6 +954,7 @@ class PluginManager {
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to getUserMenuItems for plugin : " + e.toString());
             }
         }
@@ -936,6 +971,7 @@ class PluginManager {
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to getQMSUserMenuItems for plugin : " + e.toString());
             }
         }
@@ -952,6 +988,7 @@ class PluginManager {
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to getConfigUserMenuItems for plugin : " + e.toString());
             }
         }
@@ -968,6 +1005,7 @@ class PluginManager {
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to getProjectMenuItems for plugin : " + e.toString());
             }
         }
@@ -979,6 +1017,8 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].getProjectPagesAsync) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     let pages = await this._plugins[idx].getProjectPagesAsync();
                     for (let page of pages) {
                         allPages.push(page);
@@ -990,21 +1030,21 @@ class PluginManager {
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to getProjectPages for plugin : " + e.toString());
             }
         }
         return allPages;
     }
-    async getAllTilesAsync() {
+    /**
+     * Return a list of plugins that can be displayed in the dashboard analytics page.
+     * */
+    getAllTilePlugins() {
         let tiles = [];
         for (let idx = 0; idx < this._plugins.length; idx++) {
-            if (this._plugins[idx].getTilesAsync) {
-                let tile = await this._plugins[idx].getTilesAsync();
-                if (tile && tile.length > 0) {
-                    for (let t of tile) {
-                        tiles.push(t);
-                    }
-                }
+            if (this._plugins[idx].renderTile) {
+                let tile = this._plugins[idx];
+                tiles.push(tile);
             }
         }
         return tiles;
@@ -1016,9 +1056,11 @@ class PluginManager {
         options.control.html("");
         document.title = this.titles[options.type] + " - " + _globals__WEBPACK_IMPORTED_MODULE_0__.matrixSession.getProject();
         if (this.usesFilters[options.type]) {
+            // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
             toggleFilters(true);
         }
         else {
+            // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
             toggleFilters(false);
         }
         this.activeControlPage = options.type;
@@ -1031,6 +1073,7 @@ class PluginManager {
                 if (destructor) {
                     destructor();
                 }
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 this.activeControlPage = null;
             }
             catch (e) {
@@ -1047,9 +1090,11 @@ class PluginManager {
             let res = $.Deferred();
             if (idx >= that._plugins.length) {
                 res.resolve();
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 return res;
             }
             if (that._plugins[idx].preSaveHookAsync) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 that._plugins[idx]
                     .preSaveHookAsync(isItem, type, controls)
                     .then(function () {
@@ -1076,6 +1121,7 @@ class PluginManager {
                     res.reject();
                 });
             }
+            // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
             return res;
         }
         return callRec(0);
@@ -1086,12 +1132,14 @@ class PluginManager {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].renderActionButtons) {
+                    // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                     if (this._plugins[idx].renderActionButtons(options, body, controls)) {
                         done = true;
                     }
                 }
             }
             catch (e) {
+                // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
                 console.error("error: Fail to renderActionButtons for plugin : " + e.toString());
             }
         }
@@ -1144,6 +1192,7 @@ class GlobalMatrix {
         this.globalShiftDown = false;
         this.globalCtrlDown = false;
         this.historyFilter = "merge,delete,undelete,add,edit,execute,reviewed,signature,report,touch,release";
+        // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
         this.mobileApp = undefined;
     }
     installLegacyAdaptor() {

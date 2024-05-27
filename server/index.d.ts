@@ -1,5 +1,3 @@
-import { ReactElement } from 'react';
-
 export declare enum TodoTypes {
 	needSignature = "needSignature",
 	needReview = "needReview",
@@ -358,8 +356,8 @@ export interface ITraceConfigRule {
 }
 export type TTraceRule = "can_have" | "must_have";
 declare enum EnumItemPublish {
-	IfNotInGroup = 0,
-	Always = 1,
+	IfNotInGroup = 0,//allow items to be published unless they are in a group
+	Always = 1,// allow items to be published even if they are in a group
 	Never = 2
 }
 export interface IQMSConfig {
@@ -1156,7 +1154,7 @@ declare class ItemControl {
 	refreshLinks(): void;
 	fillControls(): Promise<void>;
 	needsSave(): Promise<boolean>;
-	hasTitle(): Promise<boolean>;
+	hasTitle(): Promise<any>;
 	updateItem(newItem: IItem): void;
 	setFieldValue(fieldId: number, newValue: string): void;
 	getFieldValue(fieldId: number): Promise<any>;
@@ -1179,18 +1177,17 @@ declare class ItemControl {
 }
 export declare enum SelectMode {
 	/*** DO NOT CHANGED numbers use from baseControl */
-	none = 0,
-	items = 1,
-	folders = 2,
-	singleItem = 3,
-	singleFolder = 4,
-	independent = 5,
-	auto = 6,
-	independentAuto = 7,
+	none = 0,// cannot select
+	items = 1,// can select items (no folders)
+	folders = 2,// can select folders (no items)
+	singleItem = 3,// can select one item (no folders)
+	singleFolder = 4,// can select one folder (no items)
+	independent = 5,// can select folder and items (independently)
+	auto = 6,// if all children in folder are selected, selection changes to parent
+	independentAuto = 7,//  can select folder and items independently -> but when checking a folder it adds all children
 	autoPrecise = 8
 }
 export interface INavigationBar {
-	disableTabs: boolean;
 	tabs: INavigationBarTab[];
 }
 export interface INavigationBarTab {
@@ -1274,9 +1271,9 @@ export interface IPlugin {
 	 */
 	getQMSUserMenuItems?(): IPluginMenuAction[];
 	/**
-	 * Return a list of react components to be displayed in the dashboard analytics page.
+	 *  Notify the plugin to render itself in the element passed.
 	 */
-	getTilesAsync?: () => Promise<React.ReactElement[]>;
+	renderTile?: (analyticsContainer: HTMLElement) => void;
 }
 export interface ISettingPage {
 	id: string;
@@ -1584,7 +1581,7 @@ export declare class Tasks implements IPlugin {
 	private waitForNewTaskOrWindowCloseTimer;
 	private waitForNewTaskOrWindowClose;
 	private searchAndLinkIssueDlg;
-	static getConfig(pluginId: number): ITaskConfiguration;
+	static getConfig(pluginId: number): ITaskConfiguration | null;
 	private renderProjectPage;
 	private updateUI;
 	private static getTaskDefinition;
@@ -1993,7 +1990,7 @@ export declare class DateFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string | undefined): void;
 	setData(value: string, doValidation?: boolean): void;
-	static getDateFromString(dateStr: string): Date;
+	static getDateFromString(dateStr: string): Date | null;
 	setDate(date: Date): void;
 	getDate(): Date | undefined;
 }
@@ -2093,7 +2090,7 @@ declare class NotificationsCache {
 	 * Return the total number of notifications for a specific project from the cache
 	 * @param project
 	 */
-	getTotalNotificationsProject(project: string): XRTodoCount;
+	getTotalNotificationsProject(project: string): XRTodoCount | null;
 	/**
 	 * Return the total number of notifications from the cache
 	 */
@@ -2201,7 +2198,7 @@ export declare class GateFieldHandler implements IFieldHandler {
 	parseFieldValue(stored: string): IGateStatus;
 	updateOverallStatus(): void;
 	private updateOverallStatusInternal;
-	getGateValue(): IGateStatus;
+	getGateValue(): IGateStatus | undefined;
 	setGateValue(gateValue: IGateStatus): void;
 }
 export interface IControlDefinition {
@@ -2299,14 +2296,14 @@ export interface IDataStorage {
 	getItemDefault: (itemKey: string, defaultValue: string) => string;
 }
 export declare enum ControlState {
-	FormEdit = 0,
-	FormView = 1,
-	DialogCreate = 2,
-	HistoryView = 3,
-	Tooltip = 4,
-	Print = 5,
-	Report = 6,
-	DialogEdit = 7,
+	FormEdit = 0,//this is a embedded form which allows the user to modify the content
+	FormView = 1,//this is read only version with (some) read only tools enabled (e.g. history)
+	DialogCreate = 2,//this allows the user to modify the content, usually to create new elements. No tools
+	HistoryView = 3,//is a read only version, e.g. used for the history where smart text and smart link is not resolved
+	Tooltip = 4,// most things will not shown as tooltip...
+	Print = 5,// for printing ...
+	Report = 6,// special to render report into page
+	DialogEdit = 7,// between FormEdit and DialogCreate to edit an item in popup
 	Review = 8
 }
 export interface IDB {
@@ -2401,7 +2398,7 @@ export declare class ItemConfiguration {
 	getEmail(user: string): string;
 	activateTimewarp(date: string): void;
 	getTimeWarp(): string;
-	isAfterTimeWarp(date: string): boolean;
+	isAfterTimeWarp(date: string): boolean | "";
 	hasWriteAccess(user: string): boolean;
 	private getPermission;
 	getUserNames(sorted?: boolean): XRUserPermissionType[];
@@ -2473,9 +2470,9 @@ export declare class ItemConfiguration {
 	private addCategory;
 	getItemConfiguration(category: string): ICategoryConfig;
 	getFieldId(category: string, fieldLabel: string): number;
-	getFields(category: string): XRFieldTypeAnnotated[];
+	getFields(category: string): XRFieldTypeAnnotated[] | null;
 	getFieldByName(category: string, name: string): XRFieldTypeAnnotated;
-	getFieldById(category: string, fieldId: number): XRFieldTypeAnnotated;
+	getFieldById(category: string, fieldId: number): XRFieldTypeAnnotated | null;
 	getFieldConfig(fieldId: number): XRFieldTypeAnnotatedParamJson;
 	getFieldName(fieldId: number): string;
 	getFieldType(category: string, fieldId: number): string;
@@ -8910,7 +8907,7 @@ export declare class TreeFolder {
 	private type;
 	private folderChildren;
 	private itemChildren;
-	constructor(needs: ITreeFolderNeeds, folder: FancyFolder, parent?: TreeFolder);
+	constructor(needs: ITreeFolderNeeds, folder: FancyFolder, parent?: TreeFolder | undefined);
 	isRoot(): boolean;
 	getId(): string;
 	getTitle(): string;

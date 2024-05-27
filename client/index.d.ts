@@ -1,5 +1,3 @@
-import { ReactElement } from 'react';
-
 export declare enum TodoTypes {
 	needSignature = "needSignature",
 	needReview = "needReview",
@@ -965,8 +963,8 @@ export interface ITraceConfigRule {
 }
 export type TTraceRule = "can_have" | "must_have";
 declare enum EnumItemPublish {
-	IfNotInGroup = 0,
-	Always = 1,
+	IfNotInGroup = 0,//allow items to be published unless they are in a group
+	Always = 1,// allow items to be published even if they are in a group
 	Never = 2
 }
 export interface IQMSConfig {
@@ -1703,8 +1701,8 @@ export interface IWidgetParameters {
 export interface IWidgetPlugin {
 	id: string;
 	help: string;
-	_root: JQuery;
-	displayedWidget: IDisplayedWidget;
+	_root: JQuery | undefined;
+	displayedWidget: IDisplayedWidget | undefined;
 	pluginName(): string;
 	defaultParameters(): IWidgetParameters;
 	mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
@@ -1973,7 +1971,7 @@ declare class ItemControl {
 	refreshLinks(): void;
 	fillControls(): Promise<void>;
 	needsSave(): Promise<boolean>;
-	hasTitle(): Promise<boolean>;
+	hasTitle(): Promise<any>;
 	updateItem(newItem: IItem): void;
 	setFieldValue(fieldId: number, newValue: string): void;
 	getFieldValue(fieldId: number): Promise<any>;
@@ -2352,7 +2350,7 @@ export declare class UIToolsConstants {
 	static allGrey: string[];
 	static CIColorsPrimary: ICIColorList;
 }
-export declare module UIToolsConstants {
+export declare namespace UIToolsConstants {
 	enum Scroll {
 		Auto = 0,
 		Vertical = 1,
@@ -2568,6 +2566,10 @@ export interface IApp extends IBaseApp {
 	isConfigApplication: false;
 	isClientApplication: true;
 	dragEnter?: (dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode) => string[] | boolean;
+	/** Open the analytics UI */
+	openAnalytics(): void;
+	/** Close the analytics UI */
+	closeAnalytics(): void;
 }
 export interface IBaseApp {
 	getParentId(itemId: string): string;
@@ -2710,18 +2712,17 @@ export interface ISetField {
 }
 export declare enum SelectMode {
 	/*** DO NOT CHANGED numbers use from baseControl */
-	none = 0,
-	items = 1,
-	folders = 2,
-	singleItem = 3,
-	singleFolder = 4,
-	independent = 5,
-	auto = 6,
-	independentAuto = 7,
+	none = 0,// cannot select
+	items = 1,// can select items (no folders)
+	folders = 2,// can select folders (no items)
+	singleItem = 3,// can select one item (no folders)
+	singleFolder = 4,// can select one folder (no items)
+	independent = 5,// can select folder and items (independently)
+	auto = 6,// if all children in folder are selected, selection changes to parent
+	independentAuto = 7,//  can select folder and items independently -> but when checking a folder it adds all children
 	autoPrecise = 8
 }
 export interface INavigationBar {
-	disableTabs: boolean;
 	tabs: INavigationBarTab[];
 }
 export interface INavigationBarTab {
@@ -2893,9 +2894,9 @@ export interface IPlugin {
 	 */
 	getQMSUserMenuItems?(): IPluginMenuAction[];
 	/**
-	 * Return a list of react components to be displayed in the dashboard analytics page.
+	 *  Notify the plugin to render itself in the element passed.
 	 */
-	getTilesAsync?: () => Promise<React.ReactElement[]>;
+	renderTile?: (analyticsContainer: HTMLElement) => void;
 }
 export interface IPluginHooks {
 	shares: number;
@@ -3065,7 +3066,10 @@ declare class PluginManager {
 	getConfigUserMenuItems(): IPluginMenuAction[];
 	getProjectMenuItems(): IPluginMenuAction[];
 	getProjectPages(): Promise<IProjectPageParam[]>;
-	getAllTilesAsync(): Promise<ReactElement<any, string | import("react").JSXElementConstructor<any>>[]>;
+	/**
+	 * Return a list of plugins that can be displayed in the dashboard analytics page.
+	 * */
+	getAllTilePlugins(): IPlugin[];
 	supportsControlPage(controlType: string): boolean;
 	createControlPage(options: IPluginPanelOptions, toggleFilters?: (toggle: boolean) => void): void;
 	destroyActiveControlPage(): void;
@@ -3284,7 +3288,7 @@ export declare class Tasks implements IPlugin {
 	private waitForNewTaskOrWindowCloseTimer;
 	private waitForNewTaskOrWindowClose;
 	private searchAndLinkIssueDlg;
-	static getConfig(pluginId: number): ITaskConfiguration;
+	static getConfig(pluginId: number): ITaskConfiguration | null;
 	private renderProjectPage;
 	private updateUI;
 	private static getTaskDefinition;
@@ -3360,7 +3364,7 @@ export declare class ItemConfiguration {
 	getEmail(user: string): string;
 	activateTimewarp(date: string): void;
 	getTimeWarp(): string;
-	isAfterTimeWarp(date: string): boolean;
+	isAfterTimeWarp(date: string): boolean | "";
 	hasWriteAccess(user: string): boolean;
 	private getPermission;
 	getUserNames(sorted?: boolean): XRUserPermissionType[];
@@ -3432,9 +3436,9 @@ export declare class ItemConfiguration {
 	private addCategory;
 	getItemConfiguration(category: string): ICategoryConfig;
 	getFieldId(category: string, fieldLabel: string): number;
-	getFields(category: string): XRFieldTypeAnnotated[];
+	getFields(category: string): XRFieldTypeAnnotated[] | null;
 	getFieldByName(category: string, name: string): XRFieldTypeAnnotated;
-	getFieldById(category: string, fieldId: number): XRFieldTypeAnnotated;
+	getFieldById(category: string, fieldId: number): XRFieldTypeAnnotated | null;
 	getFieldConfig(fieldId: number): XRFieldTypeAnnotatedParamJson;
 	getFieldName(fieldId: number): string;
 	getFieldType(category: string, fieldId: number): string;
@@ -3942,7 +3946,7 @@ export declare class DateFieldHandler implements IFieldHandler {
 	getFieldType(): string;
 	initData(serializedFieldData: string | undefined): void;
 	setData(value: string, doValidation?: boolean): void;
-	static getDateFromString(dateStr: string): Date;
+	static getDateFromString(dateStr: string): Date | null;
 	setDate(date: Date): void;
 	getDate(): Date | undefined;
 }
@@ -4042,7 +4046,7 @@ declare class NotificationsCache {
 	 * Return the total number of notifications for a specific project from the cache
 	 * @param project
 	 */
-	getTotalNotificationsProject(project: string): XRTodoCount;
+	getTotalNotificationsProject(project: string): XRTodoCount | null;
 	/**
 	 * Return the total number of notifications from the cache
 	 */
@@ -4150,7 +4154,7 @@ export declare class GateFieldHandler implements IFieldHandler {
 	parseFieldValue(stored: string): IGateStatus;
 	updateOverallStatus(): void;
 	private updateOverallStatusInternal;
-	getGateValue(): IGateStatus;
+	getGateValue(): IGateStatus | undefined;
 	setGateValue(gateValue: IGateStatus): void;
 }
 export interface IPanel {
@@ -4249,7 +4253,7 @@ declare class GlobalMatrix {
 	globalShiftDown: boolean;
 	globalCtrlDown: boolean;
 	jsonValidator: JsonValidator;
-	historyFilter: any;
+	historyFilter: string;
 	EmbeddedReport: any;
 	constructor();
 	installLegacyAdaptor(): void;
@@ -4325,14 +4329,14 @@ export interface IDataStorage {
 	getItemDefault: (itemKey: string, defaultValue: string) => string;
 }
 export declare enum ControlState {
-	FormEdit = 0,
-	FormView = 1,
-	DialogCreate = 2,
-	HistoryView = 3,
-	Tooltip = 4,
-	Print = 5,
-	Report = 6,
-	DialogEdit = 7,
+	FormEdit = 0,//this is a embedded form which allows the user to modify the content
+	FormView = 1,//this is read only version with (some) read only tools enabled (e.g. history)
+	DialogCreate = 2,//this allows the user to modify the content, usually to create new elements. No tools
+	HistoryView = 3,//is a read only version, e.g. used for the history where smart text and smart link is not resolved
+	Tooltip = 4,// most things will not shown as tooltip...
+	Print = 5,// for printing ...
+	Report = 6,// special to render report into page
+	DialogEdit = 7,// between FormEdit and DialogCreate to edit an item in popup
 	Review = 8
 }
 export declare enum LineType {
@@ -4378,14 +4382,14 @@ declare class LineEditorExt {
 	private isEnabled;
 }
 export declare abstract class BaseWidget implements IWidgetPlugin {
-	abstract _root: JQuery;
+	abstract _root: JQuery | undefined;
 	abstract id: string;
 	abstract defaultParameters(): IWidgetParameters;
-	abstract displayedWidget: IDisplayedWidget;
+	abstract displayedWidget: IDisplayedWidget | undefined;
 	abstract getBoxConfigurator(): ILineEditorLine[];
 	abstract help: string;
 	abstract render(root: JQuery, arg0: IDisplayedWidget): void;
-	abstract renderOn: widgetRenderEvent;
+	abstract renderOn: widgetRenderEvent | undefined;
 	pluginName(): string;
 	mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
 	addContainer(root: JQuery, displayedWidget: IDisplayedWidget): JQuery;
@@ -4474,15 +4478,15 @@ export declare class PrintProcessor implements IPrintProcessor {
 	private getItemFormatter;
 	static addItemSorter(uid: string, sorter: IPrintSorter): void;
 	static getItemSorters(): IPrintSorterMap;
-	static getItemSorter(uid: string): IPrintSorter;
+	static getItemSorter(uid: string): IPrintSorter | null;
 	static getItemSorterDropdown(): IDropdownOption[];
 	static addItemIterator(uid: string, iterator: IPrintIterator): void;
 	static getItemIterator(uid: string, quiet?: boolean): IPrintItemIterator | null;
 	static getItemIteratorsDropdown(items: boolean, folders: boolean, allowNoIterator: boolean): IDropdownOption[];
 	static addLabelIterator(uid: string, iterator: IPrintIterator): void;
-	static getLabelIterator(uid: string): IPrintLabelIterator;
+	static getLabelIterator(uid: string): IPrintLabelIterator | null;
 	static addFieldIterator(uid: string, iterator: IPrintIterator): void;
-	static getFieldIterator(uid: string): IPrintFieldIterator;
+	static getFieldIterator(uid: string): IPrintFieldIterator | null;
 	static addFunction(uid: string, fctn: IPrintFunction): void;
 	static getFunction(uid: string): IPrintFunction | null;
 	static FIELD_FUNCTION_TYPE: string;
@@ -4490,7 +4494,7 @@ export declare class PrintProcessor implements IPrintProcessor {
 	static getFieldFunctionId(uid: string): string;
 	static getFieldFunction(uid: string): IPrintFunction | null;
 	static addConditionFunction(uid: string, fctn: IConditionFunction): void;
-	static getConditionFunction(uid: string): IConditionFunction;
+	static getConditionFunction(uid: string): IConditionFunction | null;
 	static getItemConditionDropdown(): IDropdownOption[];
 	static getAllFunctions(): IPrintBaseFunctionMap;
 	static getAllIterators(): IPrintBaseFunctionMap;
@@ -10789,14 +10793,14 @@ declare class DefaultApi extends BaseAPI {
 	userUserTokenPost(user: string, purpose: string, value?: string, reason?: string, validity?: number, options?: any): Promise<string>;
 }
 export declare enum refLinkStyle {
-	edit = 1,
-	link = 2,
-	show = 3,
-	select = 4,
+	edit = 1,// user can change title
+	link = 2,// click opens another window
+	show = 3,// read only, can call callback if clicked
+	select = 4,// renders like the link, but select the item in the tree (changes selection)
 	selectTree = 5
 }
 export declare enum refLinkTooltip {
-	none = 1,
+	none = 1,// no tooltip
 	html = 2
 }
 export interface IRiskControlOptions extends IBaseControlOptions {
@@ -10837,7 +10841,7 @@ export interface IRiskValueFactorWeight {
 export interface IRiskValueMitigation {
 	to: string;
 	title: string;
-	changes: IRiskValueMitigationChange[];
+	changes?: IRiskValueMitigationChange[];
 }
 export interface IRiskValueMitigationChange {
 	by: number;
@@ -11158,7 +11162,7 @@ export interface IExternalPlugin<SERVERSETTINGS extends IServerSettingsBase, PRO
 	/**
 	 * Return a list of tiles to be added to the analytics dashboard.
 	 */
-	getTilesAsync?(): Promise<React.ReactElement[]>;
+	renderTile?(root: HTMLElement): void;
 }
 export interface IDashboardParameters extends IDashboardParametersBase {
 }
@@ -11197,7 +11201,7 @@ export declare abstract class ControlCoreBase<T extends IPluginFieldHandler<AAA>
 	/** method to call to initialize the editor, e.g. to attach handlers to checkboxes etc */
 	protected initEditor(): void;
 	/** this method is called by the UI to retrieve the string to be saved in the database */
-	getValueAsync(): Promise<string>;
+	getValueAsync(): Promise<string | undefined>;
 	protected originalValue?: IPluginFieldValueBase;
 	/** this method renders a user input field in an item.
 	 * @readOnly is set to true if the user cannot edit the data (e.g. in history or while printing)
@@ -11258,9 +11262,10 @@ export declare class PluginCore implements IPlugin {
 	getConfigUserMenuItems(): IPluginMenuAction[];
 	getProjectMenuItems(): IPluginMenuAction[];
 	getCustomSearches(): IPluginSearch[];
+	getConfig(): IPluginConfig<IServerSettingsBase, IProjectSettingsBase>;
 	getPluginName(): string;
 	getPluginVersion(): string;
-	getTilesAsync(): Promise<React.ReactElement[]>;
+	renderTile(root: HTMLElement): void;
 }
 export interface IValidationSpec {
 	validationFunction?: JsonEditorValidation | null | any;
@@ -11597,7 +11602,7 @@ export declare class TreeFolder {
 	private type;
 	private folderChildren;
 	private itemChildren;
-	constructor(needs: ITreeFolderNeeds, folder: FancyFolder, parent?: TreeFolder);
+	constructor(needs: ITreeFolderNeeds, folder: FancyFolder, parent?: TreeFolder | undefined);
 	isRoot(): boolean;
 	getId(): string;
 	getTitle(): string;
