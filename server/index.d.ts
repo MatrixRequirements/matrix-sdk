@@ -1,5 +1,3 @@
-import { ReactElement } from 'react';
-
 export declare enum TodoTypes {
 	needSignature = "needSignature",
 	needReview = "needReview",
@@ -8729,7 +8727,7 @@ export interface ITile {
 	/**
 	 * Render the tile in the container
 	 */
-	render: (container: HTMLElement) => Promise<ReactElement<unknown>>;
+	render: (container: HTMLElement) => Promise<void>;
 	/**
 	 * Refresh the tile
 	 */
