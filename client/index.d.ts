@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+
 export declare enum TodoTypes {
 	needSignature = "needSignature",
 	needReview = "needReview",
@@ -963,8 +965,8 @@ export interface ITraceConfigRule {
 }
 export type TTraceRule = "can_have" | "must_have";
 declare enum EnumItemPublish {
-	IfNotInGroup = 0,//allow items to be published unless they are in a group
-	Always = 1,// allow items to be published even if they are in a group
+	IfNotInGroup = 0,
+	Always = 1,
 	Never = 2
 }
 export interface IQMSConfig {
@@ -2350,7 +2352,7 @@ export declare class UIToolsConstants {
 	static allGrey: string[];
 	static CIColorsPrimary: ICIColorList;
 }
-export declare namespace UIToolsConstants {
+export declare module UIToolsConstants {
 	enum Scroll {
 		Auto = 0,
 		Vertical = 1,
@@ -2570,6 +2572,7 @@ export interface IApp extends IBaseApp {
 	openAnalytics(): void;
 	/** Close the analytics UI */
 	closeAnalytics(): void;
+	startCompareDocumentsWord(source: string, target: string): Promise<XRPostProject_LaunchReport_CreateReportJobAck>;
 }
 export interface IBaseApp {
 	getParentId(itemId: string): string;
@@ -2712,14 +2715,14 @@ export interface ISetField {
 }
 export declare enum SelectMode {
 	/*** DO NOT CHANGED numbers use from baseControl */
-	none = 0,// cannot select
-	items = 1,// can select items (no folders)
-	folders = 2,// can select folders (no items)
-	singleItem = 3,// can select one item (no folders)
-	singleFolder = 4,// can select one folder (no items)
-	independent = 5,// can select folder and items (independently)
-	auto = 6,// if all children in folder are selected, selection changes to parent
-	independentAuto = 7,//  can select folder and items independently -> but when checking a folder it adds all children
+	none = 0,
+	items = 1,
+	folders = 2,
+	singleItem = 3,
+	singleFolder = 4,
+	independent = 5,
+	auto = 6,
+	independentAuto = 7,
 	autoPrecise = 8
 }
 export interface INavigationBar {
@@ -9076,14 +9079,14 @@ declare class DefaultApi extends BaseAPI {
 	userUserTokenPost(user: string, purpose: string, value?: string, reason?: string, validity?: number, options?: any): Promise<string>;
 }
 export declare enum refLinkStyle {
-	edit = 1,// user can change title
-	link = 2,// click opens another window
-	show = 3,// read only, can call callback if clicked
-	select = 4,// renders like the link, but select the item in the tree (changes selection)
+	edit = 1,
+	link = 2,
+	show = 3,
+	select = 4,
 	selectTree = 5
 }
 export declare enum refLinkTooltip {
-	none = 1,// no tooltip
+	none = 1,
 	html = 2
 }
 /**
@@ -11676,11 +11679,11 @@ export interface ITile {
 	/**
 	 * Render the tile in the container
 	 */
-	render: (container: HTMLElement) => Promise<void>;
+	render: (container: HTMLElement) => Promise<ReactElement<unknown>>;
 	/**
 	 * Refresh the tile
 	 */
-	refresh: () => void;
+	refresh: () => Promise<void>;
 	/**
 	 * Can the tile be rendered? */
 	canBeRenderedAsync: () => Promise<boolean>;
@@ -13002,15 +13005,16 @@ export interface IDataStorage {
 	getItemDefault: (itemKey: string, defaultValue: string) => string;
 }
 export declare enum ControlState {
-	FormEdit = 0,//this is a embedded form which allows the user to modify the content
-	FormView = 1,//this is read only version with (some) read only tools enabled (e.g. history)
-	DialogCreate = 2,//this allows the user to modify the content, usually to create new elements. No tools
-	HistoryView = 3,//is a read only version, e.g. used for the history where smart text and smart link is not resolved
-	Tooltip = 4,// most things will not shown as tooltip...
-	Print = 5,// for printing ...
-	Report = 6,// special to render report into page
-	DialogEdit = 7,// between FormEdit and DialogCreate to edit an item in popup
-	Review = 8
+	FormEdit = 0,
+	FormView = 1,
+	DialogCreate = 2,
+	HistoryView = 3,
+	Tooltip = 4,
+	Print = 5,
+	Report = 6,
+	DialogEdit = 7,
+	Review = 8,
+	Zen = 9
 }
 export declare enum LineType {
 	textline = "textline",

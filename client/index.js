@@ -1275,6 +1275,7 @@ var ControlState;
     ControlState[ControlState["Report"] = 6] = "Report";
     ControlState[ControlState["DialogEdit"] = 7] = "DialogEdit";
     ControlState[ControlState["Review"] = 8] = "Review";
+    ControlState[ControlState["Zen"] = 9] = "Zen";
 })(ControlState || (ControlState = {}));
 // This is so that old legacy scripts can "just work" to a degree.
 function InstallLegacyAdaptor() {
