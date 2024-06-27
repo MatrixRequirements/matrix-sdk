@@ -1162,6 +1162,29 @@ class PluginManager {
     getPlugins() {
         return this._plugins;
     }
+    async waitForAllPlugins() {
+        //Wait for all script to be loaded
+        let pluginCount = () => {
+            return globalThis.pluginLoadedCount;
+        };
+        let expectedCount = () => {
+            return globalThis.pluginCountExpectedToBeLoaded;
+        };
+        console.log(` ${expectedCount()} plugins has to be loaded...`);
+        console.log(`Current plugin count: ${pluginCount()}`);
+        let tryCount = 0;
+        // If item doesn't exist, let's check if plugins are still loading by check the # of plugins
+        while (pluginCount() == undefined || (pluginCount() != expectedCount() && tryCount < 10)) {
+            // Wait few milliseconds to let the plugins register themselves
+            console.log(`Waiting for plugins to load ${pluginCount()}/${expectedCount()} ... Try #${tryCount++}`);
+            await (0,_globals__WEBPACK_IMPORTED_MODULE_0__.wait)(100);
+            if (tryCount === 10) {
+                console.error("Failed to load all plugins");
+                break;
+            }
+        }
+        console.info("All plugins loaded");
+    }
 }
 let plugins;
 function InitializePluginManager() {
@@ -1192,7 +1215,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setIC: () => (/* binding */ setIC),
 /* harmony export */   setMatrixApplicationUI: () => (/* binding */ setMatrixApplicationUI),
 /* harmony export */   setMatrixSession: () => (/* binding */ setMatrixSession),
-/* harmony export */   setRestConnection: () => (/* binding */ setRestConnection)
+/* harmony export */   setRestConnection: () => (/* binding */ setRestConnection),
+/* harmony export */   wait: () => (/* binding */ wait)
 /* harmony export */ });
 
 
@@ -1294,6 +1318,9 @@ function InstallLegacyAdaptor() {
     globalMatrix.installLegacyAdaptor();
     // @ts-ignore have to live with it for now
     globalThis.applyResponsiveView = applyResponsiveView;
+}
+function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 function applyResponsiveView() {
     let mobileView = localStorage.getItem("mobileLayout");

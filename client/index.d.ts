@@ -728,182 +728,6 @@ declare class MatrixSchemaView {
 	renderArray(array: ISchemaArray): string;
 	renderProperty(prop: ISchemaItem): ISchemaPrintTypeInfo;
 }
-/************************************************************************
- 
-print sorter allow to sort items in tables
- 
-************************************************************************/
-export interface IPrintSorterMap {
-	[key: string]: IPrintSorter;
-}
-export interface IPrintSorter {
-	getName: () => string;
-	getHelp: () => string;
-	sort: (a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => number;
-}
-export interface IPrintSortParams {
-	sorter: string;
-	descending: boolean;
-	params?: any;
-}
-/************************************************************************
-
-Iterators return children of an item, items or folders in a folder, or field / label objects
-
- There are 3 main different types of formatters:
- * Item operators return item ids based on an reference item or folder
- * Label iterators return label objects for an item
- * Field iterators return field objects for an item or folder
-
- These are implemented as javascript functions
-
-************************************************************************/
-export interface IPrintIteratorMap {
-	[key: string]: IPrintIterator;
-}
-export interface IPrintItemIteratorParams {
-	maxDepth?: number;
-	sorting?: IPrintSortParams[];
-	direction?: "up" | "down";
-}
-export interface IPrintIterator extends IPrintBaseFunction {
-	worksOnItem: boolean;
-	worksOnFolder: boolean;
-}
-export interface IPrintItemIterator extends IPrintIterator {
-	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<string[]>;
-	getValidation: () => JsonEditorValidation | null;
-	folderIterator: boolean;
-	traceIterator: boolean;
-	tableRowIterator: boolean;
-}
-export interface IPrintFieldIteratorParams {
-}
-export interface IPrintFieldInfo {
-	fieldId: string;
-	field: JQuery;
-	name: string;
-	type: string;
-	config: JQuery;
-	jsonConfig: any;
-	jsonValue: any;
-}
-export interface IPrintFieldIterator extends IPrintIterator {
-	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintFieldIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<IPrintFieldInfo[]>;
-}
-export interface IPrintLabelIteratorParams {
-}
-export interface IPrintLabelInfo {
-	id: string;
-	printName: string;
-	icon: string;
-	set: boolean;
-	jsonConfig: {};
-}
-export interface IPrintLabelIterator extends IPrintIterator {
-	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintLabelIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => IPrintLabelInfo[];
-}
-/************************************************************************
- 
-Formatter deal with an array or a single item/folder/label/field and convert that to an "html" string
-
- There are 5 main different types of formatters:
- * sequential: print folders/items in a list by mixing html with macros
- * tables: print folders arrays in a tabular form by mixing html with macros
- * blocks: print something about an item/folder/label/field by mixing html with macros
- * traces: know how to iterate over traces
- * fields / labels: know how to iterate over fields or labels
- 
- These are implemented as JSON objects or javascript functions
-
-************************************************************************/
-export interface IPrintFormatter {
-	/**
-	 * a unique id required for user defined id's if the uid is not unique it will overwrite the defaults
-	 */
-	uid: string;
-	/**
-	 * to display to user
-	 */
-	name: string;
-	/**
-	 * explains what the entity  is for
-	 */
-	help: string;
-	/**
-	 * indicates if an item was deleted
-	 */
-	deleted?: boolean;
-	/**
-	 * last modification date of print item
-	 */
-	modDate?: string;
-}
-export interface IPrintCustomFormatter {
-	/**
-	 * The project on this instance that is used as the source
-	 * for the definitions. By default this is PRINT
-	 */
-	source?: string;
-	/**
-	 * Definition of LIST iterators
-	 */
-	items: {
-		[key: string]: IPrintFormatter;
-	};
-	/**
-	 * Overwrites for default function parameters
-	 */
-	functionDefaults: IPrintFunctionParamsOverwrites;
-}
-/************************************** Main section definition  ********************************************/
-export interface ICustomSection {
-	description?: string;
-	descriptionContent?: string;
-	descriptionNoContent?: string;
-	formatter: string;
-	functionDefaults?: IPrintFunctionParamsOverwrites;
-}
-export interface IProcessResult {
-	/** generated html */
-	html: string;
-	/** primary list of items from selection + first level interators */
-	redlining: string[];
-}
-export interface IPrintProcessor {
-	prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): void;
-	processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): Promise<IProcessResult>;
-	getCustomStylesheet(): string;
-	/**
-	 * This can be used by render functions to get a table and process its data,
-	 * for example for a row count
-	 * @param tableId The (sub)table to render
-	 * @param selection The selection to use as the root
-	 */
-	getTableData(tableId: string, selection: string[]): Promise<string>;
-	globals?: IPrintGlobals;
-}
-export interface IStringRiskConfigMap {
-	[key: string]: IRiskConfig;
-}
-export interface IFieldCache {
-	[key: string]: IPrintFieldInfo;
-}
-export interface IPrintGlobals {
-	itemMap: IStringJQueryMap;
-	riskControlCategories: IStringStringArrayMap;
-	categories: IStringJQueryMap;
-	fieldsPerCategory: IStringJQueryMap;
-	fieldIdByLabel: IStringMap;
-	fieldDefById: IStringJQueryMap;
-	riskConfigs: IStringRiskConfigMap;
-	down: IStringStringArrayMap;
-	up: IStringStringArrayMap;
-	children: IStringStringArrayMap;
-	count: number;
-	lastItem: string;
-	lastFields: IFieldCache;
-}
 export interface IPrintFunctionMap {
 	[key: string]: IPrintFunction;
 }
@@ -1665,81 +1489,6 @@ export interface IImportConfigDetails {
 	/** ItemParentMode for new includes or copies. By default "orphan", otherwise "preserve" */
 	itemParentMode?: string;
 }
-export interface IDisplayedWidget {
-	id: string;
-	pluginName: string;
-	parameters: IWidgetParameters;
-	createdBy?: string;
-}
-declare enum widgetRenderEvent {
-	load = 0,
-	scroll = 1,
-	click = 2
-}
-export declare enum IWidgetScope {
-	admin = 0,
-	user = 1,
-	superAdmin = 2
-}
-export interface IWidgetPosition {
-	dashboard: string;
-	w: number;
-	h: number;
-	x?: number;
-	y?: number;
-}
-export interface IWidgetParameters {
-	canBeAddedOrDeletedBy: IWidgetScope;
-	position: IWidgetPosition;
-	users?: string[];
-	options: {
-		title: string;
-		canBeHidden: boolean;
-		[key: string]: any;
-	};
-}
-export interface IWidgetPlugin {
-	id: string;
-	help: string;
-	_root: JQuery | undefined;
-	displayedWidget: IDisplayedWidget | undefined;
-	pluginName(): string;
-	defaultParameters(): IWidgetParameters;
-	mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
-	render(root: JQuery, displayedWidget: IDisplayedWidget): void;
-	updatePosition(w: number, h: number, x: number, y: number): void;
-	hide(showConfirm: boolean): void;
-	unload?(): void;
-	scrollIntoView?(): void;
-	clicked?(): void;
-	refresh?(): void;
-}
-export interface IDashboard {
-	displayString: string;
-	icon?: string;
-}
-export interface IDashboardConfig {
-	dashboards: {
-		[key: string]: IDashboard;
-	};
-}
-export declare class WidgetPluginsConstants {
-	static defaultDashboardId: string;
-	static defaultDashboard: IDashboard;
-}
-export interface IWidgetPluginsContainer {
-	visible: boolean;
-	previousUrl: string;
-	toggle(): void;
-	addNewWidget(): void;
-	render(dashboardId: string): void;
-	loadServerSettingWidgets(loadAllUser: boolean): void;
-	exit(destination: string): void;
-	hideWidget(id: string): void;
-	unhide(id: string): void;
-	deleteWidget(displayedWidget: IDisplayedWidget): void;
-	showUpdateShowHiddenButton(): void;
-}
 /**
  * There should be an implementation of IFieldHandler for each type of field matrix supports.
  */
@@ -1795,7 +1544,6 @@ export interface IBaseControl {
 	refresh?: Function;
 	needsLatest: boolean;
 	requiresContent?: () => boolean;
-	afterRendering?: () => void;
 	disableDelayedShow?: boolean;
 }
 export interface IBaseControlOptions {
@@ -1833,7 +1581,6 @@ declare abstract class BaseControl<T extends IFieldHandler> implements IBaseCont
 	abstract hasChangedAsync(): Promise<boolean>;
 	abstract resizeItem(newWidth?: number, force?: boolean): void;
 	abstract destroy(): void;
-	afterRendering(): void;
 }
 export interface IBaseDropdownFieldParams {
 	splitHuman?: boolean;
@@ -2267,7 +2014,6 @@ export interface ICIColorList {
 	[key: string]: ICIColor;
 }
 export interface IUIToolsEnum {
-	widgetPluginsContainer: IWidgetPluginsContainer;
 	DateTime: IDateTimeUI;
 	BlockingProgress: IBlockingProgressUI;
 	SelectUserOrGroup: ISelectUserOrGroupUI;
@@ -2524,8 +2270,7 @@ export interface IApp extends IBaseApp {
 	getNeedsSave(): boolean;
 	getType(itemId: string): string;
 	getAvailableReportsAsync(): JQueryDeferred<XRGetProject_Reports_GetReportsAck>;
-	getDeletedItemsAsync(insertInList: (item: IVersionDetails) => void, progress: (p: number) => void, deleteLog?: IVersionDetails[], startAt?: number): JQueryDeferred<{}>;
-	getActivityAsync(insertInList: (item: IVersionDetails, first?: number, last?: number, referenceChange?: IReferenceUpdate) => void, startAt?: number, count?: number, auditIdMin?: number, auditIdMax?: number): JQueryDeferred<number>;
+	getActivityAsync(insertInList: (item: IVersionDetails, first?: number, last?: number, referenceChange?: IReferenceUpdate) => void, startAt?: number, count?: number, auditIdMin?: number, auditIdMax?: number, deletedOnly?: boolean): JQueryDeferred<number>;
 	canNavigateAwayAsync(): JQueryDeferred<{}>;
 	treeSelectionChangeAsync(newItemId: string): JQueryDeferred<{}>;
 	moveItemsAsync(itemIds: string, newFolder: string, newPosition?: number, useComment?: string): JQueryDeferred<{}>;
@@ -9291,6 +9036,48 @@ export interface IItemSelectionParams {
 	crossProjectHideDelete?: boolean;
 	crossProjectAsList?: boolean;
 }
+export declare enum LineType {
+	textline = "textline",
+	id = "id",
+	uppercase = "uppercase",
+	number = "number",
+	select = "select",
+	table = "table",
+	json = "json",
+	color = "color",
+	id_ = "id_",
+	richtext = "richtext",
+	readonly = "readonly",
+	boolean = "boolean",
+	multiselect = "multiselect",
+	folderselect = "folderselect",
+	userAndGroupSelect = "userAndGroupSelect"
+}
+export interface ILineEditorLine {
+	id?: string;
+	key?: number;
+	help: string;
+	explanation?: string;
+	value: string;
+	type: LineType;
+	options?: IDropdownOption[];
+	multiple?: boolean;
+	groups?: IDropdownGroup[];
+	columns?: ITableControlOptionsColumn[];
+	noEdit?: boolean;
+	readonly?: boolean;
+	hide?: boolean;
+	required?: boolean;
+	extraOptions?: IAnyMap;
+}
+declare class LineEditorExt {
+	constructor();
+	showDialog(title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number, showUserAndGroupsSelectWithDialog?: (container: JQuery, showUsers: boolean, showGroups: boolean, help: string, empty: string, selected: string[], dialogTitle: string, onSelect: (selection: string[]) => void) => void): JQueryDeferred<any>;
+	static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
+	private setEnabled;
+	private getValue;
+	private isEnabled;
+}
 export interface INotificationsChanges {
 	total: number;
 	allNotifications: XRGetTodosAck;
@@ -9383,6 +9170,134 @@ export declare class Notifications implements IPlugin {
 	private addFancyTreeNotificationCounterPlugin;
 	static anchorTimer: number;
 	static anchorNotifications(): void;
+}
+/************************************************************************
+ 
+print sorter allow to sort items in tables
+ 
+************************************************************************/
+export interface IPrintSorterMap {
+	[key: string]: IPrintSorter;
+}
+export interface IPrintSorter {
+	getName: () => string;
+	getHelp: () => string;
+	sort: (a: string, b: string, inverse: boolean, params: any, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => number;
+}
+export interface IPrintSortParams {
+	sorter: string;
+	descending: boolean;
+	params?: any;
+}
+/************************************************************************
+
+Iterators return children of an item, items or folders in a folder, or field / label objects
+
+ There are 3 main different types of formatters:
+ * Item operators return item ids based on an reference item or folder
+ * Label iterators return label objects for an item
+ * Field iterators return field objects for an item or folder
+
+ These are implemented as javascript functions
+
+************************************************************************/
+export interface IPrintIteratorMap {
+	[key: string]: IPrintIterator;
+}
+export interface IPrintItemIteratorParams {
+	maxDepth?: number;
+	sorting?: IPrintSortParams[];
+	direction?: "up" | "down";
+}
+export interface IPrintIterator extends IPrintBaseFunction {
+	worksOnItem: boolean;
+	worksOnFolder: boolean;
+}
+export interface IPrintItemIterator extends IPrintIterator {
+	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintItemIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<string[]>;
+	getValidation: () => JsonEditorValidation | null;
+	folderIterator: boolean;
+	traceIterator: boolean;
+	tableRowIterator: boolean;
+}
+export interface IPrintFieldIteratorParams {
+}
+export interface IPrintFieldInfo {
+	fieldId: string;
+	field: JQuery;
+	name: string;
+	type: string;
+	config: JQuery;
+	jsonConfig: any;
+	jsonValue: any;
+}
+export interface IPrintFieldIterator extends IPrintIterator {
+	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintFieldIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => Promise<IPrintFieldInfo[]>;
+}
+export interface IPrintLabelIteratorParams {
+}
+export interface IPrintLabelInfo {
+	id: string;
+	printName: string;
+	icon: string;
+	set: boolean;
+	jsonConfig: {};
+}
+export interface IPrintLabelIterator extends IPrintIterator {
+	iterate: (overwrites: IGlobalPrintFunctionParams, params: IPrintLabelIteratorParams, itemOrFolder: string, mf: JQuery, globals: IPrintGlobals, possibleTargets: string[], onError: (message: string) => void) => IPrintLabelInfo[];
+}
+/************************************************************************
+ 
+Formatter deal with an array or a single item/folder/label/field and convert that to an "html" string
+
+ There are 5 main different types of formatters:
+ * sequential: print folders/items in a list by mixing html with macros
+ * tables: print folders arrays in a tabular form by mixing html with macros
+ * blocks: print something about an item/folder/label/field by mixing html with macros
+ * traces: know how to iterate over traces
+ * fields / labels: know how to iterate over fields or labels
+ 
+ These are implemented as JSON objects or javascript functions
+
+************************************************************************/
+export interface IPrintFormatter {
+	/**
+	 * a unique id required for user defined id's if the uid is not unique it will overwrite the defaults
+	 */
+	uid: string;
+	/**
+	 * to display to user
+	 */
+	name: string;
+	/**
+	 * explains what the entity  is for
+	 */
+	help: string;
+	/**
+	 * indicates if an item was deleted
+	 */
+	deleted?: boolean;
+	/**
+	 * last modification date of print item
+	 */
+	modDate?: string;
+}
+export interface IPrintCustomFormatter {
+	/**
+	 * The project on this instance that is used as the source
+	 * for the definitions. By default this is PRINT
+	 */
+	source?: string;
+	/**
+	 * Definition of LIST iterators
+	 */
+	items: {
+		[key: string]: IPrintFormatter;
+	};
+	/**
+	 * Overwrites for default function parameters
+	 */
+	functionDefaults: IPrintFunctionParamsOverwrites;
 }
 export interface IAttributePrimitiveParams {
 	attributeName?: string;
@@ -11939,6 +11854,7 @@ declare class PluginManager {
 	renderActionButtons(options: IItemControlOptions, body: JQuery, controls: IControlDefinition[]): boolean;
 	/******************** admin function  */
 	getPlugins(): IPlugin[];
+	waitForAllPlugins(): Promise<void>;
 }
 /*** config
  *
@@ -12337,8 +12253,8 @@ export interface ICompanyUISettings {
 	maxHits?: number;
 	/** bigger scale = sharper drawio images in PDF, default is 3 */
 	drawIOScale?: boolean;
-	/** @experimental: Enable the widget dashboard on instance root */
-	widgetDashboardOption?: boolean;
+	/** @experimental: Enable the analytics dashboard */
+	analyticsEnabled?: boolean;
 	/** internal: url of draw io editor */
 	drawioURL?: string;
 	/** @experimental: if set to anything > 0 the fields in a form are rendered in a non blocking way if there are more than largeFormRender fields */
@@ -12472,6 +12388,7 @@ declare class MatrixSession {
 	getProjectList(readOrWriteOnly: boolean): XRProjectType[];
 	canSeeProject(project: string): boolean;
 	private changeToken;
+	static NewTokenDisplay(tokenValue: string): void;
 	setProjectColor(projectShort: string, color: string): void;
 	getProjectColor(projectShort: string): string;
 	getImgFromProject(pRef: string): string;
@@ -12503,7 +12420,6 @@ declare class MatrixSession {
 	getBranches(mainline: string, branch: string): XRMainAndBranch[];
 	private signOutCleanUp;
 	getCustomParams(): IStringMap;
-	getDashboardConfig(): IDashboardConfig;
 }
 export interface ITableDataRow {
 	[key: string]: number | string;
@@ -12675,7 +12591,9 @@ export declare class TestResultFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
 	private params;
-	static UpdateFieldConfig(params: IBaseDropdownFieldParams, testConfig: TestManagerConfiguration): void;
+	static UpdateFieldConfig(params: IBaseDropdownFieldParams & {
+		automaticOptions?: ITestRuleAuto[];
+	}, testConfig: TestManagerConfiguration): void;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	getData(): string | undefined;
@@ -13014,67 +12932,53 @@ export declare enum ControlState {
 	Review = 8,
 	Zen = 9
 }
-export declare enum LineType {
-	textline = "textline",
-	id = "id",
-	uppercase = "uppercase",
-	number = "number",
-	select = "select",
-	table = "table",
-	json = "json",
-	color = "color",
-	id_ = "id_",
-	richtext = "richtext",
-	readonly = "readonly",
-	boolean = "boolean",
-	multiselect = "multiselect",
-	folderselect = "folderselect",
-	userAndGroupSelect = "userAndGroupSelect"
+/************************************** Main section definition  ********************************************/
+export interface ICustomSection {
+	description?: string;
+	descriptionContent?: string;
+	descriptionNoContent?: string;
+	formatter: string;
+	functionDefaults?: IPrintFunctionParamsOverwrites;
 }
-export interface ILineEditorLine {
-	id?: string;
-	key?: number;
-	help: string;
-	explanation?: string;
-	value: string;
-	type: LineType;
-	options?: IDropdownOption[];
-	multiple?: boolean;
-	groups?: IDropdownGroup[];
-	columns?: ITableControlOptionsColumn[];
-	noEdit?: boolean;
-	readonly?: boolean;
-	hide?: boolean;
-	required?: boolean;
-	extraOptions?: IAnyMap;
+export interface IProcessResult {
+	/** generated html */
+	html: string;
+	/** primary list of items from selection + first level interators */
+	redlining: string[];
 }
-declare class LineEditorExt {
-	constructor();
-	showDialog(title: string, height: number, input: ILineEditorLine[], onOk: (update: ILineEditorLine[]) => boolean, width?: number, showUserAndGroupsSelectWithDialog?: (container: JQuery, showUsers: boolean, showGroups: boolean, help: string, empty: string, selected: string[], dialogTitle: string, onSelect: (selection: string[]) => void) => void): JQueryDeferred<any>;
-	static mapToKeys(results: ILineEditorLine[]): ILineEditorLine[];
-	private setEnabled;
-	private getValue;
-	private isEnabled;
+export interface IPrintProcessor {
+	prepareProcessing(mf: JQuery, onError: (message: string) => void, format: string): void;
+	processSection(formatter: IPrintCustomFormatter, section: ICustomSection, projectOverwrites: IPrintFunctionParamsOverwrites, selection: string[], possibleTargets: string[]): Promise<IProcessResult>;
+	getCustomStylesheet(): string;
+	/**
+	 * This can be used by render functions to get a table and process its data,
+	 * for example for a row count
+	 * @param tableId The (sub)table to render
+	 * @param selection The selection to use as the root
+	 */
+	getTableData(tableId: string, selection: string[]): Promise<string>;
+	globals?: IPrintGlobals;
 }
-export declare abstract class BaseWidget implements IWidgetPlugin {
-	abstract _root: JQuery | undefined;
-	abstract id: string;
-	abstract defaultParameters(): IWidgetParameters;
-	abstract displayedWidget: IDisplayedWidget | undefined;
-	abstract getBoxConfigurator(): ILineEditorLine[];
-	abstract help: string;
-	abstract render(root: JQuery, arg0: IDisplayedWidget): void;
-	abstract renderOn: widgetRenderEvent | undefined;
-	pluginName(): string;
-	mergeOptions(parameters: IWidgetParameters): IWidgetParameters;
-	addContainer(root: JQuery, displayedWidget: IDisplayedWidget): JQuery;
-	updateHideUnHideButton(): void;
-	protected addToToolbar(iconName: string, onClick: () => void, tooltip?: string): void;
-	showWidgetSettingEditor(displayedWidget: IDisplayedWidget): Promise<void>;
-	calculateHeight(configurator: ILineEditorLine[]): number;
-	updatePosition(w: number, h: number, x: number, y: number): void;
-	hide(showConfirm?: boolean): void;
-	unhide(showConfirm: boolean): void;
+export interface IStringRiskConfigMap {
+	[key: string]: IRiskConfig;
+}
+export interface IFieldCache {
+	[key: string]: IPrintFieldInfo;
+}
+export interface IPrintGlobals {
+	itemMap: IStringJQueryMap;
+	riskControlCategories: IStringStringArrayMap;
+	categories: IStringJQueryMap;
+	fieldsPerCategory: IStringJQueryMap;
+	fieldIdByLabel: IStringMap;
+	fieldDefById: IStringJQueryMap;
+	riskConfigs: IStringRiskConfigMap;
+	down: IStringStringArrayMap;
+	up: IStringStringArrayMap;
+	children: IStringStringArrayMap;
+	count: number;
+	lastItem: string;
+	lastFields: IFieldCache;
 }
 export interface IPublishInfo {
 	target: string;

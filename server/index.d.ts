@@ -9261,7 +9261,9 @@ export declare class TestResultFieldHandler implements IFieldHandler {
 	private rawData;
 	private human;
 	private params;
-	static UpdateFieldConfig(params: IBaseDropdownFieldParams, testConfig: TestManagerConfiguration): void;
+	static UpdateFieldConfig(params: IBaseDropdownFieldParams & {
+		automaticOptions?: ITestRuleAuto[];
+	}, testConfig: TestManagerConfiguration): void;
 	constructor(params: IBaseDropdownFieldParams, initialValue?: string);
 	getFieldType(): string;
 	getData(): string | undefined;
