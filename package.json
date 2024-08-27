@@ -1,6 +1,6 @@
 {
   "name": "matrix-requirements-sdk",
-  "version": "2.4.2-rc.0",
+  "version": "2.5.0-alpha.0",
   "description": "An SDK for manipulating MatrixRequirements projects",
   "exports": {
     "./client": {

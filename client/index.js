@@ -44,6 +44,8 @@ class FieldDescriptions {
         let returnedValue = undefined;
         let result = this.descriptions.filter((description) => description.id === idToFind);
         returnedValue = result.length === 1 ? result[0] : undefined;
+        // TODO: MATRIX-7555: lint errors should be fixed for next line
+        // eslint-disable-next-line
         if (returnedValue == undefined) {
             // try to find it in the plugins, if they exist
             let descriptionFromPlugins = (_a = _PluginManager__WEBPACK_IMPORTED_MODULE_0__.plugins === null || _PluginManager__WEBPACK_IMPORTED_MODULE_0__.plugins === void 0 ? void 0 : _PluginManager__WEBPACK_IMPORTED_MODULE_0__.plugins.getFieldConfigOptions()) !== null && _a !== void 0 ? _a : [];
@@ -52,9 +54,13 @@ class FieldDescriptions {
         }
         return returnedValue;
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     static appendFieldDescriptions(newFields) {
         for (let fco of newFields) {
             let result = this.descriptions.filter((description) => description.id === fco.id);
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
             if (result.length == 0) {
                 this.descriptions.push(fco);
             }
@@ -63,6 +69,8 @@ class FieldDescriptions {
     static get() {
         return FieldDescriptions.descriptions;
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     static setValidationFunction(fieldId, validator) {
         let fieldDesc = FieldDescriptions.findById(fieldId);
         if (!fieldDesc) {
@@ -689,6 +697,8 @@ class PluginManager {
             }
         }
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     async initPrinting() {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
@@ -767,7 +777,14 @@ class PluginManager {
         }
         return fco;
     }
-    addFieldSettings(configApp, project, pageId, fieldType, fieldParams, ui, paramChanged, canBePublished) {
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
+    addFieldSettings(
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
+    configApp, project, pageId, fieldType, fieldParams, ui, paramChanged, canBePublished) {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
                 if (this._plugins[idx].addFieldSettings) {
@@ -894,6 +911,8 @@ class PluginManager {
             }
         }
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     updateTree() {
         for (let idx = 0; idx < this._plugins.length; idx++) {
             try {
@@ -909,14 +928,17 @@ class PluginManager {
         }
         return;
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     getTinyMenus(editor) {
         let list = [];
         for (let plugin of this._plugins) {
             try {
                 if (plugin.getTinyMenuItems) {
                     let menuItems = plugin.getTinyMenuItems(editor);
-                    if (menuItems && menuItems.length > 0)
+                    if (menuItems && menuItems.length > 0) {
                         list.push(...menuItems);
+                    }
                 }
             }
             catch (e) {
@@ -932,8 +954,9 @@ class PluginManager {
             try {
                 if (plugin.getCustomSearches) {
                     let menuItems = plugin.getCustomSearches();
-                    if (menuItems && menuItems.length > 0)
+                    if (menuItems && menuItems.length > 0) {
                         list.push(...menuItems);
+                    }
                 }
             }
             catch (e) {
@@ -949,8 +972,9 @@ class PluginManager {
             try {
                 if (plugin.getUserMenuItems) {
                     let menuItems = plugin.getUserMenuItems();
-                    if (menuItems && menuItems.length > 0)
+                    if (menuItems && menuItems.length > 0) {
                         list.push(...menuItems);
+                    }
                 }
             }
             catch (e) {
@@ -966,8 +990,9 @@ class PluginManager {
             try {
                 if (plugin.getQMSUserMenuItems) {
                     let menuItems = plugin.getQMSUserMenuItems();
-                    if (menuItems && menuItems.length > 0)
+                    if (menuItems && menuItems.length > 0) {
                         list.push(...menuItems);
+                    }
                 }
             }
             catch (e) {
@@ -983,8 +1008,9 @@ class PluginManager {
             try {
                 if (plugin.getConfigUserMenuItems) {
                     let menuItems = plugin.getConfigUserMenuItems();
-                    if (menuItems && menuItems.length > 0)
+                    if (menuItems && menuItems.length > 0) {
                         list.push(...menuItems);
+                    }
                 }
             }
             catch (e) {
@@ -1000,8 +1026,9 @@ class PluginManager {
             try {
                 if (plugin.getProjectMenuItems) {
                     let menuItems = plugin.getProjectMenuItems();
-                    if (menuItems && menuItems.length > 0)
+                    if (menuItems && menuItems.length > 0) {
                         list.push(...menuItems);
+                    }
                 }
             }
             catch (e) {
@@ -1039,10 +1066,14 @@ class PluginManager {
     /**
      * Return a list of plugins that can be displayed in the dashboard analytics page.
      * */
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     getAllTiles() {
         let tiles = [];
         for (let idx = 0; idx < this._plugins.length; idx++) {
             let plugin = this._plugins[idx];
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
             if (plugin.getTiles != undefined) {
                 let tile = plugin.getTiles();
                 tiles.push(...tile);
@@ -1050,10 +1081,24 @@ class PluginManager {
         }
         return tiles;
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     async getAllDashboardLinksForAnalyticsAsync() {
         let allLinks = [];
         for (let idx = 0; idx < this._plugins.length; idx++) {
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
             let plugin = this._plugins[idx];
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
             if (plugin && plugin.getDashboardLinksForAnalyticsAsync != undefined) {
                 let links = await plugin.getDashboardLinksForAnalyticsAsync();
                 allLinks.push(...links);
@@ -1096,8 +1141,12 @@ class PluginManager {
             // console.log("No active control page");
         }
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     callPreSaveHook(isItem, type, controls) {
         let that = this;
+        // TODO: MATRIX-7555: lint errors should be fixed for next line
+        // eslint-disable-next-line
         function callRec(idx) {
             let res = $.Deferred();
             if (idx >= that._plugins.length) {
@@ -1159,21 +1208,37 @@ class PluginManager {
         return done;
     }
     /******************** admin function  */
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     getPlugins() {
         return this._plugins;
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     async waitForAllPlugins() {
         //Wait for all script to be loaded
+        // TODO: MATRIX-7555: lint errors should be fixed for next line
+        // eslint-disable-next-line
         let pluginCount = () => {
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
             return globalThis.pluginLoadedCount;
         };
+        // TODO: MATRIX-7555: lint errors should be fixed for next line
+        // eslint-disable-next-line
         let expectedCount = () => {
+            // TODO: MATRIX-7555: lint errors should be fixed for next line
+            // eslint-disable-next-line
             return globalThis.pluginCountExpectedToBeLoaded;
         };
         console.log(` ${expectedCount()} plugins has to be loaded...`);
         console.log(`Current plugin count: ${pluginCount()}`);
         let tryCount = 0;
         // If item doesn't exist, let's check if plugins are still loading by check the # of plugins
+        // TODO: MATRIX-7555: lint errors should be fixed for next line
+        // eslint-disable-next-line
+        // TODO: MATRIX-7555: lint errors should be fixed for next line
+        // eslint-disable-next-line
         while (pluginCount() == undefined || (pluginCount() != expectedCount() && tryCount < 10)) {
             // Wait few milliseconds to let the plugins register themselves
             console.log(`Waiting for plugins to load ${pluginCount()}/${expectedCount()} ... Try #${tryCount++}`);
@@ -1187,6 +1252,8 @@ class PluginManager {
     }
 }
 let plugins;
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function InitializePluginManager() {
     plugins = new PluginManager(); // plugin manager
     // @ts-ignore TODO: get rid of globals
@@ -1231,6 +1298,8 @@ class GlobalMatrix {
         // @ts-ignore TODO: MATRIX-6934: nullStrictCheck should be fixed for next line
         this.mobileApp = undefined;
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     installLegacyAdaptor() {
         // @ts-ignore have to live with it for now
         globalThis.ITEM_DOES_NOT_EXIST = this.ITEM_DOES_NOT_EXIST;
@@ -1263,20 +1332,28 @@ class GlobalMatrix {
     }
 }
 const globalMatrix = new GlobalMatrix();
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function setIC(newIC) {
     globalMatrix.ItemConfig = newIC; // To use in matrixSdk
     // @ts-ignore have to live with it for now
     globalThis.IC = newIC; // legacy support
 }
 let matrixSession;
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function setMatrixSession(session) {
     matrixSession = session;
 }
 let restConnection; // global rest connection
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function setRestConnection(rc) {
     restConnection = rc;
 }
 let matrixApplicationUI; // the application
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function setMatrixApplicationUI(ui) {
     matrixApplicationUI = ui;
 }
@@ -1285,6 +1362,10 @@ function setMatrixApplicationUI(ui) {
 // this variable and ideally we should fix that with a real interface. I changed the type to
 // any to make the true situation easier to see.
 let app; // main application
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function setApp(newApp) {
     app = newApp;
 }
@@ -1302,6 +1383,8 @@ var ControlState;
     ControlState[ControlState["Zen"] = 9] = "Zen";
 })(ControlState || (ControlState = {}));
 // This is so that old legacy scripts can "just work" to a degree.
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function InstallLegacyAdaptor() {
     // @ts-ignore have to live with it for now
     globalThis.ControlState = ControlState;
@@ -1319,9 +1402,13 @@ function InstallLegacyAdaptor() {
     // @ts-ignore have to live with it for now
     globalThis.applyResponsiveView = applyResponsiveView;
 }
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
+// TODO: MATRIX-7555: lint errors should be fixed for next line
+// eslint-disable-next-line
 function applyResponsiveView() {
     let mobileView = localStorage.getItem("mobileLayout");
     let x = $(window).width();
@@ -1330,17 +1417,23 @@ function applyResponsiveView() {
         $("#dragbar").css("display", "none");
         $("#sidebar").css("max-width", "none");
     }
+    // TODO: MATRIX-7555: lint errors should be fixed for next line
+    // eslint-disable-next-line
     if (mobileView == "0") {
         // see item
         $("#sidebar").css("display", "none");
         $("#navLeft").css("display", "none");
         $("#main").css("display", "block");
+        // TODO: MATRIX-7555: lint errors should be fixed for next line
+        // eslint-disable-next-line
     }
     else if (mobileView == "1") {
         // see navigation tree
         $("#sidebar").css("width", x).css("display", "block");
         $("#main").css("display", "none");
         $("#navLeft").css("display", "");
+        // TODO: MATRIX-7555: lint errors should be fixed for next line
+        // eslint-disable-next-line
     }
     else if (mobileView == "2") {
         // see both

@@ -1037,6 +1037,7 @@ export interface IRiskConfig {
 	ram?: IRiskConfigRT;
 	controls?: string;
 	hazard_category?: string;
+	legacyLayout?: boolean;
 }
 export type IRiskConfigMethod = "+" | "*" | "lookup";
 export interface IRiskConfigRT {
@@ -1737,6 +1738,7 @@ declare class ItemControl {
 	private needsSaveImpl;
 	private getFieldType;
 	private sendNeedsSave;
+	private markFieldAsUnsaved;
 	private renderActionButtonsReport;
 }
 export declare class RichtextFieldHandler implements IFieldHandler {
@@ -1815,7 +1817,7 @@ export interface IItemTools {
 	getCreator(item: IItem): string;
 	getLastEditor(item: IItem): string;
 	refListToDisplayString(inputItems: IReference[] | null, prefix: string, shorten?: number): string;
-	renderLink(itemId: string, itemTitle?: string, newWindow?: boolean): JQuery;
+	renderLink(itemId: string, itemTitle?: string | null, newWindow?: boolean): JQuery;
 	updateReferences(oldReferences: IReference[], newReferences: IReference[], fromId: string | null, toId: string | null): IReferenceChange[];
 	clone(item: IItemGet, copyLabels: boolean): IItemPut;
 	sort(a: string, b: string): number;
@@ -2199,7 +2201,7 @@ export interface IApp extends IBaseApp {
 	getSubTree(itemId: string): ISimpleTree;
 	getAuditDetailsAsync(auditId?: number, ignoreErrors?: boolean): JQueryDeferred<XRTrimAudit>;
 	getItemAsync(itemId: string, version?: number, ignoreErrors?: boolean, noHistory?: boolean): JQueryDeferred<IItem>;
-	getNeedlesAsync(searchExpr: string, up?: boolean, down?: boolean, fields?: string, labels?: boolean, ignoreFilters?: boolean): JQueryDeferred<IItem[]>;
+	getNeedlesAsync(searchExpr: string, up?: boolean, down?: boolean, fields?: string, labels?: boolean, ignoreFilters?: boolean): JQueryDeferred<IItemGet[]>;
 	getItemProjectAsync(project: string, itemId: string, ignoreErrors?: boolean): JQueryDeferred<IItem>;
 	getProjectItemAsync(project: string, itemId: string, version?: number, includeHistory?: boolean): JQueryDeferred<IItem>;
 	getProjectCatFields(project: string): JQueryDeferred<XRCategoryExtendedType[]>;
@@ -8832,6 +8834,14 @@ export declare enum refLinkTooltip {
 	none = 1,
 	html = 2
 }
+export interface IRiskTableParams {
+	tableOptions?: {
+		showFullRisk?: boolean;
+		hideReadonly?: boolean;
+		cloneButtonName?: string;
+		showUplinks?: boolean;
+	};
+}
 /**
  * GenericFieldHandler is a field handler which does no validation on the field
  * data. It simply stores the data as a string.
@@ -8872,7 +8882,7 @@ export interface IRiskControlOptions extends IBaseControlOptions {
 	help?: string;
 	fieldValue?: string;
 	valueChanged?: Function;
-	parameter?: IRiskParameter;
+	parameter?: IRiskParameter | IRiskTableParams;
 	links?: IReference[];
 	hideReadonlyColumns?: boolean;
 }
@@ -8955,6 +8965,7 @@ export declare class RiskControlImpl extends BaseControl<GenericFieldHandler> {
 	private isPrint;
 	private riskCalculator;
 	private mitigationsRemoved;
+	private factorInputToTriggerChangeAfterLoad;
 	constructor(control: JQuery, fieldHandler: GenericFieldHandler);
 	init(options: IRiskControlOptions): void;
 	hasChangedAsync(): Promise<boolean>;
@@ -8988,9 +8999,15 @@ export declare class RiskControlImpl extends BaseControl<GenericFieldHandler> {
 	 * user inputs
 	 ********************************/
 	private renderFactorInput;
+	private createSelectInput;
+	private createTextareaInput;
+	private createRichtextInput;
+	private createDefaultInput;
+	private attachFactorInputChangeEvent;
 	private renderWeightInput;
 	highlightReferences(): void;
 	private renderMitigationSelect;
+	private shouldUseOldLayout;
 }
 export declare class ProjectStorage implements IDataStorage {
 	Project: string;
@@ -10907,13 +10924,18 @@ export interface IReviewConfigTask {
 	taskDescription?: string;
 }
 export interface ITableReviewData {
-	reviewtable: IStringMap[];
+	reviewtable: ITableReviewItem[];
+}
+export interface ITableReviewItem extends IStringMap {
+	commentlog: string;
+	reviewitem: string;
+	_version: string;
 }
 export declare class ReviewControlColumns {
-	static COL_COMMENT_LOG: string;
-	static COL_ITEM: string;
-	static COL_VERSION: string;
-	static COL_ANNOTATIONS: string;
+	static COL_COMMENT_LOG: "commentlog";
+	static COL_ITEM: "reviewitem";
+	static COL_VERSION: "_version";
+	static COL_ANNOTATIONS: "_annotation";
 }
 export interface ISimpleSessionControl {
 	getCsrfCookie(): string;
@@ -12092,6 +12114,13 @@ export declare class Tasks implements IPlugin {
 	private static expandFolders;
 	private static thisFolderPathIsInSelection;
 }
+declare enum DefaultCategorySettingNames {
+	texticon = "texticon",
+	syncInfo = "syncInfo",
+	concurrentEdit = "concurrentEdit",
+	tabs = "tabs",
+	folderToolsLocation = "folderToolsLocation"
+}
 export interface ICategoryConfig {
 	fieldList: XRFieldTypeAnnotated[];
 	label: string;
@@ -12194,7 +12223,7 @@ export declare class ItemConfiguration {
 	getPluginSetting(pluginId: number, setting: string): string;
 	getPluginSettings(): XRPluginSetting[];
 	getFieldsOfType(fieldType: string, categoryType?: string): IFieldsOfType[];
-	getCategorySetting(category: string, setting: string): ICategorySetting;
+	getCategorySetting(category: string, setting: string | DefaultCategorySettingNames): ICategorySetting;
 	getCategories(noFolders?: boolean): string[];
 	getCategoryLabel(category: string): string;
 	getCategoryId(category: string): string;
@@ -12369,7 +12398,6 @@ declare class MatrixSession {
 	isGroup(): boolean;
 	isQMS(): boolean;
 	isCompose(): boolean;
-	isUnique(): boolean;
 	isMerge(): boolean;
 	isReview(): boolean;
 	isACL(): boolean;
@@ -12420,6 +12448,7 @@ declare class MatrixSession {
 	getBranches(mainline: string, branch: string): XRMainAndBranch[];
 	private signOutCleanUp;
 	getCustomParams(): IStringMap;
+	private sanitizeSettings;
 }
 export interface ITableDataRow {
 	[key: string]: number | string;
@@ -12836,7 +12865,6 @@ declare class GlobalMatrix {
 	matrixWfgw: string;
 	matrixExpress: boolean;
 	matrixProduct: string;
-	matrixUniqueSerial: string;
 	mxOauth: string;
 	mxOauthLoginUrl: string;
 	serverStorage: IDataStorage;
@@ -12866,6 +12894,7 @@ export interface IItemIdParts {
 	link: string;
 	linkv: string;
 	number: number;
+	originTag: string;
 }
 export interface IReferenceChange {
 	action: string;

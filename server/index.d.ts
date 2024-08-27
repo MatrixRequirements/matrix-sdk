@@ -606,6 +606,7 @@ export interface IRiskConfig {
 	ram?: IRiskConfigRT;
 	controls?: string;
 	hazard_category?: string;
+	legacyLayout?: boolean;
 }
 export type IRiskConfigMethod = "+" | "*" | "lookup";
 export interface IRiskConfigRT {
@@ -1173,6 +1174,7 @@ declare class ItemControl {
 	private needsSaveImpl;
 	private getFieldType;
 	private sendNeedsSave;
+	private markFieldAsUnsaved;
 	private renderActionButtonsReport;
 }
 export declare enum SelectMode {
@@ -9488,6 +9490,7 @@ export interface IItemIdParts {
 	link: string;
 	linkv: string;
 	number: number;
+	originTag: string;
 }
 export interface IReferenceChange {
 	action: string;
@@ -9596,6 +9599,13 @@ export interface ISetField {
 	fieldName: string;
 	value: string;
 }
+declare enum DefaultCategorySettingNames {
+	texticon = "texticon",
+	syncInfo = "syncInfo",
+	concurrentEdit = "concurrentEdit",
+	tabs = "tabs",
+	folderToolsLocation = "folderToolsLocation"
+}
 export interface ICategoryConfig {
 	fieldList: XRFieldTypeAnnotated[];
 	label: string;
@@ -9698,7 +9708,7 @@ export declare class ItemConfiguration {
 	getPluginSetting(pluginId: number, setting: string): string;
 	getPluginSettings(): XRPluginSetting[];
 	getFieldsOfType(fieldType: string, categoryType?: string): IFieldsOfType[];
-	getCategorySetting(category: string, setting: string): ICategorySetting;
+	getCategorySetting(category: string, setting: string | DefaultCategorySettingNames): ICategorySetting;
 	getCategories(noFolders?: boolean): string[];
 	getCategoryLabel(category: string): string;
 	getCategoryId(category: string): string;
@@ -9867,10 +9877,10 @@ export declare class SimpleItemTools implements ISimpleItemTools {
 	sort(a: string, b: string, project: string, matrixBaseUrl: string): number;
 }
 export declare class ReviewControlColumns {
-	static COL_COMMENT_LOG: string;
-	static COL_ITEM: string;
-	static COL_VERSION: string;
-	static COL_ANNOTATIONS: string;
+	static COL_COMMENT_LOG: "commentlog";
+	static COL_ITEM: "reviewitem";
+	static COL_VERSION: "_version";
+	static COL_ANNOTATIONS: "_annotation";
 }
 export interface ISimpleSessionControl {
 	getCsrfCookie(): string;
