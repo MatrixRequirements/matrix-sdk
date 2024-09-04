@@ -11061,10 +11061,10 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 */
 	putProjectSetting(project: string, key: string, value: string): Promise<string>;
 	/**
-	 * Log to the server-side metrics log
+	 * Log to the server-side metrics log.
 	 * @param key the key to log the information under
 	 * @param values a collection of key value pairs
-	 * @returns result code
+	 * @returns "Ok" or "missing endpoint"
 	 */
 	logMetrics(key: string, values: object): Promise<string>;
 	protected parseRef(itemId: string): IItemIdParts;
@@ -11367,10 +11367,10 @@ declare class MatrixSDK {
 	 */
 	putServerSetting(key: string, value: string): Promise<string>;
 	/**
-	 * Log to the server-side metrics log
+	 * Log to the server-side metrics log.
 	 * @param key the key to log the information under
 	 * @param values a collection of key value pairs
-	 * @returns result code
+	 * @returns "Ok" or "missing endpoint"
 	 */
 	logMetrics(key: string, values: object): Promise<string>;
 	/**
