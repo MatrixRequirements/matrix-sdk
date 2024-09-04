@@ -2732,6 +2732,12 @@ export interface AddItemAck {
 	serial?: number;
 	/**
 	 *
+	 * @type {string}
+	 * @memberof AddItemAck
+	 */
+	originTag?: string;
+	/**
+	 *
 	 * @type {CleanupFail}
 	 * @memberof AddItemAck
 	 */
@@ -5271,6 +5277,27 @@ export interface MergeParam {
 /**
  *
  * @export
+ * @interface Metric
+ */
+export interface Metric {
+	/**
+	 *
+	 * @type {string}
+	 * @memberof Metric
+	 */
+	key?: string;
+	/**
+	 *
+	 * @type {{ [key: string]: any; }}
+	 * @memberof Metric
+	 */
+	values?: {
+		[key: string]: any;
+	};
+}
+/**
+ *
+ * @export
  * @interface MonitorAction
  */
 export interface MonitorAction {
@@ -6350,6 +6377,12 @@ export interface Todo {
 	 * @memberof Todo
 	 */
 	future?: boolean;
+	/**
+	 *
+	 * @type {number}
+	 * @memberof Todo
+	 */
+	projectId?: number;
 }
 /**
  *
@@ -7490,6 +7523,15 @@ declare class DefaultApi extends BaseAPI {
 	 */
 	allLoglevelPut(body?: LogLevel, options?: any): Promise<string>;
 	/**
+	 * Permissions - Must have read access (or higher) to the project. Valid from version 2.5
+	 * @summary Add metrics entry.
+	 * @param {Metric} [body] Payload containing the metric data
+	 * @param {*} [options] Override http request option.
+	 * @throws {RequiredError}
+	 * @memberof DefaultApi
+	 */
+	allMetricsPut(body?: Metric, options?: any): Promise<string>;
+	/**
 	 * Permissions - No permissions needed. Valid from version 2.1
 	 * @summary Monitoring object
 	 * @param {*} [options] Override http request option.
@@ -7736,11 +7778,12 @@ declare class DefaultApi extends BaseAPI {
 	 * Permissions - Must have read access (or higher) to the project. Valid from version 2.1
 	 * @summary Get all dates at which a project has been modified
 	 * @param {string} project Project short label
+	 * @param {string} [deleteOnly] (optional) if set to yes, only report actions of type delete
 	 * @param {*} [options] Override http request option.
 	 * @throws {RequiredError}
 	 * @memberof DefaultApi
 	 */
-	projectCalendarGet(project: string, options?: any): Promise<CalendarType[]>;
+	projectCalendarGet(project: string, deleteOnly?: string, options?: any): Promise<CalendarType[]>;
 	/**
 	 * Permissions - Must be admin. Valid from version 2.1
 	 * @summary Removes (inactivate) a category. Will fail on REPORT and FOLDER categories
@@ -8287,7 +8330,7 @@ declare class DefaultApi extends BaseAPI {
 	projectMergeinfoGet(project: string, excludeCategories?: string, fromDate?: string, push?: number, options?: any): Promise<MergeInfo[]>;
 	/**
 	 * Permissions - Must have read/write access to the project. Valid from version 2.1
-	 * @summary Imports some folders from a project to another as a module. Only available is you have the compose module licensed and the unique_serial setting
+	 * @summary Imports some folders from a project to another as a module. Only available is you have the compose module licensed
 	 * @param {string} project Project short label
 	 * @param {string} mode Import mode -  can be include or copy
 	 * @param {string} sourceProject Source project
@@ -8296,11 +8339,12 @@ declare class DefaultApi extends BaseAPI {
 	 * @param {string} [update] Update mode -  can be simple, update or rebase. If not defined, simple assumed
 	 * @param {string} [oldSourceProject] Old source project (if update&#x3D;rebase
 	 * @param {string} [lockLabel] An optional label that this operation will set on all items
+	 * @param {string} [itemParentMode] Default &#x27;orphan&#x27;. Specify &#x27;preserve&#x27; to include all parent folders to the root
 	 * @param {*} [options] Override http request option.
 	 * @throws {RequiredError}
 	 * @memberof DefaultApi
 	 */
-	projectModuleimportPost(project: string, mode: string, sourceProject: string, sourceSelection: string, reason: string, update?: string, oldSourceProject?: string, lockLabel?: string, options?: any): Promise<string>;
+	projectModuleimportPost(project: string, mode: string, sourceProject: string, sourceSelection: string, reason: string, update?: string, oldSourceProject?: string, lockLabel?: string, itemParentMode?: string, options?: any): Promise<string>;
 	/**
 	 * Permissions - Must have read/write access to the project. Valid from version 2.1
 	 * @summary Move items into this folder
@@ -8685,6 +8729,15 @@ declare class DefaultApi extends BaseAPI {
 	userUserDelete(user: string, confirm: string, options?: any): Promise<string>;
 	/**
 	 * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
+	 * @summary Retrieves all projects a user has access to
+	 * @param {string} user user login name
+	 * @param {*} [options] Override http request option.
+	 * @throws {RequiredError}
+	 * @memberof DefaultApi
+	 */
+	userUserDetailsGet(user: string, options?: any): Promise<UserDetails>;
+	/**
+	 * Permissions - Must be admin or the user. Valid from version 2.1
 	 * @summary Retrieves full details of a user
 	 * @param {string} user user login name
 	 * @param {*} [options] Override http request option.
@@ -8746,15 +8799,6 @@ declare class DefaultApi extends BaseAPI {
 	 */
 	userUserProjectPut(user: string, project: string, permission: number, options?: any): Promise<string>;
 	/**
-	 * Permissions - Must be that user - Matrix operations can impersonate. Valid from version 2.1
-	 * @summary Retrieves all projects a user has access to
-	 * @param {string} user user login name
-	 * @param {*} [options] Override http request option.
-	 * @throws {RequiredError}
-	 * @memberof DefaultApi
-	 */
-	userUserProjectsGet(user: string, options?: any): Promise<UserDetails>;
-	/**
 	 * Permissions - Must be admin or the user. Valid from version 2.1
 	 * @summary Edits the user details. Arguments are all separated or a single json argument. Regular users can only change their signature and passwords.
 	 * @param {string} user user login name
@@ -8803,12 +8847,12 @@ declare class DefaultApi extends BaseAPI {
 	 * Permissions - Must be admin or the user. Valid from version 2.1
 	 * @summary Removes a user token
 	 * @param {string} user user login name
-	 * @param {string} value The token to be removed
+	 * @param {number} tokenId The tokenId of the token to be removed
 	 * @param {*} [options] Override http request option.
 	 * @throws {RequiredError}
 	 * @memberof DefaultApi
 	 */
-	userUserTokenDelete(user: string, value: string, options?: any): Promise<string>;
+	userUserTokenDelete(user: string, tokenId: number, options?: any): Promise<string>;
 	/**
 	 * Permissions - Must be admin or the user. Valid from version 2.1
 	 * @summary Adds a token for a user
@@ -11016,6 +11060,13 @@ export declare class StandaloneMatrixSDK implements IProjectNeeds {
 	 * @param value the value of the setting
 	 */
 	putProjectSetting(project: string, key: string, value: string): Promise<string>;
+	/**
+	 * Log to the server-side metrics log
+	 * @param key the key to log the information under
+	 * @param values a collection of key value pairs
+	 * @returns result code
+	 */
+	logMetrics(key: string, values: object): Promise<string>;
 	protected parseRef(itemId: string): IItemIdParts;
 	private getType;
 	/**
@@ -11315,6 +11366,13 @@ declare class MatrixSDK {
 	 * @param value the value of the setting
 	 */
 	putServerSetting(key: string, value: string): Promise<string>;
+	/**
+	 * Log to the server-side metrics log
+	 * @param key the key to log the information under
+	 * @param values a collection of key value pairs
+	 * @returns result code
+	 */
+	logMetrics(key: string, values: object): Promise<string>;
 	/**
 	 * get an item from the database as json object.
 	 *
@@ -12388,7 +12446,7 @@ declare class MatrixSession {
 	isCustomerAdmin(): boolean;
 	isSuperAdmin(): boolean;
 	isAdmin(): boolean;
-	getProject(): string;
+	getProject(): string | null;
 	setProject(projectId: string): void;
 	getCommentAsync(): JQueryDeferred<string>;
 	getComment(): string;
@@ -12401,7 +12459,7 @@ declare class MatrixSession {
 	isMerge(): boolean;
 	isReview(): boolean;
 	isACL(): boolean;
-	isQMSProject(project?: string): boolean;
+	isQMSProject(projectArg?: string): boolean;
 	limitAdmin(): boolean;
 	hasRisks(): boolean;
 	hasVariants(): boolean;
@@ -12425,7 +12483,7 @@ declare class MatrixSession {
 	updateUI(afterTimeout?: boolean): void;
 	addLiveQMSProjects(): 0 | 1;
 	updateCommentCheckboxBoxVisibility(): any;
-	loadProject(projectId: string, projectURL?: string, setAsProjectUrl?: boolean): void;
+	loadProject(projectId: string | null, projectURL?: string, setAsProjectUrl?: boolean): void;
 	oAuthOnly(): boolean;
 	private showProjectSelectMessage;
 	private filterProjects;
