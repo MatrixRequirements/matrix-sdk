@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/MatrixRequirements/matrix-sdk#readme",
   "devDependencies": {
-    "matrixrequirements-type-declarations": "^2.4.0-rc.0",
+    "matrixrequirements-type-declarations": "^2.5.0-rc.0",
     "typedoc": "^0.24.0-beta.2"
   }
 }
