@@ -1333,8 +1333,12 @@ export interface IACLGroupsAcl {
 	fields?: string[];
 	rights: string[];
 }
-export interface IFieldParameter {
+export interface IFieldParameter extends IFieldParameterCommon {
 	[key: string]: any;
+}
+/**  IFieldParameter is split into IFieldParameterCommon and IFieldParameter
+	to avoid poluting the IFieldParameterCommon with [key:string]:any */
+export interface IFieldParameterCommon {
 	/** if set to true, the control will not be editable by the user */
 	readonly?: boolean;
 	/** if set to true the field will not be shown in reports */
@@ -1752,7 +1756,7 @@ export declare class RichtextFieldHandler implements IFieldHandler {
 	getHtml(): string | undefined;
 	setHtml(str: string): RichtextFieldHandler;
 }
-export interface IRichTextParams {
+export interface IRichTextParams extends IFieldParameterCommon {
 	showSmartText?: boolean;
 	autoEdit?: boolean;
 	height?: number;
@@ -1879,7 +1883,7 @@ export interface ILabelManager {
 	getFilter(): string;
 	getDisplayName(labelId: string): string;
 	getFilterName(labelId: string): string;
-	getLabelDefinitions(categories: string[]): ILabel[];
+	getLabelDefinitions(categories: string[] | void): ILabel[];
 	setFilter(filter: string[]): void;
 	resetReviewLabels(labelIds: string[], category: string, addXor?: boolean): string[];
 	getDefaultLabels(category: string): string[];
@@ -2135,6 +2139,7 @@ export interface IBlockingProgressUI {
 export interface IProgressUI {
 	Init(message: string, warning?: boolean): void;
 	Update(progress: number): void;
+	getProgress(): number;
 	SuccessHide(message: string, ms: number): void;
 	ErrorHide(message: string, ms: number): void;
 }
@@ -2273,7 +2278,7 @@ export interface IApp extends IBaseApp {
 	getType(itemId: string): string;
 	getAvailableReportsAsync(): JQueryDeferred<XRGetProject_Reports_GetReportsAck>;
 	getActivityAsync(insertInList: (item: IVersionDetails, first?: number, last?: number, referenceChange?: IReferenceUpdate) => void, startAt?: number, count?: number, auditIdMin?: number, auditIdMax?: number, deletedOnly?: boolean): JQueryDeferred<number>;
-	canNavigateAwayAsync(): JQueryDeferred<{}>;
+	canNavigateAwayAsync(): JQueryDeferred<void>;
 	treeSelectionChangeAsync(newItemId: string): JQueryDeferred<{}>;
 	moveItemsAsync(itemIds: string, newFolder: string, newPosition?: number, useComment?: string): JQueryDeferred<{}>;
 	updateMaxVersion(itemId: string): JQueryDeferred<{}>;
@@ -2318,6 +2323,7 @@ export interface IApp extends IBaseApp {
 	/** Close the analytics UI */
 	closeAnalytics(): void;
 	startCompareDocumentsWord(source: string, target: string): Promise<XRPostProject_LaunchReport_CreateReportJobAck>;
+	setSaving(saving: boolean): void;
 }
 export interface IBaseApp {
 	getParentId(itemId: string): string;
@@ -2393,11 +2399,14 @@ declare class PushMessages {
 	private itemDeleted;
 	private todoChanged;
 	static socketId: number;
+	private wsReconnectTimeoutMs;
+	private wsTimeoutId;
 	constructor();
 	newConnection(): JQueryDeferred<{}>;
 	connect(): JQueryDeferred<number>;
 	private preventConcurrentEdit;
 	private reconnectAfterCloseMessage;
+	private scheduleReconnect;
 	trigger(message: any): void;
 	private sendCurrentEditingStatus;
 	private retryTimer;
@@ -9000,6 +9009,7 @@ export declare class RiskCalculator {
 	getRiskSumSpan(riskValues: IRiskValueMap): string;
 	getColor(riskValues: IRiskValueMap, foreground: boolean): string;
 	static labelDisplay(weightValue: IRiskConfigFactorWeightValue): string;
+	updateMitigationsChanges(): void;
 }
 export declare class RiskControlImpl extends BaseControl<GenericFieldHandler> {
 	private settings;
@@ -9706,8 +9716,8 @@ export interface IConfigApp extends IBaseApp {
 	dragEnter(dragged: Fancytree.FancytreeNode, target: Fancytree.FancytreeNode): string[] | boolean;
 	getJSONProjectSettings(projectId: string, settingId: string): IJsonSetting[];
 	settingExists(projectId: string, settingId: string): boolean;
-	setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<unknown>;
-	setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string): JQueryDeferred<unknown>;
+	setJSONProjectSettingAsync(projectId: string, setting: IJsonSetting, pageId: string): JQueryDeferred<void>;
+	setProjectSettingAsync(projectId: string, settingId: string, settingValue: string, pageId: string | null): JQueryDeferred<void>;
 	setServerSettingAsync(settingId: string, settingValue: string): JQueryDeferred<any>;
 	getServerSetting(settingId: string, defaultValue: any): any;
 	setServerSetting(settingId: string, property: string, newValue: any): void;
@@ -9756,7 +9766,7 @@ export declare class ConfigPage implements IConfigPage {
 	getCategory(): string;
 	getField(): string;
 	willUnload(): void;
-	protected initPage(title: string, showAdvancedBtn: boolean, showDeleteText: string, help: string, externalHelp?: string, showCopy?: boolean): void;
+	protected initPage(title: string, showAdvancedBtn: boolean, showDeleteText: string | null, help: string, externalHelp?: string, showCopy?: boolean): void;
 	protected showAdvanced(): void;
 	protected doCopy(): void;
 	protected doDelete(): void;
@@ -12261,7 +12271,7 @@ export declare class ItemConfiguration {
 	getTasksConfig(): ITasksConfiguration;
 	getDHFConfig(): IDHFConfig;
 	getExtrasConfig(): IExtras;
-	getLabelsConfig(): ILabelsConfig;
+	getLabelsConfig(): ILabelsConfig | undefined;
 	getIncludeConfig(): IImportConfig;
 	getQMSConfig(): IQMSConfig;
 	getRiskConfig(): IRiskConfig;
@@ -12354,6 +12364,8 @@ export interface ICompanyUISettings {
 	legacyUserDropdown?: number;
 	/** @internal obsolete */
 	legacyKeepFolder?: boolean;
+	/** set the max items count when "... and expand tree" search modes are available. if not set defaults to 20000 */
+	maxItemsForExpandSearch?: number;
 }
 export interface ICompanyTiny {
 	/** true if browser context menu should be used as default */

@@ -902,8 +902,12 @@ export interface IACLGroupsAcl {
 	fields?: string[];
 	rights: string[];
 }
-export interface IFieldParameter {
+export interface IFieldParameter extends IFieldParameterCommon {
 	[key: string]: any;
+}
+/**  IFieldParameter is split into IFieldParameterCommon and IFieldParameter
+	to avoid poluting the IFieldParameterCommon with [key:string]:any */
+export interface IFieldParameterCommon {
 	/** if set to true, the control will not be editable by the user */
 	readonly?: boolean;
 	/** if set to true the field will not be shown in reports */
@@ -7584,7 +7588,7 @@ export interface ILabelManager {
 	getFilter(): string;
 	getDisplayName(labelId: string): string;
 	getFilterName(labelId: string): string;
-	getLabelDefinitions(categories: string[]): ILabel[];
+	getLabelDefinitions(categories: string[] | void): ILabel[];
 	setFilter(filter: string[]): void;
 	resetReviewLabels(labelIds: string[], category: string, addXor?: boolean): string[];
 	getDefaultLabels(category: string): string[];
@@ -7649,7 +7653,7 @@ export declare class LabelManager implements ILabelManager {
 	getFilter(): string;
 	getDisplayName(labelId: string): string;
 	getFilterName(labelId: string): string;
-	getLabelDefinitions(categories: string[]): ILabel[];
+	getLabelDefinitions(categories?: string[]): ILabel[];
 	setFilter(filter: string[]): void;
 	resetReviewLabels(labelIds: string[], category: string, addXor?: boolean): string[];
 	getDefaultLabels(category: string): string[];
@@ -9732,7 +9736,7 @@ export declare class ItemConfiguration {
 	getTasksConfig(): ITasksConfiguration;
 	getDHFConfig(): IDHFConfig;
 	getExtrasConfig(): IExtras;
-	getLabelsConfig(): ILabelsConfig;
+	getLabelsConfig(): ILabelsConfig | undefined;
 	getIncludeConfig(): IImportConfig;
 	getQMSConfig(): IQMSConfig;
 	getRiskConfig(): IRiskConfig;
