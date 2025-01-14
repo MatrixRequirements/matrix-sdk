@@ -1,6 +1,6 @@
 {
   "name": "matrix-requirements-sdk",
-  "version": "2.5.0-rc.2",
+  "version": "2.5.0-rc.3",
   "description": "An SDK for manipulating MatrixRequirements projects",
   "exports": {
     "./client": {
@@ -29,5 +29,8 @@
   "devDependencies": {
     "matrixrequirements-type-declarations": "^2.5.0-rc.0",
     "typedoc": "^0.24.0-beta.2"
+  },
+  "dependencies": {
+    "simpledateformat": "0.0.0"
   }
 }

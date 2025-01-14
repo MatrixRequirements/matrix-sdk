@@ -8,6 +8,10 @@ contains type declaration files (for TypeScript programming) and code for
 using the Matrix software from node or from custom plugins that get loaded
 by a Matrix instance at runtime.
 
+## Notes on publishing
+
+Run the `./addlines.sh` script before publishing.
+
 ## How to get it
 
 The SDK is available as an npm package at https://www.npmjs.com/package/matrix-requirements-sdk.
