@@ -1520,6 +1520,18 @@ export interface IFieldHandler {
 	 */
 	setData(value: string, doValidation?: boolean): void;
 }
+export declare enum ControlState {
+	FormEdit = 0,
+	FormView = 1,
+	DialogCreate = 2,
+	HistoryView = 3,
+	Tooltip = 4,
+	Print = 5,
+	Report = 6,
+	DialogEdit = 7,
+	Review = 8,
+	Zen = 9
+}
 export interface ITableParams {
 	canBeModified?: boolean;
 	create?: boolean;
@@ -9058,6 +9070,7 @@ export declare class RiskControlImpl extends BaseControl<GenericFieldHandler> {
 	private createRichtextInput;
 	private createDefaultInput;
 	private attachFactorInputChangeEvent;
+	private filterOutPostRows;
 	private renderWeightInput;
 	highlightReferences(): void;
 	private renderMitigationSelect;
@@ -12366,6 +12379,8 @@ export interface ICompanyUISettings {
 	legacyKeepFolder?: boolean;
 	/** set the max items count when "... and expand tree" search modes are available. if not set defaults to 20000 */
 	maxItemsForExpandSearch?: number;
+	/** Auto edit mode for richtext fields */
+	RTautoEdit?: boolean;
 }
 export interface ICompanyTiny {
 	/** true if browser context menu should be used as default */
@@ -13018,18 +13033,6 @@ export interface IDataStorage {
 	setItem: (itemKey: string, itemVal: string, sanitize?: boolean) => void;
 	getItem: (itemKey: string, dontSanitize?: boolean) => string;
 	getItemDefault: (itemKey: string, defaultValue: string) => string;
-}
-export declare enum ControlState {
-	FormEdit = 0,
-	FormView = 1,
-	DialogCreate = 2,
-	HistoryView = 3,
-	Tooltip = 4,
-	Print = 5,
-	Report = 6,
-	DialogEdit = 7,
-	Review = 8,
-	Zen = 9
 }
 /************************************** Main section definition  ********************************************/
 export interface ICustomSection {

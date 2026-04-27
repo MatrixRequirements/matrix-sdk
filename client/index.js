@@ -1269,7 +1269,7 @@ function InitializePluginManager() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ControlState: () => (/* binding */ ControlState),
+/* harmony export */   ControlState: () => (/* reexport safe */ _types__WEBPACK_IMPORTED_MODULE_0__.ControlState),
 /* harmony export */   GlobalMatrix: () => (/* binding */ GlobalMatrix),
 /* harmony export */   InstallLegacyAdaptor: () => (/* binding */ InstallLegacyAdaptor),
 /* harmony export */   app: () => (/* binding */ app),
@@ -1285,6 +1285,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setRestConnection: () => (/* binding */ setRestConnection),
 /* harmony export */   wait: () => (/* binding */ wait)
 /* harmony export */ });
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+
 
 
 
@@ -1369,25 +1371,12 @@ let app; // main application
 function setApp(newApp) {
     app = newApp;
 }
-var ControlState;
-(function (ControlState) {
-    ControlState[ControlState["FormEdit"] = 0] = "FormEdit";
-    ControlState[ControlState["FormView"] = 1] = "FormView";
-    ControlState[ControlState["DialogCreate"] = 2] = "DialogCreate";
-    ControlState[ControlState["HistoryView"] = 3] = "HistoryView";
-    ControlState[ControlState["Tooltip"] = 4] = "Tooltip";
-    ControlState[ControlState["Print"] = 5] = "Print";
-    ControlState[ControlState["Report"] = 6] = "Report";
-    ControlState[ControlState["DialogEdit"] = 7] = "DialogEdit";
-    ControlState[ControlState["Review"] = 8] = "Review";
-    ControlState[ControlState["Zen"] = 9] = "Zen";
-})(ControlState || (ControlState = {}));
 // This is so that old legacy scripts can "just work" to a degree.
 // TODO: MATRIX-7555: lint errors should be fixed for next line
 // eslint-disable-next-line
 function InstallLegacyAdaptor() {
     // @ts-ignore have to live with it for now
-    globalThis.ControlState = ControlState;
+    globalThis.ControlState = _types__WEBPACK_IMPORTED_MODULE_0__.ControlState;
     // @ts-ignore have to live with it for now
     globalThis.IC = globalMatrix.ItemConfig;
     // @ts-ignore have to live with it for now
@@ -1458,6 +1447,29 @@ function applyResponsiveView() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ControlState: () => (/* binding */ ControlState)
+/* harmony export */ });
+var ControlState;
+(function (ControlState) {
+    ControlState[ControlState["FormEdit"] = 0] = "FormEdit";
+    ControlState[ControlState["FormView"] = 1] = "FormView";
+    ControlState[ControlState["DialogCreate"] = 2] = "DialogCreate";
+    ControlState[ControlState["HistoryView"] = 3] = "HistoryView";
+    ControlState[ControlState["Tooltip"] = 4] = "Tooltip";
+    ControlState[ControlState["Print"] = 5] = "Print";
+    ControlState[ControlState["Report"] = 6] = "Report";
+    ControlState[ControlState["DialogEdit"] = 7] = "DialogEdit";
+    ControlState[ControlState["Review"] = 8] = "Review";
+    ControlState[ControlState["Zen"] = 9] = "Zen";
+})(ControlState || (ControlState = {}));
+
+
+/***/ }),
+/* 6 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LineType: () => (/* binding */ LineType)
 /* harmony export */ });
 var LineType;
@@ -1481,7 +1493,7 @@ var LineType;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1592,8 +1604,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_client_plugins_ScheduleReviewDefines__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _core_common_businesslogic_FieldDescriptions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony import */ var _core_common_UI_LineType__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-/* harmony import */ var _core_common_UI_Components_ProjectViewDefines__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
+/* harmony import */ var _core_common_UI_LineType__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
+/* harmony import */ var _core_common_UI_Components_ProjectViewDefines__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7);
 
 
 
@@ -1619,4 +1631,4 @@ function registerPlugin(plugin) {
 /******/ })()
 ;
 });
-//# sourceMappingURL=clientSdk.js.map
+//# sourceMappingURL=index.js.map

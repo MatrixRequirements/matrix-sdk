@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.5.6
+
+Bumping version.
+
 ## 2.4.0-rc.0
 
 First official release.

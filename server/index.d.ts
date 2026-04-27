@@ -1082,6 +1082,18 @@ export interface IFieldHandler {
 	 */
 	setData(value: string, doValidation?: boolean): void;
 }
+export declare enum ControlState {
+	FormEdit = 0,
+	FormView = 1,
+	DialogCreate = 2,
+	HistoryView = 3,
+	Tooltip = 4,
+	Print = 5,
+	Report = 6,
+	DialogEdit = 7,
+	Review = 8,
+	Zen = 9
+}
 export interface IBaseControlOptions {
 	[key: string]: any;
 	controlState?: ControlState;
@@ -9592,18 +9604,6 @@ export interface IDataStorage {
 	setItem: (itemKey: string, itemVal: string, sanitize?: boolean) => void;
 	getItem: (itemKey: string, dontSanitize?: boolean) => string;
 	getItemDefault: (itemKey: string, defaultValue: string) => string;
-}
-export declare enum ControlState {
-	FormEdit = 0,
-	FormView = 1,
-	DialogCreate = 2,
-	HistoryView = 3,
-	Tooltip = 4,
-	Print = 5,
-	Report = 6,
-	DialogEdit = 7,
-	Review = 8,
-	Zen = 9
 }
 export interface IDB {
 	children?: IDB[];
